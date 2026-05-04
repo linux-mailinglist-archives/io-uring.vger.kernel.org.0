@@ -1,218 +1,687 @@
-Return-Path: <io-uring+bounces-13222-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13223-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id uJIVGIpJ+GlMsQIAu9opvQ
-	(envelope-from <io-uring+bounces-13222-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Mon, 04 May 2026 09:23:54 +0200
+	id wItQIvpL+GmQsQIAu9opvQ
+	(envelope-from <io-uring+bounces-13223-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Mon, 04 May 2026 09:34:18 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E5034B94D0
-	for <lists+io-uring@lfdr.de>; Mon, 04 May 2026 09:23:53 +0200 (CEST)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id D96CB4B964D
+	for <lists+io-uring@lfdr.de>; Mon, 04 May 2026 09:34:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 6BCBA3001598
-	for <lists+io-uring@lfdr.de>; Mon,  4 May 2026 07:23:48 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 5924630166D1
+	for <lists+io-uring@lfdr.de>; Mon,  4 May 2026 07:32:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A9C82DBF76;
-	Mon,  4 May 2026 07:23:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7748A2D877D;
+	Mon,  4 May 2026 07:32:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ntu.edu.sg header.i=@ntu.edu.sg header.b="felCcfd8"
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="X0dXVbkQ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013051.outbound.protection.outlook.com [40.107.44.51])
+Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 183BA277C96;
-	Mon,  4 May 2026 07:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777879426; cv=fail; b=baZ9QbBQvPCZLz0pJVVQVAOxc6OFUtM9r7ovnJEf0HWdTlW3Q/KFMFNgqjPRRaN3j4+3GoA2Wn98ptMw37cISjXX38njLytixCI3kd7+LSQe6Y4ebrDUjqrFBYAtG0CR7S8xz6qAnG6Zn523mnCU2cgd8hhCzV8miAMeB2f9KhQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777879426; c=relaxed/simple;
-	bh=xV1IIgybr9C+O+Bqj2zi1Bq+9L7+tmgqK1uXZxTpRBk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ga/wD+39ohrgsevmUriClWZmuq1cbLvI5QcrCkJoPNCRGIMsukvoMnzI8Wgao0mZDuPlXb5l1+i/I2dYr4+9Seluxn57jhjdJ5LIoyov4Hjy0XN/YZ+dFZVgjmeKB8uN1RrYPYI0nX3epWWb0BOpk4+Tmr9aEemrv4cUkpZK11Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ntu.edu.sg; spf=pass smtp.mailfrom=ntu.edu.sg; dkim=pass (2048-bit key) header.d=ntu.edu.sg header.i=@ntu.edu.sg header.b=felCcfd8; arc=fail smtp.client-ip=40.107.44.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ntu.edu.sg
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ntu.edu.sg
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vR86WutbGnlMPEuVUEGEO088/UEGtSbQBoCep7mROacKqnnct8NricZb1kcoeybS/yqiLYuHdpryEW4sp+iVuCQJ9PyvZR6RIQ8Wt1OKX7QCWY5389Gm2m7v5NqRdHN4oK24CFwaJyl7sQE44e/8TO/fr2e+6Tlq5zH1J/s3aC4NaaTcsuoaGFBgeqvtmbLDyA/2iKowYildVeZPfTEmggKrZ1JBk+N+df/RQ/MgskAitt2u81QLSVonf10KqkhjOKzBQ99x128OyaTP3W6JOj1u7V7nJhnXjrI+hFnAK6uP/Mm1rLo06DtKceIgf3jXwMt2mwUaKQkkviUPDMzT4Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YczqJDIox1xs+w/alkChwOuPxSQbEyXOLYzyudnvkAE=;
- b=J//c6ldJ7hl98A0ZgGTMBleS3b1BzykDAm5DhqeqIQSd9Jf9bowtaOvUzLR1XfPhzUeal/zUV6R7wrAGC2ldEOYK0FcFw7GcQQBu/npceloGVP3Wz9MUPyn/XT7XA5SfeaQGd7lT29fVTqbUZlIBA0ju4Xq4/gOAciKPh0/uW6B/ka4crJza8gqBbVjbUj4iLNXgHHexImpyQBeemtzoswHBPWcKtDdjTGpUgC7b+QVWFsD9RHHQ2Zi6XjCNhhNv7M41N1zNoXLSmnSLuW8WbiOc44WDEkkC+LxlP8HKjhiXGrimoq+50H+vNAXFDF5zEkpU4oKrXi1xSAZ9iw1QPA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=ntu.edu.sg; dmarc=pass action=none header.from=ntu.edu.sg;
- dkim=pass header.d=ntu.edu.sg; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ntu.edu.sg;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YczqJDIox1xs+w/alkChwOuPxSQbEyXOLYzyudnvkAE=;
- b=felCcfd8JFximbHFIRC/FLZA+KsK2VJBiEmugEy+NaIV7KlguUjKGC+sXJjM6OqM9JNf8vkFzKcIqxrg6OmEgfyDNqQeiHHqtiimuCJSB1Ev+/dV3UBaKI28tZjzYoZkyuuluQ1iEPh6m6f/XYyQQWGi94Q9u98xWu5BeZc/XAGgIj0DGEiaQMCwQwZMYSTm2qJSUTK9FP/0ESyl/PGuRw7VYyuvisd1Nkycr2FsN8WtziyFjr+nC4rZU5taVroAAu8wtQQxxG3kmdw/kxk/DVZ9yxxpcpemRAmkvXVClVnlxhRZt+zU6kIlAR3R0JvD3+hWkT1NMeo+wO5MTPmkFg==
-Received: from OS8PR01MB6749.apcprd01.prod.exchangelabs.com
- (2603:1096:604:28b::10) by SEYPR01MB4391.apcprd01.prod.exchangelabs.com
- (2603:1096:101:5f::9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9870.25; Mon, 4 May
- 2026 07:23:40 +0000
-Received: from OS8PR01MB6749.apcprd01.prod.exchangelabs.com
- ([fe80::2aaf:ec6:ef03:639c]) by OS8PR01MB6749.apcprd01.prod.exchangelabs.com
- ([fe80::2aaf:ec6:ef03:639c%3]) with mapi id 15.20.9870.023; Mon, 4 May 2026
- 07:23:40 +0000
-From: Xie Maoyi <maoyi.xie@ntu.edu.sg>
-To: Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>
-CC: Andrei Vagin <avagin@gmail.com>, "io-uring@vger.kernel.org"
-	<io-uring@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: io_uring: should IORING_TIMEOUT_ABS honour the submitter's time
- namespace?
-Thread-Topic: io_uring: should IORING_TIMEOUT_ABS honour the submitter's time
- namespace?
-Thread-Index: AQHc2gC1O+evKeW+H0uOkX1nIKwMBrX6iDUAgAAZu8qAAca854AA+58AgAAVbdQ=
-Date: Mon, 4 May 2026 07:23:40 +0000
-Message-ID:
- <OS8PR01MB674993B75C46D1763F925ADDDC312@OS8PR01MB6749.apcprd01.prod.exchangelabs.com>
-References:
- <TYZPR01MB67582BE6855BE725AA5174CBDC332@TYZPR01MB6758.apcprd01.prod.exchangelabs.com>
- <85b63dbc-1fb3-4913-9419-90908c5b6358@gmail.com>
- <TYZPR01MB6758466089A9CAADC5095F20DC332@TYZPR01MB6758.apcprd01.prod.exchangelabs.com>
- <TYZPR01MB67581D3389689A4427E41E92DC302@TYZPR01MB6758.apcprd01.prod.exchangelabs.com>
- <aa9ea9e9-dbf3-41b9-874c-1638f454c2d1@kernel.dk>
-In-Reply-To: <aa9ea9e9-dbf3-41b9-874c-1638f454c2d1@kernel.dk>
-Accept-Language: en-GB, en-US
-Content-Language: en-GB
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=ntu.edu.sg;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OS8PR01MB6749:EE_|SEYPR01MB4391:EE_
-x-ms-office365-filtering-correlation-id: 1c7740ed-3eff-4398-7ce6-08dea9ae10e8
-x-o365: NTU-OFF365
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|786006|366016|1800799024|376014|22082099003|18002099003|56012099003|38070700021;
-x-microsoft-antispam-message-info:
- OZ4Ksz5WDGq5DkZN5H4DyskOmniD7FxOWheK4AnG1U2AGT8jl2r2y3mWqmftOqbVfKB7Sz2m851h+7o8acv5P/zxlgW4A5gyEWVpnFNxfgX/jM+t786ZgLrwDrEMfmsNLsIvdEhwOKTOSIoMLuniOaRmqsihA4iaPXYAIlgtkUAR8G+SemXTT6jT8wDEHI/l7X0zFv8+/GDk0FICWTKhhtD0SpGh330PV9Y51UQxOaCn/gaDfPHw+psEFHwMvBiKcjuJLYmDQi7ZVK6sqZGl/+5NNwERsOkqmVo1O7Tb8ELp47UR3uJksqVX9FKyXJGOnguGZcJNeHhx60KNws4X7mm0KuGUnfamEV6u7l/1REFv/aDCf5zmFuvWcY6my40KFYcSh5RKeqo1PUv5EEb9MZ1YF28rr83cjz7rRrw0G1UKk3fnABjofm3IKMu/aJ+9LszKBnIMfJHo1pLKo3cn6RgY6wtWrm9pBWr9LmG5qD+L8Y/lGb/tRBOdFcj/r9sqYio4gtIXJizZSvTDF8Ie1AF9f1IS3bRNn5dW/HUTG0ZhROkxMHORlcffODjzwbdXns6jyw6Bq2F3PK8om2YBeUQyHnZOlXcEt6VnCwwqTsA7CJknP/0KO5GeMqwBXDnA2+YkCHOdphpnJ2kENybHCe7ulooMQoMLX26XM/BdL368Z2dmCfRG8bW7aHvBb0Co
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS8PR01MB6749.apcprd01.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(786006)(366016)(1800799024)(376014)(22082099003)(18002099003)(56012099003)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?mGqIgH8pfVCWSksIMi6S0fWRon+WEyyzBCut6f+M30rNjGq3dX/llJh7Tm?=
- =?iso-8859-1?Q?e9hoQ89y0bUIrDHvFCJwdpOwaI7h9Gwy0tUODwm8X5NTGT9k7mkvaTQzhx?=
- =?iso-8859-1?Q?vouje8zzw+svpnfGFmNJTq1EMJBHAcXC7UL8cxen9Mc8iFPXFV6bkXftCf?=
- =?iso-8859-1?Q?UQYYBYjEpscGWRhmZJhszR7AnA9lTJiU3S9eEqKnl5oZykXaJhAeYRGaI4?=
- =?iso-8859-1?Q?qpRcA7M4QxGIP+u8MSqL9G+QovpxzgXrnEVdW7bRQsXluAmlouG6RiCPFY?=
- =?iso-8859-1?Q?h3oFoXXduLGthfj5DdWTQ5SHo3rcnPn8dxzHFQdC0uoXcNSbk09UjRZwHy?=
- =?iso-8859-1?Q?IipVEsVKCWj0TiU6FB10xNRmZKTANW48SsG8eL0JturxuHYZsO9hNpacid?=
- =?iso-8859-1?Q?oJz0qf02/5pn11xFeZdzsgtPVOEA6DWt1PbngTzZNao5Q5QvYhjv3N4k/R?=
- =?iso-8859-1?Q?woEfEKJ7A6mU8rNZrGEQoWBMftn3+nYg4uGm5ZTZD6KvVn9D+xIR9OmF7r?=
- =?iso-8859-1?Q?vVKYYJGYZKoZbEx273jeG9IqSBGwfot2LHS+YIf8hBmhj4Onw6lw/ozVPe?=
- =?iso-8859-1?Q?YVvrr0uwBvwjQSX9gUfPcdmTzy3hTAuKw7Bqql6MqcGo0z6HeBI+f2dQDE?=
- =?iso-8859-1?Q?xMiNS16szNmgbHY6UgV6oLqbYlMc8BqjayMm/6NZ8qtYMAtbrklx03qoeR?=
- =?iso-8859-1?Q?1mTOIaM0ZoHDoIPbIz1bJApdSIHXfye56OK1cwPzzS1BvfXlALLmJ+Jy/Y?=
- =?iso-8859-1?Q?gG7R61yYSPsE5VLLYLwYC/j/MDZb8tJpc7SlNF/ZIWcyUiv8xYnphngniP?=
- =?iso-8859-1?Q?4bWxhoNVd0oSaFLnb2fz9x8giyPzNvFvIF/BZ3M6Sa1cpSmdqZDnO4IbUL?=
- =?iso-8859-1?Q?twvA6//8FuoK+0wpmiBxtTuPkiawBzNeBUMOoPw+26isRp4tnI9Cr7sL6o?=
- =?iso-8859-1?Q?VIa4VBKkAgol6K1Ach1Q5nLGdqzTtfvR0IPrHHDfxrrM/JvKMh+2PRmke6?=
- =?iso-8859-1?Q?DW27EKrWV3a5WS1fbRkWnx2i1K55dsuT7Vcvtk9mu+1bDtX/E/qq8wuRx9?=
- =?iso-8859-1?Q?itDqkD8tISmbS0rD5MbJji2f5AU+DEQycIzNUEYSXK4HT9GgagZOb4rXqj?=
- =?iso-8859-1?Q?sSZ8AkZMZ+/TmeNbKFoMJ1LaPnvWftldot91WTM36wDz4x2W+89pyn8E5h?=
- =?iso-8859-1?Q?Kc3JMb+h7pnmvtmCLqSZfuUmQ3lPRvljvNFxpXgZiEa8mwFuicvv9GWv5F?=
- =?iso-8859-1?Q?howj2nV77VBIlICdYH8CS6jbIwynyV2d8g/PLXMkaKEXwg/+6P8w24g8uD?=
- =?iso-8859-1?Q?iwSYzsHNRoQBGrel2fidnGIP6heOMMLBXps66MxyAx2PTcavA5tX5VtkDp?=
- =?iso-8859-1?Q?MzvqXczcand+uqW1AVog+rqFQrF8YG/K9oFcZJ9Ky3dLQFGJhjER4Cqp8a?=
- =?iso-8859-1?Q?RyPFwK/Lv9isb1oAz4VYAuy2DZSDZGlwaXwjfJpqwE5rlnL5K4zrl245L4?=
- =?iso-8859-1?Q?DdpeeEEKDi378+nJJNgBzfEz0GonmZ03Vtv7vzs/EbEFG+iuUJSajVhifw?=
- =?iso-8859-1?Q?j3WOF+kPJpbaceN1MEGsdIkuj+3GqgDjWdxQt5/Gsiu7geR/NSOttPbWlY?=
- =?iso-8859-1?Q?iDbEyLEnOzqkkh+8rR6V5kHiVI5lz5FKnFZaw6A1rftPLipkGzre+jP2iW?=
- =?iso-8859-1?Q?VSDdmnxNYBWeD4vZO5U/CwWcKJXrAe0IMyZ9K/zHpOMthljXFUL1AEqo0m?=
- =?iso-8859-1?Q?zr0MJ9qg+eLBexdJd+vq8DSQTTMdgSFxjoU1O5qI54vTleNDeH2d3GUyec?=
- =?iso-8859-1?Q?jmgpDLkgDxQJyfMSne4xNjwMkMM9y5c=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4699A2857EA
+	for <io-uring@vger.kernel.org>; Mon,  4 May 2026 07:31:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1777879921; cv=none; b=PL9+cVxv1jf3OP6Yt+VxHx36KA4ixQhmTHP8fTt5a21KQ/sDRTD/067nVa8niuCktOPBj8RUI8MRGh5Jd/OnESAqo/R8iAKOdb0clFsyc++djnYTKA/DJSZWFLr9FhXss0uCEVrTBCcrw/tysuxR1XufXi3NLC3EkMhsnQfHmBI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1777879921; c=relaxed/simple;
+	bh=TTcEXLJtLk4CTbAcKG3Mql9kufoS0JFFUurylQ87QQ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=uw7dekusYbScGOzS6A+VYN1CG9/EfOVvRLRlfzNVn0JXr75Wposw96L9rKh/Q3wMHDNHFovbmkJVUEkFkAOwUE4dzdoO20Nlg7cb52C8UJeEUUV0Y9JZh/VKueQhjbszE0KIv60rBq3JXt34KbLwknjzG5acO7YTnwRDNCyQzdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=X0dXVbkQ; arc=none smtp.client-ip=67.231.153.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
+	by m0001303.ppops.net (8.18.1.11/8.18.1.11) with ESMTP id 6443uHL22742413
+	for <io-uring@vger.kernel.org>; Mon, 4 May 2026 00:31:58 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
+	 bh=ABOyuV4sRK18AIgBhGvgNDj7q7mbFrR/LPRfI3qBBs4=; b=X0dXVbkQKr2O
+	282vbQG5BFSkj6UE2KbjL5D0BQjWe3sANt2ra6hqfG8A+HEDLGgnTD5rsX2pLDrE
+	L32ysHOT4fPnbRKtn0LC58SdY8PlleMIyRMI/dqAV4vJFGgXk4fZyWIjM8K+LZiz
+	OA4jJfIVQ4SliIkuj8jVsI6lJBQ7rvU9z9OB92nF8iqFhFrhyL9hSeOqr5dTZDom
+	QJXz+Y/EZQ9lEM59Gjo78Bv/oTF1/rnieKdgB1bqWQd5VX7F3dnHTksZzvGQu9If
+	ywAuj3n75KOUexcBirYNeFguLR58RzWG+9vTrVvfJS5+tiVJYXEppjon2QNRcN/L
+	jZ5/+qoX6Q==
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com [209.85.128.71])
+	by m0001303.ppops.net (PPS) with ESMTPS id 4dwcx97q2m-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <io-uring@vger.kernel.org>; Mon, 04 May 2026 00:31:57 -0700 (PDT)
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-488a17a33e9so4255565e9.1
+        for <io-uring@vger.kernel.org>; Mon, 04 May 2026 00:31:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1777879917; x=1778484717;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=D39sxhPIzrbj0ZtT9yuLEO8uF0MNmEK8jW6NlqELD0k=;
+        b=iH+w78T8yy6nB4cSE8g32eBHkk/IckaS6mKKKnLzW3oID0eDyLVXfZukwvXMLOpoSH
+         ozTFY6KoeZhYKJRh8TH4ytDCpxQNU0Efqt3gUYeH11pGPsPVZmvWTxLxZdDLMDv8DNtI
+         zGO59lA7qzdW5p4rkgYUhnd3+2qRHLHp8WPtnnpYOHCGMupNGsIGp8XJi9wkewGgcB3I
+         TFa+f3HoIE1zb4H4B0hyaRD2ClRLfPbAIj1bdzFhz4tbRBhgnu8jNe29oR7aqe34IIZF
+         yBc4YLpQZdhr7AnEACkPLJg5XFOuO/flQh3zVMzVCn6MDQS92YTyNdg1LONoGEfwokeX
+         GeiA==
+X-Forwarded-Encrypted: i=1; AFNElJ/yme1Idj+/5Z2cSE2ljvuYxy7ijP7NFOeyPEUh5EDxpxhR5rjx/8pmXXl5HYjVVbdhct+ms6Vvsw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQdDdtDcw/GNhGJAiyli3PzO7EzF/ftADZbUqPoFIm1iTqLbYQ
+	w2qoUS51qHtYBd/T2/aC3xWklYA7b9Hmr9alhCndzlGiPqYOwXgbWZSHb34uFgQGDDA573BHc8Z
+	OIiQaxU4P03Yx+ZBwYRzPAqbc2vlSqnwvfZwonfUavUfr1acKtZcRn4LBt6Y=
+X-Gm-Gg: AeBDietEVTlEGgaqx7UbZJcCN4TIlE1Z2Tkr+52jAVDzfXEt4h5R3jSXNE10TY7JLH7
+	BT1vDHxe/CQCv99uApbdgqzZ9zLJd5AVbpPSowWQkmDktjcKywISY+SL+TaKjMVDPjdtvJNAb6Q
+	PKFPU3fZQ55rLq2rEYjaX0ZRITKTCiKPnSzwnP0tz6/WQcMoKy5i292+qf51lTBomP+Q/CXgSUy
+	809As+m6NuzibC/sc5FOjS3LdGwQrzVHDBjkOIFH7QJoHqZS7HQEjtRBRziiTroFqHPUhYhTbru
+	qu2wyGpUszBmyFvkuFoXe0BFs8neafiafP/BFseVjzFuIbTH5TCmMGIDOWEoucvecjh1t4rSjFf
+	eFeQcCqdbXmgU5L2ZX0HCxsfIfWWoCz7Mm1qy96lomLnU+w7xdClBAlTEsENFDuK4I2NzQa37
+X-Received: by 2002:a05:600c:4f94:b0:487:17d:d0bf with SMTP id 5b1f17b1804b1-48a9867c712mr60427335e9.6.1777879916509;
+        Mon, 04 May 2026 00:31:56 -0700 (PDT)
+X-Received: by 2002:a05:600c:4f94:b0:487:17d:d0bf with SMTP id 5b1f17b1804b1-48a9867c712mr60426935e9.6.1777879915695;
+        Mon, 04 May 2026 00:31:55 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:e17:9700:3f7b:7276:a343:d339? ([2a01:e0a:e17:9700:3f7b:7276:a343:d339])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48a8fea68b4sm73578475e9.9.2026.05.04.00.31.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 May 2026 00:31:55 -0700 (PDT)
+Message-ID: <f2e104e2-0110-4dca-a285-81b0fc63a272@meta.com>
+Date: Mon, 4 May 2026 09:31:49 +0200
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: ntu.edu.sg
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OS8PR01MB6749.apcprd01.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1c7740ed-3eff-4398-7ce6-08dea9ae10e8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 May 2026 07:23:40.5674
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 15ce9348-be2a-462b-8fc0-e1765a9b204a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: GNGicZ7mJ1dNdVprUJb3q83ADzvrVJwJV8tjdHwBjdNToGjj4ZWRuk1GcPVBdfJB3KnXZFjf25z7tvOUJFLC8N/Rnh6hWrMXA5jeXwWmB4k=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR01MB4391
-X-Rspamd-Queue-Id: 0E5034B94D0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] io_uring/rsrc: add huge page accounting for registered
+ buffers
+To: Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
+References: <d377141e-064e-48a2-9a76-8477a90e8655@kernel.dk>
+Content-Language: en-US
+From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@meta.com>
+In-Reply-To: <d377141e-064e-48a2-9a76-8477a90e8655@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-ORIG-GUID: h3cvtyQycm5U-xGpVegvbpmYRXxirEw2
+X-Proofpoint-GUID: h3cvtyQycm5U-xGpVegvbpmYRXxirEw2
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTA0MDA4MSBTYWx0ZWRfXxL7Hb6oR7yPH
+ sb5aXQwrmLTDrtOALLAdxCS7zOzvvwonJnuPT/8/fm9OaRuTUpZg2q3NdWqiQkaXmZai9dret1W
+ 0CztYhFrjrRwzlcc7isT4Jb6y1Mje9+neOBrG+ZgCg12im4KV/jhUiQ36+RLhuH5MXQKXZK3HlX
+ lU/CBTm7s/nf5bWboZg+Tp/1LsFSsFJSxer0GlC+GutYkote/z9YXxFIncG7czMJsYbSfbEqFhM
+ RomMe0zQXLXyTvmYy7JX+K5RKp6Mooq+BiZcA3wp03GIAeAOSYoMCPK8YlBtCmPEeh6utRMIExV
+ OFTGelXy/3hjameauvegMJel61Lugdd++STQ6EQGZAPdYg5a3PHEIoc0WyniSzPuIWVuHuFwvo6
+ SIj0mSbQJcRnKoOIfisH7grQYA6QJW1tRWxYzOl3SlFWKRdeE8wmlVgoKGO/su4grDjIU4eNf4G
+ IhEIi39V1bwVrLwc4kw==
+X-Authority-Analysis: v=2.4 cv=SoCgLvO0 c=1 sm=1 tr=0 ts=69f84b6d cx=c_pps
+ a=ocXdEHcuFBd2kx0v6vcWqw==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=NGcC8JguVDcA:10 a=M51BFTxLslgA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=7x6HtfJdh03M6CCDgxCd:22 a=_78whYxrdx1mplLwxq1U:22 a=VwQbUJbxAAAA:8
+ a=pGLkceISAAAA:8 a=s_rhyD67zrxYuDMM86sA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-05-04_03,2026-04-30_02,2025-10-01_01
+X-Rspamd-Queue-Id: D96CB4B964D
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [0.84 / 15.00];
-	SUBJECT_ENDS_QUESTION(1.00)[];
-	ARC_REJECT(1.00)[cv is fail on i=2];
-	DMARC_POLICY_ALLOW(-0.50)[ntu.edu.sg,quarantine];
-	R_DKIM_ALLOW(-0.20)[ntu.edu.sg:s=selector1];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+X-Spamd-Result: default: False [-1.49 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	R_MIXED_CHARSET(0.67)[subject];
+	DMARC_POLICY_ALLOW(-0.50)[meta.com,reject];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[meta.com:s=s2048-2025-q2];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13222-lists,io-uring=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
+	TAGGED_FROM(0.00)[bounces-13223-lists,io-uring=lfdr.de];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_TO(0.00)[kernel.dk,gmail.com];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org];
+	RCPT_COUNT_TWO(0.00)[2];
+	TO_DN_ALL(0.00)[];
+	DKIM_TRACE(0.00)[meta.com:+];
+	RCVD_TLS_LAST(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RCVD_COUNT_FIVE(0.00)[5];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[maoyi.xie@ntu.edu.sg,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[ntu.edu.sg:+];
+	FROM_NEQ_ENVFROM(0.00)[cleger@meta.com,io-uring@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	NEURAL_HAM(-0.00)[-1.000];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
 	TAGGED_RCPT(0.00)[io-uring];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[OS8PR01MB6749.apcprd01.prod.exchangelabs.com:mid]
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_COUNT_SEVEN(0.00)[7]
 
-On 5/3/26, Jens Axboe wrote:
-> Might make sense to refactor a helper that does the time translation,
-> and then patch 1 would basically be Pavel's fix and patch 2 would be
-> sorting out the io_cqring_wait() translation as well. Both should be
-> able to use the refactored helper.
+On 5/2/26 04:31, Jens Axboe wrote:
+> >=20
+> Track huge page references in a per-ring xarray to prevent double
+> accounting when the same huge page is used by multiple registered
+> buffers, either within the same ring or across cloned rings.
+>=20
+> When registering buffers backed by huge pages, we need to account for
+> RLIMIT_MEMLOCK. But if multiple buffers share the same huge page (common
+> with cloned buffers), we must not account for the same page multiple
+> times. Similarly, we must only unaccount when the last reference to a
+> huge page is released.
+>=20
+> Maintain a per-ring xarray (hpage_acct) that tracks reference counts for
+> each huge page. When registering a buffer, for each unique huge page,
+> increment its accounting reference count, and only account pages that
+> are newly added.
+>=20
+> When unregistering a buffer, for each unique huge page, decrement its
+> refcount. Once the refcount hits zero, the page is unaccounted.
+>=20
+> Note: any account is done against the ctx->user that was assigned when
+> the ring was setup. As before, if root is running the operation, no
+> accounting is done.
+>=20
+> With these changes, any use of imu->acct_pages is also dead, hence kill
+> it from struct io_mapped_ubuf. This shrinks it from 56b to 48b on a
+> 64-bit arch. Additionally, hpage_already_acct() is gone, which was an
+> O(M*M) scan over current + previous registrations.
+>=20
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>=20
+> ---
+>=20
+> See previous discussions here:
+>=20
+> https://lore.kernel.org/io-uring/20260119071039.2113739-1-danisjiang@gmai=
+l.com/
+>=20
+> diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_type=
+s.h
+> index 244392026c6d..23b8891d5704 100644
+> --- a/include/linux/io_uring_types.h
+> +++ b/include/linux/io_uring_types.h
+> @@ -446,6 +446,9 @@ struct io_ring_ctx {
+>   	/* Stores zcrx object pointers of type struct io_zcrx_ifq */
+>   	struct xarray			zcrx_ctxs;
+>  =20
+> +	/* Used for accounting references on pages in registered buffers */
+> +	struct xarray		hpage_acct;
+> +
+>   	u32			pers_next;
+>   	struct xarray		personalities;
+>  =20
+> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+> index 4ed998d60c09..fb6ed52bae61 100644
+> --- a/io_uring/io_uring.c
+> +++ b/io_uring/io_uring.c
+> @@ -233,6 +233,7 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(s=
+truct io_uring_params *p)
+>   		return NULL;
+>  =20
+>   	xa_init(&ctx->io_bl_xa);
+> +	xa_init(&ctx->hpage_acct);
+>  =20
+>   	/*
+>   	 * Use 5 bits less than the max cq entries, that should give us around
+> @@ -302,6 +303,7 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(s=
+truct io_uring_params *p)
+>   	io_free_alloc_caches(ctx);
+>   	kvfree(ctx->cancel_table.hbs);
+>   	xa_destroy(&ctx->io_bl_xa);
+> +	xa_destroy(&ctx->hpage_acct);
+>   	kfree(ctx);
+>   	return NULL;
+>   }
+> @@ -2198,6 +2200,7 @@ static __cold void io_ring_ctx_free(struct io_ring_=
+ctx *ctx)
+>   	io_napi_free(ctx);
+>   	kvfree(ctx->cancel_table.hbs);
+>   	xa_destroy(&ctx->io_bl_xa);
+> +	xa_destroy(&ctx->hpage_acct);
+>   	kfree(ctx);
+>   }
+>  =20
+> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+> index 650303626be6..ca22e07245c4 100644
+> --- a/io_uring/rsrc.c
+> +++ b/io_uring/rsrc.c
+> @@ -28,7 +28,51 @@ struct io_rsrc_update {
+>   };
+>  =20
+>   static struct io_rsrc_node *io_sqe_buffer_register(struct io_ring_ctx *=
+ctx,
+> -			struct iovec *iov, struct page **last_hpage);
+> +						   struct iovec *iov);
+> +
+> +static int hpage_acct_ref(struct io_ring_ctx *ctx, struct page *hpage,
+> +			  bool *acct_new)
+> +{
+> +	unsigned long key =3D (unsigned long) hpage;
+> +	unsigned long count;
+> +	void *entry;
+> +	int ret;
+> +
+> +	lockdep_assert_held(&ctx->uring_lock);
+> +
+> +	entry =3D xa_load(&ctx->hpage_acct, key);
+> +	if (!entry) {
+> +		ret =3D xa_reserve(&ctx->hpage_acct, key, GFP_KERNEL_ACCOUNT);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	count =3D 1;
+> +	if (entry)
+> +		count =3D xa_to_value(entry) + 1;
 
-Understood. I will prepare a 2-patch series along those lines:
+Hi Jens,
 
-  1/2 io_uring: introduce io_timens_to_host_ktime() helper and apply
-        it in IORING_OP_TIMEOUT / IORING_OP_LINK_TIMEOUT (=3D Pavel's
-        fix for io_parse_user_time).
+Can't most of this be merged in the previous if/else ? ie:
 
-  2/2 io_uring: route io_uring_enter()'s IORING_ENTER_ABS_TIMER path
-        through the same helper (covers io_uring/wait.c around the
-        ext_arg->ts parse).
+	entry =3D xa_load(&ctx->hpage_acct, key);>
+	count =3D 1;
+	if (!entry) {
+		ret =3D xa_reserve(&ctx->hpage_acct, key, GFP_KERNEL_ACCOUNT);
+		if (ret)
+			return ret;
+		*acct_new =3D true;
+	} else {
+		count =3D xa_to_value(entry) + 1;
+		*acct_new =3D false;
+	}
 
-Could you point me at the right base to develop on top of? Pavel's
-draft uses io_parse_user_time which is not in v7.0 mainline, so I
-assume the target is one of the io_uring trees (for-next?). I will
-also re-run the SQPOLL and ABS_TIMER reproducers against the
-series before sending.
+> +	xa_store(&ctx->hpage_acct, key, xa_mk_value(count), GFP_KERNEL_ACCOUNT);
+> +	*acct_new =3D (count =3D=3D 1);
+> +	return 0;
+> +}
+> +
+> +static bool hpage_acct_unref(struct io_ring_ctx *ctx, struct page *hpage)
+> +{
+> +	unsigned long key =3D (unsigned long) hpage;
+> +	unsigned long count;
+> +	void *entry;
+> +
+> +	lockdep_assert_held(&ctx->uring_lock);
+> +
+> +	entry =3D xa_load(&ctx->hpage_acct, key);
+> +	if (WARN_ON_ONCE(!entry))
+> +		return false;
+> +	count =3D xa_to_value(entry);
+> +	if (count =3D=3D 1)
+> +		xa_erase(&ctx->hpage_acct, key);
+> +	else
+> +		xa_store(&ctx->hpage_acct, key, xa_mk_value(count - 1), GFP_KERNEL_ACC=
+OUNT);
+> +	return count =3D=3D 1;
 
-Best regards,
-Maoyi
-Nanyang Technological University
-https://maoyixie.com/
-________________________________
+Maybe something like this could easier to read ?:
 
-CONFIDENTIALITY: This email is intended solely for the person(s) named and =
-may be confidential and/or privileged. If you are not the intended recipien=
-t, please delete it, notify us and do not copy, use, or disclose its conten=
-ts.
-Towards a sustainable earth: Print only when necessary. Thank you.
+	if (count =3D=3D 1) {
+		xa_erase(&ctx->hpage_acct, key);
+		return true;
+	}
+=09
+	xa_store(&ctx->hpage_acct, key, xa_mk_value(count - 1),=20
+GFP_KERNEL_ACCOUNT);
+	return false;
+
+
+
+> +}
+>  =20
+>   /* only define max */
+>   #define IORING_MAX_FIXED_FILES	(1U << 20)
+> @@ -124,15 +168,53 @@ static void io_free_imu(struct io_ring_ctx *ctx, st=
+ruct io_mapped_ubuf *imu)
+>   		kvfree(imu);
+>   }
+>  =20
+> +static unsigned long io_buffer_unaccount_pages(struct io_ring_ctx *ctx,
+> +					       struct io_mapped_ubuf *imu)
+> +{
+> +	struct page *seen =3D NULL;
+> +	unsigned long acct =3D 0;
+> +	int i;
+> +
+> +	if (imu->flags & IO_REGBUF_F_KBUF || !ctx->user)
+> +		return 0;
+> +
+> +	for (i =3D 0; i < imu->nr_bvecs; i++) {
+> +		struct page *page =3D imu->bvec[i].bv_page;
+> +		struct page *hpage;
+> +
+> +		if (!PageCompound(page)) {
+> +			acct++;
+> +			continue;
+> +		}
+> +
+> +		hpage =3D compound_head(page);
+> +		if (hpage =3D=3D seen)
+> +			continue;
+> +		seen =3D hpage;
+> +
+> +		/* Unaccount on last reference */
+> +		if (hpage_acct_unref(ctx, hpage))
+> +			acct +=3D page_size(hpage) >> PAGE_SHIFT;
+> +		cond_resched();
+> +	}
+> +
+> +	return acct;
+> +}
+> +
+>   static void io_buffer_unmap(struct io_ring_ctx *ctx, struct io_mapped_u=
+buf *imu)
+>   {
+> +	unsigned long acct_pages =3D 0;
+> +
+> +	/* Always decrement, so it works for cloned buffers too */
+> +	acct_pages =3D io_buffer_unaccount_pages(ctx, imu);
+> +
+>   	if (unlikely(refcount_read(&imu->refs) > 1)) {
+>   		if (!refcount_dec_and_test(&imu->refs))
+>   			return;
+>   	}
+>  =20
+> -	if (imu->acct_pages)
+> -		io_unaccount_mem(ctx->user, ctx->mm_account, imu->acct_pages);
+> +	if (acct_pages)
+> +		io_unaccount_mem(ctx->user, ctx->mm_account, acct_pages);
+>   	imu->release(imu->priv);
+>   	io_free_imu(ctx, imu);
+>   }
+> @@ -282,7 +364,6 @@ static int __io_sqe_buffers_update(struct io_ring_ctx=
+ *ctx,
+>   {
+>   	u64 __user *tags =3D u64_to_user_ptr(up->tags);
+>   	struct iovec fast_iov, *iov;
+> -	struct page *last_hpage =3D NULL;
+>   	struct iovec __user *uvec;
+>   	u64 user_data =3D up->data;
+>   	__u32 done;
+> @@ -307,7 +388,7 @@ static int __io_sqe_buffers_update(struct io_ring_ctx=
+ *ctx,
+>   			err =3D -EFAULT;
+>   			break;
+>   		}
+> -		node =3D io_sqe_buffer_register(ctx, iov, &last_hpage);
+> +		node =3D io_sqe_buffer_register(ctx, iov);
+>   		if (IS_ERR(node)) {
+>   			err =3D PTR_ERR(node);
+>   			break;
+> @@ -605,76 +686,79 @@ int io_sqe_buffers_unregister(struct io_ring_ctx *c=
+tx)
+>   }
+>  =20
+>   /*
+> - * Not super efficient, but this is just a registration time. And we do =
+cache
+> - * the last compound head, so generally we'll only do a full search if w=
+e don't
+> - * match that one.
+> - *
+> - * We check if the given compound head page has already been accounted, =
+to
+> - * avoid double accounting it. This allows us to account the full size o=
+f the
+> - * page, not just the constituent pages of a huge page.
+> + * Undo hpage_acct_ref() calls made during io_buffer_account_pin() on fa=
+ilure.
+> + * This operates on the pages array since imu->bvec isn't populated yet.
+>    */
+> -static bool headpage_already_acct(struct io_ring_ctx *ctx, struct page *=
+*pages,
+> -				  int nr_pages, struct page *hpage)
+> +static void io_buffer_unaccount_hpages(struct io_ring_ctx *ctx,
+> +				       struct page **pages, int nr_pages)
+>   {
+> -	int i, j;
+> +	struct page *seen =3D NULL;
+> +	int i;
+> +
+> +	if (!ctx->user)
+> +		return;
+>  =20
+> -	/* check current page array */
+>   	for (i =3D 0; i < nr_pages; i++) {
+> +		struct page *hpage;
+> +
+>   		if (!PageCompound(pages[i]))
+>   			continue;
+> -		if (compound_head(pages[i]) =3D=3D hpage)
+> -			return true;
+> -	}
+> -
+> -	/* check previously registered pages */
+> -	for (i =3D 0; i < ctx->buf_table.nr; i++) {
+> -		struct io_rsrc_node *node =3D ctx->buf_table.nodes[i];
+> -		struct io_mapped_ubuf *imu;
+>  =20
+> -		if (!node)
+> +		hpage =3D compound_head(pages[i]);
+> +		if (hpage =3D=3D seen)
+>   			continue;
+> -		imu =3D node->buf;
+> -		for (j =3D 0; j < imu->nr_bvecs; j++) {
+> -			if (!PageCompound(imu->bvec[j].bv_page))
+> -				continue;
+> -			if (compound_head(imu->bvec[j].bv_page) =3D=3D hpage)
+> -				return true;
+> -		}
+> -	}
+> +		seen =3D hpage;
+>  =20
+> -	return false;
+> +		hpage_acct_unref(ctx, hpage);
+> +		cond_resched();
+> +	}
+>   }
+>  =20
+>   static int io_buffer_account_pin(struct io_ring_ctx *ctx, struct page *=
+*pages,
+> -				 int nr_pages, struct io_mapped_ubuf *imu,
+> -				 struct page **last_hpage)
+> +				 int nr_pages)
+>   {
+> +	unsigned long acct_pages =3D 0;
+> +	struct page *seen =3D NULL;
+>   	int i, ret;
+>  =20
+> -	imu->acct_pages =3D 0;
+> +	if (!ctx->user)
+> +		return 0;
+> +
+>   	for (i =3D 0; i < nr_pages; i++) {
+> +		struct page *hpage;
+> +		bool acct_new;
+> +
+>   		if (!PageCompound(pages[i])) {
+> -			imu->acct_pages++;
+> -		} else {
+> -			struct page *hpage;
+> -
+> -			hpage =3D compound_head(pages[i]);
+> -			if (hpage =3D=3D *last_hpage)
+> -				continue;
+> -			*last_hpage =3D hpage;
+> -			if (headpage_already_acct(ctx, pages, i, hpage))
+> -				continue;
+> -			imu->acct_pages +=3D page_size(hpage) >> PAGE_SHIFT;
+> +			acct_pages++;
+> +			continue;
+>   		}
+> +
+> +		hpage =3D compound_head(pages[i]);
+> +		if (hpage =3D=3D seen)
+> +			continue;
+> +		seen =3D hpage;
+> +
+> +		ret =3D hpage_acct_ref(ctx, hpage, &acct_new);
+> +		if (ret) {
+> +			io_buffer_unaccount_hpages(ctx, pages, i);
+> +			return ret;
+> +		}
+> +		if (acct_new)
+> +			acct_pages +=3D page_size(hpage) >> PAGE_SHIFT;
+> +		cond_resched();
+>   	}
+>  =20
+> -	if (!imu->acct_pages)
+> -		return 0;
+> +	/* Try to account the memory */
+> +	if (acct_pages) {
+> +		ret =3D io_account_mem(ctx->user, ctx->mm_account, acct_pages);
+> +		if (ret) {
+> +			/* Undo the refs we just added */
+> +			io_buffer_unaccount_hpages(ctx, pages, nr_pages);
+> +			return ret;
+> +		}
+> +	}
+>  =20
+> -	ret =3D io_account_mem(ctx->user, ctx->mm_account, imu->acct_pages);
+> -	if (ret)
+> -		imu->acct_pages =3D 0;
+> -	return ret;
+> +	return 0;
+>   }
+>  =20
+>   static bool io_coalesce_buffer(struct page ***pages, int *nr_pages,
+> @@ -763,8 +847,7 @@ bool io_check_coalesce_buffer(struct page **page_arra=
+y, int nr_pages,
+>   }
+>  =20
+>   static struct io_rsrc_node *io_sqe_buffer_register(struct io_ring_ctx *=
+ctx,
+> -						   struct iovec *iov,
+> -						   struct page **last_hpage)
+> +						   struct iovec *iov)
+>   {
+>   	struct io_mapped_ubuf *imu =3D NULL;
+>   	struct page **pages =3D NULL;
+> @@ -811,7 +894,7 @@ static struct io_rsrc_node *io_sqe_buffer_register(st=
+ruct io_ring_ctx *ctx,
+>   		goto done;
+>  =20
+>   	imu->nr_bvecs =3D nr_pages;
+> -	ret =3D io_buffer_account_pin(ctx, pages, nr_pages, imu, last_hpage);
+> +	ret =3D io_buffer_account_pin(ctx, pages, nr_pages);
+>   	if (ret)
+>   		goto done;
+>  =20
+> @@ -861,7 +944,6 @@ static struct io_rsrc_node *io_sqe_buffer_register(st=
+ruct io_ring_ctx *ctx,
+>   int io_sqe_buffers_register(struct io_ring_ctx *ctx, void __user *arg,
+>   			    unsigned int nr_args, u64 __user *tags)
+>   {
+> -	struct page *last_hpage =3D NULL;
+>   	struct io_rsrc_data data;
+>   	struct iovec fast_iov, *iov =3D &fast_iov;
+>   	const struct iovec __user *uvec;
+> @@ -904,7 +986,7 @@ int io_sqe_buffers_register(struct io_ring_ctx *ctx, =
+void __user *arg,
+>   			}
+>   		}
+>  =20
+> -		node =3D io_sqe_buffer_register(ctx, iov, &last_hpage);
+> +		node =3D io_sqe_buffer_register(ctx, iov);
+>   		if (IS_ERR(node)) {
+>   			ret =3D PTR_ERR(node);
+>   			break;
+> @@ -971,7 +1053,6 @@ int io_buffer_register_bvec(struct io_uring_cmd *cmd=
+, struct request *rq,
+>  =20
+>   	imu->ubuf =3D 0;
+>   	imu->len =3D blk_rq_bytes(rq);
+> -	imu->acct_pages =3D 0;
+>   	imu->folio_shift =3D PAGE_SHIFT;
+>   	refcount_set(&imu->refs, 1);
+>   	imu->release =3D release;
+> @@ -1137,6 +1218,56 @@ int io_import_reg_buf(struct io_kiocb *req, struct=
+ iov_iter *iter,
+>   }
+>  =20
+>   /* Lock two rings at once. The rings must be different! */
+
+This comment should be before lock_two_rings().
+
+> +static int io_buffer_acct_cloned_hpages(struct io_ring_ctx *ctx,
+> +					struct io_mapped_ubuf *imu)
+> +{
+> +	struct page *seen =3D NULL;
+> +	int i, ret =3D 0;
+> +
+> +	if (imu->flags & IO_REGBUF_F_KBUF || !ctx->user)
+> +		return 0;
+> +
+> +	for (i =3D 0; i < imu->nr_bvecs; i++) {
+> +		struct page *page =3D imu->bvec[i].bv_page;
+> +		struct page *hpage;
+> +		bool acct_new;
+> +
+> +		if (!PageCompound(page))
+> +			continue;
+> +
+> +		hpage =3D compound_head(page);
+> +		if (hpage =3D=3D seen)
+> +			continue;
+> +		seen =3D hpage;
+> +
+> +		/* Atomically add reference for cloned buffer */
+> +		ret =3D hpage_acct_ref(ctx, hpage, &acct_new);
+> +		if (ret)
+> +			break;
+> +
+> +		cond_resched();
+> +	}
+> +
+> +	if (!ret)
+> +		return 0;
+> +
+> +	/* Undo refs we added for bvecs [0..i) */
+> +	seen =3D NULL;
+> +	for (int j =3D 0; j < i; j++) {
+> +		struct page *p =3D imu->bvec[j].bv_page;
+> +		struct page *hp;
+> +
+> +		if (!PageCompound(p))
+> +			continue;
+> +		hp =3D compound_head(p);
+> +		if (hp =3D=3D seen)
+> +			continue;
+> +		seen =3D hp;
+> +		hpage_acct_unref(ctx, hp);
+> +	}
+> +	return ret;
+> +}
+> +
+>   static void lock_two_rings(struct io_ring_ctx *ctx1, struct io_ring_ctx=
+ *ctx2)
+>   {
+>   	if (ctx1 > ctx2)
+> @@ -1218,6 +1349,14 @@ static int io_clone_buffers(struct io_ring_ctx *ct=
+x, struct io_ring_ctx *src_ctx
+>  =20
+>   			refcount_inc(&src_node->buf->refs);
+>   			dst_node->buf =3D src_node->buf;
+> +			/* track compound references to clones */
+> +			ret =3D io_buffer_acct_cloned_hpages(ctx, src_node->buf);
+> +			if (ret) {
+> +				refcount_dec(&src_node->buf->refs);
+> +				io_cache_free(&ctx->node_cache, dst_node);
+> +				io_rsrc_data_free(ctx, &data);
+> +				return ret;
+> +			}
+>   		}
+>   		data.nodes[off++] =3D dst_node;
+>   		i++;
+> diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
+> index 44e3386f7c1c..c0f8a18ec767 100644
+> --- a/io_uring/rsrc.h
+> +++ b/io_uring/rsrc.h
+> @@ -38,7 +38,6 @@ struct io_mapped_ubuf {
+>   	unsigned int	nr_bvecs;
+>   	unsigned int    folio_shift;
+>   	refcount_t	refs;
+> -	unsigned long	acct_pages;
+>   	void		(*release)(void *);
+>   	void		*priv;
+>   	u8		flags;
+>=20
+
+Thanks,
+
+Cl=C3=A9ment
+
 

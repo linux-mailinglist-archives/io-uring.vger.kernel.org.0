@@ -1,178 +1,236 @@
-Return-Path: <io-uring+bounces-13239-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13240-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 6JfJC9fr+WkLFQMAu9opvQ
-	(envelope-from <io-uring+bounces-13239-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 05 May 2026 15:08:39 +0200
+	id OOQPFaLv+WmcFQMAu9opvQ
+	(envelope-from <io-uring+bounces-13240-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 05 May 2026 15:24:50 +0200
 X-Original-To: lists+io-uring@lfdr.de
 Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2F444CE2C4
-	for <lists+io-uring@lfdr.de>; Tue, 05 May 2026 15:08:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E83AB4CE6B0
+	for <lists+io-uring@lfdr.de>; Tue, 05 May 2026 15:24:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id AE8E630054E0
-	for <lists+io-uring@lfdr.de>; Tue,  5 May 2026 13:08:36 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id A622A3034D4C
+	for <lists+io-uring@lfdr.de>; Tue,  5 May 2026 13:23:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 281653D4121;
-	Tue,  5 May 2026 13:08:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93B7940B6DC;
+	Tue,  5 May 2026 13:23:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="LJB0AHYK"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oo1-f71.google.com (mail-oo1-f71.google.com [209.85.161.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B236E43C06D
-	for <io-uring@vger.kernel.org>; Tue,  5 May 2026 13:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C42F11B983F
+	for <io-uring@vger.kernel.org>; Tue,  5 May 2026 13:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777986513; cv=none; b=FyADNF8IVgWkAtlA+wzptXFr9FTv2u+5BlQeMi+uPQw2BVzI8hd+shCy3zgIdFkbLtz6y2f+GejNaaijjUFeVrOLkkisBcBleMR1UB77QEQORl60AiOyni3ozQsu7w5UZBSFLlR2KjtuOR2Ly8YtSkVpwlAAPXKJ1gLPIY7uzv0=
+	t=1777987403; cv=none; b=gspqEHM5GnXdLskqUDiqHZjOdVfMCViMM/SgSnBuoze13pltb0cARvdOq9iZuKvh9pyZurF8dWqtLEF/j9uLQLy2IseFkKCft1yYYB3as2HlKYm7+pH0DtF5lABChFU9ToT+viSMqEv36gHKAFcNzXgNGiowoO+VaZw4P7qwBiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777986513; c=relaxed/simple;
-	bh=sFevfuThPnK9sIPvedInedMJ5eGsSSn0G/pa7IgRNzY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=Jnm0oBqXWO46zLbtLVgxEjdZ8l3NiHyojx0XVnKRIBjID3A4RI8Jad/ydxQBhgGQdRLUdhs6wnMotd86hCLNkKmmbZ/wv20rMoS/iNU9fNyKy3q78bjCK0HippUpA1saQYNS9upypjj3FHcBRkKotH7JvgE52somMUe6Vdb12RU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-oo1-f71.google.com with SMTP id 006d021491bc7-6966db8db2aso8364469eaf.0
-        for <io-uring@vger.kernel.org>; Tue, 05 May 2026 06:08:31 -0700 (PDT)
+	s=arc-20240116; t=1777987403; c=relaxed/simple;
+	bh=IqkZVf5tgsvZqIerSXBzFWwT0qoGvqbt02Q8vUA+tBk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AP/VqVOk1ZJA8Ucsm4t0ykZMdKR7JzdDKuSx97imqRm0Zj03BNBv7lUpDbfGAYY3E4Eh2XXOI14x5KugHEJBj7xyVrgGiiUp23x3z7LrapbLVw9Svm1+Yl3a+g6zgPyx9sENwMS/4ry27b6ait6sUf8l9oIlXgqE2t7+f682nPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=LJB0AHYK; arc=none smtp.client-ip=67.231.153.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 645D1slR791585
+	for <io-uring@vger.kernel.org>; Tue, 5 May 2026 06:23:20 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
+	 bh=mbjdbFLZGUU8lfZHuiUCvPC+kC14AzNuHsxbWhhGfHc=; b=LJB0AHYKnTH3
+	rIBI9d/AWpLeFJKjq4PluIoUxG1AVsFCyL5MnV0b0hCdbYdPMIg8OZqx1+lWSsv/
+	cFzvFVt88mUoDjvJSnmRiMJx5qqq5PDwke4qoJDBQjB8xi2cFd9SY1YpNlZY7j3q
+	Cf2fXTA/4/Il7+RIZAFcY8nZolVwpsT/bhp/Vkf2gbvjTVP1yE8O79BJOI6VhO/r
+	3IHxvvJYbPyIz5EQ9Hy1LMi59DmlJZY11Pe/VGBWppMlsq0yXCvFEGfhowaWDC7L
+	WvDRhZbCnYuzmau5FF+rFOb7gTLnmE4Wn0Xi8Aeq3RNGMo3ryc+rZSdc6UIgghu1
+	fHL0G6vmuQ==
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com [209.85.128.72])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4dwf3707jd-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <io-uring@vger.kernel.org>; Tue, 05 May 2026 06:23:20 -0700 (PDT)
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-488a8741604so6479765e9.0
+        for <io-uring@vger.kernel.org>; Tue, 05 May 2026 06:23:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777986511; x=1778591311;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LTYFpGF2sAJ08QtA3xEO+n4nsS4Uz+UMNVOp/UWwx7k=;
-        b=WavkXBgtwwaTYZ+8hVzTDh1XPauyBJXqmUnwejJaEnwU2feO5eA/f12dCLxN/GbiBl
-         TXuTfsngjNsDSNxEjDxOFOueRK/g/wZf54gfPPalWUf0DOuCrmN924OUyvpy3hZBcMP1
-         3DAkN4Iz/yJBAxoAAfxcGhCq1HsJO7Nu/PShjQXzFCip7uFo4RLH3tgpjva0DEJ5c3ZV
-         U2G8q+m4cw36/NbRgZZvm5Re/2+EZMeTPD/j2h6n7etWQjkZn73q8V2kpTLw+i2+6cAl
-         ONsim8n87UnCcscqXHkp0hFLjNCP5bQpRZZ8uNCWlMRrrTbw6lAX/BFV7nah4WwPqCfM
-         pyNg==
-X-Forwarded-Encrypted: i=1; AFNElJ/Fd6YG+ei2OLJ0hHtl7rixxvbkqMn6T1s7V0uGp+n0L/j8MC0nMhP7MFDzlhca/Qb8RpgW/ALgIQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYIMsH/71oFbss1gahJO9CXZE4na6rdCJWO8bn4wXnGJ6eR08f
-	pwpVPtPEkmnIH4n3lgLTr2Em7NSzCJRORYGlSJWxlaud546D+zNu5010eSwkx4u0dX/SRxD/2p+
-	QE9eSuxKbezGCulxMvzBb8A9r85+nX2OT58ZDxt2gp65bHsA3DQngPjciNXY=
+        d=1e100.net; s=20251104; t=1777987399; x=1778592199;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=M0IFtGSJpMS01UjuQ4xgV0yjZEm4WSH7x6f/5TvpdWg=;
+        b=TqSIz//boiM/QZRDI9STEXM1VLQQ/Ajq2/iPp/ZTKSGaXbk4gKfoICYbLBoh+kqauc
+         nZnNAtKYS1iv0DjUl41imcAz4y7kRyKPJmOjeT7vg7qVE2qjkqxR5f2pMolksVpkkXjt
+         H4e7zHQ3hRZwxmI15gF74q8nzNBFpoEKuAEnYReNlL/dcyWSwdcmq75rAFW0ftaOTK9L
+         oiMEwzst7Ub6vVZydFfpOPPC+5pNUg45OTvtPEKMJVJPKgw9iwkLyL0IOTickCBiHFXT
+         O4nP+zHVG+YGymdG/6v72X4K4i5HqgPpKV5W2pDCA0BwS6M9hvHREO54DZpymQYiDbeE
+         93OA==
+X-Forwarded-Encrypted: i=1; AFNElJ8v+F+unSeaMtAe4yQ5HO+Jx0blAheZWwSti3TDe7LvTqHrJbfXFwleB+VpFaOj3jyzwt+oush4NA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGp0OuGLxqNl5xCTkkjl+dD5YiPN2uWvRW6n3R2EPTKCjwpqa7
+	uD/FD4TxBG7cOVHj1vakNAOgAsdBASb33CAS1JUXGPU7+TkunEQd6bFntRdjrsxz5p/j2tETiMs
+	0TB/7Wy2+gXhD96U0cGq4sbzC7+T9d2g/XFbSE8Fvd2lTZ/yB8Fnbt85oB2I=
+X-Gm-Gg: AeBDietmDhTftzsy182G6xIdP9gO6Ab0AKEmkR5YcxPiOldlQtAA+sfi+Je8M4qTCwq
+	7KoHLknv30d9X4fytlv/vyjADDNygHt50dRSYJbwuH3qnyhTlFb3LxfdjeeKHYln9zIDschK1Lf
+	iLghKlvK0weC/ONOrbazGGwV0cceZEvICfarFSEZggIzW4NUEZYXnP21Tns6+BVerZ101qUH9hX
+	z3ILgnv97Cq82XefO741Frng3I7DnJ3/WLlwG1pJ2OAER8CmGAARhJ8QRhj/WBEGpQKMI/AKCK7
+	lfLm3ew2sE2+MQhB7dHBnXzV2OcGKsuQ1OUqU7yc/qTd0hbQpJ0j1bbNGRTvlDo0STpF26CAlUY
+	JfLe7CE7ceHKE4TBkZoR3rB4var1I5nTR6/MUrDyYcslG5siSrQhOvEaaLUwy/Wnrkxpjwcku
+X-Received: by 2002:a05:600c:1d21:b0:48a:5758:7999 with SMTP id 5b1f17b1804b1-48a9865e099mr118105945e9.4.1777987399249;
+        Tue, 05 May 2026 06:23:19 -0700 (PDT)
+X-Received: by 2002:a05:600c:1d21:b0:48a:5758:7999 with SMTP id 5b1f17b1804b1-48a9865e099mr118105575e9.4.1777987398807;
+        Tue, 05 May 2026 06:23:18 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:e17:9700:3f7b:7276:a343:d339? ([2a01:e0a:e17:9700:3f7b:7276:a343:d339])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48a82301b7bsm473121305e9.11.2026.05.05.06.23.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 May 2026 06:23:18 -0700 (PDT)
+Message-ID: <0965a131-ccaf-40d5-a207-9d41c837b278@meta.com>
+Date: Tue, 5 May 2026 15:23:17 +0200
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6820:e16:b0:694:857a:5a78 with SMTP id
- 006d021491bc7-698876f07f9mr1294157eaf.8.1777986510804; Tue, 05 May 2026
- 06:08:30 -0700 (PDT)
-Date: Tue, 05 May 2026 06:08:30 -0700
-In-Reply-To: <6de5d329-9162-4992-85cb-f946f2d5c0b1@kernel.dk>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69f9ebce.170a0220.59368.0011.GAE@google.com>
-Subject: [syzbot ci] Re: io_uring/rsrc: remove registered buffer 1GB limit
-From: syzbot ci <syzbot+ci5f475aa1640b4177@syzkaller.appspotmail.com>
-To: andres@anarazel.de, axboe@kernel.dk, io-uring@vger.kernel.org
-Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-X-Rspamd-Queue-Id: B2F444CE2C4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] io_uring/rsrc: remove registered buffer 1GB limit
+To: Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
+Cc: Andres Freund <andres@anarazel.de>
+References: <6de5d329-9162-4992-85cb-f946f2d5c0b1@kernel.dk>
+ <3a19966b-229b-495b-966a-5018fc615a8a@kernel.dk>
+Content-Language: en-US
+From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@meta.com>
+In-Reply-To: <3a19966b-229b-495b-966a-5018fc615a8a@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTA1MDEyNiBTYWx0ZWRfX0kVxsubvkT/B
+ OKJsXQ7HUdLLTZeihvVku0sLY3Zr/SHkmdrVzW2iCgK4uh3XMAIkQdvnb1Wnonk8qm77KgRL+ME
+ Cg4Mcpw+GOH3JN+dK9XIbGJWCs5NBw81a5B8qa1asWQR0D6w8LKWOHPJUZwctGyYinWPBp5l61U
+ krCn98RN2H4HQOfFNP4o5Jc3XhSX7wzKIluTF9ZomSAANrxxOBcipN4qHfJIyvwoQ3y7EURcBpN
+ L0qhmfyzktYfJ50QUfWMSFXhs4ADaG6C8AG7BsS4DqcnvNveaIblFMlAhVxi3TcgVzp5/TSLFNQ
+ BIhX3OtmMjLKbYCdw9U6Weji0YqnmBi15nEyV07NKig5h9nioPs/9uWQGe/dKPw16tQr4NMtAX1
+ 9mb0n02i8OXRrKryq885wfMRTpR5XlUfDoKam/4tuN3PcSuQ+rHVl86ZrxF8N7D+fFAhLgZ7ejZ
+ +aWoYf6e+JGXy4Hf91A==
+X-Proofpoint-GUID: GPtrjWwV_MSCSJ0nkf-rZyUBKmPN-WjR
+X-Authority-Analysis: v=2.4 cv=GKs41ONK c=1 sm=1 tr=0 ts=69f9ef48 cx=c_pps
+ a=IwH782EDBk/vqbJ9rM8UFw==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=NGcC8JguVDcA:10 a=M51BFTxLslgA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=7x6HtfJdh03M6CCDgxCd:22 a=wpfVPzegXHpEFt3DAXn9:22 a=VwQbUJbxAAAA:8
+ a=iaFi8TtKhGdbX_SpOFsA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=Ng9YvVcppn9CIdWre3nD:22
+X-Proofpoint-ORIG-GUID: GPtrjWwV_MSCSJ0nkf-rZyUBKmPN-WjR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-05-05_02,2026-04-30_02,2025-10-01_01
+X-Rspamd-Queue-Id: E83AB4CE6B0
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.36 / 15.00];
+X-Spamd-Result: default: False [-1.33 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	R_MIXED_CHARSET(0.83)[subject];
+	DMARC_POLICY_ALLOW(-0.50)[meta.com,reject];
+	R_DKIM_ALLOW(-0.20)[meta.com:s=s2048-2025-q2];
 	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
 	MAILLIST(-0.15)[generic];
-	DMARC_POLICY_SOFTFAIL(0.10)[appspotmail.com : SPF not aligned (relaxed), No valid DKIM,none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	TAGGED_RCPT(0.00)[io-uring];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-0.991];
-	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
-	R_DKIM_NA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,appspotmail.com:email,googlegroups.com:email];
-	RCVD_TLS_LAST(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[syzbot@syzkaller.appspotmail.com,io-uring@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	PRECEDENCE_BULK(0.00)[];
-	TO_DN_NONE(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13239-lists,io-uring=lfdr.de,ci5f475aa1640b4177];
-	RCPT_COUNT_FIVE(0.00)[5]
+	TAGGED_FROM(0.00)[bounces-13240-lists,io-uring=lfdr.de];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,meta.com:dkim,meta.com:mid];
+	DKIM_TRACE(0.00)[meta.com:+];
+	TO_DN_ALL(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_THREE(0.00)[3];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_NEQ_ENVFROM(0.00)[cleger@meta.com,io-uring@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	PRECEDENCE_BULK(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
+	TAGGED_RCPT(0.00)[io-uring];
+	RCVD_COUNT_SEVEN(0.00)[7]
 
-syzbot ci has tested the following series
+On 5/5/26 12:09, Jens Axboe wrote:
+> >=20
+> On 5/5/26 1:39 AM, Jens Axboe wrote:
+>> There's no real reason to have a limit, as the memory is accounted by
+>> the lockmem limits anyway, if any exist. io_pin_pages() will still
+>> restrict the maximum allowed limit per buffer, which is INT_MAX
+>> number of pages. For a 4kb page size system, the limit is 8TB.
+>>
+>> Reported-by: Andres Freund <andres@anarazel.de>
+>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>=20
+> Forgot that I had a prep patch for this one... The branch is here:
+>=20
+> https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git/log/?h=3D=
+io_uring-reg-buffers
+>=20
+> and notably the patch before this one is below, which bumps the ->len
+> size of the io_mapped_ubuf. I'll send this out as a proper series later
+> this week, this is 7.2 material obviously.
+>=20
+> commit 381e736515173a1fb78d2a86983d3ebfcf263597
+> Author: Jens Axboe <axboe@kernel.dk>
+> Date:   Mon May 4 05:40:16 2026 -0600
+>=20
+>      io_uring/rsrc: bump struct io_mapped_ubuf length field to size_t
+>     =20
+>      In preparation for supporting bigger individual buffers, bump the le=
+ngth
+>      field to a full 8-bytes with size_t rather than an unsigned int.
+>     =20
+>      Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>=20
+> diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
+> index c2d3e45544bb..f0ff4bd01b6d 100644
+> --- a/io_uring/fdinfo.c
+> +++ b/io_uring/fdinfo.c
+> @@ -223,7 +223,7 @@ static void __io_uring_show_fdinfo(struct io_ring_ctx=
+ *ctx, struct seq_file *m)
+>   		if (ctx->buf_table.nodes[i])
+>   			buf =3D ctx->buf_table.nodes[i]->buf;
+>   		if (buf)
+> -			seq_printf(m, "%5u: 0x%llx/%u\n", i, buf->ubuf, buf->len);
+> +			seq_printf(m, "%5u: 0x%llx/%zu\n", i, buf->ubuf, buf->len);
+>   		else
+>   			seq_printf(m, "%5u: <none>\n", i);
+>   	}
+> diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
+> index 44e3386f7c1c..03521b50926c 100644
+> --- a/io_uring/rsrc.h
+> +++ b/io_uring/rsrc.h
+> @@ -34,15 +34,15 @@ enum {
+>  =20
+>   struct io_mapped_ubuf {
+>   	u64		ubuf;
+> -	unsigned int	len;
+> +	size_t		len;
+>   	unsigned int	nr_bvecs;
+>   	unsigned int    folio_shift;
+>   	refcount_t	refs;
+> +	u8		flags;
+> +	u8		dir;
+>   	unsigned long	acct_pages;
+>   	void		(*release)(void *);
+>   	void		*priv;
+> -	u8		flags;
+> -	u8		dir;
 
-[v1] io_uring/rsrc: remove registered buffer 1GB limit
-https://lore.kernel.org/all/6de5d329-9162-4992-85cb-f946f2d5c0b1@kernel.dk
-* [PATCH] io_uring/rsrc: remove registered buffer 1GB limit
+Hi Jens,
 
-and found the following issue:
-WARNING in io_pin_pages
+This seems like an unrelated change.
 
-Full report is available here:
-https://ci.syzbot.org/series/576c7f20-d7fb-471a-a534-f8f67489e049
+Thanks,
 
-***
+Cl=C3=A9ment
 
-WARNING in io_pin_pages
+>   	struct bio_vec	bvec[] __counted_by(nr_bvecs);
+>   };
+>  =20
+>=20
 
-tree:      torvalds
-URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux
-base:      c7e4e4d5f7dc2daa439303d1b5bf6bdfaa249f49
-arch:      amd64
-compiler:  Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
-config:    https://ci.syzbot.org/builds/287c9ce7-c085-4a41-9f94-756762f8dacf/config
-syz repro: https://ci.syzbot.org/findings/63ff94b0-aced-41c6-83fc-a917c57ad624/syz_repro
-
-------------[ cut here ]------------
-!(flags & __GFP_NOWARN)
-WARNING: mm/slub.c:6840 at __kvmalloc_node_noprof+0x7be/0x8a0 mm/slub.c:6840, CPU#1: syz.1.18/5830
-Modules linked in:
-CPU: 1 UID: 0 PID: 5830 Comm: syz.1.18 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-RIP: 0010:__kvmalloc_node_noprof+0x7be/0x8a0 mm/slub.c:6840
-Code: ff 48 c7 c7 d0 bd a8 8e 48 89 de e8 dc 48 c9 02 e9 49 fc ff ff 48 c7 c7 10 be a8 8e 48 89 de e8 c8 48 c9 02 e9 7e fc ff ff 90 <0f> 0b 90 45 31 e4 e9 f8 fd ff ff 90 0f 0b 90 e9 52 ff ff ff 49 83
-RSP: 0018:ffffc90003a37928 EFLAGS: 00010246
-RAX: 0000000000000004 RBX: 0000000201000008 RCX: 0000000080000001
-RDX: 0000000201000008 RSI: ffffffff8c28ac40 RDI: ffffffff8c28ac00
-RBP: ffffc90003a37b70 R08: 00000000004028c0 R09: 00000000ffffffff
-R10: 0000000000000006 R11: 0000000000000000 R12: 0000000000000000
-R13: 00000000004028c0 R14: 0000000000000016 R15: 00000000ffffffff
-FS:  00007fb3823ec6c0(0000) GS:ffff8882a9290000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffcca0efe68 CR3: 000000017064e000 CR4: 00000000000006f0
-Call Trace:
- <TASK>
- io_pin_pages+0xac/0x1a0 io_uring/memmap.c:59
- io_sqe_buffer_register+0x228/0x1860 io_uring/rsrc.c:801
- io_sqe_buffers_register+0x2f9/0x7e0 io_uring/rsrc.c:913
- io_register_rsrc+0x24d/0x280 io_uring/rsrc.c:414
- __io_uring_register io_uring/register.c:843 [inline]
- __do_sys_io_uring_register io_uring/register.c:1029 [inline]
- __se_sys_io_uring_register+0xc5d/0x1ac0 io_uring/register.c:1006
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0x15f/0xf80 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fb38159cdd9
-Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fb3823ec028 EFLAGS: 00000246 ORIG_RAX: 00000000000001ab
-RAX: ffffffffffffffda RBX: 00007fb381815fa0 RCX: 00007fb38159cdd9
-RDX: 0000200000002700 RSI: 000000000000000f RDI: 0000000000000003
-RBP: 00007fb381632d69 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000020 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fb381816038 R14: 00007fb381815fa0 R15: 00007fffdb4e7d78
- </TASK>
-
-
-***
-
-If these findings have caused you to resend the series or submit a
-separate fix, please add the following tag to your commit message:
-  Tested-by: syzbot@syzkaller.appspotmail.com
-
----
-This report is generated by a bot. It may contain errors.
-syzbot ci engineers can be reached at syzkaller@googlegroups.com.
-
-To test a patch for this bug, please reply with `#syz test`
-(should be on a separate line).
-
-The patch should be attached to the email.
-Note: arguments like custom git repos and branches are not supported.
 

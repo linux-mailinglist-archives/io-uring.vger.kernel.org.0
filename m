@@ -1,195 +1,178 @@
-Return-Path: <io-uring+bounces-13238-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13239-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id cOSNCTnI+WlhEAMAu9opvQ
-	(envelope-from <io-uring+bounces-13238-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 05 May 2026 12:36:41 +0200
+	id 6JfJC9fr+WkLFQMAu9opvQ
+	(envelope-from <io-uring+bounces-13239-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 05 May 2026 15:08:39 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95ADA4CB83E
-	for <lists+io-uring@lfdr.de>; Tue, 05 May 2026 12:36:40 +0200 (CEST)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2F444CE2C4
+	for <lists+io-uring@lfdr.de>; Tue, 05 May 2026 15:08:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 2E55731C2056
-	for <lists+io-uring@lfdr.de>; Tue,  5 May 2026 10:20:38 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id AE8E630054E0
+	for <lists+io-uring@lfdr.de>; Tue,  5 May 2026 13:08:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2603EAC7F;
-	Tue,  5 May 2026 10:10:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b="VPPzpele"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 281653D4121;
+	Tue,  5 May 2026 13:08:33 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-oo1-f71.google.com (mail-oo1-f71.google.com [209.85.161.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526B83F1667
-	for <io-uring@vger.kernel.org>; Tue,  5 May 2026 10:10:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B236E43C06D
+	for <io-uring@vger.kernel.org>; Tue,  5 May 2026 13:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777975814; cv=none; b=cOjPYHi8YVXB/DGW0skrQUvRiJIMcOerE4+v+bG36RUzQmBck4f5++/6XdSp0rxlvDinwHwFdGfwyimRY4pA04HDgCJvocEY99rXwZnPbncLBluF7yKwOT+/gIm0bZS3RAEZFqFGUMlsv46pI/3QIw9TRErfWDEJo8HGKqxqehs=
+	t=1777986513; cv=none; b=FyADNF8IVgWkAtlA+wzptXFr9FTv2u+5BlQeMi+uPQw2BVzI8hd+shCy3zgIdFkbLtz6y2f+GejNaaijjUFeVrOLkkisBcBleMR1UB77QEQORl60AiOyni3ozQsu7w5UZBSFLlR2KjtuOR2Ly8YtSkVpwlAAPXKJ1gLPIY7uzv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777975814; c=relaxed/simple;
-	bh=9oqQH1qfBEJRuk3wVZzU0grvI3rXWRK4R2/ycR84m0E=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=PpLByvGyyr/T7GWvzZeeZb11UB+hXbSTqdaspnxHQgdsv0t46FhfF34Ie/L1ffWjgZA8P5rf2RGmNNGI0yza9Rj4mZ+aIqNAXVhpzl8yePvro9/tunSTz/aPh3B3iUjIs1isYenhDrCN52KFEA6Vc2xuJOiKe/hE8RZRNnzKDLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=VPPzpele; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4893940bb5eso26990975e9.3
-        for <io-uring@vger.kernel.org>; Tue, 05 May 2026 03:10:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1777975801; x=1778580601; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=/o+0Q/X0If/4D+g3HwLBV72Px1O9IuGc0j7qaZ5M5bo=;
-        b=VPPzpelezXdUYD2zI4l5xWQRttRvbafcp5a9moAt5UW7jCqa7LUmvtgGljI1l8atBs
-         INEG9mRervTpLtVl83vFDRLhlsNujfjfwWxZEOpEBEv3wAFH08J0ACzyPsxD4Yx45Q/s
-         ygkKrvV2wZegAa9DJhXVuLnwcbt2Wv85+0m53yrtEr73k9YGIrHAgMwV0kNyGXCdpuTD
-         NenwdpK92Ih8MbPs999+UIbR+TJ8QvtC4eS7K8yDx5lrMPvGV0CeykhaFjJ+DMj6asod
-         iojPZUY4Cu3sUX9DgE5xl+HVUSsvBbFN45egUKrLXtskD1i3XjX3PhSJ0r5uxwwi71xc
-         jcnw==
+	s=arc-20240116; t=1777986513; c=relaxed/simple;
+	bh=sFevfuThPnK9sIPvedInedMJ5eGsSSn0G/pa7IgRNzY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=Jnm0oBqXWO46zLbtLVgxEjdZ8l3NiHyojx0XVnKRIBjID3A4RI8Jad/ydxQBhgGQdRLUdhs6wnMotd86hCLNkKmmbZ/wv20rMoS/iNU9fNyKy3q78bjCK0HippUpA1saQYNS9upypjj3FHcBRkKotH7JvgE52somMUe6Vdb12RU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.161.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-oo1-f71.google.com with SMTP id 006d021491bc7-6966db8db2aso8364469eaf.0
+        for <io-uring@vger.kernel.org>; Tue, 05 May 2026 06:08:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777975801; x=1778580601;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:x-gm-gg
+        d=1e100.net; s=20251104; t=1777986511; x=1778591311;
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/o+0Q/X0If/4D+g3HwLBV72Px1O9IuGc0j7qaZ5M5bo=;
-        b=RkWiDqdt1PXHpYXeD8OvvNI11FZqCz3pBklH+XIRW0nPQmq7ERneGQ3kAYnwGqhycj
-         XssYp8c76qB/VAi/OPGWJcbRDB+D4Co071XJmFWrmY2AP5uhVlf6TDYiRNP82Dhx4xNF
-         7HNjf7j2opte2/C6O1Vz8yVhL6YDzqgRYgs56fg1gU2WBlieU4BxlWCU4eMt+GMRtWGI
-         sm1a9jMfKK/UTIANGRU83aPLc+I6xx3Ew5/lDq+r4rxj0OR+S9sUOE3Y/ITGfJGnDh4U
-         /kxStlGYrXMKPLFpD0OBjTGrb47y3MlGcMgn690FZAk9MYbxSqu+uDN1S5N9/VJ91g1t
-         xYHg==
-X-Gm-Message-State: AOJu0YwBOqz7EtnAzwwbJ3OElfLW5c+XiZ/MpnXXezNhxazMLmILy2C3
-	M1jrlHgcxaeB0nb+QsaQ04uXT/xDWfFYb374Sljib28D6ZnQTGTLWKxVp5qrwdTtuOkcCyv89un
-	TS7Q53ww=
-X-Gm-Gg: AeBDieu0ZVlBLhZogG6dFxk/Y+hNQV57+XSyan7+TBiGXhaU3lE49MMW1quSO5VDZl/
-	cNOcUavOO9pj5OD5vaa9jdeQSl7b9F5dmQ4D1pIU1VZ4aPni9hxAZHpmoL8g5Hm+tIKZc2iIWol
-	q0E/fZZ7PNN+IAAKfY8RQ/BqeDySddLqQXIc+GALX/uxvQAMOs5PoQpy972V/ildAoUbnzQ2KGa
-	GaiNmUxf3KIyaqUcANfng/wCbZFyksao/lS3ZA0omf3zcCbdMKZa8q9cCRYw3PXeQeeqY3Gy4ji
-	/sJvBic0omc+Tr1QbueyRNIDNP684THHr/oQdV1qQ5NUQaGCfK+R34tA1xEA9RqIuBo4r2l0nFd
-	jta1+S00a1p/JNZpp7yzXZvy09QE9EY+KIzwPW5ClJJS41xRreKfUspDHGpsPcir5/lyJrqkvTn
-	rRd4GPTQhRtSL7mf2p6AnzEzPNPZxSYLZnxPab3swxWknwR9VdMzL1UJ4urTh/6njihybN+uQgD
-	utopRmtfUv/VQyubunE
-X-Received: by 2002:a05:600c:5308:b0:48a:5565:ec3d with SMTP id 5b1f17b1804b1-48d03b401f5mr164940815e9.22.1777975798930;
-        Tue, 05 May 2026 03:09:58 -0700 (PDT)
-Received: from [10.211.9.173] ([213.147.98.98])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48d149ebdebsm21702645e9.4.2026.05.05.03.09.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 May 2026 03:09:58 -0700 (PDT)
-Message-ID: <3a19966b-229b-495b-966a-5018fc615a8a@kernel.dk>
-Date: Tue, 5 May 2026 04:09:57 -0600
+        bh=LTYFpGF2sAJ08QtA3xEO+n4nsS4Uz+UMNVOp/UWwx7k=;
+        b=WavkXBgtwwaTYZ+8hVzTDh1XPauyBJXqmUnwejJaEnwU2feO5eA/f12dCLxN/GbiBl
+         TXuTfsngjNsDSNxEjDxOFOueRK/g/wZf54gfPPalWUf0DOuCrmN924OUyvpy3hZBcMP1
+         3DAkN4Iz/yJBAxoAAfxcGhCq1HsJO7Nu/PShjQXzFCip7uFo4RLH3tgpjva0DEJ5c3ZV
+         U2G8q+m4cw36/NbRgZZvm5Re/2+EZMeTPD/j2h6n7etWQjkZn73q8V2kpTLw+i2+6cAl
+         ONsim8n87UnCcscqXHkp0hFLjNCP5bQpRZZ8uNCWlMRrrTbw6lAX/BFV7nah4WwPqCfM
+         pyNg==
+X-Forwarded-Encrypted: i=1; AFNElJ/Fd6YG+ei2OLJ0hHtl7rixxvbkqMn6T1s7V0uGp+n0L/j8MC0nMhP7MFDzlhca/Qb8RpgW/ALgIQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYIMsH/71oFbss1gahJO9CXZE4na6rdCJWO8bn4wXnGJ6eR08f
+	pwpVPtPEkmnIH4n3lgLTr2Em7NSzCJRORYGlSJWxlaud546D+zNu5010eSwkx4u0dX/SRxD/2p+
+	QE9eSuxKbezGCulxMvzBb8A9r85+nX2OT58ZDxt2gp65bHsA3DQngPjciNXY=
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring/rsrc: remove registered buffer 1GB limit
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring <io-uring@vger.kernel.org>
-Cc: Andres Freund <andres@anarazel.de>
-References: <6de5d329-9162-4992-85cb-f946f2d5c0b1@kernel.dk>
-Content-Language: en-US
+X-Received: by 2002:a05:6820:e16:b0:694:857a:5a78 with SMTP id
+ 006d021491bc7-698876f07f9mr1294157eaf.8.1777986510804; Tue, 05 May 2026
+ 06:08:30 -0700 (PDT)
+Date: Tue, 05 May 2026 06:08:30 -0700
 In-Reply-To: <6de5d329-9162-4992-85cb-f946f2d5c0b1@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 95ADA4CB83E
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69f9ebce.170a0220.59368.0011.GAE@google.com>
+Subject: [syzbot ci] Re: io_uring/rsrc: remove registered buffer 1GB limit
+From: syzbot ci <syzbot+ci5f475aa1640b4177@syzkaller.appspotmail.com>
+To: andres@anarazel.de, axboe@kernel.dk, io-uring@vger.kernel.org
+Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Rspamd-Queue-Id: B2F444CE2C4
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [-1.36 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
-	R_DKIM_ALLOW(-0.20)[kernel-dk.20251104.gappssmtp.com:s=20251104];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
 	MAILLIST(-0.15)[generic];
+	DMARC_POLICY_SOFTFAIL(0.10)[appspotmail.com : SPF not aligned (relaxed), No valid DKIM,none];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	TAGGED_RCPT(0.00)[io-uring];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13238-lists,io-uring=lfdr.de];
-	TO_DN_ALL(0.00)[];
+	NEURAL_HAM(-0.00)[-0.991];
+	MISSING_XM_UA(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	R_DKIM_NA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,appspotmail.com:email,googlegroups.com:email];
 	RCVD_TLS_LAST(0.00)[];
-	DMARC_NA(0.00)[kernel.dk];
-	RCPT_COUNT_TWO(0.00)[2];
-	DKIM_TRACE(0.00)[kernel-dk.20251104.gappssmtp.com:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[syzbot@syzkaller.appspotmail.com,io-uring@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	NEURAL_HAM(-0.00)[-1.000];
-	TAGGED_RCPT(0.00)[io-uring];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,kernel.dk:mid,kernel.dk:email]
+	TO_DN_NONE(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-13239-lists,io-uring=lfdr.de,ci5f475aa1640b4177];
+	RCPT_COUNT_FIVE(0.00)[5]
 
-On 5/5/26 1:39 AM, Jens Axboe wrote:
-> There's no real reason to have a limit, as the memory is accounted by
-> the lockmem limits anyway, if any exist. io_pin_pages() will still
-> restrict the maximum allowed limit per buffer, which is INT_MAX
-> number of pages. For a 4kb page size system, the limit is 8TB.
-> 
-> Reported-by: Andres Freund <andres@anarazel.de>
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+syzbot ci has tested the following series
 
-Forgot that I had a prep patch for this one... The branch is here:
+[v1] io_uring/rsrc: remove registered buffer 1GB limit
+https://lore.kernel.org/all/6de5d329-9162-4992-85cb-f946f2d5c0b1@kernel.dk
+* [PATCH] io_uring/rsrc: remove registered buffer 1GB limit
 
-https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git/log/?h=io_uring-reg-buffers
+and found the following issue:
+WARNING in io_pin_pages
 
-and notably the patch before this one is below, which bumps the ->len
-size of the io_mapped_ubuf. I'll send this out as a proper series later
-this week, this is 7.2 material obviously.
+Full report is available here:
+https://ci.syzbot.org/series/576c7f20-d7fb-471a-a534-f8f67489e049
 
-commit 381e736515173a1fb78d2a86983d3ebfcf263597
-Author: Jens Axboe <axboe@kernel.dk>
-Date:   Mon May 4 05:40:16 2026 -0600
+***
 
-    io_uring/rsrc: bump struct io_mapped_ubuf length field to size_t
-    
-    In preparation for supporting bigger individual buffers, bump the length
-    field to a full 8-bytes with size_t rather than an unsigned int.
-    
-    Signed-off-by: Jens Axboe <axboe@kernel.dk>
+WARNING in io_pin_pages
 
-diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
-index c2d3e45544bb..f0ff4bd01b6d 100644
---- a/io_uring/fdinfo.c
-+++ b/io_uring/fdinfo.c
-@@ -223,7 +223,7 @@ static void __io_uring_show_fdinfo(struct io_ring_ctx *ctx, struct seq_file *m)
- 		if (ctx->buf_table.nodes[i])
- 			buf = ctx->buf_table.nodes[i]->buf;
- 		if (buf)
--			seq_printf(m, "%5u: 0x%llx/%u\n", i, buf->ubuf, buf->len);
-+			seq_printf(m, "%5u: 0x%llx/%zu\n", i, buf->ubuf, buf->len);
- 		else
- 			seq_printf(m, "%5u: <none>\n", i);
- 	}
-diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
-index 44e3386f7c1c..03521b50926c 100644
---- a/io_uring/rsrc.h
-+++ b/io_uring/rsrc.h
-@@ -34,15 +34,15 @@ enum {
- 
- struct io_mapped_ubuf {
- 	u64		ubuf;
--	unsigned int	len;
-+	size_t		len;
- 	unsigned int	nr_bvecs;
- 	unsigned int    folio_shift;
- 	refcount_t	refs;
-+	u8		flags;
-+	u8		dir;
- 	unsigned long	acct_pages;
- 	void		(*release)(void *);
- 	void		*priv;
--	u8		flags;
--	u8		dir;
- 	struct bio_vec	bvec[] __counted_by(nr_bvecs);
- };
- 
+tree:      torvalds
+URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux
+base:      c7e4e4d5f7dc2daa439303d1b5bf6bdfaa249f49
+arch:      amd64
+compiler:  Debian clang version 21.1.8 (++20251221033036+2078da43e25a-1~exp1~20251221153213.50), Debian LLD 21.1.8
+config:    https://ci.syzbot.org/builds/287c9ce7-c085-4a41-9f94-756762f8dacf/config
+syz repro: https://ci.syzbot.org/findings/63ff94b0-aced-41c6-83fc-a917c57ad624/syz_repro
 
--- 
-Jens Axboe
+------------[ cut here ]------------
+!(flags & __GFP_NOWARN)
+WARNING: mm/slub.c:6840 at __kvmalloc_node_noprof+0x7be/0x8a0 mm/slub.c:6840, CPU#1: syz.1.18/5830
+Modules linked in:
+CPU: 1 UID: 0 PID: 5830 Comm: syz.1.18 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+RIP: 0010:__kvmalloc_node_noprof+0x7be/0x8a0 mm/slub.c:6840
+Code: ff 48 c7 c7 d0 bd a8 8e 48 89 de e8 dc 48 c9 02 e9 49 fc ff ff 48 c7 c7 10 be a8 8e 48 89 de e8 c8 48 c9 02 e9 7e fc ff ff 90 <0f> 0b 90 45 31 e4 e9 f8 fd ff ff 90 0f 0b 90 e9 52 ff ff ff 49 83
+RSP: 0018:ffffc90003a37928 EFLAGS: 00010246
+RAX: 0000000000000004 RBX: 0000000201000008 RCX: 0000000080000001
+RDX: 0000000201000008 RSI: ffffffff8c28ac40 RDI: ffffffff8c28ac00
+RBP: ffffc90003a37b70 R08: 00000000004028c0 R09: 00000000ffffffff
+R10: 0000000000000006 R11: 0000000000000000 R12: 0000000000000000
+R13: 00000000004028c0 R14: 0000000000000016 R15: 00000000ffffffff
+FS:  00007fb3823ec6c0(0000) GS:ffff8882a9290000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffcca0efe68 CR3: 000000017064e000 CR4: 00000000000006f0
+Call Trace:
+ <TASK>
+ io_pin_pages+0xac/0x1a0 io_uring/memmap.c:59
+ io_sqe_buffer_register+0x228/0x1860 io_uring/rsrc.c:801
+ io_sqe_buffers_register+0x2f9/0x7e0 io_uring/rsrc.c:913
+ io_register_rsrc+0x24d/0x280 io_uring/rsrc.c:414
+ __io_uring_register io_uring/register.c:843 [inline]
+ __do_sys_io_uring_register io_uring/register.c:1029 [inline]
+ __se_sys_io_uring_register+0xc5d/0x1ac0 io_uring/register.c:1006
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0x15f/0xf80 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fb38159cdd9
+Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fb3823ec028 EFLAGS: 00000246 ORIG_RAX: 00000000000001ab
+RAX: ffffffffffffffda RBX: 00007fb381815fa0 RCX: 00007fb38159cdd9
+RDX: 0000200000002700 RSI: 000000000000000f RDI: 0000000000000003
+RBP: 00007fb381632d69 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000020 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fb381816038 R14: 00007fb381815fa0 R15: 00007fffdb4e7d78
+ </TASK>
+
+
+***
+
+If these findings have caused you to resend the series or submit a
+separate fix, please add the following tag to your commit message:
+  Tested-by: syzbot@syzkaller.appspotmail.com
+
+---
+This report is generated by a bot. It may contain errors.
+syzbot ci engineers can be reached at syzkaller@googlegroups.com.
+
+To test a patch for this bug, please reply with `#syz test`
+(should be on a separate line).
+
+The patch should be attached to the email.
+Note: arguments like custom git repos and branches are not supported.
 

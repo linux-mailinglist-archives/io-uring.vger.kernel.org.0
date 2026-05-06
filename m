@@ -1,91 +1,85 @@
-Return-Path: <io-uring+bounces-13242-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13243-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id WGv4DEDy+WmcFQMAu9opvQ
-	(envelope-from <io-uring+bounces-13242-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 05 May 2026 15:36:00 +0200
+	id 0Jv9LKkD+2mbVQMAu9opvQ
+	(envelope-from <io-uring+bounces-13243-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Wed, 06 May 2026 11:02:33 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9882F4CE9BF
-	for <lists+io-uring@lfdr.de>; Tue, 05 May 2026 15:35:59 +0200 (CEST)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F92B4D843D
+	for <lists+io-uring@lfdr.de>; Wed, 06 May 2026 11:02:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 81ED0303897E
-	for <lists+io-uring@lfdr.de>; Tue,  5 May 2026 13:35:58 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 61190301AA53
+	for <lists+io-uring@lfdr.de>; Wed,  6 May 2026 09:02:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E15A836495D;
-	Tue,  5 May 2026 13:35:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C89A83E122C;
+	Wed,  6 May 2026 09:02:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="YX3iJj82"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KGAPdKzL"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D8D1342C9E
-	for <io-uring@vger.kernel.org>; Tue,  5 May 2026 13:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1FE73DD534
+	for <io-uring@vger.kernel.org>; Wed,  6 May 2026 09:02:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777988157; cv=none; b=QXiEQWFUUwFdYfYu+bO9dLtNvDUS2CLFoJpPLUynayNZCQ1+dlRqmNA4Ku08Je9ub6pb0ubocc61+JR8r0UYR28TQ9zV5zWiJVL9cDv553onorViEGjQ1Vwk0dW0H74c30YuApKejgUq7pfFeZSmNrQzujWT+9l0pPIG1+x6cKg=
+	t=1778058151; cv=none; b=UBJ5oqBeJGupkU+U3gwbDXXK5rlMIoYOVseuJBvXcRE//G0HODcZeQwAaAGMqC50Nzpp8dkV9m8lw26SQtGuU33KGIigU63sEx4mLKToJULYgx378J3Roy3Pu45MnakW0VeNIlfAodCqgDPyj8phM104IDewC2+8Oj2vClC+Ayg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777988157; c=relaxed/simple;
-	bh=UPhUTYPW62gkrcifw1RXyFft7fKtqDMETk1IgiWoHWU=;
+	s=arc-20240116; t=1778058151; c=relaxed/simple;
+	bh=nLSZKCR0woXtN6W5cyzs5oEHO2Ts0XPwdeXwd60CnUg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qke1rLev+eUg+RwFyja8dRvgjdPE1did8V93yZQ9kuvna9PB6wNqScQsPB6SP6aCxxkwpcyTq638OhfSqwSyAzy3ghPS0zej/Zuu5QZ8bZqJ1sMjYX6z+3JjYAb4/yNnFkmQmAYqhBAuyfA9gMICZXpWOA5jdSoEYVvZDsFmY/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=YX3iJj82; arc=none smtp.client-ip=67.231.153.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
-	by m0001303.ppops.net (8.18.1.11/8.18.1.11) with ESMTP id 645DEDBL229036
-	for <io-uring@vger.kernel.org>; Tue, 5 May 2026 06:35:55 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
-	 bh=WzMsRsHNxtPOYdT3/1ZzAOQHhnuEh+5HKq9GSrKax9s=; b=YX3iJj825mHF
-	omflA2NwdpTR6vclpI4IuWNC+0YU1btj8K9oztf3AUHmST3bKBI8b89E1wCDtGDO
-	Vu5scxOkGdHZKe5V4ko6zRMp0akNiMofEACWib3fzzJNAdQDXU2EblYjVI9MGhQW
-	2nCOvLCy6Ot7oEcN1t3wb7cuxqvsKCLYlWVEq7iugRgGPiZD7eYcUof0GYtxCprp
-	n+NhmhoLMua6C6NBsPH3Gh8/yk4tTRXKJwNTE/j2eBAvQfreiAcfE300khjrh3i6
-	IdUtWQV9uZbTudob0bmfF0PZEJuMlRJX/r8Kq4brvzW0dxd+6w52IpVXDgiLWCVZ
-	g3NKtwm7mA==
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com [209.85.128.72])
-	by m0001303.ppops.net (PPS) with ESMTPS id 4dwcx9gnjg-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <io-uring@vger.kernel.org>; Tue, 05 May 2026 06:35:54 -0700 (PDT)
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-488b739e1b6so4710435e9.3
-        for <io-uring@vger.kernel.org>; Tue, 05 May 2026 06:35:54 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=ZV2aHYLiCjFT31FYB57wfuoyx/le5os2r0I/zRnGJtqAU2h+PqNaATH67KdZd0XQp7QdK4+aNAwK6RYPKThTmO77URSeLwuWH9WD6mhatfVw1DGLI8BkQr6WEv1zxzepVuBsLQ9dCUKhcZ77DWz7AwmMq5hBpqeihOcsU3ZWzek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KGAPdKzL; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4896c22fcbaso47202465e9.0
+        for <io-uring@vger.kernel.org>; Wed, 06 May 2026 02:02:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1778058143; x=1778662943; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mmaZWXsqMxYY1SXzoardDG6u5dyIRaJ/iULJJHwbN+E=;
+        b=KGAPdKzLk3vJJ86/+9JWb0pewVd+eSoidY3lk7EZPts94uHo4N/VRkoM9t57Na8hZU
+         ohCDqtJlErkxUgfhc1xF31gaTTxEEV9aQTpYdnIYJw5UqkLIvfOYXMVeC0yFRnX/MHe4
+         HmgeTl6uAbvaO7lSltkxovg9zHAEVQVtWdlJLq+MyigLOHJOPN3xooUX/QlPsg9aezCX
+         fcFIH2ULFXdTlkzGp+Ry1SgKQ1i2euO26Gf6Maw6yBVWA69E1LILuSHMu5h7drw4GBsF
+         YHnLv0r1kzhMzpzHNEVk53axTY4nfGL7MMB052P2FX+fuI9Xsu9HaT6ntUkADcXIzcaX
+         fiPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777988154; x=1778592954;
+        d=1e100.net; s=20251104; t=1778058143; x=1778662943;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=AftRhRGHt8QxJpYb1Gtwcw6MNUWTpVGlAHWlPUr25Yk=;
-        b=fAK+H8MaExQiGAJWogL4f/4scPgpirHV9qd1r8JHbmxefb1UziiftQdY5ckpdoPcOn
-         h1FxC+0uTrdGZDTOz9rPhzRwqHRMLDeps54AH5Rh+SBxPHfd4EB1rZZWrIHUzhdyX+Xr
-         0XRp9mwPYagJPJrCW5V+Z33fvS8AyOee4/FwCzRIfGRmnDsdgb53+wZXZ6oHqffsJGC9
-         +p30HYQW3VjRBFIjmrLWAvI0ch8MQVNaRXEYHQJVMU/nzNC+VHf9gHdlVUC2zvWhayKd
-         wrb2oLnDzfiY00Obr8QrIWwL3u6FTRb+4tTFD2NGGKBZA/WqbtSRy3U57osaRPcwJ45F
-         CU3A==
-X-Forwarded-Encrypted: i=1; AFNElJ8yhTI9NFH7OW3Sv/sNP+FpAIlZjkXfQ5l/59SHxYpgXPd19qDaxRWgbnSl6epxKTQtqNtLXqyI2g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCXGJ6lmvHNPP59QM2neDzQgsgdabnfKTLVKVoVZxoM2DlL373
-	hSSOTvpPYdPksn1/iJTjjbBXziF0Sl+qGBM1GNxUoD2YtwehB2sg1oSjZxVwVr0DU9US9RTPxjZ
-	7rc/0I9w6A/6Z1APx9dHABq5xHcPY2D17HFafYDo0qTSol/i9MJa0w1MSOM4=
-X-Gm-Gg: AeBDiet6+wHmTwNArfGEVjUTbgCVn38/c/ZSeMmpmAF9/DrzRs4BfHMZAkpBa/nnRkY
-	eITxxvk+8Ed4Yf9vGhYr4iQulNJKzNunGVb24rABLRU/cxtPK3xEPFPpfshQFtWH7glxO5ebght
-	6wEClSnkP3vmOV4WHpHgikgkUX2hmKJFhSOHqo802c67g94gug4zCvWylRtIzAkMjoiSJv7MBzT
-	AAj98sLmkce5554qTrUH6UWZuCKWQeFDbBkqYMk1cdDq3BNxpgE2pO1OAShNWfoQjZy7MvOH3Hv
-	UbflXVhvHOwMW5Gs2RzVvGG0bA8xpYxo0C+cP2uFAkwh7doFsrn9GgRwUTTyEMKz9pXw7MndcJq
-	dapxfQoAsldpAjq+2sE7MCzjMr/kV0/8+BsxiSksqYzrp4GS23RS1N2T9liOmByITusb3ow66
-X-Received: by 2002:a05:600c:4706:b0:489:6c28:dbb4 with SMTP id 5b1f17b1804b1-48a986631c8mr116692065e9.5.1777988153426;
-        Tue, 05 May 2026 06:35:53 -0700 (PDT)
-X-Received: by 2002:a05:600c:4706:b0:489:6c28:dbb4 with SMTP id 5b1f17b1804b1-48a986631c8mr116691825e9.5.1777988152936;
-        Tue, 05 May 2026 06:35:52 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:e17:9700:3f7b:7276:a343:d339? ([2a01:e0a:e17:9700:3f7b:7276:a343:d339])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48a8eba8487sm348647915e9.11.2026.05.05.06.35.52
+        bh=mmaZWXsqMxYY1SXzoardDG6u5dyIRaJ/iULJJHwbN+E=;
+        b=jivvQp6FJSxr8XynpA5gtT+xY8lsiNAyfCbiech7N8+NS2KEP79NUQGDwMmw5JhT5s
+         FmuMPt8EAh8RYh9Jj1BazIsl8r+aJT8Zo1z0SRj1kOF/c/kUCFyy5TOR+elvehRXsvWZ
+         aiO60bRzR7CYcxus6fHPLxD3hlv9HRbaHsgau69CPHXZla6IQUc8lxzDfT8tPAr49pG+
+         bibGsMx+25jzZi3wjBTuug0V8ZyNsIt5FrwTqLE1UrbMuu3TQ256VdHY9cJOuUQLWB9S
+         NV3mweIwEwIAU23Erqo883t0Y2zepTFup/gnzkdJRVso61+iCHCPH6Old86a791e/XUV
+         AQJw==
+X-Forwarded-Encrypted: i=1; AFNElJ9qpTMS7+3/Q/zOkHGO1qBP4b7v7UCObcAId5+D/ZtNZK3j6Ml5Q6oY1AcJwohD0V5x+8q5GKysPw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxo4d9BKA1FL07rWe9uPYD3/Oe6Mo/W4lLVmlLx262zxzM3AP1u
+	/uNnWAoEVtm8ZkO/0pHPe9F1gmn5dpETD2KwRvvd/uZ2wZ7vaylFk1JH
+X-Gm-Gg: AeBDievxQvfTodNDiboQnvsgzFZraqtupKY41ZAhtQB4E2PBrRXg8OveGVz1j1o+EN9
+	i18GahUPxuhCZoz1JCxk0GrGj5NLereZ7yDjS1czKX9K/2PGtJmSquiq7FGFf5Qk+o4R8Oot2to
+	syA2J9XsAoKYsbOhWSQ+Pttl1ORcY9Zrtd3PPwFgV2/+CZXWtpK1dgIBJWfpmRKMKou8rTb99zf
+	mm45M1at7PD+jK9kThugPY4xVBSWK3RCnitYs4ZEZFwZ1v5ZztU/mKoWPoSLYqk1+MbNXTK3NbI
+	oG44VZYjZVK+LLnPlmabQZ9xy5msQZPUVfKAB4aWBAMjF2vrJxKc+mWWlMmtayHz35Gh/E6s4wh
+	w4GX5htmHmhy7K1Cj/0snCHaDHR6VLUVaaVm9rve0qaK5izqQNI9MmYRIxgRGhKYnuc++Avzq2C
+	uksnnFfq9ZG8oAIjxQ2PrPkUvGaSkQylvgsHE0eRfs8k8DxS73WpGS96e8sRaL2PFzmog2la4yk
+	BhkbmofSuSyy5qREIY1qByzM33LOgzmYebWVrGGPg==
+X-Received: by 2002:a05:600c:2e0c:b0:489:1c2d:211e with SMTP id 5b1f17b1804b1-48e51e0c833mr25734095e9.5.1778058142476;
+        Wed, 06 May 2026 02:02:22 -0700 (PDT)
+Received: from [10.109.92.22] ([86.33.71.194])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48e52f5c1cfsm21365215e9.0.2026.05.06.02.02.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 May 2026 06:35:52 -0700 (PDT)
-Message-ID: <4c041d9e-faae-477b-b5c7-7288b07b661f@meta.com>
-Date: Tue, 5 May 2026 15:35:51 +0200
+        Wed, 06 May 2026 02:02:21 -0700 (PDT)
+Message-ID: <6873d617-c904-45f3-bad9-e1ae39cfecd2@gmail.com>
+Date: Wed, 6 May 2026 10:02:11 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -93,150 +87,118 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring/rsrc: remove registered buffer 1GB limit
-To: Jens Axboe <axboe@kernel.dk>, io-uring <io-uring@vger.kernel.org>
-Cc: Andres Freund <andres@anarazel.de>
-References: <6de5d329-9162-4992-85cb-f946f2d5c0b1@kernel.dk>
- <3a19966b-229b-495b-966a-5018fc615a8a@kernel.dk>
- <0965a131-ccaf-40d5-a207-9d41c837b278@meta.com>
- <4c976ffe-ae16-4804-9b75-50ffb7288d11@kernel.dk>
+Subject: Re: [PATCH v3 00/10] Add dmabuf read/write via io_uring
+To: Ming Lei <tom.leiming@gmail.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>,
+ Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+ io-uring@vger.kernel.org, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+ Nitesh Shetty <nj.shetty@samsung.com>, Kanchan Joshi <joshi.k@samsung.com>,
+ Anuj Gupta <anuj20.g@samsung.com>, Tushar Gohad <tushar.gohad@intel.com>,
+ William Power <william.power@intel.com>, Phil Cayton
+ <phil.cayton@intel.com>, Jason Gunthorpe <jgg@nvidia.com>
+References: <cover.1777475843.git.asml.silence@gmail.com>
+ <afi7c-VUJWOLlC1m@fedora>
 Content-Language: en-US
-From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@meta.com>
-In-Reply-To: <4c976ffe-ae16-4804-9b75-50ffb7288d11@kernel.dk>
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <afi7c-VUJWOLlC1m@fedora>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-ORIG-GUID: p5Dvu5ureugsCPK70w3V0AreId3a0g_P
-X-Proofpoint-GUID: p5Dvu5ureugsCPK70w3V0AreId3a0g_P
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTA1MDEyOSBTYWx0ZWRfX5JUzP3bNZw/g
- zCeZ+/Zz0MPN42e1vlp24tjmEOtbEVkTnP7tNkcsTIXDBgaGdooNGo0JhRa7fWSiVNrI6PHwaPr
- Kwmd2YbzbeNqkyOMiT1usHGDHUiK/JFbPxeco6sIYDogSuCdZfyT66iqa/H9517SZ2xzoOvJPGH
- 1k3uZTHMz/JALgQaCpd25qaA8XoFeAMUN4hes6+AnVFxWl5iYdLh/rMS3BDNisteVl/JxLfaz01
- yl+cSCCSXBycfx8L0ckl4n9512nyNpS+z9IbM2VmCzUnUnJ+g4ZUociPkkMlvslW8HIR9mQt+uN
- MbkQHq0uXsGfDgJjwTBe/3rxPGEl3YCEMwnZXvO/l4UQbBRWqqoFUbA5hdcXfo46GjXGsleX6Y4
- 3dq8uRdUSomCHcfckEd5RjIZ11tzEkwu3q1MR7+rhkCHiFv8a19J9DNCHHvMsyg/bJG0wA20Us3
- LdmJgKqv3SHU33qLcTA==
-X-Authority-Analysis: v=2.4 cv=SoCgLvO0 c=1 sm=1 tr=0 ts=69f9f23b cx=c_pps
- a=IwH782EDBk/vqbJ9rM8UFw==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=NGcC8JguVDcA:10 a=M51BFTxLslgA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=7x6HtfJdh03M6CCDgxCd:22 a=_78whYxrdx1mplLwxq1U:22 a=VwQbUJbxAAAA:8
- a=eJFJiYnnyJXwPChUhRgA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-05-05_02,2026-04-30_02,2025-10-01_01
-X-Rspamd-Queue-Id: 9882F4CE9BF
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 3F92B4D843D
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.33 / 15.00];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_MIXED_CHARSET(0.83)[subject];
-	DMARC_POLICY_ALLOW(-0.50)[meta.com,reject];
-	R_DKIM_ALLOW(-0.20)[meta.com:s=s2048-2025-q2];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20251104];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13242-lists,io-uring=lfdr.de];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,meta.com:dkim,meta.com:mid,anarazel.de:email,kernel.dk:email];
-	DKIM_TRACE(0.00)[meta.com:+];
-	TO_DN_ALL(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_FROM(0.00)[bounces-13243-lists,io-uring=lfdr.de];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	FROM_NEQ_ENVFROM(0.00)[cleger@meta.com,io-uring@vger.kernel.org];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	RCPT_COUNT_TWELVE(0.00)[25];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[asmlsilence@gmail.com,io-uring@vger.kernel.org];
+	DKIM_TRACE(0.00)[gmail.com:+];
 	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[io-uring];
-	RCVD_COUNT_SEVEN(0.00)[7]
+	MID_RHS_MATCH_FROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
 
-On 5/5/26 15:26, Jens Axboe wrote:
-> >=20
-> On 5/5/26 7:23 AM, Cl?ment L?ger wrote:
->> On 5/5/26 12:09, Jens Axboe wrote:
->>>> On 5/5/26 1:39 AM, Jens Axboe wrote:
->>>> There's no real reason to have a limit, as the memory is accounted by
->>>> the lockmem limits anyway, if any exist. io_pin_pages() will still
->>>> restrict the maximum allowed limit per buffer, which is INT_MAX
->>>> number of pages. For a 4kb page size system, the limit is 8TB.
->>>>
->>>> Reported-by: Andres Freund <andres@anarazel.de>
->>>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->>>
->>> Forgot that I had a prep patch for this one... The branch is here:
->>>
->>> https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git/log/?h=
-=3Dio_uring-reg-buffers
->>>
->>> and notably the patch before this one is below, which bumps the ->len
->>> size of the io_mapped_ubuf. I'll send this out as a proper series later
->>> this week, this is 7.2 material obviously.
->>>
->>> commit 381e736515173a1fb78d2a86983d3ebfcf263597
->>> Author: Jens Axboe <axboe@kernel.dk>
->>> Date:   Mon May 4 05:40:16 2026 -0600
->>>
->>>       io_uring/rsrc: bump struct io_mapped_ubuf length field to size_t
->>>            In preparation for supporting bigger individual buffers, bum=
-p the length
->>>       field to a full 8-bytes with size_t rather than an unsigned int.
->>>            Signed-off-by: Jens Axboe <axboe@kernel.dk>
->>>
->>> diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
->>> index c2d3e45544bb..f0ff4bd01b6d 100644
->>> --- a/io_uring/fdinfo.c
->>> +++ b/io_uring/fdinfo.c
->>> @@ -223,7 +223,7 @@ static void __io_uring_show_fdinfo(struct io_ring_c=
-tx *ctx, struct seq_file *m)
->>>            if (ctx->buf_table.nodes[i])
->>>                buf =3D ctx->buf_table.nodes[i]->buf;
->>>            if (buf)
->>> -            seq_printf(m, "%5u: 0x%llx/%u\n", i, buf->ubuf, buf->len);
->>> +            seq_printf(m, "%5u: 0x%llx/%zu\n", i, buf->ubuf, buf->len);
->>>            else
->>>                seq_printf(m, "%5u: <none>\n", i);
->>>        }
->>> diff --git a/io_uring/rsrc.h b/io_uring/rsrc.h
->>> index 44e3386f7c1c..03521b50926c 100644
->>> --- a/io_uring/rsrc.h
->>> +++ b/io_uring/rsrc.h
->>> @@ -34,15 +34,15 @@ enum {
->>>      struct io_mapped_ubuf {
->>>        u64        ubuf;
->>> -    unsigned int    len;
->>> +    size_t        len;
->>>        unsigned int    nr_bvecs;
->>>        unsigned int    folio_shift;
->>>        refcount_t    refs;
->>> +    u8        flags;
->>> +    u8        dir;
->>>        unsigned long    acct_pages;
->>>        void        (*release)(void *);
->>>        void        *priv;
->>> -    u8        flags;
->>> -    u8        dir;
+Hey Ming,
+
+On 5/4/26 16:29, Ming Lei wrote:
+> On Wed, Apr 29, 2026 at 04:25:46PM +0100, Pavel Begunkov wrote:
+>> The patch set allows to register a dmabuf to an io_uring instance for
+>> a specified file and use it with io_uring read / write requests. The
+>> infrastructure is not tied to io_uring and there could be more users
+>> in the future. A similar idea was attempted some years ago by Keith [1],
+>> from where I borrowed a good number of changes, and later was brough up
+>> by Tushar and Vishal from Intel.
 >>
->> Hi Jens,
+>> It's an opt-in feature for files, and they need to implement a new
+>> file operation to use it. Only NVMe block devices are supported in this
+>> series. The user API is built on top of io_uring's "registered buffers",
+>> where a dmabuf is registered in a special way, but after it can be used
+>> as any other "registered buffer" with IORING_OP_{READ,WRITE}_FIXED
+>> requests. It's created via a new file operation and the resulted map is
+>> then passed through the I/O stack in a new iterator type. There is some
+>> additional infrastructure to bind it all, which also counts requests
+>> using a dmabuf map and managing lifetimes, which is used to implement
+>> map invalidation.
 >>
->> This seems like an unrelated change.
->=20
-> Hmm, how so? It's required for removing the 1GB restriction, as it bumps
-> buf->len from a 32-bit unsigned to a 64-bit size_t.
->=20
-> Oh you mean moving flags and dir? That's just so it packs better,
-> changing int would leave a 4-byte gap. Might as well move flags and dir
-> near the 4b refcount_t to avoid bloating the struct.
+>> It was tested for GPU <-> NVMe transfers. Also, as it maintains a
+>> long-term dma mapping, it helps with the IOMMU cost. The numbers
+>> below are for udmabuf reads previously run by Anuj for different
+>> IOMMU modes:
+> 
+> Plain registered buffer is long-live too, which raises question: does this
+> framework need to take it into account from beginning?
 
-Yes, I meant dir/flags but indeed, that makes sense !
+Not sure I follow, mind expanding on what should be accounted?
+Are you suggesting that we might want to use normal registered
+buffers in a similar way? I.e. giving the driver an ability to
+pre-register them?
 
-Thanks,
+> BTW, inspired by this approach, I adds similar feature to ublk via UBLK_IO_F_SHMEM_ZC
+> which can maintain long-term vfio dma mapping over registered user-place aligned buffer.
 
-Cl=C3=A9ment
+Interesting, just too a glance, and it looks like what David Wei
+was thinking to add to fuse, but IIUC he gave up exactly because the
+client will need to cooperate and that could be troublesome.
 
->=20
+Should we try to push everything under the same interface instead of
+keeping a ublk specific one? Again to the point that it requires
+a cooperative client, but if it's something more generic, the user
+might just try to use it as a general optimisation. In the same way
+it'll be helpful to fuse, and as a bonus you wouldn't need tree look
+ups (but mandates clients using registered buffers as a downside).
+
+It'd need to shaped to somehow work better with host memory as I
+assume you want to be able to map it into server in common case.
+Switch case'ing if it's a udmabuf is not the greatest approach,
+but maybe we can figure out something else.
+  
+-- 
+Pavel Begunkov
 
 

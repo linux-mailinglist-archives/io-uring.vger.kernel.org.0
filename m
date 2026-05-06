@@ -1,165 +1,501 @@
-Return-Path: <io-uring+bounces-13248-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13249-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id sHi9MlUg+2kgWwMAu9opvQ
-	(envelope-from <io-uring+bounces-13248-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Wed, 06 May 2026 13:04:53 +0200
+	id SDnLOp9K+2mYYwMAu9opvQ
+	(envelope-from <io-uring+bounces-13249-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Wed, 06 May 2026 16:05:19 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F44B4D9952
-	for <lists+io-uring@lfdr.de>; Wed, 06 May 2026 13:04:53 +0200 (CEST)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02AA34DBA81
+	for <lists+io-uring@lfdr.de>; Wed, 06 May 2026 16:05:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 917AB30066B0
-	for <lists+io-uring@lfdr.de>; Wed,  6 May 2026 11:04:52 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 01222303E61D
+	for <lists+io-uring@lfdr.de>; Wed,  6 May 2026 14:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF0523D904E;
-	Wed,  6 May 2026 11:04:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D45E64611D7;
+	Wed,  6 May 2026 13:59:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b="PzGFpBUV"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QY4f4/EB"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0540D3FE341
-	for <io-uring@vger.kernel.org>; Wed,  6 May 2026 11:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A555480320
+	for <io-uring@vger.kernel.org>; Wed,  6 May 2026 13:59:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778065489; cv=none; b=JcwcqWoS0vpBC+4z35FM1N3a1WCz+Wd38Y6CPubRtleS04+MqwiQBRPd6rhZV74d2vHa2s4u9IcClcBhvU8/jZbjsMOWxNQ48OJP99BujxAVHIKEZFFKmU9odmQu9taWqQ7jvcTYbhePeHDHl6EHukdpiP0Nyn8Oidc/YY9oavw=
+	t=1778075982; cv=none; b=MzN7lcOv1E2b5fj3SmuswlFfr6+jZRb24W6oqcwzAZC5F4NmDLEdslIBeLYdScOpTN5DZsYOxrQvfQ2F74mEIlCsWNO42HWn7Zs8AoYM0JHs3wNjd/fBZwrJ988FyAKlyhAUJcu1Ly5zvTf8sga9aB2EhQhmATK3IMhxMEj6/Pg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778065489; c=relaxed/simple;
-	bh=Ep/l3Tx4naPqZAkU32u2xL4oqc77BusXOyLruaz4vWA=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=XLV4+ev7j+G4nEGaJSfm4RA/ytsm1CiP4jdO3ZF5ws9lX+qQ4QRxBxitytX2bDLbJtlmTiX4y/HxYPvAy/bHOUOkdooLh5kmfYNOF1YViH3LPMV+83I8Vs/2bfJGTkPqTRYF1nltwUtZAKEvJpv5N82ysyI57opH8H0X9bA8HrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=PzGFpBUV; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-488ff90d6c7so59620055e9.2
-        for <io-uring@vger.kernel.org>; Wed, 06 May 2026 04:04:46 -0700 (PDT)
+	s=arc-20240116; t=1778075982; c=relaxed/simple;
+	bh=Q7GEJWsGpqq+gwAvObqCBHqoZq+hqlaj6h7H61KmEEk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=muA21HgrC2Vx2/Qsv5mC3T1IVQguvIIV7F1qFxXHBbNGKYcsnOeETysJQnKgCSXWguU4kM8hqXy/3DBvowcmS6D7dQNc4cO6UtVvTM0cmqPkko/dSv1ofEffUFR/aa51/q1ZXvsHgQQn91KWgcLffVdDq6fcXj27Afh/T5oeD18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QY4f4/EB; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-8354461da74so1836270b3a.1
+        for <io-uring@vger.kernel.org>; Wed, 06 May 2026 06:59:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1778065484; x=1778670284; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zG+MVy2+yzM0YmAXRqlUNKNXzostrBe4j+S4Kg5YiGI=;
-        b=PzGFpBUVXb1cIFijajaSxQ2kY/qTKuwv4Sv0oDBOiF2x/kBUqZGt3mYIjtp9Yia49y
-         vqBMfT5lncOuPtqo2TL2GB/8kfo4+o/pJ3QMBkEKVjUv7zpIAQx3rvOqQccEjIOxXavL
-         fHTnQ+QFUxaXLOm9Qth5Q61MLUP4qROrmxNIEKBSQ07auQ3MwKGHvphGdhplMRGX37K1
-         FQ1wz8sWYZ3A36WA+yuH67D3QiGxOQvLbCOdIJRD4vFNlUqeYLZe2YDBOmQG7cp0C/2O
-         wEJQuuDGAQeZeH/RssdjiGo9ARTdNhrA1+g3fVeTu0p53+n9Haj6DcXQHvdiaVsLT9u1
-         M+rA==
+        d=gmail.com; s=20251104; t=1778075981; x=1778680781; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=U5wYuKN4KPzu26+IPj2dzSP+uqG5gwPZU9K/rLjWc90=;
+        b=QY4f4/EBP9lazfIUP2kw2uHq/N2ci4/GQ4LfGNHTTfckImY6CSXMpOn63oq4doeuIs
+         dyRz+IMdqwe31LU0ZT7VoDwmUoGhqBvhsGnLEp0A8dkH9jRRLmwDDBIhpGVyB6PRFZae
+         55jlDr395k5ibP3EBgEny4D29nEwAuXbEMAHfANGwvJvWe9YOlx22kvh2pNficzq5rjU
+         Bx1jwAOz+a613pgIa0McuFGsASrJyLtaSMiTf7jxGYl5DzlDt2IszEaDBIG+BNguPWXl
+         +y57nF6/l0Y5GB8r4zPMW5PXJ6omnGRlWyhtAfii2lpfRkyF9jIYO4zlizN0eHeio6UD
+         yJwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778065484; x=1778670284;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zG+MVy2+yzM0YmAXRqlUNKNXzostrBe4j+S4Kg5YiGI=;
-        b=NdYl1hNLcz7cFrh9bF9ySY71raum4TCnHUNLq58Wb7ZI32LFygdi8vk2gJd3OQuGT5
-         nIQzyawSq1I8ywg2Il6wUPfxq9puf6aR6UyLm2eTxo0cnm6pIgLEB/CIWfGJ6vlbT9uU
-         o/We/52gMZWwtNsiKg8PQnM4VCHcP7oWEpsF0FgoefYf5GBFbP92422XRwXX68iMHrzY
-         woMImMtXBuLGtLVhEC69CHqObw+Duntl2UdnqnrKoFNXqEkG3mH4TWWrxWtCl3YjH0bI
-         CNDN2RjuTfyX5ZvWJj71Xj55Xzon0Qpp9kD8Nj7zRNZ7XU0Tqnx+BIp2SRXjhVOHZtO7
-         fjRg==
-X-Gm-Message-State: AOJu0YwLtduhxWfxnmKfm2xrufCtnA2nrWlhpzZBEZbOwe8R0u1cYIPz
-	M/ODTAthrQH+ci02D06xCdTed48YIlxq1uSxDEDfRD6aC1lzRvfq07dty5vHgCJtzZZH6ld0cr1
-	2yh1tbM4=
-X-Gm-Gg: AeBDiespNiBryqnOVlJ1i3or4Tc4U/o6PWQROit02/Pf/UQ2UvcfCXPwWUrv1rnS4B2
-	uV4o8FEmTkzAgq7ElkixN1rjeBqcOLLp/vlDsSijw8qYbKDIdYlbV1/iRLe27v2pQRLYrkv6Y33
-	VkMMPhruN/qOt2vSCxe4tpaDeltUlY29r0WOATydXwen1omg7j3oOemGXZyUh9lKI68SCu+pYqu
-	gDNs4uHqlZAPIx6Uz2nfntW91azKGf9IwGJK41zyjz/LjxPqXvVU7X/sjs3ZO8nKw9/67m7/0lc
-	pAXiOJnLG+DuprhS4eBr2RqdBqmE9BrJK/UfqTLxDP91x1eNDQPhCZ5vJU4OUoYD4pKH6fY9EN5
-	qo5OUYW8lltm+dX2YpHkNYYrdm5IXRMcoUQ/fnkH4hBhgD5NYzgzliMl87xBTdI4p2x/LZErPoW
-	n7blYEISv/I1cXwHtW7Vbop4b4VQC/Zd2YJSwVr9wbim5Sri0MrtRphSH4sJqioqsZqe6knr7NQ
-	CWhdLUpK7OhLYiM1xmGWdDwsl4Wl9g=
-X-Received: by 2002:a05:600c:8485:b0:488:af7f:775f with SMTP id 5b1f17b1804b1-48e51f32a64mr54457955e9.18.1778065484353;
-        Wed, 06 May 2026 04:04:44 -0700 (PDT)
-Received: from [10.211.9.173] ([213.147.98.98])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48e538acf23sm37121445e9.8.2026.05.06.04.04.43
-        for <io-uring@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 May 2026 04:04:43 -0700 (PDT)
-Message-ID: <2469b617-3b4d-442f-84a9-7d1136d84065@kernel.dk>
-Date: Wed, 6 May 2026 05:04:42 -0600
+        d=1e100.net; s=20251104; t=1778075981; x=1778680781;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=U5wYuKN4KPzu26+IPj2dzSP+uqG5gwPZU9K/rLjWc90=;
+        b=o75DEJ3Gm4Bb/P/KJR/qQIe7pAZ3/ECqGMB+XLLbRRBIXorLKbfpIWEuFRTwXJGQRJ
+         OOKLLzU4kD4F4+mqtH1LOghqEX4dnHox3v9TR9mTzxRa2RKYO0S6CeYDYo24To8ad9P1
+         aWTn7PNKTjS+eExpIcLb4RTKWsBoWmhpcXMp45tTlrzeHGQ8KlbB8U2WBv0u9xsV7DCi
+         /bg+LCQGpZGuQgcOx0rgQp2WAdm1WihEKR9lJZQvupTImgV2/eGWL1q4QHPfUlmDkXyu
+         gtR8CEypaDnbfNQY43Lxxa0YW1MHdI70Ou4gYGMduV9P1EfaKBicxaN+kKCcuAHPhpCM
+         vu6w==
+X-Forwarded-Encrypted: i=1; AFNElJ8VvmdyxsNVOz9Og199esrCes/DuUi3Kj/r+4dUuizvQtNdtyTzmxC/QG3tZH8TvVY7L41GLm54ng==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBDmAH0jzW9yAbqaB4NeDI7P5X7nZyChtJpFRZPIruxf6r0ErU
+	LzW0Bv1YW7fc0gDV8eEuYuz49Z7uqC6A47TpS9cucIfLLJKhVbJd9b7A
+X-Gm-Gg: AeBDiet2zOzjkSggX2PRsjA61i5Vu2wStQyUAff/wbqZKkQ0D6ravJX/v06za3qHRXy
+	UTUeYlO49hgYM028KgVoRzXADeLy1TZlIKCWlSBkI5xZgDLEnup8ctrzKCyXpr0i6CabYjlwZLl
+	7vjI3RHxev18Wu1I14l/RJk7KScDOOrijANpQh9M5JirCaHXQWDCkCCNnejGna4bpUgRn7EOP4j
+	GTOF5Grq/J+TFrDAe1JYQ7fBlZaJ1oE8dDsHpOixcwXMEPv9XwdH6/9St5FqgeBcFm4LURkrOC4
+	DvIeTHQJRRaxGzPzAiM77R1FE4HtTA0KVg0jmZLuxwqVkmFizPu3S8OeVgZe1eSRHxfG4bqTCWR
+	7shBxRtuDvME3CDCNlxHLO5neKKvkGj+cfEs4lrkRsnsEJwDmO4KFDlga+rWEuuxCQeZ18S14bn
+	KWjiO5JMMFUW6xRAYbCjwkLlcAjHHvi2/dltfkQeFrAJg+6lc7/vCHd197IDCl1jSwC3L9tA==
+X-Received: by 2002:a05:6a21:e097:b0:39c:783:e42b with SMTP id adf61e73a8af0-3aa5a4a0020mr3606902637.21.1778075980448;
+        Wed, 06 May 2026 06:59:40 -0700 (PDT)
+Received: from csl-conti-dell7858.ntu.edu.sg ([155.69.195.57])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-83965d38ab5sm6997338b3a.26.2026.05.06.06.59.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 May 2026 06:59:40 -0700 (PDT)
+From: Maoyi Xie <maoyixie.tju@gmail.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Pavel Begunkov <asml.silence@gmail.com>,
+	io-uring@vger.kernel.org,
+	Maoyi Xie <maoyi.xie@ntu.edu.sg>
+Subject: [PATCH] test: add timens-abs-timer regression test
+Date: Wed,  6 May 2026 21:59:35 +0800
+Message-Id: <20260506135935.2420124-1-maoyixie.tju@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: io-uring <io-uring@vger.kernel.org>
-From: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring/uring_cmd: skip inline completion cleanup if
- unlocked
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 5F44B4D9952
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 02AA34DBA81
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [-0.16 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64];
-	R_DKIM_ALLOW(-0.20)[kernel-dk.20251104.gappssmtp.com:s=20251104];
+	R_MISSING_CHARSET(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20251104];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-13248-lists,io-uring=lfdr.de];
-	TO_DN_ALL(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_ONE(0.00)[1];
-	DMARC_NA(0.00)[kernel.dk];
-	DKIM_TRACE(0.00)[kernel-dk.20251104.gappssmtp.com:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FROM_HAS_DN(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,ntu.edu.sg];
+	TAGGED_FROM(0.00)[bounces-13249-lists,io-uring=lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	RCPT_COUNT_THREE(0.00)[4];
 	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
-	NEURAL_HAM(-0.00)[-1.000];
+	FROM_NEQ_ENVFROM(0.00)[maoyixietju@gmail.com,io-uring@vger.kernel.org];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	NEURAL_HAM(-0.00)[-0.998];
 	TAGGED_RCPT(0.00)[io-uring];
 	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[kernel-dk.20251104.gappssmtp.com:dkim,sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,kernel.dk:mid,kernel.dk:email]
+	FROM_HAS_DN(0.00)[]
 
-If the call path to __io_uring_cmd_done() is not locked, then we
-cannot recycle the uring_cmd to our allocation cache. Check for
-that and skip it, and let the normal locked completion flushing
-do the cleanup.
+From: Maoyi Xie <maoyi.xie@ntu.edu.sg>
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Add a regression test that exercises the two ABS timer paths in
+io_uring with the submitter inside a CLONE_NEWTIME time namespace
+that has a -10s monotonic offset:
 
+  - IORING_OP_TIMEOUT with IORING_TIMEOUT_ABS, parsed via
+    io_parse_user_time() in io_uring/timeout.c.
+  - io_uring_enter with IORING_ENTER_ABS_TIMER, parsed inline in
+    io_cqring_wait() in io_uring/wait.c.
+
+The test forks once to enter the new userns, sets up uid_map
+and gid_map for unprivileged root, writes the -10s monotonic
+offset to /proc/self/timens_offsets, then forks again. The
+grandchild is the first process actually inside the new time
+namespace (unshare(CLONE_NEWTIME) does not move the caller in,
+only its future children). On both ABS timer paths the
+grandchild submits an absolute deadline of now + 1s and asserts
+the call returns after at least 0.9s.
+
+The test fails on a kernel without commits 9cc6bac1bebf
+("io_uring/timeout: honour caller's time namespace for
+IORING_TIMEOUT_ABS") and 45d2b37a37ab ("io_uring/wait: honour
+caller's time namespace for IORING_ENTER_ABS_TIMER"), where
+the deadline is interpreted in host view and the timer fires
+after ~1ms.
+
+The test is skipped if the kernel lacks CLONE_NEWTIME support
+or the caller cannot create an unprivileged user namespace.
+
+Signed-off-by: Maoyi Xie <maoyi.xie@ntu.edu.sg>
 ---
+ test/Makefile           |   1 +
+ test/timens-abs-timer.c | 315 ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 316 insertions(+)
+ create mode 100644 test/timens-abs-timer.c
 
-This effectively defeats proper cache recyling for uring_cmd opcodes,
-with the fix it's working fine again.
+diff --git a/test/Makefile b/test/Makefile
+index 6a79a02..13841a9 100644
+--- a/test/Makefile
++++ b/test/Makefile
+@@ -286,6 +286,7 @@ test_srcs := \
+ 	task-restrict.c \
+ 	teardowns.c \
+ 	thread-exit.c \
++	timens-abs-timer.c \
+ 	timerfd-short-read.c \
+ 	timeout.c \
+ 	timeout-new.c \
+diff --git a/test/timens-abs-timer.c b/test/timens-abs-timer.c
+new file mode 100644
+index 0000000..cd5471b
+--- /dev/null
++++ b/test/timens-abs-timer.c
+@@ -0,0 +1,315 @@
++/* SPDX-License-Identifier: MIT */
++/*
++ * Description: regression test for IORING_TIMEOUT_ABS and
++ * IORING_ENTER_ABS_TIMER honouring the submitter's time
++ * namespace. The kernel converts user supplied absolute time
++ * from the caller's time namespace view to host view via
++ * timens_ktime_to_host(). Without that conversion an absolute
++ * deadline submitted from inside a CLONE_NEWTIME namespace fires
++ * immediately instead of after the requested interval.
++ *
++ * The test forks a child, enters a fresh user namespace plus
++ * time namespace with a -10s monotonic offset, submits an
++ * absolute deadline of now + 1s on each path, and asserts the
++ * call returns after ~1s rather than after <100ms. The test is
++ * skipped if the kernel lacks CLONE_NEWTIME support or the
++ * caller cannot create a user namespace.
++ */
++#include <errno.h>
++#include <fcntl.h>
++#include <sched.h>
++#include <signal.h>
++#include <stdbool.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <time.h>
++#include <unistd.h>
++#include <sys/types.h>
++#include <sys/wait.h>
++
++#include "helpers.h"
++#include "liburing.h"
++#include "../src/syscall.h"
++
++#ifndef CLONE_NEWTIME
++#define CLONE_NEWTIME	0x00000080
++#endif
++
++#define EXPECTED_NS	1000000000ULL	/* deadline at now + 1s */
++#define MIN_OBSERVED_NS	900000000ULL	/* fire no earlier than 0.9s */
++#define BUG_OBSERVED_NS	100000000ULL	/* bug fires under 0.1s */
++
++static int write_one(const char *path, const char *buf)
++{
++	int fd, ret;
++
++	fd = open(path, O_WRONLY);
++	if (fd < 0)
++		return -errno;
++	ret = write(fd, buf, strlen(buf));
++	close(fd);
++	if (ret < 0)
++		return -errno;
++	if ((size_t) ret != strlen(buf))
++		return -EIO;
++	return 0;
++}
++
++static int enter_unpriv_userns_timens(void)
++{
++	int ret;
++
++	ret = unshare(CLONE_NEWUSER | CLONE_NEWTIME);
++	if (ret < 0)
++		return -errno;
++
++	if (write_one("/proc/self/setgroups", "deny") < 0)
++		return -errno;
++	if (write_one("/proc/self/uid_map", "0 0 1\n") < 0)
++		return -errno;
++	if (write_one("/proc/self/gid_map", "0 0 1\n") < 0)
++		return -errno;
++
++	/* -10s monotonic offset: host_monotonic - 10s inside this ns. */
++	if (write_one("/proc/self/timens_offsets", "monotonic -10 0\n") < 0)
++		return -errno;
++
++	return 0;
++}
++
++static unsigned long long ts_to_ns(const struct timespec *ts)
++{
++	return ts->tv_sec * 1000000000ULL + ts->tv_nsec;
++}
++
++static long long elapsed_ns(const struct timespec *start)
++{
++	struct timespec now;
++
++	if (clock_gettime(CLOCK_MONOTONIC, &now) < 0)
++		return -errno;
++	return ts_to_ns(&now) - ts_to_ns(start);
++}
++
++/*
++ * Path 1: IORING_OP_TIMEOUT with IORING_TIMEOUT_ABS, parsed via
++ * io_parse_user_time() in io_uring/timeout.c.
++ */
++static int test_op_timeout_abs(void)
++{
++	struct io_uring_cqe *cqe;
++	struct io_uring_sqe *sqe;
++	struct __kernel_timespec kts;
++	struct timespec start;
++	struct io_uring ring;
++	long long elapsed;
++	int ret;
++
++	ret = io_uring_queue_init(1, &ring, 0);
++	if (ret) {
++		fprintf(stderr, "queue_init: %d\n", ret);
++		return T_EXIT_FAIL;
++	}
++
++	if (clock_gettime(CLOCK_MONOTONIC, &start) < 0) {
++		perror("clock_gettime");
++		io_uring_queue_exit(&ring);
++		return T_EXIT_FAIL;
++	}
++
++	kts.tv_sec = start.tv_sec + 1;
++	kts.tv_nsec = start.tv_nsec;
++
++	sqe = io_uring_get_sqe(&ring);
++	io_uring_prep_timeout(sqe, &kts, 0, IORING_TIMEOUT_ABS);
++
++	ret = io_uring_submit(&ring);
++	if (ret != 1) {
++		fprintf(stderr, "submit: %d\n", ret);
++		io_uring_queue_exit(&ring);
++		return T_EXIT_FAIL;
++	}
++
++	ret = io_uring_wait_cqe(&ring, &cqe);
++	if (ret) {
++		fprintf(stderr, "wait_cqe: %d\n", ret);
++		io_uring_queue_exit(&ring);
++		return T_EXIT_FAIL;
++	}
++	io_uring_cqe_seen(&ring, cqe);
++
++	elapsed = elapsed_ns(&start);
++	io_uring_queue_exit(&ring);
++
++	if (elapsed < 0) {
++		fprintf(stderr, "elapsed_ns failed\n");
++		return T_EXIT_FAIL;
++	}
++	if ((unsigned long long) elapsed < BUG_OBSERVED_NS) {
++		fprintf(stderr,
++			"IORING_TIMEOUT_ABS fired after %lld ns, expected ~%llu ns. "
++			"Likely missing timens_ktime_to_host() in io_parse_user_time().\n",
++			elapsed, EXPECTED_NS);
++		return T_EXIT_FAIL;
++	}
++	if ((unsigned long long) elapsed < MIN_OBSERVED_NS) {
++		fprintf(stderr,
++			"IORING_TIMEOUT_ABS fired early at %lld ns\n", elapsed);
++		return T_EXIT_FAIL;
++	}
++	return T_EXIT_PASS;
++}
++
++/*
++ * Path 2: io_uring_enter with IORING_ENTER_ABS_TIMER, parsed
++ * inline in io_uring/wait.c::io_cqring_wait().
++ */
++static int test_enter_abs_timer(void)
++{
++	struct io_uring_getevents_arg arg;
++	struct __kernel_timespec kts;
++	struct timespec start;
++	struct io_uring ring;
++	long long elapsed;
++	int ret;
++
++	ret = io_uring_queue_init(1, &ring, 0);
++	if (ret) {
++		fprintf(stderr, "queue_init: %d\n", ret);
++		return T_EXIT_FAIL;
++	}
++
++	if (clock_gettime(CLOCK_MONOTONIC, &start) < 0) {
++		perror("clock_gettime");
++		io_uring_queue_exit(&ring);
++		return T_EXIT_FAIL;
++	}
++
++	kts.tv_sec = start.tv_sec + 1;
++	kts.tv_nsec = start.tv_nsec;
++
++	memset(&arg, 0, sizeof(arg));
++	arg.sigmask_sz = _NSIG / 8;
++	arg.ts = (unsigned long) &kts;
++
++	ret = io_uring_enter2(ring.ring_fd, 0, 1,
++			      IORING_ENTER_GETEVENTS |
++			      IORING_ENTER_EXT_ARG |
++			      IORING_ENTER_ABS_TIMER,
++			      &arg, sizeof(arg));
++	if (ret != -ETIME) {
++		fprintf(stderr,
++			"io_uring_enter2 returned %d, expected -ETIME (%d)\n",
++			ret, -ETIME);
++		io_uring_queue_exit(&ring);
++		if (ret == -EINVAL)
++			return T_EXIT_SKIP;
++		return T_EXIT_FAIL;
++	}
++
++	elapsed = elapsed_ns(&start);
++	io_uring_queue_exit(&ring);
++
++	if (elapsed < 0) {
++		fprintf(stderr, "elapsed_ns failed\n");
++		return T_EXIT_FAIL;
++	}
++	if ((unsigned long long) elapsed < BUG_OBSERVED_NS) {
++		fprintf(stderr,
++			"IORING_ENTER_ABS_TIMER fired after %lld ns, expected ~%llu ns. "
++			"Likely missing timens_ktime_to_host() on the ABS_TIMER branch.\n",
++			elapsed, EXPECTED_NS);
++		return T_EXIT_FAIL;
++	}
++	if ((unsigned long long) elapsed < MIN_OBSERVED_NS) {
++		fprintf(stderr,
++			"IORING_ENTER_ABS_TIMER fired early at %lld ns\n", elapsed);
++		return T_EXIT_FAIL;
++	}
++	return T_EXIT_PASS;
++}
++
++/*
++ * Run the actual io_uring tests inside the new time namespace.
++ * unshare(CLONE_NEWTIME) does not move the caller into the new
++ * namespace, only its future children. So the caller sets up
++ * userns and timens, writes the offset, then forks once more to
++ * enter the new time namespace.
++ */
++static int run_tests_in_timens_grandchild(void)
++{
++	struct timespec probe;
++	int ret;
++
++	/*
++	 * Sanity check: clock_gettime should reflect the -10s offset.
++	 * If it does not, the offset was not applied and the test
++	 * would silently appear to pass on an unpatched kernel.
++	 */
++	if (clock_gettime(CLOCK_MONOTONIC, &probe) < 0) {
++		perror("clock_gettime");
++		return T_EXIT_FAIL;
++	}
++
++	ret = test_op_timeout_abs();
++	if (ret != T_EXIT_PASS)
++		return ret;
++
++	return test_enter_abs_timer();
++}
++
++static int run_in_timens(void)
++{
++	pid_t pid;
++	int status, ret;
++
++	ret = enter_unpriv_userns_timens();
++	if (ret == -EPERM || ret == -ENOSPC || ret == -EINVAL || ret == -ENOENT)
++		return T_EXIT_SKIP;
++	if (ret) {
++		fprintf(stderr, "userns/timens setup: %s\n", strerror(-ret));
++		return T_EXIT_SKIP;
++	}
++
++	pid = fork();
++	if (pid < 0) {
++		perror("fork (timens)");
++		return T_EXIT_FAIL;
++	}
++	if (pid == 0)
++		_exit(run_tests_in_timens_grandchild());
++
++	if (waitpid(pid, &status, 0) < 0) {
++		perror("waitpid (timens)");
++		return T_EXIT_FAIL;
++	}
++	if (WIFEXITED(status))
++		return WEXITSTATUS(status);
++	return T_EXIT_FAIL;
++}
++
++int main(int argc, char *argv[])
++{
++	pid_t pid;
++	int status;
++
++	if (argc > 1)
++		return T_EXIT_SKIP;
++
++	pid = fork();
++	if (pid < 0) {
++		perror("fork");
++		return T_EXIT_FAIL;
++	}
++	if (pid == 0)
++		_exit(run_in_timens());
++
++	if (waitpid(pid, &status, 0) < 0) {
++		perror("waitpid");
++		return T_EXIT_FAIL;
++	}
++	if (WIFEXITED(status))
++		return WEXITSTATUS(status);
++	return T_EXIT_FAIL;
++}
 
-diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-index 42be1be5b132..35e2aa8b9446 100644
---- a/io_uring/uring_cmd.c
-+++ b/io_uring/uring_cmd.c
-@@ -166,7 +166,9 @@ void __io_uring_cmd_done(struct io_uring_cmd *ioucmd, s32 ret, u64 res2,
- 			req->cqe.flags |= IORING_CQE_F_32;
- 		io_req_set_cqe32_extra(req, res2, 0);
- 	}
--	io_req_uring_cleanup(req, issue_flags);
-+	/* defer cleanup if not locked, otherwise cache recyling is skipped */
-+	if (!(issue_flags & IO_URING_F_UNLOCKED))
-+		io_req_uring_cleanup(req, issue_flags);
- 	if (req->flags & REQ_F_IOPOLL) {
- 		/* order with io_iopoll_req_issued() checking ->iopoll_complete */
- 		smp_store_release(&req->iopoll_completed, 1);
-@@ -211,6 +213,7 @@ int io_uring_cmd_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	ac = io_uring_alloc_async_data(&req->ctx->cmd_cache, req);
- 	if (!ac)
- 		return -ENOMEM;
-+	req->flags |= REQ_F_NEED_CLEANUP;
- 	ioucmd->sqe = sqe;
- 	return 0;
- }
-
+base-commit: 5dfc30a27303af1185e65d10890fdb35117bb3eb
 -- 
-Jens Axboe
+2.34.1
 
 

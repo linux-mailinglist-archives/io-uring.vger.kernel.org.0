@@ -1,252 +1,176 @@
-Return-Path: <io-uring+bounces-13255-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13256-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 6Ou5NRXt/WlJkwAAu9opvQ
-	(envelope-from <io-uring+bounces-13255-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Fri, 08 May 2026 16:03:01 +0200
+	id 2LtwNzs3/mkroAAAu9opvQ
+	(envelope-from <io-uring+bounces-13256-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Fri, 08 May 2026 21:19:23 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AD6E4F7870
-	for <lists+io-uring@lfdr.de>; Fri, 08 May 2026 16:03:01 +0200 (CEST)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F3F14FB083
+	for <lists+io-uring@lfdr.de>; Fri, 08 May 2026 21:19:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id C6D493006132
-	for <lists+io-uring@lfdr.de>; Fri,  8 May 2026 14:03:00 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id B373C3023D8E
+	for <lists+io-uring@lfdr.de>; Fri,  8 May 2026 19:19:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CECAC37AA72;
-	Fri,  8 May 2026 14:02:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F853376BD5;
+	Fri,  8 May 2026 19:19:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QXOGJC9W"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b="yPu5CdwU"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 313B73E5580
-	for <io-uring@vger.kernel.org>; Fri,  8 May 2026 14:02:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E9513321DC
+	for <io-uring@vger.kernel.org>; Fri,  8 May 2026 19:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778248977; cv=none; b=eRA2U5QWjm7cRBhzjDX7Iw7L2bxswpQlz8Ol0s2WzkcNQeNG/ak8l/0n5sUaNZm/W0JJ4Pn4aWHJpsPYSND7bNXBhAcffNCbO4AfHBCHAhBT1o1sW8e0FdY5kRBx/pibtJUYyjK756V9cPPeJ1wBLx0fgfDVVldALIjfcPnKgdw=
+	t=1778267959; cv=none; b=pJgmm5FnrDqPTGYmpTBlX7fI25yCyE8NoE0lezoNjYMrUtSOCE5tBxs97LSDJ8VM5pGgNmmxNzwRIHSrHXFZpWBWA3KL3EclF+igQ3uT1r6HlCpj5aBQ3CGFY4TPTvTvQ7flaWzL7Vujq2GuYDpLUpOulu5m2cg59tU6XwKiEns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778248977; c=relaxed/simple;
-	bh=wFDH1o3olfLg5Ia+rpt7qq+s9E6GpSnwIOlVVU8i2Tw=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=e5xSZ1+o0e7lwP+BQDNrsxbXHNm6Kawq/4lR0NOLetenjgKWkpKYKDaXFHJlwLwculY2kT1/cIg5XmP+KbWDa3zSjXjiv8AQkEjP+4E85iRcvYBvsomeNNdcReZZHp/9lOUrqhV313ENjIMLOVsl4M/qntaWpPtX92TZx+FFjFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QXOGJC9W; arc=none smtp.client-ip=209.85.221.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-44f1b4d0fb0so1397075f8f.1
-        for <io-uring@vger.kernel.org>; Fri, 08 May 2026 07:02:55 -0700 (PDT)
+	s=arc-20240116; t=1778267959; c=relaxed/simple;
+	bh=24DFyDdTicQmBLTZ8+LRbY+KiUmR3EO7mV9uGd+Km6Q=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=iV4A61YOzgDKXL9YCZwc0rguktlTcPwM/0FD23JeX2qkdIApIBHpCIqy7UH1pRcqL6i9WGpOh3svlvtJi5W2pLZC40Yc1UQbJytveOof7GEpj5tpRyG/BE57XOtHaFENwz9CZf6qSwb+i3xLPfL6yjrYRrPIozGuAu6+RFI/Oh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=yPu5CdwU; arc=none smtp.client-ip=209.85.160.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-4042905015cso1818923fac.0
+        for <io-uring@vger.kernel.org>; Fri, 08 May 2026 12:19:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1778248974; x=1778853774; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=VXcmRThuEWO63YTSaN19aEGemVtVdbv7aDPqYYnwWkg=;
-        b=QXOGJC9WSmTMuWvA57PTvZ05TTFNOItLUD5f6UVAD9cTJ4GsHUE5vndpO9dMM8Ba9+
-         qA+hhjybXC2UiXMGkgVd/Us6KmdLzFlJFAoxsyecZCj2DxN80COgAicnx8KSNHrrIqFy
-         pwyStGk+ecQ/k6Cnhhh1yBf5Lkc6Rvo8avJM6wfRL2OP28xE2iPys4PoIZ4PwZf2LTnk
-         jo0a210ppE4YxGTCq8bvxjE49jMwB/EK9jeQtwddMUqvd/hsVu7E2RK+e2NK31xw+8nk
-         O2q2qTYNh3PkcEpGeXrgsGt4B0+BpZg1ff1kKeLHTtrGP9pK4qB7AnMX7DG7pdBq0XTU
-         wxjg==
+        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1778267956; x=1778872756; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UImDyYCb6DVDK7Q3Nz3Zu113gv2Y6T+8KdZt1KRqTW8=;
+        b=yPu5CdwUWRTBMTxxosLO9wsKgtMLSagVGrrYa+BxlRv0Eli1XjLquEZa6qC7in7Sti
+         Ph69k37BAudbZXaVDTwzD6vOnU0P9ciFmN8KmLZXk3YbXD2LoYpz7j6BTWKnKJKKeIkt
+         322wNsz0NZIosr92xyUnjhNTUNYVVfe0zeF2e1FIzFdY9Eew9eJJc+J6ZeZFOvpl+qjK
+         c1XMIa40qtOS4jfV9DDUrSs2Xt+3GtzfFd0JuKZoFpVW1YH5lMP4LqaDr8PdXiUKyuJj
+         73ethOUMzOWBIKt16Fp3kCcxNXP6D3QkWyCBnE73YxxVz/gIZeOE/gRq38ohrqWqGYa3
+         el9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778248974; x=1778853774;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+        d=1e100.net; s=20251104; t=1778267956; x=1778872756;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=VXcmRThuEWO63YTSaN19aEGemVtVdbv7aDPqYYnwWkg=;
-        b=B2lbkfqpmKk6nEb7GrohWQSXvdZI84KrE9hqXDi6ESwBYXPRD+jgbrRgRUiQNsq4q7
-         kmIVocPXOZSyBAZ/yPYp0cLpdJA+fVdq47LWo3iIbhKstcdm0zvql8/1/fvZ30W9UDUT
-         P5ksnZOZVSR6doYkEvEJC1mm29FHeeqRqSW2Ra/d1Basv9Z97NsiF1Ly2i2/P5dov1lt
-         ssGygiqx+p0oG2ygM3ifP58GMHJEynuX8/v3BvnUBOnu5YzT8tNqql/BPMNGDnbOQS6l
-         UeRd/P0AdbxK5Gq97+8+9N4ddKlGaBvqy6IeIFtw3/IJ4ouYT5ZcfEO2+Nr5qWM3kr0t
-         MGCw==
-X-Gm-Message-State: AOJu0YzJkqkbUY6RVxvziHQSE4+NL1YQENOCsM0zc9CJnP+CDK/2PGPN
-	7hsTmKdHYGhSHK8PInqdgOYgMfOMghscKPE1Apvwj4AgyqWFxwKWSWXAjHvw3w0jzMXOGBgKXrL
-	OsIISOi9cAe5Y9GgqtA==
-X-Received: from wmlf10.prod.google.com ([2002:a7b:c8ca:0:b0:48d:146d:6669])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:1797:b0:48d:366:b962 with SMTP id 5b1f17b1804b1-48e51e0a8a8mr106370715e9.6.1778248974199;
- Fri, 08 May 2026 07:02:54 -0700 (PDT)
-Date: Fri, 08 May 2026 14:02:45 +0000
+        bh=UImDyYCb6DVDK7Q3Nz3Zu113gv2Y6T+8KdZt1KRqTW8=;
+        b=aJ3c+iBaH4PDWjgPNh9+VE53T/76W/Vyr11t+ugcksYc58T8ox+4+7BTUrOptrbher
+         EyqGSDGtY2FsLUxhogf1Y7E5m4PUhhDjnZtPDCsVnap6AbF8x1k0yY8ROQFO6sRFiz1X
+         GWt/L7iXPcdx1OZtNDG2c9DoBr0sIPNiYDzpNQX6+eYaA/ro2Oq9+h4wRQfB0PKIB0uC
+         Dl2z9AmS3ePHK0eoVzWq+dv4X4ddcxpqQVH0NcIv8YPgJAkhfbJJVD866VO5POBXiDIF
+         m5PaT6mvouLPBw+/034/OCf0dty0X+fMvVk0T1kDkhDfRGW8GspBllWu8KU/AcToptev
+         d+Kw==
+X-Gm-Message-State: AOJu0YxBQzicCDMvJwSiKBThPi6/4tM4Vl06mr8KgyfTwfjuM+1SyLBS
+	Nh2ooJias8+yRpuBTAIDPIz8JVeDPJOsaTjma63YUHjfwaeO+rfYST/TlI/SalM6naNrftBAxfx
+	2A95e
+X-Gm-Gg: Acq92OFh7yujDX18y3WvGta7e25M6upZAVC/is5o9lEAv4zeiR46pNvJvMXS6GPGpuW
+	ax7JF0KipWufOvA2u0gkMvrCp96RZW0/V/5mEAPYLA/HmNCEcQ6aI6N/16WQ9kLh5e1SxVkiRen
+	zEN5SBsGcSmR1xpH0+aoV5nvS691Yv06N6qwv4Ur89C+S8E8W1iveoexZRiy5YGg9u/YIi+xIcl
+	fWgmVGvu5Op0fzKtBTyPshym1DVXGZ1SmSZsVSXxd8FDWnqkFixpqJWRp28gRrcSid4NXPKzdGs
+	4h5aOKUrycDka01N5gmLWktrHaoGu/MLbEHMsHRM4Z1FbumBgTMfXsvmOptJlAUMPJvhyJJwAW1
+	e626vVxbllL6k5kOzWoMkQUGSq1SQRsQ0eAjXyv9xN9AJONe2hItjCqlxwFAza79bTKP2CnhsEn
+	+eVOUD+dKMQuqUJOBPZITEU3nPbquGT60fXLpR28XUIUpHp4aq4Y2Bp0JLK4yMvbp3cizDanQnM
+	ehbm8bc
+X-Received: by 2002:a05:6871:c785:20b0:435:4b9b:828f with SMTP id 586e51a60fabf-4354b9b838emr2184077fac.2.1778267955770;
+        Fri, 08 May 2026 12:19:15 -0700 (PDT)
+Received: from [192.168.1.102] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-435570ac625sm2541463fac.1.2026.05.08.12.19.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 May 2026 12:19:15 -0700 (PDT)
+Message-ID: <db32ecb0-b37c-43b2-a8ab-cba6713b3e67@kernel.dk>
+Date: Fri, 8 May 2026 13:19:14 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAAXt/WkC/x3MQQ5AMBBA0avIrE1SjSKuIhbFYCJKOiVE3F1j+
- Rb/PyDkmQTq5AFPJwtvLiJLE+hn6yZCHqJBK10ooyrcj4DByoIS/NEHXK270XSm02NuKStziOn uaeTr3zbt+34VHkJuZgAAAA==
-X-Change-Id: 20260508-put-task-struct-many-5b5b2f4ae174
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5092; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=wFDH1o3olfLg5Ia+rpt7qq+s9E6GpSnwIOlVVU8i2Tw=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBp/e0La+wERa4SgFHFwZzu6XdSGRui6vLxCtQ1s
- 2d/uBZx5ViJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaf3tCwAKCRAEWL7uWMY5
- RuFiEAC5xbqkM6wsZulENtzyW35yQTipHX4FGSiCnlBNG0C/ALdZUnlYbHusE/PbThUZAzDPICP
- 6NZoIe83p3LB102k3/H0nmM7h//WpfKQ+beNIitFlu5nJRvEn9yoWUnmxQRdfhhEdVFC+fwGS4G
- WXqGDf/g+jN0avXueIXVT6U+sU9vuHkM2HeDzEL54K19PBK7YTUiltoW8M+5TsNyivxsFUtGwD0
- DtoGh6Fc8fQztcEMzvtmND0SEHYnPYTUwl2Gd51Zse/f48HnAyqxC224v7NUBC18JGmXVHocAlK
- AYDGUQBbjBK6wvlR/pkxWRIWQGgrPlWjkcvat7XvfuYpBq44CYtoOhrU1quGlTSGN0U3z7ed+41
- 25V6gvY1uF7yL9n4NgfoPXlUNsZJKU9Fe3y983KzVvCqOiz5HbWhHgmZlxgQSt+P4aNLMqX56wB
- SWbLJ6GZwVvpZz6udveJg+SuwxQ8/yAnYuy1griDWwfQE3/pN2o7qtg1jCfLh3qTKPRUNN3cYrb
- IvrR4dBTpFOBXSCOpzFf6Vf2GNiTpsBfCTmTQBCpEHfukjHLCJ7SnOUA5s0G57YQ0y3mzF0oXuW
- xZZJUR19vdEiUc6Od57NHsULjnuePCAUcJal5yb56ov32Z8sfFhdZq5cWZAX4nnqOdKS0zG9ez4 5VKjj2h5MtF98Aw==
-X-Mailer: b4 0.14.3
-Message-ID: <20260508-put-task-struct-many-v1-1-8341c18141a6@google.com>
-Subject: [PATCH] sched/task: always defer 'struct task_struct' destruction via RCU
-From: Alice Ryhl <aliceryhl@google.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>, Andrea Righi <arighi@nvidia.com>, Boqun Feng <boqun@kernel.org>, 
-	Changwoo Min <changwoo@igalia.com>, Clark Williams <clrkwllms@kernel.org>, 
-	David Vernet <void@manifault.com>, Frederic Weisbecker <frederic@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
-	Jens Axboe <axboe@kernel.dk>, Joel Fernandes <joelagnelf@nvidia.com>, 
-	Josh Triplett <josh@joshtriplett.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Steven Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>, 
-	Uladzislau Rezki <urezki@gmail.com>, Zqiang <qiang.zhang@linux.dev>
-Cc: io-uring@vger.kernel.org, rcu@vger.kernel.org, sched-ext@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev, 
-	Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="utf-8"
-X-Rspamd-Queue-Id: 6AD6E4F7870
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fixes for 6.1-rc3
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 4F3F14FB083
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[google.com,reject];
-	MV_CASE(0.50)[];
-	R_DKIM_ALLOW(-0.20)[google.com:s=20251104];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_DKIM_ALLOW(-0.20)[kernel-dk.20251104.gappssmtp.com:s=20251104];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13255-lists,io-uring=lfdr.de];
-	FREEMAIL_TO(0.00)[kernel.org,nvidia.com,igalia.com,manifault.com,redhat.com,kernel.dk,joshtriplett.org,gmail.com,efficios.com,infradead.org,linutronix.de,goodmis.org,linux.dev];
-	RCPT_COUNT_TWELVE(0.00)[26];
-	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[kernel-dk.20251104.gappssmtp.com:+];
+	TAGGED_FROM(0.00)[bounces-13256-lists,io-uring=lfdr.de];
+	TO_DN_ALL(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	RCPT_COUNT_TWO(0.00)[2];
+	RCVD_TLS_LAST(0.00)[];
+	DMARC_NA(0.00)[kernel.dk];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[aliceryhl@google.com,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[google.com:+];
+	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	RCVD_COUNT_FIVE(0.00)[5];
 	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[io-uring];
 	NEURAL_HAM(-0.00)[-1.000];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
+	TAGGED_RCPT(0.00)[io-uring];
+	MIME_TRACE(0.00)[0:+]
 X-Rspamd-Action: no action
 
-The sched/task.h header file currently exposes a tryget_task_struct()
-function, but it is very risky to use it: If the last refcount of the
-task is dropped using put_task_struct_many(), then the task is freed
-right away without an RCU grace period.
+Hi Linus,
 
-This means that if the kernel contains a code path anywhere such that
-the last refcount of a task may be dropped with put_task_struct_many(),
-and it also contains a code path anywhere that tries to stash a task
-pointer under rcu and use tryget_task_struct() on it, then if they ever
-execute on the same 'struct task_struct', it results in a
-use-after-free.
+A few fixes for io_uring that should go into the current kernel release,
+and will be heading to stable as well. This pull request contains:
 
-The above applies even if the RCU user drops its own task reference with
-put_task_struct(), because if that is not the last reference, then it's
-possible for another thread to invoke put_task_struct_many() and free
-the task less than a grace period after the RCU user called
-put_task_struct().
+- Ensure that the absolute timeouts for both the command side and the
+  waiting side honor the callers time namespace.
 
-There does not appear to be an actual problem in the kernel tree right
-now because there are no in-tree users of put_task_struct_many() where
-refcount_sub_and_test() might return 'true'. Io-uring invokes the
-function from task work while the task is still running, so it will not
-decrement it all the way to zero. (Note that if I'm wrong about this,
-then it's probably possible to trigger UAF by combining this codepath in
-io-uring with the tryget_task_struct() call in sched-ext.)
+- Ensure tracked NAPI entries are cleared at unregistration time, as
+  the NAPI polling loop checks the list state rather than the general
+  NAPI state. This can lead to NAPI polling even after unregistration
+  has been done. If unregistered, all NAPI polling should be disabled.
 
-However, the current situation is fragile and error-prone.
-- If you look at put_task_struct_many() in isolation, it looks like it
-  would be okay to call it in a situation where refcount_sub_and_test()
-  might return 'true'.
-- Similarly, if you look at tryget_task_struct(), you would assume that
-  you are allowed to call this method for a grace period after 'users'
-  hitting zero. (If not, why does it exist?)
-But if two different kernel developers anywhere in the kernel make these
-conflicting assumptions at any point in the future, then the combination
-of their code may lead to a use-after-free if there is any way for them
-to interact via the same 'struct task_struct'.
+- Fix for eventfd recursive invocation handling.
 
-Thus, as a defensive measure, we should either make
-put_task_struct_many() use call_rcu(), or we should delete
-tryget_task_struct(). This patch suggests the former because it does not
-change anything for any callers that exist today. (As argued previously,
-the body of the 'if' statement is dead code in the kernel today.)
+Please pull!
 
-The comment in put_task_struct() is also updated so that nobody changes
-its implementation to only use call_rcu() under PREEMPT_RT in the
-future. The current comment suggests that would be a legal change, but
-it is similarly incompatible with anyone using tryget_task_struct().
 
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
-Including sched-ext and io-uring in the cc list as they are the only
-users of tryget_task_struct() and put_task_struct_many() respectively.
----
- include/linux/sched/task.h | 24 +++++++++++++++---------
- 1 file changed, 15 insertions(+), 9 deletions(-)
+The following changes since commit 17666e2d7592c3e85260cafd3950121524acc2c5:
 
-diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
-index 41ed884cffc9..da2fbd17b676 100644
---- a/include/linux/sched/task.h
-+++ b/include/linux/sched/task.h
-@@ -131,19 +131,25 @@ static inline void put_task_struct(struct task_struct *t)
- 		return;
- 
- 	/*
--	 * Under PREEMPT_RT, we can't call __put_task_struct
--	 * in atomic context because it will indirectly
--	 * acquire sleeping locks. The same is true if the
--	 * current process has a mutex enqueued (blocked on
--	 * a PI chain).
-+	 * Delay __put_task_struct() for one grace period so
-+	 * that tryget_task_struct() may be used for one
-+	 * grace period after any call to put_task_struct().
- 	 *
--	 * In !RT, it is always safe to call __put_task_struct().
--	 * Though, in order to simplify the code, resort to the
--	 * deferred call too.
-+	 * This also has the benefit of making it legal to
-+	 * call put_task_struct() in atomic context. We
-+	 * can't do that under PREEMPT_RT because it will
-+	 * indirectly acquire sleeping locks. The same is
-+	 * true if the current process has a mutex enqueued
-+	 * (blocked on a PI chain).
- 	 *
- 	 * call_rcu() will schedule __put_task_struct_rcu_cb()
- 	 * to be called in process context.
- 	 *
-+	 * In !RT, it is safe to call __put_task_struct()
-+	 * from atomic context, but we still need to delay
-+	 * cleanup for a grace period to accommodate
-+	 * tryget_task_struct() callers.
-+	 *
- 	 * __put_task_struct() is called when
- 	 * refcount_dec_and_test(&t->usage) succeeds.
- 	 *
-@@ -164,7 +170,7 @@ DEFINE_FREE(put_task, struct task_struct *, if (_T) put_task_struct(_T))
- static inline void put_task_struct_many(struct task_struct *t, int nr)
- {
- 	if (refcount_sub_and_test(nr, &t->usage))
--		__put_task_struct(t);
-+		call_rcu(&t->rcu, __put_task_struct_rcu_cb);
- }
- 
- void put_task_struct_rcu_user(struct task_struct *task);
+  io_uring/tw: serialize ctx->retry_llist with ->uring_lock (2026-04-30 06:57:20 -0600)
 
----
-base-commit: 7fd2df204f342fc17d1a0bfcd474b24232fb0f32
-change-id: 20260508-put-task-struct-many-5b5b2f4ae174
+are available in the Git repository at:
 
-Best regards,
+  https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git tags/io_uring-7.1-20260508
+
+for you to fetch changes up to 45d2b37a37ab98484693533496395c610a2cab96:
+
+  io_uring/wait: honour caller's time namespace for IORING_ENTER_ABS_TIMER (2026-05-06 04:58:56 -0600)
+
+----------------------------------------------------------------
+io_uring-7.1-20260508
+
+----------------------------------------------------------------
+Maoyi Xie (2):
+      io_uring/timeout: honour caller's time namespace for IORING_TIMEOUT_ABS
+      io_uring/wait: honour caller's time namespace for IORING_ENTER_ABS_TIMER
+
+Yufan Chen (2):
+      io_uring/napi: clear tracked NAPI entries on unregister
+      io_uring/eventfd: reset deferred signal state
+
+ io_uring/eventfd.c |  1 +
+ io_uring/napi.c    | 27 ++++++++++++++++++++-------
+ io_uring/napi.h    |  8 +++++---
+ io_uring/timeout.c | 35 ++++++++++++++++++++++-------------
+ io_uring/wait.c    |  6 +++++-
+ 5 files changed, 53 insertions(+), 24 deletions(-)
+
 -- 
-Alice Ryhl <aliceryhl@google.com>
+Jens Axboe
 
 

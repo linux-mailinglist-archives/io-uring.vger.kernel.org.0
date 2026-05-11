@@ -1,87 +1,87 @@
-Return-Path: <io-uring+bounces-13268-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13269-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id CB3EB7gfAmrAoAEAu9opvQ
-	(envelope-from <io-uring+bounces-13268-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Mon, 11 May 2026 20:28:08 +0200
+	id gO/jM3IfAmrAoAEAu9opvQ
+	(envelope-from <io-uring+bounces-13269-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Mon, 11 May 2026 20:26:58 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 227D651470F
-	for <lists+io-uring@lfdr.de>; Mon, 11 May 2026 20:28:06 +0200 (CEST)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 466C9514649
+	for <lists+io-uring@lfdr.de>; Mon, 11 May 2026 20:26:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id B3AB53009F05
-	for <lists+io-uring@lfdr.de>; Mon, 11 May 2026 18:22:26 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 41138305EA36
+	for <lists+io-uring@lfdr.de>; Mon, 11 May 2026 18:22:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D36A9472784;
-	Mon, 11 May 2026 18:22:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B55147885C;
+	Mon, 11 May 2026 18:22:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b="BQRt35fn"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b="HRgpH0/1"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25364472774
-	for <io-uring@vger.kernel.org>; Mon, 11 May 2026 18:22:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A28C8307494
+	for <io-uring@vger.kernel.org>; Mon, 11 May 2026 18:22:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778523745; cv=none; b=lJpDdfqH9SqZOS90xcb3IdG4XhBh+iU2nAsBLr0nRFGm1oE9KAvGtsubet1TyrmGtd/3CeE+Y5d9QFLrfpjIf8811+mDwlUFA7Yo2Os2d93Tz6X3PBhRJhks9kGZkBpeOgveay4Tpfjfokys9ec8BCymiKslstIS+n0U2hygm5c=
+	t=1778523746; cv=none; b=aNfBNADnA8knKgykpUTrMFzS0u4oIIOTgUiTGl07HSPyHVlUkWsGyACabWTzjrJTgGoCeeU167nyT1KyPYe/nIN5WcOo0z/svnc/N5KykCgXT06GfV6oZKjulJ3CBjEE1imBWImvsRovuxVMAIo0rC8qRSvN05OO7wYjNB3NVFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778523745; c=relaxed/simple;
-	bh=Uy7O924Mu5EkBmehO5YQ+Zwk8wVNbQq3rWczihUPw+4=;
+	s=arc-20240116; t=1778523746; c=relaxed/simple;
+	bh=PoEXGjiWI0h+AaeqSyPIRSchRFPaUOgyQE+pXMnchEw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JbbugyrcQv8Tb035LsIAsckWdFVB1TgV7stcVRmWWhPMfUssoEuOwT+Qq37L5MdnxpoUO96fkJRsJZ1cVueIX+Oxkg6m+g5V9kniEV4ZMiHNubhFX1szhBKHCf8yHp8k5+tgFImPs7GHauPnrayxyGpt39Zn2rbWEa3V78ly95A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=BQRt35fn; arc=none smtp.client-ip=209.85.160.44
+	 MIME-Version; b=I9+oqCOZJad4slDEmqasfsgz8quVTt63N3G16G16iyVNkZ0tc0OmuSdtMKew7rgWbf+f/WGzLilEUP22wCkza0HGvB5SqWCaDPr1V4D+8eMjoS1vAh5FRMPxib33BFlYsp3fMc39ZX5ZsurUGfJUFAgO45nGdzfc6BRjS5/Wxvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=HRgpH0/1; arc=none smtp.client-ip=209.85.167.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-41576c5c01cso2844089fac.3
-        for <io-uring@vger.kernel.org>; Mon, 11 May 2026 11:22:23 -0700 (PDT)
+Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-47c6f914617so2379300b6e.1
+        for <io-uring@vger.kernel.org>; Mon, 11 May 2026 11:22:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1778523743; x=1779128543; darn=vger.kernel.org;
+        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1778523744; x=1779128544; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2b21n3Mm+nClyF88V0mpEnnFmYJEnXXznAvFmS7Qt3Q=;
-        b=BQRt35fnYhx+eIfK+OrfdJowwjyTfx4Vb9Fi765AHMfQ3pVP/weRMPeVJ8LJ068Y2U
-         ypEeesdDBEy1a3i5K1NWCRMv4L65gVYPTYkXm16B1Xj0gsVpXVMYx/i0BYn7rME7WBxS
-         zQMUsfsZ13FFdIpagaGEt0W53jvkpNwPWFUyC1Gi75VNNSbu2iMCXf4sv+axQyjELOZL
-         9A3LZd7gyt3gZT/Aaz+4l6So8IevHeQDzXil//+uxOzKKOqfYn66HkWXeUKvS5i/4YS1
-         YokwzE3iBCpNiDjl0WVYcm9eH+Dhrqidb6o1RQavnYDYJy+F+VCApmh8AC+r5flDdrHP
-         yeqQ==
+        bh=IjuM2soSeaudA/GxoHlDmrB0lkjGv8cbGASUjwKuCeg=;
+        b=HRgpH0/1I/DfSkKMZdm6O9ECiDgcB00Hnl8VkLAeHh3c1uE3It1I4/nY+kq9Z2Xwil
+         UbBwGysZVu62yMRIgQoawpV0qHHEC9QehMDuWMA3CPl2rpGte7iavwCrZdH5PY50KYb2
+         hsksuPSuHHbKcBUfIYjq4wIQsZPMB0nvK/cLHEY6NPACHRaGReEsBIDf57paUSLOenfh
+         BOKg8eWYpmdQ60jHdSjl/VLSxaL7XEKDdyH3IFjJaU+A/b2WXnRiHEtbhZWQdRByXSrP
+         pfoIAFGREjXtUgdbvd+iKpj0JuQ2YMtEEU/gbVvx6uNCeZ2O54YrvZk8/+IgbrTNXW1o
+         aZmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778523743; x=1779128543;
+        d=1e100.net; s=20251104; t=1778523744; x=1779128544;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=2b21n3Mm+nClyF88V0mpEnnFmYJEnXXznAvFmS7Qt3Q=;
-        b=k9frBDIOLQgXz/ssixBSJe9Kf2VsE2x8lZ4xqFOQ7+LLHz/a9TfbGSUVGh7yb2YlX6
-         vsdzAaIuGYiJTKtN0/HLmfYJdmIhPEl+FE7RjdiFUCJNTqDSwBtvPm7eKS13eJxiUXzJ
-         YLNz+YtGlZ9b54/K8vLNRcnwC6bNxRwtfsM2E4gTvHEQevlLu1TNfSI5Rn9UI+7JdgY7
-         o9Q0DIAa8oDaFQuqCtSHVpPMS6pLU9TXdu5E12XyKcdNelLtVpVTfaj5uSUDhMq6lYv8
-         NaNXEzCxfBvbqDkQYufY50vddxsIC8q0c9DnFwlEJhQNJarp15t0Akjt85VJ44H9PqSj
-         VgcQ==
-X-Gm-Message-State: AOJu0YzGfNPcGbM6Qkz1c5WMRcFmcs23ew8VDbJM7I7ozr+NGgdCJjjo
-	qB29fcTZNH0JSF05H5ElMD4x74xffFeRW/rnoOMNJ7z/NOXn7cGSKC5vszVVnGay5Lj1MnLbT4J
-	PFKel
-X-Gm-Gg: Acq92OGBL6abOo64WUDcheXJXdwGZgRh+HSsCvi23NS5OmmZfO8OrSzZJtu3uieHCok
-	/B7ZB4ALnKGf6Zh4CfTnKfF4M8RFF6YIoWRThmNH/b5UXjppShrIV0yCWC4R8NqaIkkNi3lj3Ca
-	/VH20ptKHr8CoTmv8G10nnTiqa7Lvc/snyhKt/wcN8Z6kRoJeEjubmyCuQi8TRXEXNLbP0tKGP8
-	tO7fsey4gg1h4CJIIIRIc0LZ2Xr2yZdu60qsmHFYyck2qa/cii2L3iReTQy0CFYauEjH0SeWfUn
-	WNxgtl05HgIymq7vaLWi6QQ0djawYyZK9nz2gwhFUCcoQpqGPBMxN8svitP964m08k4+gwFWVKT
-	ziz225cuMDsptf2ON1r6gbJCRQXwu2+Z+ujyegB0k6jE8vHqNCwd6t074MTxjMR4Jl6Q1rTwVsZ
-	S+LR39VnelZGaCnhtIwV5jSsCT1+UFMus/qS9RW34lSNvUrWXGryGvXBeZxUeQQH7bvek=
-X-Received: by 2002:a05:6808:350b:b0:467:3f4:907c with SMTP id 5614622812f47-4804252f32cmr15486201b6e.47.1778523742619;
-        Mon, 11 May 2026 11:22:22 -0700 (PDT)
+        bh=IjuM2soSeaudA/GxoHlDmrB0lkjGv8cbGASUjwKuCeg=;
+        b=SAfVFYspMlP2t1ctry8d003gr0oVisLIZ1ANgRQhZM+tCDdYrPYkrZMi9YliRAGRjs
+         bUa56yaegbl6bchruYT7Qj9/qek4W3VvXQUMgDo5D5Q14CE1M1WgwQvEg/ZSO61UIdav
+         2etfBM9GPY7+8+iRqxQxcvmPuLWie9edfRycm+YWeIIcynAq5+MjxzofwU65QpGFbyuJ
+         LJngd8Taa8qBwo31uZT8I7JImHMJvgui3YYPEca/4V8fW91UHq66f7yw/M3TOfPzPH3A
+         k0mg+bOA31WHTQOOEnDUFk/ru/XyD7W7DqHx2UvRzJtlCQ80Nseoudoeq1vew5RGEPJl
+         X9WA==
+X-Gm-Message-State: AOJu0Yy8PKEpQnCZ+jMR3oEatRbYpZ9R3pkRaKHMQHSS2j6jQh05/W+2
+	oQf6zheWCP4xHRgQtTVURrr67+FEyabwIqSzRc8nPp/C0zejndN/rc8qKcXdCHPPC43FJSfLpFP
+	O2PBz
+X-Gm-Gg: Acq92OG1VHo0UVbCb72XH4qz3sLbJKVZViLW9w+sBNgeVYgXOYt3gnheH/ikf1i7eRa
+	l0tR526z20fbwLzvn++EfsVZ7lM+qQIrPpys/j2Q1/RclApyWzQNhJQ2SzP1fZ5m6sdgKOznzBw
+	RDi64XovEkLQ5zTvbFV6OOf6ZCQucQnN8AIPsDxL7Jbxajzf2PC2nZqAffKoZe1Im3+8DEcJLfm
+	LALeXJYxq7jrOd5OAgmzGfK001ZGbniDd/QPqGSrK+kn7Pz0vqb6uk+BNTnGIGTAWV2RE1uLtt+
+	A5puNMevkuN5E27pMBCEOgJximLPZzoUQdDoL/AO7WPzfJdad2Xa4HindIVd5xPkCN/We5Uf/gm
+	PGrQARyjeerHDqLsjen58QdFaa33u5hR9QenksXtssEF8Bc9tcg80XGa8TjBg4F6B3d3GWclcrM
+	VRejmD1c68oaneswuhks+fPITuL0JnKKBqKIkPa3lxxBCoJ4Ggp2l8O7EQayYuMBIvUK0=
+X-Received: by 2002:a05:6808:d4d:b0:479:eb19:6e6a with SMTP id 5614622812f47-4824aa8d2e7mr5636779b6e.34.1778523744113;
+        Mon, 11 May 2026 11:22:24 -0700 (PDT)
 Received: from m2max ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-47c769c9b12sm20749141b6e.17.2026.05.11.11.22.21
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-47c769c9b12sm20749141b6e.17.2026.05.11.11.22.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 May 2026 11:22:21 -0700 (PDT)
+        Mon, 11 May 2026 11:22:22 -0700 (PDT)
 From: Jens Axboe <axboe@kernel.dk>
 To: io-uring@vger.kernel.org
 Cc: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 1/3] io_uring: hold uring_lock when walking link chain in io_wq_free_work()
-Date: Mon, 11 May 2026 12:21:02 -0600
-Message-ID: <20260511182217.226763-2-axboe@kernel.dk>
+Subject: [PATCH 2/3] io_uring: defer linked-timeout chain splice out of hrtimer context
+Date: Mon, 11 May 2026 12:21:03 -0600
+Message-ID: <20260511182217.226763-3-axboe@kernel.dk>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260511182217.226763-1-axboe@kernel.dk>
 References: <20260511182217.226763-1-axboe@kernel.dk>
@@ -92,13 +92,13 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 227D651470F
+X-Rspamd-Queue-Id: 466C9514649
 X-Rspamd-Server: lfdr
 X-Spamd-Result: default: False [-0.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	MID_CONTAINS_FROM(1.00)[];
 	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	R_DKIM_ALLOW(-0.20)[kernel-dk.20251104.gappssmtp.com:s=20251104];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
@@ -108,7 +108,7 @@ X-Spamd-Result: default: False [-0.16 / 15.00];
 	PRECEDENCE_BULK(0.00)[];
 	DMARC_NA(0.00)[kernel.dk];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13268-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-13269-lists,io-uring=lfdr.de];
 	MIME_TRACE(0.00)[0:+];
 	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
@@ -119,42 +119,65 @@ X-Spamd-Result: default: False [-0.16 / 15.00];
 	TAGGED_RCPT(0.00)[io-uring];
 	TO_DN_SOME(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[kernel.dk:email,kernel.dk:mid,kernel-dk.20251104.gappssmtp.com:dkim,sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,kernel.dk:email,kernel.dk:mid,kernel-dk.20251104.gappssmtp.com:dkim]
 X-Rspamd-Action: no action
 
-io_wq_free_work() calls io_req_find_next() from io-wq worker context,
-which reads and clears req->link without holding any lock. This can
-potentially race with other paths that mutate the same chain under
-ctx->uring_lock.
-
-Take ctx->uring_lock around the io_req_find_next() call. Only requests
-with IO_REQ_LINK_FLAGS reach this path, which is not the hot path.
+io_link_timeout_fn() is the hrtimer callback that fires when a linked
+timeout expires. It currently calls io_remove_next_linked(prev) under
+ctx->timeout_lock to splice the timeout request out of the link chain.
+This is the only chain-mutation site that runs without ctx->uring_lock,
+because hrtimer callbacks cannot take a mutex. Defer the splicing until
+the task_work callback.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- io_uring/io_uring.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ io_uring/timeout.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 4ed998d60c09..2ebb0ba37c4f 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -1452,8 +1452,13 @@ struct io_wq_work *io_wq_free_work(struct io_wq_work *work)
- 	struct io_kiocb *nxt = NULL;
+diff --git a/io_uring/timeout.c b/io_uring/timeout.c
+index e2595cae2b07..6353a4d979dc 100644
+--- a/io_uring/timeout.c
++++ b/io_uring/timeout.c
+@@ -284,6 +284,10 @@ static struct io_kiocb *__io_disarm_linked_timeout(struct io_kiocb *req,
+ 	struct io_timeout *timeout = io_kiocb_to_cmd(link, struct io_timeout);
  
- 	if (req_ref_put_and_test_atomic(req)) {
--		if (req->flags & IO_REQ_LINK_FLAGS)
-+		if (req->flags & IO_REQ_LINK_FLAGS) {
-+			struct io_ring_ctx *ctx = req->ctx;
+ 	io_remove_next_linked(req);
 +
-+			mutex_lock(&ctx->uring_lock);
- 			nxt = io_req_find_next(req);
-+			mutex_unlock(&ctx->uring_lock);
-+		}
- 		io_free_req(req);
++	/* If this is NULL, then timer already claimed it and will complete it */
++	if (!timeout->head)
++		return NULL;
+ 	timeout->head = NULL;
+ 	if (hrtimer_try_to_cancel(&io->timer) != -1) {
+ 		list_del(&timeout->list);
+@@ -367,6 +371,14 @@ static void io_req_task_link_timeout(struct io_tw_req tw_req, io_tw_token_t tw)
+ 	int ret;
+ 
+ 	if (prev) {
++		/*
++		 * splice the linked timeout out of prev's chain if the regular
++		 * completion path didn't already do it.
++		 */
++		if (prev->link == req)
++			prev->link = req->link;
++		req->link = NULL;
++
+ 		if (!tw.cancel) {
+ 			struct io_cancel_data cd = {
+ 				.ctx		= req->ctx,
+@@ -401,10 +413,10 @@ static enum hrtimer_restart io_link_timeout_fn(struct hrtimer *timer)
+ 
+ 	/*
+ 	 * We don't expect the list to be empty, that will only happen if we
+-	 * race with the completion of the linked work.
++	 * race with the completion of the linked work. Splice of prev is
++	 * done in io_req_task_link_timeout(), if needed.
+ 	 */
+ 	if (prev) {
+-		io_remove_next_linked(prev);
+ 		if (!req_ref_inc_not_zero(prev))
+ 			prev = NULL;
  	}
- 	return nxt ? &nxt->work : NULL;
 -- 
 2.53.0
 

@@ -1,85 +1,48 @@
-Return-Path: <io-uring+bounces-13318-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13319-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id UFc5OHYPBWrvRwIAu9opvQ
-	(envelope-from <io-uring+bounces-13318-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Thu, 14 May 2026 01:55:34 +0200
+	id gGe/IU4mBWq3SwIAu9opvQ
+	(envelope-from <io-uring+bounces-13319-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Thu, 14 May 2026 03:33:02 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46B0C53C296
-	for <lists+io-uring@lfdr.de>; Thu, 14 May 2026 01:55:34 +0200 (CEST)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1A9053CB9B
+	for <lists+io-uring@lfdr.de>; Thu, 14 May 2026 03:33:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 40BDE3022563
-	for <lists+io-uring@lfdr.de>; Wed, 13 May 2026 23:55:33 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 1748E3014BC7
+	for <lists+io-uring@lfdr.de>; Thu, 14 May 2026 01:32:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AD383CB8E2;
-	Wed, 13 May 2026 23:55:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b="g5xNXmgT"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72FE22FF164;
+	Thu, 14 May 2026 01:32:57 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 111AE38D400
-	for <io-uring@vger.kernel.org>; Wed, 13 May 2026 23:55:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80BAE31A053;
+	Thu, 14 May 2026 01:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778716532; cv=none; b=YoXJCr4LtzatUGOqiJOkYiubgFhNY66S3fhdPIfRIEFeKyFyNCpaUWvWfBSCZvhH9LtNKyiqEnZwQ2R0MmfrPBAu0N6+MDRSigoObsdLY1d8y2aGZj+VvXM/94Gt/qsIl14/l2DazGzkoED+fSc+DexKSqa/HTVP5c/wg8Rvodg=
+	t=1778722377; cv=none; b=Cdgkzdu91Da5MC5bvzb8bg3c6btI/ad5YVEYPtAjywfcYpspf8Fh9xfs9cbpR1UTZXYIGa9XZCTSqO/peCzibrqGv/7MnOhl6ErHtzWIRWMQK997Nc00wgFoEjb2RK18ZsPNXCLJQn68pXT5I+PKDIOQQH/psbfTYvVElIHumKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778716532; c=relaxed/simple;
-	bh=/VCUPSYTwU5lk68z074TX5RVkw/mp+1Mh5MFOSlSLbw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TUtAi/8uQ/2YSIe2LMnRcVGwDoUpZTZfjboNb0ZXNGZe+9kyenN798Qoo6A/nBRLIjWqhkCeHc0nJcbrYyBHrsKEtsctHQULwj4KbUxwAzz/3l6vwYvgv+eo0FzAhWuJN8RxgSrRgpIDsXVzhTaHfSC4E89t9sv8mO/9ZIY4ZTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=g5xNXmgT; arc=none smtp.client-ip=209.85.210.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-7dbd23bc684so4207181a34.2
-        for <io-uring@vger.kernel.org>; Wed, 13 May 2026 16:55:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1778716529; x=1779321329; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+STMRzOjKsrkBq3aIptVEGpXFmaW8TA3EJXL5xx0koI=;
-        b=g5xNXmgT9jfKrr0ppNL4gDriac8Ul99K0PQgHENCnhk26Ox6t+i2SlTSG/4Y8MHBqz
-         8dkPWYIYharw5AlAnGdYgyQbvBC+GOGhhLyDANm7FWOWeDHoMKFOTQfCjN6XlSFNBr8d
-         33+JATRELd+6FIPeEhCBFjTYAXweIIoX61LgeNuzB7QKpggjR0hHo7ZR2cHb1xtoUJ5g
-         NA9OD5i5M+I81WK1F3CukAqPHvG3Bjv+pBPsl74OQFdKphIhpMfj9Mle9+mlRl/ekEyN
-         4h3etwCSeAsU9J1MpUzZbVmeYIzluCCkxZf4JFbb8Z9Uhny88Lt0y0v3z7IrFZX1+hKG
-         TSJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778716529; x=1779321329;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+STMRzOjKsrkBq3aIptVEGpXFmaW8TA3EJXL5xx0koI=;
-        b=gyxKy0OayfHshNDmW6/PFgkUQCzV4yvLKu1sKkVKk9ZHZunOWKhEJtAOMQN/uWEAq+
-         OM+pCE4+4OBt5fi1c3/1HGsjO11Go1+yf2LUW/Z3OyAEcY4gV5PxfBBnQHRxev3o9ZK9
-         rFLsiQDMbHKI41D+agjUDfZCCXGTyQnaKvuxaZrye2xVF28FxoZF2uRceFxnexas/Moy
-         wZYbOoQhsx1H5pjXNjguKRwHrtclXC126gKumr1mLsRh/s+M6aq3F/epHBIEkhBlYdZh
-         o+CrtcHOCRoahZu//chSaIqhEzKgsVS9UoQFYJo+ekyKB1/45lNrERxkd50uQScotlfF
-         hRGg==
-X-Forwarded-Encrypted: i=1; AFNElJ9Ii87MP7PPYsvMo1EfI1Dbw1eKml/SEwf4+zUjFI7SUU6oMmjErjbl1Uk+Yjz/+u2vmxhTeFJp3Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUPjEWy2t+6JxMP3SpwzQf6dIixQTCsqs1zG9B6kFPPPUj8kDX
-	XhykPiltP2vvrA+utI1lBOMPseJQraAKvLPPGvNnlUFB4Gvc7xNg2g/YcQEk/1sjzzg=
-X-Gm-Gg: Acq92OGcQf27pzCXaROR3MAaEq0+NKcJH83F0jD289+PuBKkR4TEqcuMGaZOGheK21K
-	jQGkfPD5Q7/QvOGk/p9JyAD+I67+iFOgnJUv9JaUmselvvhs5iKI0AU46BMDz8ILKdxFUK9/xUn
-	JoKxZDzRvYu04R0hJ/8Qw6X6l69OyT8376fqyd1I7Z5fI+ZRdAzyTvs7WTIxNIAugcM21wqZyIG
-	WrNDeQIKBO+TuxAgGBLvvEDexyDSPOnlC1xOeCARGL/ZVHn2Minp8Ob/AJ+QHeaSFNUGpkSHtyQ
-	k50MfMdSjJyWmA6fO0puZrFxRRdyDaSPiRKMo4+GZj/WW09Jop2pciKXwi+x/c0TDQh9UYJP9QE
-	zmZNrPY9lz4fInatuy4cVaLkesgHK9lKXo1XEyyUa/FnFMfUOkIIz6I8TNeEqCsct1N6Sw2Dlss
-	spcbarQyiNR0rNuecB7VJ/Z3pZLxkpuirLnfQU6wgf4t81W/u8Vkj5RYdqBtLaZFIPdkS7PUbUj
-	txiU1g2Yw==
-X-Received: by 2002:a05:6830:3805:b0:7dd:e032:3cdf with SMTP id 46e09a7af769-7e3da49b6f5mr3549354a34.19.1778716529041;
-        Wed, 13 May 2026 16:55:29 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7e3f3e8b76esm679586a34.13.2026.05.13.16.55.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 May 2026 16:55:28 -0700 (PDT)
-Message-ID: <d1098d70-30ca-487e-8e01-b8537eb23ade@kernel.dk>
-Date: Wed, 13 May 2026 17:55:27 -0600
+	s=arc-20240116; t=1778722377; c=relaxed/simple;
+	bh=X1Y0VIR9BQZwAP6ngkxtYijkqaCrKOH0thxIzz4qs88=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=DqdbluKzzWXdprdZX6+uOX/kC8olXrb6rudn1z+vGmWFCeG+xWyNltQI4hqPO+WWXEPB0TCxt6Kna5Rv8nooMAZH4o2ggSAZtXk2M3im9n/nNWa+PQELc6oyJiBDrvZv8zHH/uJrr/VRM/PhZuEKDfzsFi4o4M3+lAUElgAO8WQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.198])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4gGCVL3WXyzKHMQy;
+	Thu, 14 May 2026 09:31:54 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 69B8740574;
+	Thu, 14 May 2026 09:32:49 +0800 (CST)
+Received: from [10.174.176.179] (unknown [10.174.176.179])
+	by APP4 (Coremail) with SMTP id gCh0CgAX31o4JgVqOPvdCA--.34519S3;
+	Thu, 14 May 2026 09:32:49 +0800 (CST)
+Message-ID: <b4c6d8c5-1423-4443-b3c4-92c399e0cb6d@huaweicloud.com>
+Date: Thu, 14 May 2026 09:32:40 +0800
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -87,103 +50,117 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring/rsrc: use refcount_t for io_rsrc_node.refs
-To: Oleg Sevostyanov <savant05@gmail.com>, io-uring@vger.kernel.org
-Cc: Pavel Begunkov <asml.silence@gmail.com>
-References: <CAJv4CsvbaJd5GoHjYPzi3bgEO0fPT-3xj+UV7JMhqTyh2qr5tg@mail.gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CAJv4CsvbaJd5GoHjYPzi3bgEO0fPT-3xj+UV7JMhqTyh2qr5tg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 46B0C53C296
+From: Zizhi Wo <wozizhi@huaweicloud.com>
+Subject: Re: [PATCH] io_uring: validate user-controlled cq.head in
+ io_cqe_cache_refill()
+To: Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com,
+ io-uring@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, yangerkun@huawei.com,
+ chengzhihao1@huawei.com
+References: <20260513063254.1122354-1-wozizhi@huaweicloud.com>
+ <f8dc69f8-7191-4c60-a2a3-2fa85a089927@kernel.dk>
+ <36e2e080-0fe0-4108-8a27-3be8b10ef97b@kernel.dk>
+In-Reply-To: <36e2e080-0fe0-4108-8a27-3be8b10ef97b@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAX31o4JgVqOPvdCA--.34519S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7CFW5JFWruryDuw1DtFykGrg_yoW8Aw1xpF
+	WUt3WYgrZYvry7Ka4DZr4rtryftrsFyrs3JrWfGa4UtFyfuFnxKF1rKryFkFWvvrZ7Cr12
+	yFsI9rZIyrs8ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUylb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUFKZXUUUUU
+X-CM-SenderInfo: pzr2x6tkl6x35dzhxuhorxvhhfrp/
+X-Rspamd-Queue-Id: B1A9053CB9B
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [-1.46 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
-	R_DKIM_ALLOW(-0.20)[kernel-dk.20251104.gappssmtp.com:s=20251104];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[gmail.com];
-	DMARC_NA(0.00)[kernel.dk];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-13319-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com,vger.kernel.org];
-	TAGGED_FROM(0.00)[bounces-13318-lists,io-uring=lfdr.de];
-	DKIM_TRACE(0.00)[kernel-dk.20251104.gappssmtp.com:+];
-	RCPT_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
+	DMARC_NA(0.00)[huaweicloud.com];
+	FREEMAIL_TO(0.00)[kernel.dk,gmail.com,vger.kernel.org];
 	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_FIVE(0.00)[5];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	NEURAL_HAM(-0.00)[-1.000];
+	TO_DN_SOME(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	FROM_HAS_DN(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[wozizhi@huaweicloud.com,io-uring@vger.kernel.org];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_COUNT_FIVE(0.00)[6];
+	R_DKIM_NA(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
 	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[huaweicloud.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
 X-Rspamd-Action: no action
 
-On 5/13/26 5:15 PM, Oleg Sevostyanov wrote:
-> Hello,
+
+
+在 2026/5/13 22:20, Jens Axboe 写道:
+> On 5/13/26 8:18 AM, Jens Axboe wrote:
+>> On 5/13/26 12:32 AM, Zizhi Wo wrote:
+>>> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+>>> index 4ed998d60c09..92e255e9e08f 100644
+>>> --- a/io_uring/io_uring.c
+>>> +++ b/io_uring/io_uring.c
+>>> @@ -710,11 +710,13 @@ static bool io_fill_nop_cqe(struct io_ring_ctx *ctx, unsigned int off)
+>>>    * fill the cq entry
+>>>    */
+>>>   bool io_cqe_cache_refill(struct io_ring_ctx *ctx, bool overflow, bool cqe32)
+>>>   {
+>>>   	struct io_rings *rings = ctx->rings;
+>>> -	unsigned int off = ctx->cached_cq_tail & (ctx->cq_entries - 1);
+>>> +	unsigned int head = READ_ONCE(ctx->rings->cq.head);
+>>> +	unsigned int tail = ctx->cached_cq_tail;
+>>> +	unsigned int off = tail & (ctx->cq_entries - 1);
+>>>   	unsigned int free, queued, len;
+>>
+>> This looks wrong, as you're snapshotting 'tail' while it could get
+>> modified by if a nop fill before the refill happens. And fwiw, looks
+>> like the refill part potentially suffers from the same unsigned issue.
 > 
-> This patch converts the refs field in struct io_rsrc_node from plain
-> int to refcount_t.
+
+Yes. I wasn't aware of io_fill_nop_cqe(), the fact that
+cached_cq_tail can be modified between the snapshot and the refill
+was missed. The same oversight also means the unsigned issue in that
+function went unnoticed...
+
+> To be clearer, I think you want to add a helper ala:
 > 
-> Background
-> ----------
-> During a static analysis pass of io_uring/rsrc.{c,h} I examined all
-> sites that touch io_rsrc_node.refs:
+> static unsigned int io_cqring_queued(struct io_ring_ctx *ctx)
+> {
+> 	struct io_rings *rings = io_get_rings(ctx);
+> 	int diff;
 > 
->   - io_rsrc_node_alloc()     rsrc.c:147   initialises to 1
->   - io_buf_node_lookup()     rsrc.c:1117  refs++ under io_ring_submit_lock
->   - io_clone_buffers() x2    rsrc.c:1199  refs++ under uring_lock (lockdep_assert_held
->                              rsrc.c:1232  asserted on both ctx's)
->   - io_put_rsrc_node()       rsrc.h:107   --refs under uring_lock
+> 	diff = (int)( ctx->cached_cq_tail - READ_ONCE(rings->cq.head));
+> 	if (diff >= 0)
+>          	return min((unsigned int) diff, ctx->cq_entries);
+> 	return 0;
+> }
 > 
-> All four sites are correctly guarded by ctx->uring_lock, so there is no
-> present race or overflow risk.  This is a defence-in-depth change only.
+> or something like that, and then use it in both spots. Would make for a
+> cleaner fix, too.
 > 
-> Rationale
-> ---------
-> io_mapped_ubuf (defined in the same header, rsrc.h:40) already uses
-> refcount_t for its own refs field.  Aligning io_rsrc_node to the same
-> convention:
 
-Because those can be shared across rings (cloning buffers), hence we
-cannot rely on the ring lock for that.
+Thanks for the suggestion. I'll send a v2 using this helper in both
+spots.
 
->   1. Gives lockless overflow/underflow detection "for free" on kernels
->      built with REFCOUNT_FULL or on architectures that provide
->      REFCOUNT_ARCH_OPTIMIZED (x86 since 4.14).
+Thanks,
+Zizhi Wo
 
-It's certainly not "for free".
-
->   2. Makes it harder for a future patch that removes or relaxes locking
->      to silently introduce a refcount bug?the saturating behaviour of
->      refcount_t would catch wraps and emit a WARN_ONCE before a
->      use-after-free could occur.
-
-You could just add a lockdep assert for that.
-
->   3. Self-documents the intent: the field is a reference counter, not an
->      arbitrary signed integer.
-
-I mean, it's named ->refs, you'd think that'd make it clear enough.
-
-> No functional change is intended.  I do not have a stable kernel build
-> environment that includes the full io_uring tree, so I am unable to
-> provide a Tested-by, but the patch compiles cleanly against the 6.8
-> source tree (io_uring/ sparse checkout).
-
-So in other words, you didn't even test this? And it's against an
-ancient kernel?
-
-None of that matters though, as that's a hard no on this patch.
-
--- 
-Jens Axboe
 

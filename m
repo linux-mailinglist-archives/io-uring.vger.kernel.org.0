@@ -1,166 +1,218 @@
-Return-Path: <io-uring+bounces-13319-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13320-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id gGe/IU4mBWq3SwIAu9opvQ
-	(envelope-from <io-uring+bounces-13319-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Thu, 14 May 2026 03:33:02 +0200
+	id CFDnHykyBWonTQIAu9opvQ
+	(envelope-from <io-uring+bounces-13320-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Thu, 14 May 2026 04:23:37 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1A9053CB9B
-	for <lists+io-uring@lfdr.de>; Thu, 14 May 2026 03:33:01 +0200 (CEST)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B43853D004
+	for <lists+io-uring@lfdr.de>; Thu, 14 May 2026 04:23:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 1748E3014BC7
-	for <lists+io-uring@lfdr.de>; Thu, 14 May 2026 01:32:58 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id DA9AB3008D31
+	for <lists+io-uring@lfdr.de>; Thu, 14 May 2026 02:23:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72FE22FF164;
-	Thu, 14 May 2026 01:32:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C8723909C;
+	Thu, 14 May 2026 02:23:30 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
 Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80BAE31A053;
-	Thu, 14 May 2026 01:32:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AEE9301465;
+	Thu, 14 May 2026 02:23:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778722377; cv=none; b=Cdgkzdu91Da5MC5bvzb8bg3c6btI/ad5YVEYPtAjywfcYpspf8Fh9xfs9cbpR1UTZXYIGa9XZCTSqO/peCzibrqGv/7MnOhl6ErHtzWIRWMQK997Nc00wgFoEjb2RK18ZsPNXCLJQn68pXT5I+PKDIOQQH/psbfTYvVElIHumKc=
+	t=1778725410; cv=none; b=YhWscl45gZ2S2xAfjy2P00KoHsix6KUPluXqDWYyeYUb16ogwMarPwmxF+EWT/1P+/OJvbIT2bvUpLjT6olNNU3fXjhu7Qt8QE6mkjKbGRsufGeecdFtU7x/rK5KcfBenydH8IzNVn/nUpiJDnGK/KrhLgkvuz3yigzNmhG5nLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778722377; c=relaxed/simple;
-	bh=X1Y0VIR9BQZwAP6ngkxtYijkqaCrKOH0thxIzz4qs88=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=DqdbluKzzWXdprdZX6+uOX/kC8olXrb6rudn1z+vGmWFCeG+xWyNltQI4hqPO+WWXEPB0TCxt6Kna5Rv8nooMAZH4o2ggSAZtXk2M3im9n/nNWa+PQELc6oyJiBDrvZv8zHH/uJrr/VRM/PhZuEKDfzsFi4o4M3+lAUElgAO8WQ=
+	s=arc-20240116; t=1778725410; c=relaxed/simple;
+	bh=/TiMFHPsCvDmxQZ3ePA7DgzU3oRpeZPGiAsNLCdvnw0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=g0uDBiflu6SSWeh/64mq+nU760EjxqF8qHrqjL/A4e6P0LUiLz1fLY6RNJCg1v7avwQVzIW2ACSobHXxo7f6uuLDkZHKIx+D+RiwwTCpM3Pq8eUF80OK8R+jn3d33JZ03vrEcfLus4gMqnVAlzaftJ+IvoYQU/iTNyfANnbr4qc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.198])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4gGCVL3WXyzKHMQy;
-	Thu, 14 May 2026 09:31:54 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.177])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4gGDch3T16zKHMh6;
+	Thu, 14 May 2026 10:22:28 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 69B8740574;
-	Thu, 14 May 2026 09:32:49 +0800 (CST)
-Received: from [10.174.176.179] (unknown [10.174.176.179])
-	by APP4 (Coremail) with SMTP id gCh0CgAX31o4JgVqOPvdCA--.34519S3;
-	Thu, 14 May 2026 09:32:49 +0800 (CST)
-Message-ID: <b4c6d8c5-1423-4443-b3c4-92c399e0cb6d@huaweicloud.com>
-Date: Thu, 14 May 2026 09:32:40 +0800
+	by mail.maildlp.com (Postfix) with ESMTP id 6E10040592;
+	Thu, 14 May 2026 10:23:23 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.50.85.155])
+	by APP4 (Coremail) with SMTP id gCh0CgD3v1sbMgVqcFDiCA--.36578S4;
+	Thu, 14 May 2026 10:23:23 +0800 (CST)
+From: Zizhi Wo <wozizhi@huaweicloud.com>
+To: axboe@kernel.dk,
+	asml.silence@gmail.com,
+	io-uring@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	yangerkun@huawei.com,
+	chengzhihao1@huawei.com,
+	wozizhi@huaweicloud.com
+Subject: [PATCH V2] io_uring: validate user-controlled cq.head in io_cqe_cache_refill()
+Date: Thu, 14 May 2026 10:18:47 +0800
+Message-ID: <20260514021847.4062782-1-wozizhi@huaweicloud.com>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Zizhi Wo <wozizhi@huaweicloud.com>
-Subject: Re: [PATCH] io_uring: validate user-controlled cq.head in
- io_cqe_cache_refill()
-To: Jens Axboe <axboe@kernel.dk>, asml.silence@gmail.com,
- io-uring@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, yangerkun@huawei.com,
- chengzhihao1@huawei.com
-References: <20260513063254.1122354-1-wozizhi@huaweicloud.com>
- <f8dc69f8-7191-4c60-a2a3-2fa85a089927@kernel.dk>
- <36e2e080-0fe0-4108-8a27-3be8b10ef97b@kernel.dk>
-In-Reply-To: <36e2e080-0fe0-4108-8a27-3be8b10ef97b@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAX31o4JgVqOPvdCA--.34519S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7CFW5JFWruryDuw1DtFykGrg_yoW8Aw1xpF
-	WUt3WYgrZYvry7Ka4DZr4rtryftrsFyrs3JrWfGa4UtFyfuFnxKF1rKryFkFWvvrZ7Cr12
-	yFsI9rZIyrs8ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUylb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUFKZXUUUUU
+X-CM-TRANSID:gCh0CgD3v1sbMgVqcFDiCA--.36578S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxZr1DGFW7GrWxKF1fCryfZwb_yoWrCrWfpF
+	WYkw15Xry0vryUGa9Ivw4xJrWfKws3JrsrGrWxG34jyr4Y9FnIgF1DKrW5CFy2vrWkZr12
+	qFsavrWqkF45ZaDanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
+	JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
+	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIY
+	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
+	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
+	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUr2-eDU
+	UUU
 X-CM-SenderInfo: pzr2x6tkl6x35dzhxuhorxvhhfrp/
-X-Rspamd-Queue-Id: B1A9053CB9B
+X-Rspamd-Queue-Id: 7B43853D004
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-1.46 / 15.00];
+X-Spamd-Result: default: False [1.54 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10];
+	R_MISSING_CHARSET(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13319-lists,io-uring=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	DMARC_NA(0.00)[huaweicloud.com];
 	FREEMAIL_TO(0.00)[kernel.dk,gmail.com,vger.kernel.org];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	FROM_HAS_DN(0.00)[];
+	TAGGED_FROM(0.00)[bounces-13320-lists,io-uring=lfdr.de];
+	DMARC_NA(0.00)[huaweicloud.com];
+	RCVD_TLS_LAST(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
+	RCPT_COUNT_SEVEN(0.00)[7];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[wozizhi@huaweicloud.com,io-uring@vger.kernel.org];
-	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
 	RCVD_COUNT_FIVE(0.00)[6];
+	NEURAL_HAM(-0.00)[-0.998];
+	TO_DN_NONE(0.00)[];
 	R_DKIM_NA(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[huaweicloud.com:mid,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,fedora:email,huawei.com:email]
 X-Rspamd-Action: no action
 
+From: Zizhi Wo <wozizhi@huawei.com>
 
+[BUG]
+A fuzzing run reproduced an unkillable io_uring task stuck at ~100% CPU:
 
-在 2026/5/13 22:20, Jens Axboe 写道:
-> On 5/13/26 8:18 AM, Jens Axboe wrote:
->> On 5/13/26 12:32 AM, Zizhi Wo wrote:
->>> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
->>> index 4ed998d60c09..92e255e9e08f 100644
->>> --- a/io_uring/io_uring.c
->>> +++ b/io_uring/io_uring.c
->>> @@ -710,11 +710,13 @@ static bool io_fill_nop_cqe(struct io_ring_ctx *ctx, unsigned int off)
->>>    * fill the cq entry
->>>    */
->>>   bool io_cqe_cache_refill(struct io_ring_ctx *ctx, bool overflow, bool cqe32)
->>>   {
->>>   	struct io_rings *rings = ctx->rings;
->>> -	unsigned int off = ctx->cached_cq_tail & (ctx->cq_entries - 1);
->>> +	unsigned int head = READ_ONCE(ctx->rings->cq.head);
->>> +	unsigned int tail = ctx->cached_cq_tail;
->>> +	unsigned int off = tail & (ctx->cq_entries - 1);
->>>   	unsigned int free, queued, len;
->>
->> This looks wrong, as you're snapshotting 'tail' while it could get
->> modified by if a nop fill before the refill happens. And fwiw, looks
->> like the refill part potentially suffers from the same unsigned issue.
-> 
+    [root@fedora io_uring_stress]# ps -ef | grep io_uring
+    root  1240  1  99 13:36 ?  00:01:35 [io_uring_stress] <defunct>
 
-Yes. I wasn't aware of io_fill_nop_cqe(), the fact that
-cached_cq_tail can be modified between the snapshot and the refill
-was missed. The same oversight also means the unsigned issue in that
-function went unnoticed...
+The task loops inside io_cqring_wait() and never returns to userspace, and
+SIGKILL has no effect.
 
-> To be clearer, I think you want to add a helper ala:
-> 
-> static unsigned int io_cqring_queued(struct io_ring_ctx *ctx)
-> {
-> 	struct io_rings *rings = io_get_rings(ctx);
-> 	int diff;
-> 
-> 	diff = (int)( ctx->cached_cq_tail - READ_ONCE(rings->cq.head));
-> 	if (diff >= 0)
->          	return min((unsigned int) diff, ctx->cq_entries);
-> 	return 0;
-> }
-> 
-> or something like that, and then use it in both spots. Would make for a
-> cleaner fix, too.
-> 
+[CAUSE]
+The CQ ring exposes rings->cq.head to userspace as writable, while the
+authoritative tail lives in kernel-private ctx->cached_cq_tail.
+io_cqe_cache_refill() computes free space as an unsigned subtraction:
 
-Thanks for the suggestion. I'll send a v2 using this helper in both
-spots.
+    free = ctx->cq_entries - min(tail - head, ctx->cq_entries);
 
-Thanks,
-Zizhi Wo
+If userspace keeps head within [0, tail], the subtraction is well defined
+and min() just acts as a defensive clamp. But if userspace advances head
+past tail, (tail - head) wraps to a huge value, free becomes 0, and
+io_cqe_cache_refill() fails. The CQE is pushed onto the overflow list and
+IO_CHECK_CQ_OVERFLOW_BIT is set.
+
+The wait loop in io_cqring_wait() relies on an invariant: refill() only
+fails when the CQ is *physically* full, in which case rings->cq.tail has
+been advanced to iowq->cq_tail and io_should_wake() returns true. The
+tampered head breaks this: refill() fails while the ring is not full, no
+OCQE is copied in, rings->cq.tail never catches up, io_should_wake() stays
+false, and io_cqring_wait_schedule() keeps returning early because
+IO_CHECK_CQ_OVERFLOW_BIT is still set. The result is a tight retry loop
+that never returns to userspace.
+
+[FIX]
+Introduce io_cqring_queued() as the single point that converts the
+(tail, head) pair into a trustworthy queued count. Since the real
+head/tail distance is bounded by cq_entries (far below 2^31),
+a signed comparison reliably detects userspace moving head past tail;
+in that case treat the queue as empty so callers see the full cache as
+free and forward progress is preserved.
+
+CQEs that would otherwise be delivered may be lost when the application
+corrupts its own head pointer, but that is an application-visible
+consequence of its own action; the kernel's responsibility here is limited
+to keeping the task killable and making forward progress.
+
+Suggested-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
+---
+ io_uring/io_uring.c |  5 ++---
+ io_uring/wait.h     | 19 +++++++++++++++++++
+ 2 files changed, 21 insertions(+), 3 deletions(-)
+
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 4ed998d60c09..458f4a53179f 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -692,7 +692,7 @@ static struct io_overflow_cqe *io_alloc_ocqe(struct io_ring_ctx *ctx,
+  */
+ static bool io_fill_nop_cqe(struct io_ring_ctx *ctx, unsigned int off)
+ {
+-	if (__io_cqring_events(ctx) < ctx->cq_entries) {
++	if (io_cqring_queued(ctx) < ctx->cq_entries) {
+ 		struct io_uring_cqe *cqe = &ctx->rings->cqes[off];
+ 
+ 		cqe->user_data = 0;
+@@ -733,8 +733,7 @@ bool io_cqe_cache_refill(struct io_ring_ctx *ctx, bool overflow, bool cqe32)
+ 		off = 0;
+ 	}
+ 
+-	/* userspace may cheat modifying the tail, be safe and do min */
+-	queued = min(__io_cqring_events(ctx), ctx->cq_entries);
++	queued = io_cqring_queued(ctx);
+ 	free = ctx->cq_entries - queued;
+ 	/* we need a contiguous range, limit based on the current array offset */
+ 	len = min(free, ctx->cq_entries - off);
+diff --git a/io_uring/wait.h b/io_uring/wait.h
+index a4274b137f81..b987837b9051 100644
+--- a/io_uring/wait.h
++++ b/io_uring/wait.h
+@@ -50,4 +50,23 @@ static inline unsigned io_cqring_events(struct io_ring_ctx *ctx)
+ 	return __io_cqring_events(ctx);
+ }
+ 
++/*
++ * Compute queued CQEs for free-space calculation, clamped to cq_entries.
++ *
++ * rings->cq.head is user-writable. If userspace advances it past
++ * cached_cq_tail, an unsigned (tail - head) underflows to a huge
++ * value, which traps io_cqring_wait() in an unkillable loop via the
++ * overflow path. Use a signed comparison to handle it.
++ */
++static inline unsigned int io_cqring_queued(struct io_ring_ctx *ctx)
++{
++	struct io_rings *rings = io_get_rings(ctx);
++	int diff;
++
++	diff = (int)(ctx->cached_cq_tail - READ_ONCE(rings->cq.head));
++	if (diff >= 0)
++		return min((unsigned int)diff, ctx->cq_entries);
++	return 0;
++}
++
+ #endif
+-- 
+2.52.0
 
 

@@ -1,125 +1,197 @@
-Return-Path: <io-uring+bounces-13355-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13356-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id IGLuOVgtB2oLsgIAu9opvQ
-	(envelope-from <io-uring+bounces-13355-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Fri, 15 May 2026 16:27:36 +0200
+	id qIq+NqMrB2oLsgIAu9opvQ
+	(envelope-from <io-uring+bounces-13356-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Fri, 15 May 2026 16:20:19 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B03955169A
-	for <lists+io-uring@lfdr.de>; Fri, 15 May 2026 16:27:36 +0200 (CEST)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54585551448
+	for <lists+io-uring@lfdr.de>; Fri, 15 May 2026 16:20:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id C126F3074818
-	for <lists+io-uring@lfdr.de>; Fri, 15 May 2026 14:11:23 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 53AF73040C55
+	for <lists+io-uring@lfdr.de>; Fri, 15 May 2026 14:14:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49A6648BD4E;
-	Fri, 15 May 2026 14:11:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C358D48097A;
+	Fri, 15 May 2026 14:14:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CFuvn7v0"
+	dkim=pass (2048-bit key) header.d=bitbyteword.org header.i=@bitbyteword.org header.b="f9gkMcn0"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx1-f45.google.com (mail-yx1-f45.google.com [74.125.224.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 227BD1C861D;
-	Fri, 15 May 2026 14:11:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778854275; cv=none; b=l18+llxMUEk2U7xqBGOGDSROM7fxxeboYaosFbLYIBhIPTgFPAe0bcjVqPybeBvuJacinA9nKzADXiIk7Ov5O7r6xBq1mxWkLLGE8587N3B9eD65DCkWb9QmRKSjbbtnU48VMpcT639AHsH2w4CpEXFz4B9ZJbgaU/4k4ELmSbY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778854275; c=relaxed/simple;
-	bh=v59ub3zIM85ceK9Xm+l25zDa14dRJ1t2DbhpmYfwjyw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qim5lp60HHkXK73MGEM8CuZ9CY/2VtXT+Ps8ZOWFDZRodWTIuGxc3YQi3oZLuxTYA/HuDHqEHU5TCY2LnvJ5i6MxVbvAUqDucXKhLB1DEQX4ar4pDPaPblTJn+w+IdOtI+Si4fkEektcjekWhjVsAPQFDw0C5O/hz1xZPkAThDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CFuvn7v0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB3F1C2BCB0;
-	Fri, 15 May 2026 14:11:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778854275;
-	bh=v59ub3zIM85ceK9Xm+l25zDa14dRJ1t2DbhpmYfwjyw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CFuvn7v0swDt+59PtYgfGSi593aL2XuMvHcb/bjh+5M9RQ3ExSSuHL7CQSgc4Skv1
-	 OrwDYkJPfAoc/lK7y83g0RCQ1sjjSQ6+TYhzvFwkTmUc3LvI1bf/84BlKrbXKOiZsB
-	 QmzIdxVjTaR4GzC1ElPzmSUlHy3c7ptzDx+VjSrzspl8F/BK8zScFg68X3mUBGTjhW
-	 o2AJ/BwBG3QDAyDYUJ3J2RYOWsGFiKHJxbOlt7qXsJfsYQsEM7zcbzZQbKAY40Tn23
-	 F/ME+pQjh4WA9YGliILehGvN1BXoQpjkTUjmIfKlYgH+Bl9uQDftx0tQXgUTm12+nq
-	 KU8QEV+BGJBXQ==
-Date: Fri, 15 May 2026 10:11:13 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: patches@lists.linux.dev, stable@vger.kernel.org,
-	Maoyi Xie <maoyixie.tju@gmail.com>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Maoyi Xie <maoyi.xie@ntu.edu.sg>, io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 7.0] io_uring/wait: honour caller's time
- namespace for IORING_ENTER_ABS_TIMER
-Message-ID: <agcpgQ9OPLLP7c5Y@laps>
-References: <20260511221931.2370053-1-sashal@kernel.org>
- <20260511221931.2370053-13-sashal@kernel.org>
- <e12d01e9-8934-4150-bcb3-09ba147fc842@kernel.dk>
- <96e5ee2d-a64b-408a-ba7f-e9ca25952959@kernel.dk>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6359D3CC7C5
+	for <io-uring@vger.kernel.org>; Fri, 15 May 2026 14:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1778854489; cv=pass; b=o9hJTt1mfuduBaQMr7uON/e3aS7bLT11ZbbTl4757Brj+nO2+ppuUCSwTBUj+O0c3Jj3Ztd15dfI4XA1E7ZsgeeJjLftwt2kTw83f11fIIfSf0HzcB6tSIURtw0iPwHyWEHCP2CicqRp47KGDrDI6NFjPFggExbHVB1ltBx6gdA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1778854489; c=relaxed/simple;
+	bh=JJFMGNt3smn/nRo+9rSXfk4rP7ZcWNohnOcxUFIEH/c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BnnNNQ0/yJ8NMP5UJW0N4kHnIcy6Wd0IAlnZ5wODl1RD7xGi4PveIsHYfGeW8qcWBYwa7HJ0z+rzQ2hW2TYub0CPjfYF/Yky9MW57AgRn6Tvq/nDtxQkrduAHrxQsSH7v0BMU/BlPwFyGcugSDAEixf5Zmyi41efGRowUJN0ymg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bitbyteword.org; spf=pass smtp.mailfrom=bitbyteword.org; dkim=pass (2048-bit key) header.d=bitbyteword.org header.i=@bitbyteword.org header.b=f9gkMcn0; arc=pass smtp.client-ip=74.125.224.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bitbyteword.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bitbyteword.org
+Received: by mail-yx1-f45.google.com with SMTP id 956f58d0204a3-65c477a3278so11742528d50.3
+        for <io-uring@vger.kernel.org>; Fri, 15 May 2026 07:14:48 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1778854487; cv=none;
+        d=google.com; s=arc-20240605;
+        b=bzxm0fzr+EjOItu9WOcPl+beKs0CYFUqnNkEEcWT/WF3j1yTa05x+ShzO/5AyBHxbw
+         l54wm2X+/498Tk/uJUkx2080VwZYFQv21xu0go0PSO11uQBRBkHp+tWXF6YWuv7Y5z/l
+         Ha999L7ztVW0515k8H1NskNvts7Vpd6gT8SiiAOmkj9L6SA4wZQjFpp7HtDk7ybekMlb
+         a1UjFMfpMbdbbbAhnt3wK4TlGBuOGXgRpEgR6o8k83Gt3TuMaLJfAcjoZfEpsy5d49D6
+         Fo6SYOJpxxuB1Tf9DeOnqAf2nta222tTkUZNJHAFZtKK4Z7PVlotGkkPScCPmBwsTRXC
+         oIhQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=JJFMGNt3smn/nRo+9rSXfk4rP7ZcWNohnOcxUFIEH/c=;
+        fh=SjoEcHsaSGbExf5n+EIzxtSD3492n/xLQy0xlPmAS0o=;
+        b=evG7DuajHLzqLfNLinBu3tLdckIHuAyGzM2c8cbDl6uU2F8SUw4rJXOezigiRilw6E
+         fWu4oS6HSzKpUNlEldVUOAHxxVQCfuQQBrcAewkKaUULc366RWsrSABZ/HvTpGlb3OA+
+         SUIskPdM847srq/kbe3TYjZa2mt1e0gaREf4WfOoBi4ugUE1nzRjgC9YTPsLqYSrx3Ms
+         cN4Rx33ciMLL8Bucpktm7kZoEzfnbDGykbJuCD6rfoH9gc1JjR24FICQorOB1emFSoGD
+         eN6VxRLKmgvirgfLbRmkJk27XUycCWoyS/feiCvCAVwvxc7AZjD9k2FSUXTwWBaBc4Xx
+         fdBA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bitbyteword.org; s=google; t=1778854487; x=1779459287; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JJFMGNt3smn/nRo+9rSXfk4rP7ZcWNohnOcxUFIEH/c=;
+        b=f9gkMcn0+zZUc4O+wXYzpeqXNTjdOOUXo5oQRYPfrZ9kQaKhILsKiWalhlD3yFcWmx
+         OG2ZFnV6n0Y7v7lkKl6zKaLjGNvlC0n7oWoJk/xos2QeZMlqbp5yl+HiT6W7H8uarXDg
+         MmOqwN5u7HgKlcmgNhE7k5IMMUhogHhYwIAKqOhtjMSKyXfAQdDlAd9vdwSJj2YRBCqZ
+         KqxsMtNPRGpbaSrHhaBacDaO1MexeRULlACItSx0EdMx3L8p1Oo3A+h88xqV86ylKCpJ
+         CN4fBylVApV35Ov7rMJlG2zLRHSXo/aOfibfp+4gt0HDHPnAfVfXtyE5DeqaBykLyfNp
+         KQCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778854487; x=1779459287;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=JJFMGNt3smn/nRo+9rSXfk4rP7ZcWNohnOcxUFIEH/c=;
+        b=lediKrxj7bFuzmpl06D0FNr+vhugytbLjqJsu/IKksDTi89Y58DU3EglH2fzw+gaAB
+         WN/aoGJHbweecZ6ir9TiwyioThNalr78JQVUqww2NgMUm7CxY4IRQ3DaWkDRitRfi+9D
+         E891z9lHJc8ouJ7q+6sYFKrCxNw5xseBsvfoqefDrfk/SaFpaZwP2Sd9FkDETXuNY8rc
+         vqfAbRjBAE48b0xarUXIlhjLtxIjpTRYuTCceVXFEb9E5mXg50i30ZAjl5nF1ys7iIWn
+         7vvfbGCCk2G4S7Qgi8Ps5pjVPkeGaptDGSHuttuDOt9YnJjjK2tcUbV8sAgZVEWhCfXu
+         I18w==
+X-Forwarded-Encrypted: i=1; AFNElJ+Mxb8XN/33t1PnaaZiVxN81C/2CoTTfPI7idgeRvqK0fJUCZlSLcP0HJfang8JZveTXzgbiSSvVg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzv93uep8RpS4ardI7BfwUuTECNeBnGM5vL+aiWf9PjAoOECbRx
+	3g1+G9qAATVQ+KKtpQ+edAkcvRbIOjju+siAWAjFydvNVFN56u+h5fkBj6tCOrtVE8lfXsxk6fr
+	kQdFwC33DZ3gHsiXCh5usZq7AuNp5H/eB7WmpPtWYWQ==
+X-Gm-Gg: Acq92OGB8PsZ/h0McGEzc7/VW27zly/LUw5f5b0HzZKqnH9zkZfR8iXb3y7Ohgc/fuF
+	GQfZrToC4hPF0xn0uJzL0FacTZk/cqD7m47ugn5LUFlYmGQ3XCw++I6T9uiC+jsPRDJ05eBLkJN
+	OwEvlbXozmhdd4SCJnyIgOdqmEYA+JHycF+Sb+H1IiSCvi5Fra3p216joOyuFNjL0LbLmBdFDam
+	aqdA1+/52SRQLT6xMo8fQj+kuX1UNe8PAQ8+04i7myTPmfn3PK2IAxGkEKbvCIZ/o4hQ4vTvZAi
+	rnKQlcdBI1PhGxuAJE74QKaUl811y+f1TREpnp8q
+X-Received: by 2002:a05:690e:418a:b0:654:5d65:9ff4 with SMTP id
+ 956f58d0204a3-65e22674e00mr3815940d50.10.1778854487348; Fri, 15 May 2026
+ 07:14:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <96e5ee2d-a64b-408a-ba7f-e9ca25952959@kernel.dk>
-X-Rspamd-Queue-Id: 3B03955169A
+References: <20260515135903.2238731-1-vineeth@bitbyteword.org>
+ <20260515100448.715589f6@gandalf.local.home> <49e77605-6227-426e-8103-329474bf88f9@kernel.dk>
+In-Reply-To: <49e77605-6227-426e-8103-329474bf88f9@kernel.dk>
+From: Vineeth Remanan Pillai <vineeth@bitbyteword.org>
+Date: Fri, 15 May 2026 10:14:36 -0400
+X-Gm-Features: AVHnY4JoBz_kAVO7oVVxjOoTR7W-h3RFbkpi3j0LZXngCIQFZfxRvShyMiW_Km4
+Message-ID: <CAO7JXPg+MJXF8smC9qXs93YziJT_amQwWKVW38L7F5XdS9-SaA@mail.gmail.com>
+Subject: Re: [PATCH v3 01/11] io_uring: Use trace_call__##name() at guarded
+ tracepoint call sites
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Steven Rostedt <rostedt@goodmis.org>, io-uring@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Rspamd-Queue-Id: 54585551448
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+X-Spamd-Result: default: False [-1.66 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	R_DKIM_ALLOW(-0.20)[bitbyteword.org:s=google];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_COUNT_THREE(0.00)[4];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-13355-lists,io-uring=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_CC(0.00)[lists.linux.dev,vger.kernel.org,gmail.com,ntu.edu.sg];
-	FORGED_SENDER_MAILLIST(0.00)[];
 	FROM_HAS_DN(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	DMARC_NA(0.00)[bitbyteword.org];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-13356-lists,io-uring=lfdr.de];
 	MISSING_XM_UA(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[sashal@kernel.org,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[vineeth@bitbyteword.org,io-uring@vger.kernel.org];
+	DKIM_TRACE(0.00)[bitbyteword.org:+];
+	NEURAL_HAM(-0.00)[-1.000];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	TAGGED_RCPT(0.00)[io-uring];
-	TO_DN_SOME(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns]
+	RCPT_COUNT_FIVE(0.00)[5];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[mail.gmail.com:mid,bitbyteword.org:email,bitbyteword.org:dkim,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,kernel.dk:email]
 X-Rspamd-Action: no action
 
-On Fri, May 15, 2026 at 08:04:57AM -0600, Jens Axboe wrote:
->On 5/12/26 9:47 AM, Jens Axboe wrote:
->> On 5/11/26 4:19 PM, Sasha Levin wrote:
->>> From: Maoyi Xie <maoyixie.tju@gmail.com>
->>>
->>> [ Upstream commit 45d2b37a37ab98484693533496395c610a2cab96 ]
->>
->> If you auto-pick this one, please also do the other one in the
->> series, 9cc6bac1bebf8310d2950d1411a91479e86d69a1. Makes no sense
->> to do just one of them.
+On Fri, May 15, 2026 at 10:06=E2=80=AFAM Jens Axboe <axboe@kernel.dk> wrote=
+:
 >
->Hello?
+> On 5/15/26 8:04 AM, Steven Rostedt wrote:
+> > On Fri, 15 May 2026 09:59:03 -0400
+> > "Vineeth Pillai (Google)" <vineeth@bitbyteword.org> wrote:
+> >
+> >> From: Vineeth Pillai <vineeth@bitbyteword.org>
+> >>
+> >
+> > Hi Vineeth,
+> >
+> >> Replace trace_foo() with the new trace_call__foo() at sites already
+> >> guarded by trace_foo_enabled(), avoiding a redundant
+> >> static_branch_unlikely() re-evaluation inside the tracepoint.
+> >> trace_call__foo() calls the tracepoint callbacks directly without
+> >> utilizing the static branch again.
+> >>
+> >
+> >> Original v2 series:
+> >> https://lore.kernel.org/linux-trace-kernel/20260323160052.17528-1-vine=
+eth@bitbyteword.org/
+> >>
+> >> Parts of the original v2 series have already been merged in mainline.
+> >> This patch is being reposted as a follow-up cleanup for the remaining
+> >> unmerged pieces.
+> >
+> > This part should go below the '---'. There's no reason to add it to the=
+ git
+> > change log.
+>
+Ahh sorry about this.
 
-Sorry, yes - I'll pick it up too.
+> I pruned it.
+>
+Thanks Jen :-). I can probably send a follow-up email directly to the
+maintainers to prune this part, similar to what Jen did. I guess one
+more version might feel like spam.
 
-I usually let AUTOSEL reviews soak for a bit before I go over them to catch
-follow up fixes or other concerns.
 
--- 
+> > You should probably also state that these can now go in individually as=
+ all
+> > the dependencies are upstream.
+>
+> I think he did, at least that's how I read it.
+>
+Yeah my intention was this, not sure if I worded it correctly. I will
+include this in the follow-up email to the maintainers for rest of the
+patches.
+
 Thanks,
-Sasha
+Vineeth
 

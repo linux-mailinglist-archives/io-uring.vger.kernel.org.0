@@ -1,187 +1,141 @@
-Return-Path: <io-uring+bounces-13360-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13361-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id IAP2In42B2rftQIAu9opvQ
-	(envelope-from <io-uring+bounces-13360-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Fri, 15 May 2026 17:06:38 +0200
+	id WIVFNy03B2rftQIAu9opvQ
+	(envelope-from <io-uring+bounces-13361-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Fri, 15 May 2026 17:09:33 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1570E551DC3
-	for <lists+io-uring@lfdr.de>; Fri, 15 May 2026 17:06:37 +0200 (CEST)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97D27551E9A
+	for <lists+io-uring@lfdr.de>; Fri, 15 May 2026 17:09:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 1B0C130785F9
-	for <lists+io-uring@lfdr.de>; Fri, 15 May 2026 14:58:31 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 33F8A30254D6
+	for <lists+io-uring@lfdr.de>; Fri, 15 May 2026 15:09:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8872D3932D1;
-	Fri, 15 May 2026 14:58:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 607C048B36F;
+	Fri, 15 May 2026 15:09:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PDAnfSVr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sg9NYjZ1"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2A625785D
-	for <io-uring@vger.kernel.org>; Fri, 15 May 2026 14:58:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D57448AE3E;
+	Fri, 15 May 2026 15:09:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778857110; cv=none; b=dEqWFsvyB9fdFTgG/7zmtfJV0N8T/GX/30eTscRXDOegCZZhy4G098IdrHbFG+SyfpcBSzyEyKBdYXo4i7m0wylTj8001yFcuZ6opOIKJEHPwIKoXQNnxGzCOpnIrgSs+4DZ3g1WNhTfvWH35M2JuEf1zuhsn4LnB4ke0k7VNJo=
+	t=1778857768; cv=none; b=B3lGEnmgTfUjftJhgRvsimFaLmqmUpormFPQ0WOWxcaPtHbFgQW3Mb2MInpoVc2vABtlD38Ij4pzdsh+9w2ZKjmpSgiYseKnESAYj8h9gQUJUKUUrH3t0BYYKvJEyJTCG0UC0H9FCPVVPUU2NOF0e8jWSZ6+lrRDztOrP15j43o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778857110; c=relaxed/simple;
-	bh=E1xx1uYoxK+eSCVWHUsVq/IguOxd3TLj+xysRTJERkQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NYiXkcoKzTuMFK9o9W3eGY4arPwqwJIEPpzorgoZQytoUl3I95ASPjcGjKQJjGA1o2ATM42AJj2J/gpWQyryuuRAYcx7a16s/JUNcsWjQ3v5U6cZHs3rCsoHQ0pRBak9kge55h4j82YeJxsijGDtxIWwlKmX3Jz3BCGpA9P+cuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PDAnfSVr; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-9102e90bcbeso333885385a.1
-        for <io-uring@vger.kernel.org>; Fri, 15 May 2026 07:58:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1778857108; x=1779461908; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0+nei0qxNlG/6SVkqADrmiSvLLb+6waS8I6r15019/8=;
-        b=PDAnfSVrU9OUHCH0STDvIPOJmRymaf8I4D7D0/3cdx7Nh94rucmofMhBh1MZlaKj5J
-         L/GBLIHg906/V/r/BHUsSKmv71mbxCpJjd3Ijviiy3G9Usq/tjqIA52GSp5WNVbuZBmz
-         X6G0tnUXmmOXj8elA0thZqSXX0u1mEa5jEYEU7prPCMae+NrHDNcX7jeoWMq+ty/ayEk
-         /Z3Vv6vsYY7eQuzU652tfxXN/6EdHZ+aMRkj5bSYVMAOcMwqoOgwGzykM6ESxB4I5are
-         w5dEhem6l12rzFq7eJXx7djYbRp6VXZTaJT9a3uZdrXU4iT4H8hVGQ6IIbKJqcPdNw28
-         I0Pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778857108; x=1779461908;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0+nei0qxNlG/6SVkqADrmiSvLLb+6waS8I6r15019/8=;
-        b=p/5FOZzW8kUg7wsXk8cmAfzJejvcSsdsg8rdV4Rl6chV+0LLFoCBraLrUlqdS+sbN/
-         vfDikZBrXmWiZPm3FSk6B3f28QW1vp13ROg+SXYU0rZ+QtHefy9f376gONOJ7jK4deCB
-         xu2zaO029FmfHgTVTDZcTFu/mWdqDY3A3CXHNTD/ceOKKGcFv9Mx5QI8/MGaRmpxFBw0
-         zuSi6I1ik9Yet17GNzYj1kQXVQFYsEaLJMqvrb7WItBzeTAnDLgwYYv40Exi3hDeFT+R
-         YQV0vbqxLPh/7WyWDqJx0Bw0l6S9zRKcp3GFS9DmJhC8CDW8tT4qYXtV6rFOuuuxxk7K
-         vYTg==
-X-Forwarded-Encrypted: i=1; AFNElJ9jlhSKUEx8aOFPRXeRmIZlQ0q+kWMRkguujgYfGfir8AE2WuuS9dXZ7IP8Qm3H6GRcbb+5a0YSgQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPsb9FWbdYcISWsGOfZV17PLyyxmnD2lGLRVYJWZ6aEkNi6HLy
-	YbfqW2UJlqNCpwAFiqbDtduXhPnn5HhDm4KhpbrrAqIL/eqYRAd4AUOq
-X-Gm-Gg: Acq92OFqICVct1KNFT/pl4ZJh1E3o5kYONSfuMDfJWO69mNe01WrQUrRyU0fK+8k5Mq
-	omDVDVQzwNU2eMJXUE8GB4A7lAio2LhUYNDK2yhnRGqPvNLUIA7uKFvrt5KdugULm6SDQKmy31M
-	89unylCQ0PLT+OIQg0najXWFVOtUJAo2qdJ4b1rBFd0iiQDxjcONG7ZTALgUJAi77lK70g5HuuH
-	/qhlM39FGaiytHZE0mwmW+7CKQRu9MXwDGE3O2WJUx2QOuv7LchsgIhyIznhaRyW3X5+T10zG8W
-	arA7xnF/CcY61sGOO0Z+uWArNTX+OxKwdcqgztZZHcl02eUM47mCBc2XYnyxdIqyUuWQLf2Oz4x
-	iCJh9gyirH3coTVNfmj9ZNseFQ+J4TinOe+4+HVkvHbhJnOrPLMQS0NMQw9VSyNsWilcvAPvsNH
-	P6WNsIximzEH7afnesaRb4GNhf0V6exMj2AoVlGKII4LwOOWtK/HnbTXbKXc2eVJmq8Cez5AJxw
-	xsA6Iwoxxd4/E+wWWR44FiDpfyqSPkCpTQe0nqJ64M=
-X-Received: by 2002:a05:620a:4083:b0:911:1a2c:f953 with SMTP id af79cd13be357-911cd75d3e6mr700185285a.20.1778857108064;
-        Fri, 15 May 2026 07:58:28 -0700 (PDT)
-Received: from server0.tail6e7dd.ts.net (c-68-48-65-54.hsd1.mi.comcast.net. [68.48.65.54])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-910bcf3584esm550293385a.34.2026.05.15.07.58.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 May 2026 07:58:27 -0700 (PDT)
-From: Michael Bommarito <michael.bommarito@gmail.com>
-To: Jens Axboe <axboe@kernel.dk>,
-	io-uring@vger.kernel.org
-Cc: Pavel Begunkov <asml.silence@gmail.com>,
-	Li Zetao <lizetao1@huawei.com>,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] io_uring: propagate array_index_nospec opcode into req->opcode
-Date: Fri, 15 May 2026 10:58:11 -0400
-Message-ID: <20260515145812.1241925-1-michael.bommarito@gmail.com>
-X-Mailer: git-send-email 2.53.0
+	s=arc-20240116; t=1778857768; c=relaxed/simple;
+	bh=rF8fC0Rifkqz+kpXltmxnDtG7PRnvjHwvsNd7SFFe9A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pbZORXoILhggqpMqxJIPbsBFsB79eGjDadyQuJu2rkwCcDyu2+O/7qs49PeamYqxJO6U/a7xeW4PGOzaJcJr0RfXXZ43ID/hng7a4Pg6axSQeR+STcSz9fBObx8oUHxI5W/KdrvqMf5DL/53AWiNEeyuZ9yVWTFwQMFBkcZlGUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sg9NYjZ1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84302C2BCFB;
+	Fri, 15 May 2026 15:09:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1778857768;
+	bh=rF8fC0Rifkqz+kpXltmxnDtG7PRnvjHwvsNd7SFFe9A=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=sg9NYjZ1kIKUngNgibfSUat16nDH+dtu09w4bNnaS+uwQsB652ooMpD30qxV8Ka5u
+	 2+jVK0p1MnPXmCerbnJuMV5n54Og1UWj7GPoRoXZN3XgtEMifwJrwY1UwSdanTsdR3
+	 cqDRT5G8KmURCJZX82aQY+IwDA8RF85dJ1xXpBUr4YU11/HHSc4QR+9VQcka0Lpb2P
+	 vp0x/CsPjTqRiSJ7H4boHdMo3vAcfzb1NmUzZFRjIUMM8pIqc1EIQRRq5NBks7Ol2/
+	 D73P2Q/lCDWIu/UxhX8LrEvwJWG7sAnsbejb9FD7pIBYJkDN07MNBbYABsesc9Vto/
+	 ATtM8KcgAeueA==
+From: Christian Brauner <brauner@kernel.org>
+To: io-uring@vger.kernel.org,
+	Jens Axboe <axboe@kernel.dk>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: (subset) [PATCHSET v2 0/6] io_uring related epoll cleanups
+Date: Fri, 15 May 2026 17:08:11 +0200
+Message-ID: <20260515-lachnummer-havarie-c6e68d7fe5ef@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260514140817.623026-1-axboe@kernel.dk>
+References: <20260514140817.623026-1-axboe@kernel.dk>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1860; i=brauner@kernel.org; h=from:subject:message-id; bh=rF8fC0Rifkqz+kpXltmxnDtG7PRnvjHwvsNd7SFFe9A=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSxmyt9PiTWUOj2pqvfJo81cU+RybS5Da4l9TW/Dtk2z +m1ejyzo5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCKXyxgZOszDGW+kmr/k3qZo sCv20OUckcqKFeWCdgvnvEy2X/f9LMN/55Bq3hZmC8818jKx/7fxcy8K2zZTpOR1ubNaXe7ZFRe YAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 1570E551DC3
+X-Rspamd-Queue-Id: 97D27551E9A
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.16 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [2.34 / 15.00];
+	MID_END_EQ_FROM_USER_PART(4.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20251104];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,huawei.com,vger.kernel.org];
-	MIME_TRACE(0.00)[0:+];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13360-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-13361-lists,io-uring=lfdr.de];
+	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	RCPT_COUNT_FIVE(0.00)[6];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[michaelbommarito@gmail.com,io-uring@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
-	MID_RHS_MATCH_FROM(0.00)[];
-	NEURAL_HAM(-0.00)[-0.999];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	RCPT_COUNT_THREE(0.00)[4];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[brauner@kernel.org,io-uring@vger.kernel.org];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	NEURAL_HAM(-0.00)[-0.966];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
 X-Rspamd-Action: no action
 
-Commit 1e988c3fe126 ("io_uring: prevent opcode speculation") added
-array_index_nospec() to the local opcode in io_init_req(), but the
-sanitised value is not written back to req->opcode.  The
-unconditional write at the top of io_init_req() stores the raw byte
-into the persistent field; the success path of the bounds check
-leaves it unchanged, and downstream consumers read the raw value.
+On Thu, 14 May 2026 08:07:16 -0600, Jens Axboe wrote:
+> One of the nastier things about epoll is how it allows nesting contexts
+> inside each other, leading to the necessity of loop detection and the
+> issues that have come with that.
+> 
+> I don't believe there's any reason to support nesting on the io_uring
+> side, in fact IORING_OP_EPOLL_CTL is a historical mistake, imho. But
+> let's at least try and contain the damage and disallow nested contexts
+> from our side.
+> 
+> [...]
 
-In io_uring/io_uring.c those consumers are io_issue_sqe(),
-__io_issue_sqe(), io_wq_submit_work() and io_prep_async_work() (all
-indexing io_issue_defs[]); io_clean_op(), io_req_defer_failed() and
-io_req_sqe_copy() (io_cold_defs[]); io_check_restriction() via
-test_bit() on ctx->restrictions.sqe_op; and the audit hook at the
-io_issue_sqe entry.  io_uring/bpf_filter.c added in v7.0 extends
-this set with io_uring_populate_bpf_ctx() and
-__io_uring_run_bpf_filters(), indexing a heap-resident per-filter
-pointer array sized at allocation to IORING_OP_LAST.
+@Jens, I added the epoll specific change to vfs-7.2.eventpoll. There
+were quite some merge conflicts now that I had to fix up. Please take a
+look and make sure it's sane. Otherwise I'm going to push this and will
+keep the branch stable.
 
-The kernel's spectre_v1 protection is per-site array_index_nospec()
-annotation, so a site missing the annotation is unprotected
-regardless of CPU vendor, microarchitecture, or microcode revision.
-A per-site array_index_nospec() was applied to the same class of
-gap in io_uring/fdinfo.c recently.  Propagating the clamped opcode
-to req->opcode once, immediately after the existing
-array_index_nospec(), closes the remaining sites at the source
-without per-site clamps.
-
-The compiled change is one instruction (a single mov of the clamped
-byte to req->opcode); the cmp/sbb/and clamp triplet is unchanged.
-No functional change: array_index_nospec() is a no-op for opcodes in
-[0, IORING_OP_LAST), and out-of-range opcodes are still rejected at
-the bounds check above this assignment.  Boot-tested under UML
-(x86_64 defconfig) by building stock and patched kernels and running
-a 54-test subset of liburing's test suite against each; pass/fail
-identical on both.
-
-Fixes: 1e988c3fe126 ("io_uring: prevent opcode speculation")
-Signed-off-by: Michael Bommarito <michael.bommarito@gmail.com>
-Assisted-by: Claude:claude-opus-4-7
 ---
- io_uring/io_uring.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 4ed998d60c09c..7b257a03ef84c 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -1739,6 +1739,7 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 		return io_init_fail_req(req, -EINVAL);
- 	}
- 	opcode = array_index_nospec(opcode, IORING_OP_LAST);
-+	req->opcode = opcode;
- 
- 	def = &io_issue_defs[opcode];
- 	if (def->is_128 && !(ctx->flags & IORING_SETUP_SQE128)) {
--- 
-2.53.0
+Applied to the vfs-7.2.eventpoll branch of the vfs/vfs.git tree.
+Patches in the vfs-7.2.eventpoll branch should appear in linux-next soon.
 
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-7.2.eventpoll
+
+[1/6] eventpoll: pass struct epoll_filefd through ep_find() and ep_insert()
+      https://git.kernel.org/vfs/vfs/c/a5b8d2cc7243
+[2/6] eventpoll: export is_file_epoll()
+      https://git.kernel.org/vfs/vfs/c/1a113455c097
+[3/6] eventpoll: add file based control interface
+      https://git.kernel.org/vfs/vfs/c/f6547914f5bc
+[4/6] eventpoll: rename struct epoll_filefd to epoll_key
+      https://git.kernel.org/vfs/vfs/c/8176d6935d79
 

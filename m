@@ -1,113 +1,171 @@
-Return-Path: <io-uring+bounces-13369-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13370-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 2LQiHq99B2qO5gIAu9opvQ
-	(envelope-from <io-uring+bounces-13369-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Fri, 15 May 2026 22:10:23 +0200
+	id oBqhEju3CGqr2QMAu9opvQ
+	(envelope-from <io-uring+bounces-13370-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Sat, 16 May 2026 20:28:11 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51B8C5574E8
-	for <lists+io-uring@lfdr.de>; Fri, 15 May 2026 22:10:23 +0200 (CEST)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id D586955D1DD
+	for <lists+io-uring@lfdr.de>; Sat, 16 May 2026 20:28:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 5BEC3300FAA8
-	for <lists+io-uring@lfdr.de>; Fri, 15 May 2026 20:10:06 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 2948A300646B
+	for <lists+io-uring@lfdr.de>; Sat, 16 May 2026 18:28:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 876DC3B6BF5;
-	Fri, 15 May 2026 20:09:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAB9631F993;
+	Sat, 16 May 2026 18:28:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="elsJuNi4"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b="nsGdIo2P"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64AE2392C28
-	for <io-uring@vger.kernel.org>; Fri, 15 May 2026 20:09:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 307E2325716
+	for <io-uring@vger.kernel.org>; Sat, 16 May 2026 18:28:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778875794; cv=none; b=J9D1fEiJWhsuuyZOe/nARt0CojhcHi/Ise1DDo+r81AGBKFpcJLVLWWhytXdTZKcOhfJe2Y+V0YL1DWcML1fCPjysygeU7LOfOdMXNoO5ZasD9hP4Ub+qXGi1dwUhZOGDoFmpv1/r9y3znQDEoPkydDfRR/cYK9n4NLlR6fyu2I=
+	t=1778956087; cv=none; b=fKprswimSR+mB4ZWyN+xqYbiz1lnrEBpo2SMxp9Nj+WyA1596eqOU/4ehbT5t0UTO0i0mipOFcYcwt6rsNKtMFGZqg4xlhwV6BeyQ906Lrd+7q1eue/0/H7aCOhPFsss3Tm4q0r9jaeXWYVqasXM1vWNhnFkjBI9DGifiyNiSp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778875794; c=relaxed/simple;
-	bh=CrKhwm8AuA3JKrtoDEH+7+47Lm0J03OlKG2F2dQmuC0=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=W1Dpjvx3n2tKLwxjBeqX3Ta3NQa0dNpYUbhNyM7DqDhwEisOAdmYo/7tWWfRn67m9dxEW2X9o6LOrlq0j6wJG36JYpDoQwWkwPi7dsAaz6KUitsgJ63Uz6o/oWoxQbIK82WQhv/xnmmTu11XqaTikdJCSJXA3mKvM/NrrWEyKxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=elsJuNi4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 425DEC2BCC7;
-	Fri, 15 May 2026 20:09:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778875794;
-	bh=CrKhwm8AuA3JKrtoDEH+7+47Lm0J03OlKG2F2dQmuC0=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=elsJuNi4iXlSvIXlXn5E3IuTwolNk/w8xObijm0D/1ZU4HAaxELq7q3qkM+AtifIl
-	 a/uv6gPbZplomlusADYU5nLBjQ/plCm0uWSlPE85IezxpYZbOhlzzxBXA8aVtXbtwJ
-	 PTtBeL+5w6aGa0nSq4DCX/cxkk1ZVcmHgCY4QTOja40SuDn2qK6I6KZ6MX067dNUwH
-	 el+pdlX05RaVGSU4vXl0AcSDuw+eSqQAEXUwc/Dh9/Da4xCAAlwz4PPkS32G2VKFVK
-	 VM1O3NMkbd4OEOItCu3SbPx4DRarCg/nKqcNna/qTlC1khDlbt8hdBcuRvc1ZY+jVg
-	 Ds1EhLkAcZ+NA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id D097E3930A09;
-	Fri, 15 May 2026 20:10:08 +0000 (UTC)
-Subject: Re: [GIT PULL] io_uring fixes for 7.1-rc4
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <52144dd5-f3a8-4a82-b048-36b53518c9c3@kernel.dk>
-References: <52144dd5-f3a8-4a82-b048-36b53518c9c3@kernel.dk>
-X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
-X-PR-Tracked-Message-Id: <52144dd5-f3a8-4a82-b048-36b53518c9c3@kernel.dk>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git tags/io_uring-7.1-20260515
-X-PR-Tracked-Commit-Id: f44d38a31f1802b7222adaea9ee69f9d280f698a
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: ee7226b2ae3beff5d8feffa94e5fd06af6965e52
-Message-Id: <177887580778.138467.4322383877039352511.pr-tracker-bot@kernel.org>
-Date: Fri, 15 May 2026 20:10:07 +0000
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, io-uring <io-uring@vger.kernel.org>
+	s=arc-20240116; t=1778956087; c=relaxed/simple;
+	bh=F+tFCCj1ZUASDFOKR7I8bBpir/zeZ7QG7dX/1D9JTrw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H+3xV48tabWA71LVO2WSLaX/o0JP91XngvFLOdGryclHn9YYZCe6MmjYx9Sg3udeAjv1QljjoA8imXqojekicKO87iPpSZ82vdcEuVZ0VBJwLTfpbdjMy5GqQJ0k42tpkCK+st/TG237A6q7U9TdKM++BYgLd43SiUZrW0Qxr5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=nsGdIo2P; arc=none smtp.client-ip=209.85.167.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-479aa2dbea2so424549b6e.0
+        for <io-uring@vger.kernel.org>; Sat, 16 May 2026 11:28:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1778956084; x=1779560884; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PrcpfbJobIdct6+JEgRgRPDSXujlfopahqsyylurpXg=;
+        b=nsGdIo2PNTYWPjbbvuCBM8h5LPFLhYSGM61vUE26bNQ0cPMUCZFS8Di9nhaocECpZX
+         6pgDRHA7llwtz70b4zMt98iuMnNoKIm11JzQFuMH3fRshDtUKK5N+xwBerwIdbJcQutd
+         OhMbYIGLc84itiBDWL/ENHHzsZ36LGetK7zix3Fse/8fYosmem2v/jUW48WKJU+CbCrv
+         vVoelSFxU05K3iZYz6UsNoStRALJJQrx+xUCijFtTuQ9C3Ac0tezPFtR48EouaWnuTos
+         pp3+3b93tl/icvtjOK7heurzvZbdlYQv4pHYnuEKa/GsOKQFidgDRA3GK9OatLLbOdac
+         p49Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778956084; x=1779560884;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PrcpfbJobIdct6+JEgRgRPDSXujlfopahqsyylurpXg=;
+        b=dhEI+Iqhsz9apFf6ImxD8/MvHXbt87cVxfbWQAQcI/XDScBHVJneaxAKUlXQFolami
+         RoCxxUu16n5EGmNh2MT/ppcDh3tBhmV06mamD93VXNm3EMbI0v/81LsaTTb4wRFv4YeN
+         5+xdDkTvKP2CRF1AXr8COfBOUpOjyXV/s9FCwnVelPIHFJA5k3H2KbzGKDawnIGF+AmD
+         vv6xoAXbKNV99F9dcOXkfeTk+2j/Mkdi50K7Hu7HmEz2c6SDocbMq/yo+5s6816cC/BI
+         ZEZSYJ5gZdbv7qmRSvSoVS0PHgyWWMZHQs2UTGMqJGnGTVQKAAhFwMmOLe/BCyddPMRe
+         Iauw==
+X-Forwarded-Encrypted: i=1; AFNElJ+2RrfMBoB76k4LpdOIZlLrvLicQBctRdUWmvSHagaEYPlmc/oJLY/yDdeOSzAeuk1PfBl+Data7A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKAEBuOO2FNIgYOZVai2euLx3V58IoR4JAXokGk6ldiC84fBCi
+	J6ql7jhNZkALmyQmByZkmxj+KJ14YXZKXpqPkTkMIKeU4X88y/nhSKdMutYHP5zs70I=
+X-Gm-Gg: Acq92OF14GCm8kGzx5C2NU+oSW4cT8zG/jOS9YI68pzRFHw9+EbVbzO4v7b/0+RbnWo
+	tknXy71wLnw3cLhJBObnQDdraWs6vBVTLJRUynXqTEw5EfzYvCVOic7vA7zWrvvzqKhKGH0duR4
+	ykR2g5MTLwPUx4hr3qdzNw8XSJVPtYRh45uMNmg/V3qPANLAPdGELKEA7L2Mkui73qABXu8IuKi
+	C0dNdLD2u1ymEPE8EoELEx8IDmtV9YyfhUji6HrH+X8ht+tcwmiVvQ8hzmYRdIlr/YF2wjofGDh
+	5eX1Z7h8Hph20vecbMD6EtPJv2xFXV6z7gNFZ0SEZYi3je/1rCs1IhCIDjbAgilcShtT1YD+wz6
+	4yZZvvrZ+E8kqkN9AnJ1bu5ti7RUBf22rPwpPwk5EfovofiSkdTe9nwfIbjPO3YlYMz+QIBKUY6
+	LkoHBys/mqni+RWZoUUTdDM15I9MR/gdgplAP1IE559UGqvez288yFs01MiujW6iOilqroElJtz
+	88Xmylnjg==
+X-Received: by 2002:a05:6808:1204:b0:480:77a1:c839 with SMTP id 5614622812f47-482e591ba1dmr5503907b6e.36.1778956083824;
+        Sat, 16 May 2026 11:28:03 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-439fc53f2acsm7139967fac.14.2026.05.16.11.28.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 16 May 2026 11:28:03 -0700 (PDT)
+Message-ID: <6a23b132-35bd-425a-b957-c63dc5cbba49@kernel.dk>
+Date: Sat, 16 May 2026 12:28:02 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-X-Rspamd-Queue-Id: 51B8C5574E8
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] io_uring/waitid: clear waitid info before copying it to
+ userspace
+To: =?UTF-8?B?6rCV7Z2s7LCs?= <gganji11@naver.com>, io-uring@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+References: <656b27a69e38857237c82fe0c5d11fba@cweb018.nm>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <656b27a69e38857237c82fe0c5d11fba@cweb018.nm>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: D586955D1DD
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	MID_CONTAINS_FROM(1.00)[];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	R_DKIM_ALLOW(-0.20)[kernel-dk.20251104.gappssmtp.com:s=20251104];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_ALL(0.00)[];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	TAGGED_FROM(0.00)[bounces-13369-lists,io-uring=lfdr.de];
-	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
-	FROM_NO_DN(0.00)[];
+	TAGGED_FROM(0.00)[bounces-13370-lists,io-uring=lfdr.de];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	DMARC_NA(0.00)[kernel.dk];
+	FREEMAIL_TO(0.00)[naver.com,vger.kernel.org];
+	DKIM_TRACE(0.00)[kernel-dk.20251104.gappssmtp.com:+];
 	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCPT_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
 	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[pr-tracker-bot@kernel.org,io-uring@vger.kernel.org];
-	MISSING_XM_UA(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
 	NEURAL_HAM(-0.00)[-1.000];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
-	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,naver.com:email,kernel-dk.20251104.gappssmtp.com:dkim]
 X-Rspamd-Action: no action
 
-The pull request you sent on Fri, 15 May 2026 08:16:41 -0600:
+On 5/16/26 12:24 PM, 강희찬 wrote:
+> 
+> IORING_OP_WAITID stores its result fields in struct io_waitid::info and
+> later copies them to userspace siginfo. The prep path initializes the
+> request arguments, but it does not initialize info itself.
+> 
+> If the wait operation completes without reporting a child event, the common
+> wait code can return without writing wo_info. In that case io_waitid_finish()
+> still copies iw->info to userspace, exposing stale bytes from the reused
+> io_kiocb command storage.
+> 
+> Clear the result storage during prep so the io_uring path matches the
+> regular waitid syscall, which uses a zero-initialized struct waitid_info.
+> 
+> Fixes: f31ecf671ddc ("io_uring: add IORING_OP_WAITID support")
+> Cc: stable@vger.kernel.org # 6.7+
+> Signed-off-by: Heechan Kang <gganji11@naver.com>
+> ---
+>  io_uring/waitid.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/io_uring/waitid.c b/io_uring/waitid.c
+> index d25d60aed6a..32f68fd7fcd 100644
+> --- a/io_uring/waitid.c
+> +++ b/io_uring/waitid.c
+> @@ -275,6 +275,7 @@int io_waitid_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>     iw->options = READ_ONCE(sqe->file_index);
+>     iw->head = NULL;
+>     iw->infop = u64_to_user_ptr(READ_ONCE(sqe->addr2));
+> +   memset(&iw->info, 0, sizeof(iw->info));
+>     return 0;
+>  }
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git tags/io_uring-7.1-20260515
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/ee7226b2ae3beff5d8feffa94e5fd06af6965e52
-
-Thank you!
+Patch looks fine, but you can't send html formatted stuff - it won't make
+it to the list, and it also corrupts the patch so it can't get applied.
+Send everything plain/text.
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Jens Axboe
+
 

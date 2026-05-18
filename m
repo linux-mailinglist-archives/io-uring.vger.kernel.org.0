@@ -1,67 +1,84 @@
-Return-Path: <io-uring+bounces-13387-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13388-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id CEluIpjnCmoE9QQAu9opvQ
-	(envelope-from <io-uring+bounces-13387-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Mon, 18 May 2026 12:19:04 +0200
+	id wESbFGPrCmqR9QQAu9opvQ
+	(envelope-from <io-uring+bounces-13388-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Mon, 18 May 2026 12:35:15 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04E0B56A8E9
-	for <lists+io-uring@lfdr.de>; Mon, 18 May 2026 12:19:03 +0200 (CEST)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA41F56AC90
+	for <lists+io-uring@lfdr.de>; Mon, 18 May 2026 12:35:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 4AFA53005584
-	for <lists+io-uring@lfdr.de>; Mon, 18 May 2026 10:19:03 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 8123E308E4ED
+	for <lists+io-uring@lfdr.de>; Mon, 18 May 2026 10:30:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0377334C0D;
-	Mon, 18 May 2026 10:18:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0103ED5A5;
+	Mon, 18 May 2026 10:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="M7Kg9NpC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AJQ4iM0Y"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91F8318B9C
-	for <io-uring@vger.kernel.org>; Mon, 18 May 2026 10:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AA163EAC71
+	for <io-uring@vger.kernel.org>; Mon, 18 May 2026 10:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779099539; cv=none; b=YCFhodokct60drZ8yWrUv3acGeFuH+NT/Bd1vpqD5KgKzKp5mHvTPIOyvq3BP0MPT0PBB0NzlTuyu5Mcd9IPPFkjLr0Nc2uRRm2yvC7L+HV2BMMkclc/JqnolSAcIAHcAMOypNy3KQ+jbQH32V7gQYcPguaSJXWk7W0fM1M+hRI=
+	t=1779100208; cv=none; b=gSrvnU84Nayy6FACGHzbCwqSv6RWLIrzpgQlE3iAludwr0mVdOePbAMoi8p9ueZpKSv1oS1gsw2PQzVTp/36ddAvpQxQWpWPWLE6CPmUBk+s2GILRJ8er33YtsGgGeYSt4jUM/ByqqFmNT4ZqXB3M5lvGwaJ7mJiXEdiyYV6urg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779099539; c=relaxed/simple;
-	bh=2x1r8Ou32SxCRtkUWQ2WZl5kfss0gDeux2mObRQgD8c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=IBIDqAKGZX4UwkUlHpRfBRn/CEOVrCJb4Gimhq3raNj5/fjXnBseXTdUPqxZyW2ximOxUY3z4mqGRIiF1OSNTRV1KINXenhOcqh80zpleg3akjvMDjwNLUfxXB1eJl5o5I1hDN0s5uUwPAAoJLURG87tc5X+2mNrJC05/tryHhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=M7Kg9NpC; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20260518101848epoutp01fc83b68de63186efae9cf3d188891b70~woZhcCzyr1804718047epoutp01S
-	for <io-uring@vger.kernel.org>; Mon, 18 May 2026 10:18:48 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20260518101848epoutp01fc83b68de63186efae9cf3d188891b70~woZhcCzyr1804718047epoutp01S
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1779099528;
-	bh=AC3DsS6WkhVfH7c3CTSyK//O8EcqzwniBI6lGRkZZsU=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=M7Kg9NpCTyjhzTAkh1MwSRgs5/P7S501/GIoFtAn6lEi40YFO6YeTmJvjiBJsYfuT
-	 cyGRuQdbiPFba9oGrBcUKjerwuYQBcoLaAKH26vVLRH2+t5m+eIiZ77C2OnKt0eZbY
-	 Zgrmscd2h/eSY58icf0lFirCCxs7zerVsiW7C4F0=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20260518101847epcas5p20c363dbebbd73fd72a0354d8a15e55fd~woZg4Vhra2884028840epcas5p2m;
-	Mon, 18 May 2026 10:18:47 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.89]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4gJv0Q6lJTz6B9m5; Mon, 18 May
-	2026 10:18:46 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20260518101846epcas5p3ae97aef88bd9239a92120368958a4a6e~woZfgA5GW2694926949epcas5p3z;
-	Mon, 18 May 2026 10:18:46 +0000 (GMT)
-Received: from [107.122.10.194] (unknown [107.122.10.194]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20260518101843epsmtip16d0504c0f9985d04573419140d5cc9af~woZcw0Yjg1875218752epsmtip1S;
-	Mon, 18 May 2026 10:18:43 +0000 (GMT)
-Message-ID: <f9e04625-50c6-4fa9-8b12-76496e29f10c@samsung.com>
-Date: Mon, 18 May 2026 15:48:37 +0530
+	s=arc-20240116; t=1779100208; c=relaxed/simple;
+	bh=FbvAJUBaJSoNOddpm6KcOlO9qRGB7h6zbd7g73ujdLc=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Fnj/o+RltH+f2/JlMp/tydgdShC1SdF7kDpfM/KLiYt1BGP6IbAsyruztgG/60sLWTxsoQ4ueHQPB90sDaQByydIu1FyvI7oFiE4Nby1y8s25aLytEhGj2sOvIqgk5wOp9XTZ8w1vje5DBYR5WWsYYAJDLdNdgL1djNNOobXu1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AJQ4iM0Y; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-45e6a4d0be0so704333f8f.1
+        for <io-uring@vger.kernel.org>; Mon, 18 May 2026 03:29:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1779100196; x=1779704996; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=yBM/MqSlhfscJgewJTDJnR/WZOfF3ZaH9qUvK+mYr0I=;
+        b=AJQ4iM0Y3atulw0PqPF8op4PRnWpRVYOty/GNjhKqmtpas6RAxpBy+PRn9KMn1Wno2
+         qjZPw+EhhE0hOFeMi5Jmm2umUnXHc9uHE6Sc4jCIy8Ms4gDmWbAja3yDgp1f0sakvIzo
+         mND0MAlV95AGumFfzHSvL6fn/HmzZMpLelmMNL/OqSMvfJdhoE33lGksAXwRGKhpz9y3
+         MUxmm5rukKAQCGvtg3KEsHI7vG7ayeRK0NXm2lTRYxEUjs5WhyITg3Gsh7qemErQcLpo
+         H/MeM/3buitXkpHJfEHCNh+4Lx9a+L/jbz0S914lIrMYWChf5levhxDB0NWAD/C8QyT9
+         dHrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779100196; x=1779704996;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yBM/MqSlhfscJgewJTDJnR/WZOfF3ZaH9qUvK+mYr0I=;
+        b=SakAdLNnbQhUp2kF+Q01/yAZCw7/pi3os8p2GYfg3HMqVdYWEQVQDmwiAtSCV305un
+         jrEaKoRCu7f3xxiOth9dcX2kXYhB48igZF+WLcTsnePu4SrAwkJvml1xppufAikcJJ4+
+         d8A741nOBQUCTKJurtb3rrCQLZFmxHo3vadGslXY9eCjxruiq31YRMCmQbrUlELyzIHY
+         zMLB4Wqemr0JgTGcLTBsoCx7//BEat37JS5RJUM29e31gqF0cDOkaq5sXcih9GrkPTea
+         xCUZjJ0/5jD9dD6NQQNSHho69SsFRlFGkSy+qJn/Bx3Y3WA2sxRQrpjc2LBF0DysCAV0
+         ySvQ==
+X-Forwarded-Encrypted: i=1; AFNElJ8XzFKUoLfI61LNyiig27fTLpCzB2QXIyapPZyDVh3UMLacjX8cHLTJRgIiyGkCd0aJSinxosoPMA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjDDdS2/Mmq/fPifp21XUIUNvf3qW1xR9P9pAvQXNpjj7pnsQK
+	wSi3m+bRBfbuJS4P5wMSQMXKbeaBu2VNhoSzFI/Vng90KB7DnLHJV54V
+X-Gm-Gg: Acq92OHQjzHsTbK0aW08srAXkOt1M+wD5HkPeRdQxXx1XqpKVCYBJi3JkrGvMjsYdI7
+	hZoBx4TjRUtXHuVgM/93KETBpbyy6GRUD+ei1qRdBZjuvW6rcQZg2w8kiqe3gHv73JYt7UIo2bo
+	PStkaa8vyhX6A/ILZV1bQT49QyjDaJntHqx1QNP9Rjh5IHEvJoowhc+tXKOXx7dOu/w/RjCfEWo
+	YAwyD8yDlgd9T06pYyiBhMQ1+RicW2ipNDuYS4cZQx6sM4+zb0we+OwgmFz3EomNOHza+zo9Ruf
+	T6MBUFtRDQNny7xhLLx7blqAAZxJNifrb2q9XZ1DeGuL9xoA3CVRSe/9ZFD6mWiStBfov/0UM1m
+	vFtSqyjHXMIj7k2/JrfavsSEgts8EWR4ql0BYHD4R4PaJHhUYWq7xpp6XT0ljyvVijiaUojvqYK
+	OlM05F4VkGM401F3j43rECpKGGC/aCRRi/gNFEz5w7d66nxSAoPZkDEHt9SIQjkCObbbVdV/ch7
+	0dToi7u5f3fZO2LUpGfHJT6ujq9iQZ9Cx8jWel3B4CoNuEFzpQsxD7+Mlg=
+X-Received: by 2002:a5d:5885:0:b0:43c:f7e5:817b with SMTP id ffacd0b85a97d-45e5c5cc2b5mr22613508f8f.19.1779100196106;
+        Mon, 18 May 2026 03:29:56 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:ec20])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45da15a6454sm36537426f8f.34.2026.05.18.03.29.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 May 2026 03:29:55 -0700 (PDT)
+Message-ID: <24833f76-2289-4859-86d1-9215b11a1258@gmail.com>
+Date: Mon, 18 May 2026 11:29:54 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -69,319 +86,191 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 07/10] nvme-pci: implement dma_token backed requests
-To: Pavel Begunkov <asml.silence@gmail.com>, Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>, Sagi
-	Grimberg <sagi@grimberg.me>, Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Andrew Morton
-	<akpm@linux-foundation.org>, Sumit Semwal <sumit.semwal@linaro.org>,
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-	io-uring@vger.kernel.org, linux-media@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, Nitesh
-	Shetty <nj.shetty@samsung.com>, Kanchan Joshi <joshi.k@samsung.com>, Jason
-	Gunthorpe <jgg@nvidia.com>
-Content-Language: en-US
-From: Anuj Gupta/Anuj Gupta <anuj20.g@samsung.com>
-In-Reply-To: <50ed7240-d8d3-4816-bcc9-ce8adbbbf841@gmail.com>
-Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20260518101846epcas5p3ae97aef88bd9239a92120368958a4a6e
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20260518092930epcas5p30d3b49f26efa5969ddcdb15351a886f3
+From: Pavel Begunkov <asml.silence@gmail.com>
+Subject: Re: [PATCH v3 04/10] block: introduce dma map backed bio type
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>,
+ Sagi Grimberg <sagi@grimberg.me>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+ io-uring@vger.kernel.org, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+ Nitesh Shetty <nj.shetty@samsung.com>, Kanchan Joshi <joshi.k@samsung.com>,
+ Anuj Gupta <anuj20.g@samsung.com>, Tushar Gohad <tushar.gohad@intel.com>,
+ William Power <william.power@intel.com>, Phil Cayton
+ <phil.cayton@intel.com>, Jason Gunthorpe <jgg@nvidia.com>
 References: <cover.1777475843.git.asml.silence@gmail.com>
-	<5cecb1157ab784f9f303a91449fdf11b03aa6002.1777475843.git.asml.silence@gmail.com>
-	<20260513083817.GC6461@lst.de>
-	<CGME20260518092930epcas5p30d3b49f26efa5969ddcdb15351a886f3@epcas5p3.samsung.com>
-	<50ed7240-d8d3-4816-bcc9-ce8adbbbf841@gmail.com>
-X-Rspamd-Queue-Id: 04E0B56A8E9
+ <646ecd6fde8d9e146cb051efb514deb27ce3883e.1777475843.git.asml.silence@gmail.com>
+ <20260513081929.GD5477@lst.de>
+Content-Language: en-US
+In-Reply-To: <20260513081929.GD5477@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: CA41F56AC90
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[samsung.com,none];
-	R_DKIM_ALLOW(-0.20)[samsung.com:s=mail20170921];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20251104];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-13387-lists,io-uring=lfdr.de];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns,samsung.com:email,samsung.com:mid,samsung.com:dkim];
-	FREEMAIL_TO(0.00)[gmail.com,lst.de];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[24];
+	TAGGED_FROM(0.00)[bounces-13388-lists,io-uring=lfdr.de];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[21];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[samsung.com:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
-	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[anuj20.g@samsung.com,io-uring@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[gmail.com:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	RCVD_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[asmlsilence@gmail.com,io-uring@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[io-uring];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_SEVEN(0.00)[8]
+	TO_DN_SOME(0.00)[]
 X-Rspamd-Action: no action
 
-On 5/18/2026 2:59 PM, Pavel Begunkov wrote:
->> FYI, I really want SGL support before this get merged, but ignoring that
->> for now:
+On 5/13/26 09:19, Christoph Hellwig wrote:
+>> +	if (!bio_flagged(bio_src, BIO_DMABUF_MAP)) {
+>> +		bio->bi_io_vec = bio_src->bi_io_vec;
+>> +	} else {
+>> +		bio->dmabuf_map = bio_src->dmabuf_map;
+>> +		bio_set_flag(bio, BIO_DMABUF_MAP);
+>> +	}
 > 
-> I was hoping to let Samsung guys to send a follow up they already have,
-> but I'll ask them to have about taking it into this patch set.
+> This is backwards, please avoid pointless negations:
 
-I had done patches on top of v3 adding SGL support and PRP list reuse
-optimization for the dmabuf path.
-Branch: https://github.com/SamsungDS/linux/commits/rw-dmabuf-v3-nvme-opt/
+I can flip it, but compilers tend to prefer the true branch. E.g. this
 
-Also pasting the SGL patch here for quick reference:
+if (cond) A; else B;
+C;
 
-Subject: [PATCH 1/2] nvme-pci: add sgl support for dmabuf path
+can get compiled into:
 
-Handle dmabuf-backed requests through the SGL setup path too.
-Use the cached dmabuf sg_table and keep PRP fallback where allowed.
+jmpcc cond B
+A: ...
+C:
+return;
+B: ...
+jmp C;
+  
 
-Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
----
-  drivers/nvme/host/pci.c | 194 +++++++++++++++++++++++++++++++++++++++-
-  1 file changed, 193 insertions(+), 1 deletion(-)
+> 
+> 	if (bio_flagged(bio_src, BIO_DMABUF_MAP)) {
+> 		bio->dmabuf_map = bio_src->dmabuf_map;
+> 		bio_set_flag(bio, BIO_DMABUF_MAP);
+> 	} else {
+> 		bio->bi_io_vec = bio_src->bi_io_vec;
+> 	}
+> 
+>> +	if (bio_flagged(bio, BIO_DMABUF_MAP)) {
+>> +		nsegs = 1;
+>> +
+>> +		if ((bio->bi_iter.bi_bvec_done & lim->dma_alignment) ||
+>> +		    (bio->bi_iter.bi_size & len_align_mask))
+>> +			return -EINVAL;
+>> +		if (bio->bi_iter.bi_size > max_bytes) {
+>> +			bytes = max_bytes;
+>> +			goto split;
+>> +		}
+> 
+> Please add a comment explaining why nsegs is always 1 here.
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index 0a49c94dd675..31e37ab8769b 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -1270,6 +1270,14 @@ static void nvme_pci_sgl_set_data(struct 
-nvme_sgl_desc *sge,
-         sge->type = NVME_SGL_FMT_DATA_DESC << 4;
-  }
 
-+static void nvme_pci_sgl_set_data_addr(struct nvme_sgl_desc *sge,
-+               dma_addr_t addr, u32 len)
-+{
-+       sge->addr = cpu_to_le64(addr);
-+       sge->length = cpu_to_le32(len);
-+       sge->type = NVME_SGL_FMT_DATA_DESC << 4;
-+}
-+
-  static void nvme_pci_sgl_set_seg(struct nvme_sgl_desc *sge,
-                 dma_addr_t dma_addr, int entries)
-  {
-@@ -1321,6 +1329,176 @@ static blk_status_t 
-nvme_pci_setup_data_sgl(struct request *req,
-         return iter->status;
-  }
 
-+static unsigned int nvme_pci_dmabuf_sgl_nents(struct request *req,
-+               dma_addr_t *first_dma, u32 *first_len)
-+{
-+       struct bio *bio = req->bio;
-+       struct nvme_dmabuf_map *map;
-+       struct scatterlist *sg;
-+       unsigned long tmp;
-+       size_t offset = bio->bi_iter.bi_bvec_done;
-+       size_t remaining = blk_rq_payload_bytes(req);
-+       dma_addr_t last_end = 0;
-+       unsigned int nents = 0;
-+       dma_addr_t dma = 0;
-+       u32 len = 0;
-+       bool have = false;
-+
-+       map = container_of(bio->dmabuf_map, struct nvme_dmabuf_map, base);
-+
-+       for_each_sgtable_dma_sg(map->sgt, sg, tmp) {
-+               size_t sg_len = sg_dma_len(sg);
-+               dma_addr_t addr = sg_dma_address(sg);
-+
-+               if (!remaining)
-+                       break;
-+               if (offset >= sg_len) {
-+                       offset -= sg_len;
-+                       continue;
-+               }
-+
-+               addr += offset;
-+               sg_len -= offset;
-+               offset = 0;
-+
-+               while (sg_len && remaining) {
-+                       u32 chunk = min_t(size_t, remaining, sg_len);
-+
-+                       if (!have || last_end != addr) {
-+                               nents++;
-+                               if (nents == 1) {
-+                                       dma = addr;
-+                                       len = chunk;
-+                               }
-+                       } else if (nents == 1) {
-+                               len += chunk;
-+                       }
-+
-+                       have = true;
-+                       last_end = addr + chunk;
-+                       addr += chunk;
-+                       sg_len -= chunk;
-+                       remaining -= chunk;
-+               }
-+       }
-+
-+       if (unlikely(remaining))
-+               return 0;
-+
-+       *first_dma = dma;
-+       *first_len = len;
-+       return nents;
-+}
-+
-+static unsigned int nvme_pci_dmabuf_avg_seg_size(struct request *req)
-+{
-+       dma_addr_t first_dma;
-+       u32 first_len;
-+       unsigned int nseg;
-+
-+       nseg = nvme_pci_dmabuf_sgl_nents(req, &first_dma, &first_len);
-+       if (!nseg)
-+               return 0;
-+       return DIV_ROUND_UP(blk_rq_payload_bytes(req), nseg);
-+}
-+
-+static blk_status_t nvme_rq_setup_dmabuf_sgl(struct request *req,
-+                                            struct nvme_queue *nvmeq)
-+{
-+       struct nvme_iod *iod = blk_mq_rq_to_pdu(req);
-+       struct bio *bio = req->bio;
-+       struct nvme_dmabuf_map *map;
-+       size_t length = blk_rq_payload_bytes(req);
-+       struct nvme_sgl_desc *sg_list = NULL;
-+       dma_addr_t sgl_dma = 0, first_dma, last_end = 0;
-+       unsigned int entries, mapped = 0;
-+       unsigned long tmp;
-+       struct scatterlist *sg;
-+       size_t offset, remaining;
-+       u32 first_len;
-+       bool have = false;
-+
-+       map = container_of(bio->dmabuf_map, struct nvme_dmabuf_map, base);
-+
-+       entries = nvme_pci_dmabuf_sgl_nents(req, &first_dma, &first_len);
-+       if (!entries)
-+               return BLK_STS_IOERR;
-+       if (entries > NVME_MAX_SEGS)
-+               return BLK_STS_AGAIN;
-+
-+       iod->cmd.common.flags = NVME_CMD_SGL_METABUF;
-+       iod->total_len = length;
-+
-+       nvme_sync_dma(nvmeq->dev, req, false);
-+
-+       if (entries == 1) {
-+               nvme_pci_sgl_set_data_addr(&iod->cmd.common.dptr.sgl, 
-first_dma,
-+                                          first_len);
-+               return BLK_STS_OK;
-+       }
-+
-+       if (entries <= NVME_SMALL_POOL_SIZE / sizeof(*sg_list))
-+               iod->flags |= IOD_SMALL_DESCRIPTOR;
-+
-+       sg_list = dma_pool_alloc(nvme_dma_pool(nvmeq, iod), GFP_ATOMIC,
-+                                &sgl_dma);
-+       if (!sg_list)
-+               return BLK_STS_RESOURCE;
-+       iod->descriptors[iod->nr_descriptors++] = sg_list;
-+
-+       offset = bio->bi_iter.bi_bvec_done;
-+       remaining = length;
-+
-+       for_each_sgtable_dma_sg(map->sgt, sg, tmp) {
-+               size_t sg_len = sg_dma_len(sg);
-+               dma_addr_t addr = sg_dma_address(sg);
-+
-+               if (!remaining)
-+                       break;
-+               if (offset >= sg_len) {
-+                       offset -= sg_len;
-+                       continue;
-+               }
-+
-+               addr += offset;
-+               sg_len -= offset;
-+               offset = 0;
-+
-+               while (sg_len && remaining) {
-+                       u32 chunk = min_t(size_t, remaining, sg_len);
-+
-+                       if (have && last_end == addr) {
-+                               u32 old = le32_to_cpu(sg_list[mapped - 
-1].length);
-+
-+                               sg_list[mapped - 1].length =
-+                                       cpu_to_le32(old + chunk);
-+                       } else {
-+                               if (WARN_ON_ONCE(mapped == entries))
-+                                       goto err_free;
-+ 
-nvme_pci_sgl_set_data_addr(&sg_list[mapped++],
-+                                                          addr, chunk);
-+                       }
-+
-+                       have = true;
-+                       last_end = addr + chunk;
-+                       addr += chunk;
-+                       sg_len -= chunk;
-+                       remaining -= chunk;
-+               }
-+       }
-+
-+       if (unlikely(remaining))
-+               goto err_free;
-+
-+       nvme_pci_sgl_set_seg(&iod->cmd.common.dptr.sgl, sgl_dma, mapped);
-+       return BLK_STS_OK;
-+
-+err_free:
-+       iod->nr_descriptors--;
-+       dma_pool_free(nvme_dma_pool(nvmeq, iod), sg_list, sgl_dma);
-+       return BLK_STS_IOERR;
-+}
-+
-  static blk_status_t nvme_pci_setup_data_simple(struct request *req,
-                 enum nvme_use_sgl use_sgl)
-  {
-@@ -1369,8 +1547,22 @@ static blk_status_t nvme_map_data(struct request 
-*req)
-         struct blk_dma_iter iter;
-         blk_status_t ret;
+> 
+>> @@ -424,7 +424,8 @@ static inline struct bio *__bio_split_to_limits(struct bio *bio,
+>>   	switch (bio_op(bio)) {
+>>   	case REQ_OP_READ:
+>>   	case REQ_OP_WRITE:
+>> -		if (bio_may_need_split(bio, lim))
+>> +		if (bio_may_need_split(bio, lim) ||
+>> +		    bio_flagged(bio, BIO_DMABUF_MAP))
+>>   			return bio_split_rw(bio, lim, nr_segs);
+> 
+> The BIO_DMABUF_MAP check should go into bio_may_need_split.
 
--       if (nvme_rq_is_dmabuf_attached(req))
-+       if (nvme_rq_is_dmabuf_attached(req)) {
-+               if (use_sgl == SGL_FORCED) {
-+                       ret = nvme_rq_setup_dmabuf_sgl(req, nvmeq);
-+                       /* Regular path doesn't fall back if SGLs are 
-forced. */
-+                       return ret == BLK_STS_AGAIN ? BLK_STS_IOERR : ret;
-+               }
-+
-+               if (use_sgl == SGL_SUPPORTED && sgl_threshold &&
-+                   nvme_pci_dmabuf_avg_seg_size(req) >= sgl_threshold) {
-+                       ret = nvme_rq_setup_dmabuf_sgl(req, nvmeq);
-+                       if (ret != BLK_STS_AGAIN)
-+                               return ret;
-+               }
-+
-                 return nvme_rq_setup_dmabuf_map(req, nvmeq);
-+       }
+Ok
+>> +static inline void bio_advance_iter_dmabuf_map(struct bvec_iter *iter,
+>> +					       unsigned int bytes)
+>> +{
+>> +	iter->bi_bvec_done += bytes;
+>> +	iter->bi_size -= bytes;
+>> +}
+>> +
+>>   static inline void bio_advance_iter(const struct bio *bio,
+>>   				    struct bvec_iter *iter, unsigned int bytes)
+>>   {
+>>   	iter->bi_sector += bytes >> 9;
+>>   
+>> -	if (bio_no_advance_iter(bio))
+>> +	if (bio_no_advance_iter(bio)) {
+>>   		iter->bi_size -= bytes;
+>> -	else
+>> +	} else if (bio_flagged(bio, BIO_DMABUF_MAP)) {
+>> +		bio_advance_iter_dmabuf_map(iter, bytes);
+> 
+> This is a bit of a mess.  You're using bi_bvec_done for something that
+> is not bvec_done, which makes the naming very confusing.  That is even
+> more confusing than the existing usage, which isn't great.  Also we
+> add yet another conditional to heavily inlined code.  I'd suggest
+> the following:
+> 
+>   - add a prep patch to rename bi_bvec_done to bi_offset, as even for
+>     the existing usage it is the offset into the current bio_vec as
+>     much as it is the count of byes done, as those must be the same
+>     and it is used both ways
+>   - add a prep patch to also increase bi_offset for bio_no_advance_iter.
+>     It is not actually use there, but incrementing it is harmless and
+>     this will avoid a new special case
+>   - please also documet this new usage in the commet in struct bvec_iter.
+>   - then just add the dma buf mapping to the bio_no_advance_iter condition
 
-         /*
-          * Try to skip the DMA iterator for single segment requests, as 
-that
---
-2.43.0
+I'll take a look
+
+>   - figure out what to do about dm_bio_rewind_iter, which pokes into these
+>     things that really should be block layer internal
+
+Need to check what that is, but doesn't implement the interface and
+is not supposed to ever see the dmabuf iterator.
+
+>>   }
+>> @@ -391,7 +403,7 @@ static inline void bio_wouldblock_error(struct bio *bio)
+>>    */
+>>   static inline int bio_iov_vecs_to_alloc(struct iov_iter *iter, int max_segs)
+>>   {
+>> -	if (iov_iter_is_bvec(iter))
+>> +	if (iov_iter_is_bvec(iter) || iov_iter_is_dmabuf_map(iter))
+>>   		return 0;
+>>   	return iov_iter_npages(iter, max_segs);
+>>   }
+> 
+> Please update the comment for this helper.
+> 
+>> @@ -322,6 +327,7 @@ enum {
+>>   	BIO_REMAPPED,
+>>   	BIO_ZONE_WRITE_PLUGGING, /* bio handled through zone write plugging */
+>>   	BIO_EMULATES_ZONE_APPEND, /* bio emulates a zone append operation */
+>> +	BIO_DMABUF_MAP, /* Using premmaped dma buffers */
+> 
+> Shouldn't this be a REQ_ flag as we should never mix and match bios with
+> and without this flag in a single request?
+
+Do you mean adding both and propagating it from bio to req? submit_bio()
+takes a bio, so we still need to set it there before it reaches blk-mq.
+And there might be bio-based drivers using it in the future.
+
+-- 
+Pavel Begunkov
 
 

@@ -1,85 +1,84 @@
-Return-Path: <io-uring+bounces-13378-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13379-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id mBlsI3zYCmrb8gQAu9opvQ
-	(envelope-from <io-uring+bounces-13378-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Mon, 18 May 2026 11:14:36 +0200
+	id qPFlAM3YCmrb8gQAu9opvQ
+	(envelope-from <io-uring+bounces-13379-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Mon, 18 May 2026 11:15:57 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ADD1569780
-	for <lists+io-uring@lfdr.de>; Mon, 18 May 2026 11:14:35 +0200 (CEST)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABABA5697C7
+	for <lists+io-uring@lfdr.de>; Mon, 18 May 2026 11:15:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 93949300A66F
-	for <lists+io-uring@lfdr.de>; Mon, 18 May 2026 09:06:58 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 61E31304FBBD
+	for <lists+io-uring@lfdr.de>; Mon, 18 May 2026 09:10:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 275453E4C86;
-	Mon, 18 May 2026 09:06:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 110A83E4C6B;
+	Mon, 18 May 2026 09:10:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yi+h26dv"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TJPAkrMm"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC0ED3E3C4A
-	for <io-uring@vger.kernel.org>; Mon, 18 May 2026 09:06:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B733E51E7
+	for <io-uring@vger.kernel.org>; Mon, 18 May 2026 09:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779095215; cv=none; b=Sp1lHjQBjgkzs8m5h0t+WnUWXBzwOJv1iZFRp/G0APHLk7DDJII/wNX67G8JQUMKzYAdpQnLI+xQn7WbWvKKwF3WcJ0xQoAjn71JUbFNwnzN3qLoD2UFUaxHxGJlX65CjHh6hqb9Al5kw/4DRfHatxlUH8h3hUKsbMwsn0zHkyQ=
+	t=1779095429; cv=none; b=CaQdTAXT8O+2CHXi+q+nbnceAEqHTsTErmnPVRGwdVGgQRQepXHerdynJO27Ifo+E7x+T6nUE2v2tZnz3sd1wQAm1TQV8sd++M24hMhxgTzCYWR46b6N4Cj4ip7HS50pxu6I9YOTxueBzySrauvwLQsS3MfI49feqFA6mvQCl8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779095215; c=relaxed/simple;
-	bh=+sv4jnUTyOdjjZciCJyC+lf1CirV23BI+BT8te+prnE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O63RmaN0vnhjzxyjJLsvMsJAFOuQjhJ9AGY5qXQDj5u2XVkqEHdeemSA14OHstUNUQydnnJO5c9UbQ9d/EtlgKLxtdBLq+D4OvwDJ45VK3yAFMiprTqd4OuPGiJXUrdzczX5RH/b90hj6i10Zgjg++m+npOKWw7dHyX/DwvpZQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yi+h26dv; arc=none smtp.client-ip=209.85.218.43
+	s=arc-20240116; t=1779095429; c=relaxed/simple;
+	bh=JDf5tfG8fpD06t7iMggta6QbZxhroHbPF6Ww351Aud0=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=T3mqj2z4GxwSbU7sikPNq2RymayOwpYNhvSmWLKQftsCh4/AaGtBV49nLChbU31G1iBZrt2poN4BrAeQAoBUNRHGZF5yakuduaa7M/hZv6RYp22a+iwXNjAMUZ3RfbxugwnApz4Ax+EVuA2/LsvoDmCxf59aqtTPl0YkDrpqFJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TJPAkrMm; arc=none smtp.client-ip=209.85.208.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-bd85ebb368fso72778366b.1
-        for <io-uring@vger.kernel.org>; Mon, 18 May 2026 02:06:52 -0700 (PDT)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-670ab084a39so4354218a12.3
+        for <io-uring@vger.kernel.org>; Mon, 18 May 2026 02:10:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779095211; x=1779700011; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zSl2K2WdTrcT8MX7//EVVA3HDXITKieSgfsnYmfI0m8=;
-        b=Yi+h26dvDZQ2jdYVDig1OE4cz3PzmeF5K6Dlb9K30eV8DlMW50Vw4XbH3n1TZXa2KR
-         lrM+MH4a4cgHcPhnNh3BVv3eozzr+u3MFV2oXZUXk8xbw51nHgVF/Tnvj+T2bBG+MwHx
-         BTjVwNO3Pb19C48esnsh1cWM0DZ5awSo77UTuLh0X9b+OugX+6BfWiWaq08gma/+e5ax
-         2CNrCb9tXVI75Wtb6FM4lCOMblDw3iJwtgrhZ+jkdX7k4ENpm0d5GHaxRVznpjDTQmbn
-         0DKj7WJiV8v0Tk2OjfUWJzmn6Flxxcas7MzadIxCL/gjdJNAzTHM/dbTivscOUBP0A7C
-         OcAg==
+        d=gmail.com; s=20251104; t=1779095426; x=1779700226; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=NK6QaM0AvluQNq8GVPqTX/wBbD7FgigoEBmBlLT11LA=;
+        b=TJPAkrMmxASGuDLSpftlKK9PV2MtAwT6+7Zl98Vv1r8yDlfkDFF/T+xJ88LhrcItVy
+         ogY/zfhZ2Xnl5jlrZIb6sM4Mz3XxcicP7OiNGHUStVms8Gwjd5P8+TT6NAfBi73t5hZg
+         0RQzv0FBgIFWDCSXCa+GlKsUl4aracaro5yu0WDXS0VvvSedi6zLP0ZXeFy0w52LN7k8
+         XipxwpaOI/gdIFepZD0M2KQT9zlG3SAeoBBPX89ZVnTj0/aWa+P3LiXCRjYEu+4pc9c9
+         vZ0R9gPdyLql3qAx7QemfDa+q25ncNE+TNIhhkPPbjwsPksLMjMxFooK9aFjxvyUC/I+
+         Ombg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779095211; x=1779700011;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zSl2K2WdTrcT8MX7//EVVA3HDXITKieSgfsnYmfI0m8=;
-        b=r1P7J5T85atlQICTl+c4Sk/yb8XTuCEwZeb44mKbHazm+N/YRPvVXraqHfkNRdDZP2
-         183rEMxSN6OfuLDB4N6X/VK1mG7Waezb6alLxqLqnjVc+/IrdD/HSE7DSgXq4YznEQYq
-         erK5WYix011mLD+PKxo6uuSAysbeLZlRZm654p+ONPLxdOsXlcRVxELA5/o4GFqyoeIM
-         LXKb1MG1zJ5YetwwLBplg3efmC1ru1KWzM8kJxItHpnu39CoZVl4w72WQim8je/6ynEf
-         4ddPa2UYH+midBiaLuYOYRfAjoY7vwdzaWPNwEEWAS1/8+Cd2IoC7x0K3ylQp1NCN3SY
-         49Qw==
-X-Forwarded-Encrypted: i=1; AFNElJ8D9IHTShyxMhmqhMmva6KhZno4lsjOXgd+eddwX84Rtmorpze1L/S4utQvNx4D3ytJwkSsneQdHA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyncV7sYRMDEZ3qi2iZDhcKNoAs5UANdCtPQfiDr5R10Ydl4SL
-	URa8qCYUQWQee6s/NZuJrIugRoyj0qzS32r4pCH2IHh6XrMZWYzCor+2
-X-Gm-Gg: Acq92OEOwRLmt3QO4W9/3zBeLjz8o6ZVX+ulCpNuGBsgVOWli3HvjI3SqLkMHfKRWKT
-	m3dc4Ic+6pfrrL9S1faI9/R5GScgkCzHmY25LWjr/uR+CA8a3+yGL7Eo8wXBZOMoptbx8e0bM+D
-	eoBawZPZzv0YGjqogDa0szWiVw8jJL7TuyHjjD0j8g7soa3s9I+9CYdn5I302UJwJD8BXO6aNUW
-	tRQBZq68ZRSJbDNif5XoivqjE9cjHEd8rziEsTJVlis7O8Y3wAz5GUAbLIyqPJ7IgYHzBhiy27/
-	ktEcO3KT/BqjwggtCb+eC4AHV5mkGC9A7utPI9KVMgtiK6GtjM7BJCw00SRxCY4Q1a5lyn559zE
-	D653aEdqghNKrC+AqMrXJ2vz+H4WICBha1fR1C4ZmukdLvETjFkuS4PNjvvnw0MzxPTN2idNa7U
-	qyLNQkI+5aQTST0buUmwR1Rn5V9zEbAWz5XG2VcxLGaGAjfKEhbB7P8DZ7fPC4nxmQYbuupZOyk
-	Sw0dp/4buz3Ew4t0pO0BeptMFiKe9nknlkZGSkRPLSqL/eXZBUapcsfBvo=
-X-Received: by 2002:a17:906:6185:b0:bc4:b9f5:fe27 with SMTP id a640c23a62f3a-bd51780c8acmr759171166b.10.1779095211030;
-        Mon, 18 May 2026 02:06:51 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1779095426; x=1779700226;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NK6QaM0AvluQNq8GVPqTX/wBbD7FgigoEBmBlLT11LA=;
+        b=JBTcchVp9u/I+hirNOQimNfZxeEzd/0CEhX2BaGPmYaGD74eOMWIyn/JY1phLf9B3X
+         1SIv10NZz6JZY9PtT89ACwZiihI7FqvDzpQP3B9mUM51dI96sw3yS1467iLPXfTFOyCe
+         0i3zSHsLMQtw0mRX+MCpzL0JvYQgQ429ZA+SYfoHWzr0Qv9idUU07dBSoCk0MpAjXdW+
+         P0Uy97laIoLHtcxc4fZbvYf60RK6jn64nXyvnIw5refjrbchJ+YOyUW27tLsh6B+qbah
+         bg4+b8qkHV259FMDW6/nnDlp55hItN24B47AFNYT742a8vw4obYlppiXWqBkZIm7Tul+
+         yHBw==
+X-Forwarded-Encrypted: i=1; AFNElJ+ms+7GCBVbAPMBc1FU+CWDs7tQDRZt0y4zcby2GjL/njtBP0MtlixJ71O5266Yu7IY6Qfo5DPR2g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIpzdEFYft7mot7FT5CJgzbQscQ3DhQm4+gB8RU09H+FhFhbfZ
+	eGU7s33gddf/0LMXylKHpJN4+T8OHgogELnUpC5xMVOavdzPnzXGoJ1p
+X-Gm-Gg: Acq92OGhS2f4N8/3KAaYgcRhZMWhdQVsTv0OwU92I06HqTc+AipsrPI672Cj/WceYAC
+	Za/uHBZzUVJzbrEL9Eq6l2heOLTcLfvVHihZPm5kk6llrMu3OjoE/BoLt3WFTUN321o+3YSZ1SG
+	h7FxGHKXUMRLy+Cb2wsVcxLRKJ56psO+Jza0gqPbX+3+bQyrKydW/cDjiSTeGlpUlfsFKomiOnN
+	OpVa3iX6TwnnY6mHng5mS6e46JNCt52BzlsXlRyx0LuIzmXTNZGvr5jps/YnzLCQF6NH8cAZ/mB
+	Z/VyNpt/8wUG4IaoKOittUaiyckNaUxb5MlpUHjeE9gU2S0cluS5RhPLx70kUM/J0YGQ3q3N/kB
+	BKQjTx2h5qdugFcIdeEv6TVPPtC4CHU6/QzhuAdcw97EGA4bHh52cjXKp/tOQMyWE2NN1aZgjqO
+	jHFK4qPrZU9QAtZF0zPffDdGP1+hsZL56OTtZp8L42MBNuDU5Wx2m+ML7LBvYtst1aVw1W23jCl
+	U6iA5Y5tUjuOA0WuL3zlwojLmUZIm2oJ+KUD2/wSkjXaYhvrZCGsSW1J9IeUUcCmAI+WQ==
+X-Received: by 2002:a05:6402:4150:b0:67e:153e:51cb with SMTP id 4fb4d7f45d1cf-683bcd9e33amr6611396a12.16.1779095426574;
+        Mon, 18 May 2026 02:10:26 -0700 (PDT)
 Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:6e9b])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-bd4f4e57cb8sm535358566b.50.2026.05.18.02.06.50
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-68310b4069dsm4929655a12.1.2026.05.18.02.10.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 May 2026 02:06:50 -0700 (PDT)
-Message-ID: <9f3f3dc7-1c52-49b6-91d5-046f1fc7b2a8@gmail.com>
-Date: Mon, 18 May 2026 10:06:48 +0100
+        Mon, 18 May 2026 02:10:25 -0700 (PDT)
+Message-ID: <d14967a9-979d-428e-8190-6a756da1c130@gmail.com>
+Date: Mon, 18 May 2026 10:10:23 +0100
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -87,123 +86,70 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] fuse: wait for aborted connection before releasing
- last fuse_dev
-To: Bernd Schubert <bschubert@ddn.com>, Berkant Koc <me@berkoc.com>,
- Greg KH <gregkh@linuxfoundation.org>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: "security@kernel.org" <security@kernel.org>,
- Joanne Koong <joannelkoong@gmail.com>,
- "linux-fuse@vger.kernel.org" <linux-fuse@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
- Jens Axboe <axboe@kernel.dk>, fuse-devel <fuse-devel@lists.linux.dev>
-References: <20260517095846.fuse-iouring-uaf.dc5f5dbb71dc@berkoc.com>
- <2026051703-equinox-multitude-91e2@gregkh>
- <20260517-fuse-uaf-cover@berkoc.com> <20260517-fuse-uaf-patch2@berkoc.com>
- <08d3f6e0-7745-4084-995a-95ddb77f7f11@ddn.com>
-Content-Language: en-US
 From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <08d3f6e0-7745-4084-995a-95ddb77f7f11@ddn.com>
+Subject: Re: [PATCH v3 03/10] block: move bvec init into __bio_clone
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>,
+ Sagi Grimberg <sagi@grimberg.me>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+ io-uring@vger.kernel.org, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+ Nitesh Shetty <nj.shetty@samsung.com>, Kanchan Joshi <joshi.k@samsung.com>,
+ Anuj Gupta <anuj20.g@samsung.com>, Tushar Gohad <tushar.gohad@intel.com>,
+ William Power <william.power@intel.com>, Phil Cayton
+ <phil.cayton@intel.com>, Jason Gunthorpe <jgg@nvidia.com>
+References: <cover.1777475843.git.asml.silence@gmail.com>
+ <43a91f54d61d3329316e40c69ace781b4d35fe0b.1777475843.git.asml.silence@gmail.com>
+ <20260513081238.GC5477@lst.de>
+Content-Language: en-US
+In-Reply-To: <20260513081238.GC5477@lst.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 9ADD1569780
+X-Rspamd-Queue-Id: ABABA5697C7
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [3.84 / 15.00];
-	SEM_URIBL_FRESH15(3.00)[berkoc.com:email];
-	SUSPICIOUS_URL_IN_SUSPICIOUS_MESSAGE(1.00)[];
+X-Spamd-Result: default: False [-2.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20251104];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
-	BAD_REP_POLICIES(0.10)[];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-13378-lists,io-uring=lfdr.de];
-	DMARC_POLICY_ALLOW(0.00)[gmail.com,none];
-	FREEMAIL_CC(0.00)[kernel.org,gmail.com,vger.kernel.org,kernel.dk,lists.linux.dev];
+	TAGGED_FROM(0.00)[bounces-13379-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	R_DKIM_ALLOW(0.00)[gmail.com:s=20251104];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
-	MID_RHS_MATCH_FROM(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	RCPT_COUNT_TWELVE(0.00)[24];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[asmlsilence@gmail.com,io-uring@vger.kernel.org];
-	NEURAL_SPAM(0.00)[0.343];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	REDIRECTOR_URL(0.00)[aka.ms];
-	ARC_ALLOW(0.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[io-uring];
+	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	R_SPF_ALLOW(0.00)[+ip4:104.64.211.4:c];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,aka.ms:url]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
 X-Rspamd-Action: no action
 
-On 5/17/26 16:00, Bernd Schubert wrote:
-> On 5/17/26 14:59, Berkant Koc wrote:
->> [You don't often get email from me@berkoc.com. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
->>
->> From: Berkant Koc <me@berkoc.com>
->>
->> fuse_dev_release() on the last fuse_dev of a connection calls
->> fuse_abort_conn(fc) and then immediately fuse_conn_put(fc). For io-uring
->> backed connections fuse_abort_conn() reaches fuse_uring_abort(), which
->> runs fuse_uring_teardown_all_queues() synchronously once and then
->> schedules ring->async_teardown_work to run after
->> FUSE_URING_TEARDOWN_INTERVAL (HZ/20). If the synchronous pass left
->> queue_refs > 0 the work owns further accesses to ring->queues[*]->
->> ent_avail_queue and ent_in_userspace entries.
->>
->> Meanwhile fuse_conn_put() can drop the last reference and arm
->> delayed_release() via call_rcu(). After the RCU grace period
->> delayed_release() calls fuse_uring_destruct(), which kfree()s the ring
->> entries on each queue->ent_released list. The previously scheduled
->> async_teardown_work then runs and walks per-queue lists that contain
->> freed entries, producing a slab-use-after-free reported by KASAN at
->> fuse_uring_teardown_all_queues+0xee reading ent->list.next from a
->> freed kmalloc-192 region.
->>
->> fuse_wait_aborted() already exists for this purpose: it waits on
->> fc->blocked_waitq for num_waiting to drain and then calls
->> fuse_uring_wait_stopped_queues(), which waits for ring->queue_refs to
->> reach zero. Call it between fuse_abort_conn() and fuse_conn_put() on
->> the last-device path so the io-uring teardown work has fully drained
->> before the connection can be torn down.
->>
->> Fixes: c090c8abae4b ("fuse: Add io-uring sqe commit and fetch support")
->> Cc: stable@vger.kernel.org # 6.14+
->> Tested-by: Berkant Koc <me@berkoc.com>
->> Signed-off-by: Berkant Koc <me@berkoc.com>
->> ---
->>   fs/fuse/dev.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
->> index 5dda7080f4a9..7d9c06654a98 100644
->> --- a/fs/fuse/dev.c
->> +++ b/fs/fuse/dev.c
->> @@ -2566,6 +2566,7 @@ int fuse_dev_release(struct inode *inode, struct file *file)
->>                  if (last) {
->>                          WARN_ON(fc->iq.fasync != NULL);
->>                          fuse_abort_conn(fc);
->> +                       fuse_wait_aborted(fc);
->>                  }
->>                  fuse_conn_put(fc);
->>          }
-> 
-> I might be wrong, but I don't think it is possible, Maybe Pavel or Jens
-> could help (added to CC). Basically as long as
-> fuse_uring_async_stop_queues() runs we do not have completed all
-> io-uring commands via io_uring_cmd_done() and as long as we do not have
-> completed these io-uring commands.
+On 5/13/26 09:12, Christoph Hellwig wrote:
+> On Wed, Apr 29, 2026 at 04:25:49PM +0100, Pavel Begunkov wrote:
+>> To quote Cristoph: "Historically __bio_clone itself does not clone the
 
-If I understand the question right, yes, fuse io_uring cmd requests hold
-a reference to the fuse file, so until you complete them the file will
-not get released.
+Sorry for late replies
+
+> It's Christoph.
+
+Oops, typo, sorry for that
 
 -- 
 Pavel Begunkov

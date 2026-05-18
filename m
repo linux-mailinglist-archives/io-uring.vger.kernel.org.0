@@ -1,133 +1,158 @@
-Return-Path: <io-uring+bounces-13417-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13418-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id jAoLGI5RC2qdFgUAu9opvQ
-	(envelope-from <io-uring+bounces-13417-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Mon, 18 May 2026 19:51:10 +0200
+	id 0I2IMkFpC2qnHAUAu9opvQ
+	(envelope-from <io-uring+bounces-13418-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Mon, 18 May 2026 21:32:17 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id B567B571BF0
-	for <lists+io-uring@lfdr.de>; Mon, 18 May 2026 19:51:09 +0200 (CEST)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5008572E89
+	for <lists+io-uring@lfdr.de>; Mon, 18 May 2026 21:32:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 4DEAC300362A
-	for <lists+io-uring@lfdr.de>; Mon, 18 May 2026 17:51:05 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 93419300E33F
+	for <lists+io-uring@lfdr.de>; Mon, 18 May 2026 19:32:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F0E381AE3;
-	Mon, 18 May 2026 17:51:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87180390229;
+	Mon, 18 May 2026 19:32:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=berkoc.com header.i=@berkoc.com header.b="hCVCWtkm";
-	dkim=pass (2048-bit key) header.d=berkoc.com header.i=@berkoc.com header.b="NeWCjOKd"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b="nVkwfxv8"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-01.1984.is (mail-01.1984.is [185.112.145.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 129342EFD9B;
-	Mon, 18 May 2026 17:51:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.112.145.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BBF0220698
+	for <io-uring@vger.kernel.org>; Mon, 18 May 2026 19:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779126664; cv=none; b=ue9SzoU7GMYAJRlTUUsEkVsd7Ls98Z+6W5OCLNhApmufUJpb4+pZTyGVlOc6WFSyr0uR+jo+7xJstFMbWNvtcwundYkUodmygeTIER2502F9n2TmSymMCkmwhGzj7nItWKCXvpkhQkp1oPON7hceb3suhdD7wn2EdWdzx7wEGww=
+	t=1779132732; cv=none; b=UQ/0r3YYt8KIRP2OQWVg2NozoocoROwCQUvKqSXRGVUOAfrPU/J7d6aNFem7s7AdGvoxMMkxOiu+IS8YX6kjHu/kKCJjsUO/Yb7YAk5hZ6Om9zU0rh7Zn6mkud+Hma8IKKY7+KhnlRiU4Qf+nMYvvHqgsNnt8BGKOf08s3VvXWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779126664; c=relaxed/simple;
-	bh=crXW9bx10A5BNDD+/SwWixkiVVCXIsfBolkeE2Vu2Ps=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 Content-Type:MIME-Version; b=DI9EjZHS4Vwm9F7uO6eJd/hOPEMoNr9nFMEGsIANw7qgGcRGhAAZrv/TLX9c8ud1nuoJqHCfmfg/ZPkApPqvCB/MedeEp7VAt2ZbHjM821gDhUPkWdv9uIXbkZ+MGFYdvmlW2K/N0cq3TgU6FtvVpWL7sSmvgPdrUGbD7Wf/XNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=berkoc.com; spf=pass smtp.mailfrom=berkoc.com; dkim=pass (2048-bit key) header.d=berkoc.com header.i=@berkoc.com header.b=hCVCWtkm; dkim=pass (2048-bit key) header.d=berkoc.com header.i=@berkoc.com header.b=NeWCjOKd; arc=none smtp.client-ip=185.112.145.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=berkoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=berkoc.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=berkoc.com;
-	s=1984; h=MIME-Version:Content-Type:Message-ID:Date:References:In-Reply-To:
-	Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=crXW9bx10A5BNDD+/SwWixkiVVCXIsfBolkeE2Vu2Ps=; b=hCVCWtkm3PzM5WydTVqokeLtQF
-	HH4hJqs7Dg8/9gZ5hRE3bOPqenZqKs7CuCX/L/+gviLPx/KW3zM4wtlYxIGJhFRr1C2mZKvSbWgi/
-	02nLyh5VQj2ImbKPRIJhKApKze9i1JpWgywWVfR+Deju5o8JZjPrOaOPFBB1DosepZ5105WHM4r1B
-	syiucJThUr7ZjfzJXw3LUWuYdl1xY1GQQ46F0LSskhCZmjMcr/frtJ6sOzLlFPktGiABAMatd+Lar
-	EfSbZihNfDNJaSO60a9yqPUUa2CziiKvtI/yK8HT8n11ApkM6pDng9o9p0X95R3MhOGfkJKYZI1vY
-	z9zCPlTQ==;
-Received: from localhost
-	by mail-01.1984.is with utf8esmtp (Exim 4.96)
-	(envelope-from <me@berkoc.com>)
-	id 1wP26z-002Dv9-0V;
-	Mon, 18 May 2026 17:50:49 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=berkoc.com;
- i=@berkoc.com; q=dns/txt; s=me; t=1779126631; h=message-id : date :
- subject : cc : to : from : sender : reply-to;
- bh=crXW9bx10A5BNDD+/SwWixkiVVCXIsfBolkeE2Vu2Ps=;
- b=NeWCjOKdC3+iioqNg5dYNrUCR2rMF9FOcC4laR99W9rRB1sCtrhR0I9KPMC9FRIL4Z+2J
- hXwzGwmVQOlcfIqw4YcqK/0GmfSWDB0nPRCOezCR24D20Fr/v4czjWfmz14D0rwDC4/rgsR
- CSEdoVT/VwsI5ALI9Y9jTFttRbh9zIDciph/jZcKf+avjSJ4waDPHxZM3z5vdAKzPGcH8ho
- 7TWCfaF9dOa4hrAvYmChspBMWe9RkJOsZ1egUtkMwMFJ89q+zPw1qOHabKxnS6zZ1TGxopp
- 9VTIGNFVwxSplt8aMXzEUjXO8kS591rVGgucoRA1cDyKVZ9YE0Quh4Ya+IOg==
-From: Berkant Koc <me@berkoc.com>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Bernd Schubert <bernd@bsbernd.com>, Bernd Schubert <bschubert@ddn.com>, Greg KH <gregkh@linuxfoundation.org>, Miklos Szeredi <miklos@szeredi.hu>, security@kernel.org, linux-kernel@vger.kernel.org, io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, fuse-devel <fuse-devel@lists.linux.dev>
-Subject: Re: [PATCH 2/2] fuse: wait for aborted connection before releasing last fuse_dev
-In-Reply-To: <CAJnrk1YjShKKKgTox9QQ86Y7zzRWUVscvWRCuetHEqv55bdh6A@mail.gmail.com>
-References: <20260517-fuse-uaf-patch2@berkoc.com> <2889c98c-21e8-47eb-903a-ea40bf5c8c04@ddn.com> <20260518143218.7c7c1689.clarification@berkoc.com> <0e4f0d30-7ed0-431d-ac9a-874b046337cf@bsbernd.com> <CAJnrk1YjShKKKgTox9QQ86Y7zzRWUVscvWRCuetHEqv55bdh6A@mail.gmail.com>
-Date: Mon, 18 May 2026 19:49:47 +0200
-Message-ID: <20260518194947.joanne-fuse-ack@berkoc.com>
-Content-Type: text/plain; charset=utf-8
+	s=arc-20240116; t=1779132732; c=relaxed/simple;
+	bh=QYmuDIiStMaUtsiWssaz6N6y6eIelB3BX8f4iyHfcJo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=WJypcz9KWdB1ze6Qd7O+xmnnesCxCeDYt5jlkjyaJDLTEXI2jk5+lNiV4KU5PoHZHmbbzP29P2SNwb+1th0n3tbjrg9sh6IMxWbIcKDlcI5kGBaB1PCmuHw/nVuFAVrUaek/WF/OkNK79yFAKrtknVj2HnB4hlDPvtBSsVR/O2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=nVkwfxv8; arc=none smtp.client-ip=209.85.167.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-479dc6d26e3so1711716b6e.0
+        for <io-uring@vger.kernel.org>; Mon, 18 May 2026 12:32:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1779132729; x=1779737529; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5H8uG/E2bOlZXn8XqsiCaUKXr1rzTmZC5bNmsFZTVYc=;
+        b=nVkwfxv8HICtK+Ul2Tz70KzmWMqBk08sdtioaAUc7dnrt2uttR0p7nvkewIUkIQ6/Y
+         YA9Vb5c5pgDuZUl04eM0B4mBtpcR5T4EXw7phSfEyHuTPBnHjEHK/6QeNEy03tVMrxzk
+         u7i3+GO7iLzfGUQvuhx9MQ1qsIoh00rfnVT4VZfp3iv0NvcRIVRhvwj0oyIqDUS4zaIj
+         jxFGCBx/Aqi1BI2rubjmUe1QCRHXbg+5AKpJ6W37RuoxXlwZJC8ZusN9weZTuv0zHv5v
+         oAnWoJ4ZDoRZZyDX0eRFWAVHzqkwD1SIilhzIgJKzJdoCzUA+8AY+vhBMgjCz314TkBG
+         ozDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779132729; x=1779737529;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=5H8uG/E2bOlZXn8XqsiCaUKXr1rzTmZC5bNmsFZTVYc=;
+        b=lf2fFhfY/HYyjRu7SAr7wKw5k1Z2pJZSdzcR4pWyv5MU5xGiW1muxRwzTiVZnU8IgI
+         LsgpUl/I06e30R9nGSj5tUZ4R7IXs+oQXyocKd2DTexLccwtUK0sZ3Ev1yOHLUC2tmh8
+         zXBVp7zrmQvXVWxYo7rKG5tDMDYaxP6KGnqPOWrfqtPyezpNk+HIayjMBQgoNMZ2BWn/
+         P7yr1fIhfK+nQDuDXsy1t8QEyqOn0FHiU80Izy8kENRJB15LzW0Bb7T5aoXgo3LZO85a
+         J65kFFB5UewVSVy5dVPIGJLIuiCGkG45jhnFpOcHCFD5RAQveNrrXGFUTPhBfqAgygef
+         OGXg==
+X-Gm-Message-State: AOJu0Yw3EDZ/6QqqZBmSGT4TNDfsoHsvBSqyuYhHuCW3P/NkwfoAnmtB
+	3mwoSdS3+BInhYNg7Diec841jaKuUb3ufWO/IXZyUz9KiwWT3ZyuofQ12WxSxXG/2tU=
+X-Gm-Gg: Acq92OFqB7EgTVExB4vXVuuRobGztwnQBMtflTVb19UVa7lkj8oQAfSDQ7asYqG0AkZ
+	ZMf9YOEW3I4wavtweWW7i5BKWDI/esPKHDrouONCF74tpDKOlkbx/dYlcp9RCyYMLsTCDWfitXd
+	9Z/PtMJrikhcz/+SYyC9kiQHZUlzXQf99KcRktGFVeIVd7Gb6OEZJzrIVkdpgpcZGucbbVqCtaW
+	zuqJKn6otZlsYAyvYmAsi6YslxFpThIEcNN66aFLYmxwU7oF+ZWa0thZMaJvA9LhPlfIr3vuTu7
+	zaULBuiAVt/p6nhfaFjlpKHwbihU20hZgD1OACj0lWzIkm97MfRUGji2+0JWqYkl1kZ/mC4T2LR
+	Cf1cB60vARgENSIc5n/LlukpEWHrlzM7PYSEeX4X+ZYz6BSCTDeCqoYVn4+hv7b+7g20bMKpDFE
+	BQvLUc9M+JLAUNRgrdrjFXizzuYx1wCDqkzW5APH8aLihMkMQBjY6hfwqvaUdjPY5wWTKPpYerk
+	Z8=
+X-Received: by 2002:a05:6808:67c1:b0:46a:c987:ba00 with SMTP id 5614622812f47-482e5760189mr11264468b6e.32.1779132729591;
+        Mon, 18 May 2026 12:32:09 -0700 (PDT)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-482ee5349a5sm5590422b6e.15.2026.05.18.12.32.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 May 2026 12:32:08 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org, 
+ Michael Bommarito <michael.bommarito@gmail.com>
+Cc: Pavel Begunkov <asml.silence@gmail.com>, Li Zetao <lizetao1@huawei.com>, 
+ Keith Busch <kbusch@kernel.org>, linux-kernel@vger.kernel.org
+In-Reply-To: <20260517213010.696135-1-michael.bommarito@gmail.com>
+References: <20260517213010.696135-1-michael.bommarito@gmail.com>
+Subject: Re: [PATCH v2] io_uring: propagate array_index_nospec opcode into
+ req->opcode
+Message-Id: <177913272776.72259.6860661058366230514.b4-ty@b4>
+Date: Mon, 18 May 2026 13:32:07 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Spam-Score: -0.2 (/)
-X-Authenticated-User: me@berkoc.com
-X-Sender-Address: me@berkoc.com
-X-Spamd-Result: default: False [4.14 / 15.00];
-	SEM_URIBL_FRESH15(3.00)[berkoc.com:dkim];
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15.2
+X-Spamd-Result: default: False [0.34 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
-	R_DKIM_ALLOW(-0.20)[berkoc.com:s=me];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[kernel-dk.20251104.gappssmtp.com:s=20251104];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
-	BAD_REP_POLICIES(0.10)[];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_MIXED(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13417-lists,io-uring=lfdr.de];
-	MIME_TRACE(0.00)[0:+];
-	GREYLIST(0.00)[pass,meta];
 	RECEIVED_HELO_LOCALHOST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FREEMAIL_TO(0.00)[gmail.com];
-	R_DKIM_REJECT(0.00)[berkoc.com:s=1984];
-	FREEMAIL_CC(0.00)[bsbernd.com,ddn.com,linuxfoundation.org,szeredi.hu,kernel.org,vger.kernel.org,kernel.dk,gmail.com,lists.linux.dev];
-	DKIM_TRACE(0.00)[berkoc.com:-,berkoc.com:+];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	PRECEDENCE_BULK(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[me@berkoc.com,io-uring@vger.kernel.org];
-	DMARC_POLICY_ALLOW(0.00)[berkoc.com,quarantine];
+	DMARC_NA(0.00)[kernel.dk];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_TO(0.00)[vger.kernel.org,gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-13418-lists,io-uring=lfdr.de];
+	DKIM_TRACE(0.00)[kernel-dk.20251104.gappssmtp.com:+];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
+	FREEMAIL_CC(0.00)[gmail.com,huawei.com,kernel.org,vger.kernel.org];
 	TAGGED_RCPT(0.00)[io-uring];
-	ARC_ALLOW(0.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	R_SPF_ALLOW(0.00)[+ip6:2600:3c0a:e001:db::/64:c];
-	DMARC_POLICY_ALLOW_WITH_FAILURES(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,berkoc.com:mid,berkoc.com:dkim]
-X-Rspamd-Queue-Id: B567B571BF0
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:rdns,sin.lore.kernel.org:helo]
+X-Rspamd-Queue-Id: B5008572E89
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On Mon, 18 May 2026 08:35:16 -0700, Joanne Koong <joannelkoong@gmail.com> wrote:
-> Yes, on mainline the references are meant to be ring->fc, eg
 
-Confirmed, ring->fc on mainline. Reviewed-by recorded for Bernd's v6.14 backport path.
+On Sun, 17 May 2026 17:30:10 -0400, Michael Bommarito wrote:
+> Commit 1e988c3fe126 ("io_uring: prevent opcode speculation") added
+> array_index_nospec() to io_init_req(), but applied it only to a local
+> opcode variable. req->opcode is initialized from sqe->opcode before the
+> bounds check and remains the raw value.
+> 
+> Keep req->opcode as the canonical opcode in io_init_req(): reject
+> out-of-range values architecturally, then write the array_index_nospec()
+> result back to req->opcode before any table lookup. This keeps downstream
+> users of req->opcode from observing the raw user byte on a mispredicted
+> path.
+> 
+> [...]
 
-Bernd has since published the full 4-patch series via B4-Relay at 18:37 CEST, rebased onto Miklos' for-next (base-commit 040d71ac6470). On that branch the fuse_chan abstraction is in place, so the teardown path uses ring->chan / chan->conn rather than ring->fc. The series stays as-is for for-next.
+Applied, thanks!
 
-Your inline diff is the basis for the mainline stable-backport once for-next lands.
+[1/1] io_uring: propagate array_index_nospec opcode into req->opcode
+      commit: cf18e36455603d65d4745de83e2d1743c54ada47
 
-I will run the two-arm Tested-by against for-next-base 040d71ac6470 (KASAN + lockdep + kmemleak, async-teardown race + baseline) and report numbers on-thread.
+Best regards,
+-- 
+Jens Axboe
 
-Assisted-by: Claude:claude-opus-4-7 berkoc-pipeline
+
+
 

@@ -1,240 +1,262 @@
-Return-Path: <io-uring+bounces-13384-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13385-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id uDeZCALmCmrO9AQAu9opvQ
-	(envelope-from <io-uring+bounces-13384-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Mon, 18 May 2026 12:12:18 +0200
+	id COEqN6DkCmo29AQAu9opvQ
+	(envelope-from <io-uring+bounces-13385-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Mon, 18 May 2026 12:06:24 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7757856A755
-	for <lists+io-uring@lfdr.de>; Mon, 18 May 2026 12:12:16 +0200 (CEST)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EC0456A57C
+	for <lists+io-uring@lfdr.de>; Mon, 18 May 2026 12:06:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 7DE6830067A4
-	for <lists+io-uring@lfdr.de>; Mon, 18 May 2026 09:50:19 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 445533006536
+	for <lists+io-uring@lfdr.de>; Mon, 18 May 2026 09:55:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B0D318EEE;
-	Mon, 18 May 2026 09:50:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 426813246F0;
+	Mon, 18 May 2026 09:55:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="0GQm7RJ5";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZJvKXuuX"
+	dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b="IYgFXEhB"
 X-Original-To: io-uring@vger.kernel.org
-Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
+Received: from outbound-ip191a.ess.barracuda.com (outbound-ip191a.ess.barracuda.com [209.222.82.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84E531714F;
-	Mon, 18 May 2026 09:50:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779097818; cv=none; b=MMXnKJlw1wsQ6DX0mh9cXhH/4XaCujAy+N7MoQxH2M1hc/fcTvzqGIzxX8mjxFUccEzPLkrkP/Su8jThmZns9uX33eEAnG46re/ZU1y1xqqQ1FyDJoAgRmAjMEfkagTZfd4UCzIkl7QkjAZuUadzx7bV92t22eYSg1YqOGwiTQI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779097818; c=relaxed/simple;
-	bh=Lg7SHY79Ez90vizKKVcccnw95sWZhe3FLdlAUXK5a1E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SSCEerXYVUCfLbxk2r6CxBc+EnXSgVcPmHA3mBcNBNJ8qAFuFs4X59ngb0HzKrzI9jzeNbrplDwX8IIlQ82I90U4gHi5Eljbe2rcUbH3wfjflCszgbOy+Z0aYI86Fu0PkAkbQcam8rzQ70jpuxQvIKQaYItW3528W29E4O5wXnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=0GQm7RJ5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ZJvKXuuX; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfout.phl.internal (Postfix) with ESMTP id D4328EC01E8;
-	Mon, 18 May 2026 05:50:15 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-03.internal (MEProxy); Mon, 18 May 2026 05:50:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1779097815;
-	 x=1779184215; bh=v1InhRMGTE94+dyIJiJxl4Z17L0BhqwIO4O+ur7YkWQ=; b=
-	0GQm7RJ5xGZUZjcXzgitunEUXB/zSRJeWI/aZ6MTJ+WDMoHemEQhmguld3/5RV84
-	m/8esjH91BlFg6vVRtkUk65ygCl1GRovKeNv9PAk0ip/Z3UdqgeW+0ZamP5Rws/P
-	6Q8w6byVI3NVKKHFcmGLVyofKrY487NwbsGQvpZfnO3KySpvrkd5jZbtemC9B6vm
-	1Lmi+qS9exO87bg1k+P06SZM1m04HS3Ez1DC6hbnzGQQHZn7TvmiU5gkycsHYdYU
-	7DZN1+l4r4BRXIKAaghBkIfTdifa0e9pFQb6lTZ1tB0K7ZI74/bKamWL/ETBMFe7
-	W/SuNVNQr62ojtTyzwAgag==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1779097815; x=
-	1779184215; bh=v1InhRMGTE94+dyIJiJxl4Z17L0BhqwIO4O+ur7YkWQ=; b=Z
-	JvKXuuXU8AYICd+OjUKSVQgt5CHyrrtRu8jrAiHU+HpnP0d/YXUy9/an6S8C7r/+
-	Gwcy7Ve6EC5ch5SGT++XD2dd37/cXodL5NTYNlFzJsN+xiIF8nz/yowBrvn/Wnma
-	4TRXL6sMjidB7yECl0Qx5jEWk8nAlGAZpN5DvQxpBBUgfW0PpxSAaA/+ABARc3nj
-	9ljj1pHvhHCI8RSwLpFRbIJvSJRAf3k3bR5fsscjRRBJ3GPjSO5l4Jd/tvP3wm7F
-	eIGm6uMPZMtCNa/IxoSI0ZsuNLwlBqomYEIsZ4nIwRioalnApSqIuDDPnDsJbI90
-	68N2J4KiJKO2e9vh2LGrw==
-X-ME-Sender: <xms:1uAKagjWH1Z6sn3K4xIcIfWY2-BdNEG0JTUz_DhlYNyaM1J2hqXFmw>
-    <xme:1uAKak4kHnyi-ctSU4dt3b8WzK7LkANYGUBdl0WEwiGBVBtUaZ9PV5U0AHj6UVQpC
-    2EzwxxVQQwsNYPHG_vOs_jHGXPOZxhDyVFEkhwROgQCYpmh2R1o>
-X-ME-Received: <xmr:1uAKalGkJtn3hPM3eVwFDcc-6Rfeo9Okxxad1PEVeuUsaX2dMAFglrT1y65_UH8Gsn9sfUABfbNsAlKyWz_ChTN5OJ63Y8meDuShFQJuEPS0m_DzIA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgddufeekheehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeeuvghrnhgu
-    ucfutghhuhgsvghrthcuoegsvghrnhgusegsshgsvghrnhgurdgtohhmqeenucggtffrrg
-    htthgvrhhnpeetfedtheelgfehheevheetheelhfeujeeitdejvedvvdejtdfgffefhfet
-    hfffveenucffohhmrghinheprghkrgdrmhhsnecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomhepsggvrhhnugessghssggvrhhnugdrtghomhdpnhgs
-    pghrtghpthhtohepuddupdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrshhmlh
-    drshhilhgvnhgtvgesghhmrghilhdrtghomhdprhgtphhtthhopegsshgthhhusggvrhht
-    seguughnrdgtohhmpdhrtghpthhtohepmhgvsegsvghrkhhotgdrtghomhdprhgtphhtth
-    hopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthho
-    pehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtohepshgvtghurhhithihse
-    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohgrnhhnvghlkhhoohhnghesghhmrghi
-    lhdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopehiohdquhhrihhnghesvhhgvghrrdhkvghrnhgvlhdr
-    ohhrgh
-X-ME-Proxy: <xmx:1uAKamIn8qI2QYbtM-nyhi9NszAcGxQjHTPWs0cRBqk3PaRNxwBPWQ>
-    <xmx:1uAKaigKJgN6LLjM8vPLld2SnFs9c1bPyx0YCmTGHbuQ2wR6VV48Dw>
-    <xmx:1uAKakmA4MPhCiEBatj22-G9OPY64L2kHpO48seeqyBzC8rWgLzlbg>
-    <xmx:1uAKapXLrvHRqmrBgud2emcnNRPjX8RLm9zLeztPIZ2DS0TachwPHw>
-    <xmx:1-AKagW7j_HJdsTJFYcoRVUZKMGk0MboLT4AClI8CVnYKkOR3a16uB60>
-Feedback-ID: i5c2e48a5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 18 May 2026 05:50:13 -0400 (EDT)
-Message-ID: <a44344bb-ad71-41f5-a3c5-81eb99442e5e@bsbernd.com>
-Date: Mon, 18 May 2026 11:50:11 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0422324B20;
+	Mon, 18 May 2026 09:55:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=209.222.82.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779098131; cv=fail; b=gJbbgap14kSmAop2FzU/sMsFrjuDrKiSaaT9y9l4BmJH2jhr7wuM1vAe76gItH/TySQUxxgz4qC0Yp/hlD39hNzvzn7rtlqQaX2YlXaQKhPG1de8RzWHgcmBTY323p/T1+pqBA/ryTYzguNuPjlfkEnS4ecZM6mCIRhE59qGWAA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779098131; c=relaxed/simple;
+	bh=hMB7BBgRmafQs7mOHLKewrlHWwxawd+T6G4zt1aqW4w=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=qkm9hsJd9TSHcAeqWUMfIUJgU+VRkMvmLbXHQZSRSVeoRuEyB7nrKeAZHOF40ka1mF18I3pVn8nb2tsaw3dGfEHYQzPTvEWRl8zsIv8x76XyZz4I9fSF0MzO3KHgsdqxk9oOtKbCOPlvtOqW0Wuh0ZLXIBHWqONEVvgsPXPxJxo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com; spf=pass smtp.mailfrom=ddn.com; dkim=pass (1024-bit key) header.d=ddn.com header.i=@ddn.com header.b=IYgFXEhB; arc=fail smtp.client-ip=209.222.82.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ddn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ddn.com
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11021099.outbound.protection.outlook.com [52.101.52.99]) by mx-outbound-ea9-161.us-east-2a.ess.aws.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO); Mon, 18 May 2026 09:55:06 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WZL/bDF8PTptey2QGn0MoIPpU3SPZJnQX3muDt+InWwheQf81lwzl1p8gHvT+uH6P0hBzkBZtL1Hv5LCgO3kB8AgEKFP9PF8eYXlYEYnkZtlWzwi3tr6B66Ix8BvWcG7tKPWbeKtv4IsoPUzz7s25iNUk7tWU7Rq50rjiWDuWWUafO8d8Ik51rpsiEaw8X0WOj6dTQgGjNikEYPT2Yex1wMl4/07Rpc1rAbSa6x4TOfpNcRQn8yCee8yGKYnrJXHIIRDoOvjWkE6mIc6UmMbkD1aVpUKfy1G9xrA6xRXZa3F7h6G0w6hF0qYTEei8yeVXxyCBErqZNc6ncZA4fftkg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hMB7BBgRmafQs7mOHLKewrlHWwxawd+T6G4zt1aqW4w=;
+ b=I5EFJ1IU7vAZ+L0kKbHOaMIccBCcvlwWK3hntu0wrr2s5ZTb/j+5HzSDuK7ta0o59NZ7Zv5OIIil0NgFmpsULriYAq/FN3L/lh5Pjh4CjQPhrzpC9/hlDV5LpWSTV2MPZyVQzk6OQO/sf11HavzDYKBcB6TTqz6vPovEaoO43wSjpRmrGKqbw9xttTKZeEip0A7t5Ch0j+J2eEQ/q3LezslKg2Gdz45b27HF/0RsugxA1US5OcdUiE/8ZKftS6TsIl7hhW6Bqr+AgLlKweAQjGF37qeaBo8SivMFIL+NjI8lGfN4mTPwY4OdYfTxb6MkRPJKk9YwHdFfb8mqTaaI2w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=ddn.com; dmarc=pass action=none header.from=ddn.com; dkim=pass
+ header.d=ddn.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hMB7BBgRmafQs7mOHLKewrlHWwxawd+T6G4zt1aqW4w=;
+ b=IYgFXEhB/jfQaxuqhTXc17eINuK/kGW1Zbkf+QK0l/XCYevt27ZMDMbZ+D+tet4JEqbmcCQjNcGx4uyyMUdZUrvQFlKtZLxCSAfy7xQaZ1Hm6xSv1EVguZ1jCfiOOWESPEcLJARZMQd8LvUGM/hk7Km8/3TqTZZtv6m/fe2DKkc=
+Received: from CH2PR19MB3864.namprd19.prod.outlook.com (2603:10b6:610:93::21)
+ by SABPR19MB997500.namprd19.prod.outlook.com (2603:10b6:806:4f0::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.25.23; Mon, 18 May
+ 2026 09:55:05 +0000
+Received: from CH2PR19MB3864.namprd19.prod.outlook.com
+ ([fe80::c2de:bba2:8877:3704]) by CH2PR19MB3864.namprd19.prod.outlook.com
+ ([fe80::c2de:bba2:8877:3704%7]) with mapi id 15.21.0025.022; Mon, 18 May 2026
+ 09:55:05 +0000
+From: Bernd Schubert <bschubert@ddn.com>
+To: Berkant Koc <me@berkoc.com>, Greg KH <gregkh@linuxfoundation.org>, Miklos
+ Szeredi <miklos@szeredi.hu>
+CC: "security@kernel.org" <security@kernel.org>, Joanne Koong
+	<joannelkoong@gmail.com>, "linux-fuse@vger.kernel.org"
+	<linux-fuse@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "io-uring@vger.kernel.org"
+	<io-uring@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>, Pavel Begunkov
+	<asml.silence@gmail.com>, fuse-devel <fuse-devel@lists.linux.dev>
+Subject: Re: [PATCH 2/2] fuse: wait for aborted connection before releasing
+ last fuse_dev
+Thread-Topic: [PATCH 2/2] fuse: wait for aborted connection before releasing
+ last fuse_dev
+Thread-Index: AQHc5f0ab+Kc+AhELUaTC1v0iClq0bYST98AgACrHICAAJHXAA==
+Date: Mon, 18 May 2026 09:55:04 +0000
+Message-ID: <fb437530-94f1-4f06-98d9-a252e4ff1315@ddn.com>
+References: <20260517095846.fuse-iouring-uaf.dc5f5dbb71dc@berkoc.com>
+ <2026051703-equinox-multitude-91e2@gregkh>
+ <20260517-fuse-uaf-cover@berkoc.com> <20260517-fuse-uaf-patch2@berkoc.com>
+ <08d3f6e0-7745-4084-995a-95ddb77f7f11@ddn.com>
+ <177906678512.922207.11821272786828738648@berkoc.com>
+In-Reply-To: <177906678512.922207.11821272786828738648@berkoc.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-GB
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Mozilla Thunderbird
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=ddn.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CH2PR19MB3864:EE_|SABPR19MB997500:EE_
+x-ms-office365-filtering-correlation-id: b35a19c3-af7c-41e4-aa51-08deb4c3894a
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|19092799006|1800799024|366016|10070799003|7416014|376014|38070700021|22082099003|18002099003|56012099003|4143699003|11063799003;
+x-microsoft-antispam-message-info:
+ hnitEKEVsri+RYd7wjmZFW6MMDtS3+7qjuS8JxBynw/WEYTm5+oCvNZAUHmMkhEdhSvjQRsl9opt1dRN6bl5jlWLDXxVl+EjGF8FYRxeG9ksZYNKLZb1lEOat8ng2rV5DK6ufcxA88GIfnx0sNYNRYoSvvb1yqYh9OZjPvcJlRHAsdHvzrliopZ77hGgMPteEYLgcJd+gNq1V01FCxiENgaZPT5KO3G1T9Zf9DN6bY8Xsu9ZTCYN9FUd9RLILCX7ody0sH+tzomWLyeSVDB9LrrogrtTsbnC4ka2LhN++ZN2a9qqXs26tI0NA1+50Bd0A8MLhw1YP/UMZebXEDTUK3R4dvdBzF2ZsdkuxMPfCS+DllpOj7S+aaH1rn0B+gx6H2yZ6mh9neDQpHGtHto0BknrsM5RKGFN+JY1gCJTT6olpFWODW5fj/i458EwlPcIU7JaVTptHhC1R7SQw8u0c2+FmakpLwYOn4CQ/dx88HBPJem6sqz3cPNF/Mul4ftg1zZJSaD0/n/W73yV5gs/hGjryNWPN/UuT/h8CWxXxIMyM8qBctQQs8E8NkdoEttanJ9x4H31oxecIjM7SDcd2s3a0W0Z/ICrBbKU0zx05AqEHWEhSdAv6OX0lCrx9SzNvDqMnHR2pPjswPLyEKKchMZ0AL3eH6UGoQsCD9dhw44vm+KYclkyp57XRA9ZqQt2O5e4g4cUHkNmjUSFCpimWxtBaTV1xMzDr1G1v45IhtJIfDGbrPu+MYaCl+XbCW/e
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR19MB3864.namprd19.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(1800799024)(366016)(10070799003)(7416014)(376014)(38070700021)(22082099003)(18002099003)(56012099003)(4143699003)(11063799003);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?Z1NxbTBJQklwWUQwQVlCNlZKVXhDU1FadTFhQ2JmbnczVXZZSXorVUR2VHhC?=
+ =?utf-8?B?MWlBS3RYcUc5WE5hTTFjVXlTbnduTXE2L3hWOHNVTWhaS3UrN292ZFlmQ1pJ?=
+ =?utf-8?B?SnZGZVJscytxbXlHZnZhTzkyand1MldUYzdVNFB3ZUlSRDdvaWU0eGNJQ3Y0?=
+ =?utf-8?B?eXhDLzBTTFNsVGNRQUJxYkgzMlB1cmxCaUs3aUdnOWNCUWZKZ3hFTUJzMENw?=
+ =?utf-8?B?TEdXOXpMT2QzbzFvN28wT1cyK2J6SFM5V1dhaENiaWwzMHl2Z2trYTJjQnFu?=
+ =?utf-8?B?TDdaVVUvL0VQQ1RCZExwOC9pMkhNMG1lOTVoekxhOElzTTdCSTA2bmFkaEZx?=
+ =?utf-8?B?OWQxYngzTE5qWk5wckZuNHo2T01wRFNYbVNaYSszMmNqcURuN1FZMkdIVlVK?=
+ =?utf-8?B?WUt4UEpnVmdQMURCR0VNT2dCc2VPMDJnbTBRNjF6alJZeDhmL0xFaklZbHdW?=
+ =?utf-8?B?ZXlqUklSN0ovdXcwMFJQVmRtWmlUMTF1ajRzVHVVeElOUXY1R2V3WFBhZ0wz?=
+ =?utf-8?B?YXZsd1lYY3EyYjdkcWgwbXFVTTdoc29QZ1ZmZmdTakNzLzhWQlFONm1SbDQ0?=
+ =?utf-8?B?ZllUMlQrVDZac3pXd1htcHkyS1BnNlp1T3ViZUdqN3hKVTlmc3lyMHpVZnhH?=
+ =?utf-8?B?VGZvcHVaempyTEEvTHhjK3diSFdHS3NQQmFlaHdGdVNtK3FLVVVFb2dybjl4?=
+ =?utf-8?B?bjM4UDJvWlJvZE1vZDg2dmQ4R1pWYmF0Ylh1b3NlTEtsdjFOOGg3SDVEYVhG?=
+ =?utf-8?B?N0VUeC9LNUIwRHY3WnYxSVdNT1plWWtTSllNREJOQzhzRjBubWVNK2U2bk0v?=
+ =?utf-8?B?N3NscUNnQ2F6THFGZG14Y2Zqa3YvTmNibTZWT3VEa1Y1R1Ivd3JnaDRpYzlK?=
+ =?utf-8?B?V0pyeGNNK01OR3hTQ0V6MCsrbzNKRjhoK3hIS0xmUHl2bXZYUG1LckM2MU95?=
+ =?utf-8?B?TVI4ZE5yWlV6VDVEVE4yTFBjaVhORXpyVGh3SEJNRTA3M2lKOVZmWXBiTGlT?=
+ =?utf-8?B?Z0VwREhpeitrUC9EZ01IWlNycjJvUFk3MDFvNS9qalhnZGlqRHhPZDk3c0NH?=
+ =?utf-8?B?QlBuTmtVVTVobklKdUtnVVRtWnVqUlVjMXY0T3JxeUFVOC82QjBlMVkxWFBD?=
+ =?utf-8?B?WHVndWZHeW1XSFZJcjhoeUJnZGtBRFh5K2xOaWFUZVZOZ3Q3RlFkMXU5amZG?=
+ =?utf-8?B?ellENFk5RWg1T1VTSVlwT3ZnMmpVMTErWFEyVGFNSW0rMTRXZmFaQlY0ckpN?=
+ =?utf-8?B?M1pqZjg5ZEpHU01NaEJDNVpNd0dIV2xwY0JkalUyTlY2RG5vNmtqYkU2NXQ0?=
+ =?utf-8?B?dmVTRmkzUXRob3dQQlFyZW12R3FTNmIxMXdvREdBdm9GaUNybVhHS2I2N0Jx?=
+ =?utf-8?B?VllyNkdBaTVYeWwyL1dmeThRL3VjL0Vjd2FIckdPbFVQR0ZnSzM2WmpVT0RJ?=
+ =?utf-8?B?aFRoQWFtRUwzaTFVd083NCtBRElyMTdxeXBCZVAwcGVtZUx2TnVRMHRKbm9y?=
+ =?utf-8?B?Z1ZWYjJOS0xiYkVJNEVMMmVacmxlUmsxUHZFZk1FWWZQR1RKV2dOckpld2dw?=
+ =?utf-8?B?ano2UFY2WUV0RlpHbFFMT2Rhend6cXg5alowODBqYStTKy9pcllaUy90ZWY1?=
+ =?utf-8?B?bDFzZWk2WkQwelpBV0FsTEVkNVA2MjNXM3hyRmVvQTF2NWNBMzZWNk8xYnI1?=
+ =?utf-8?B?R3ZSdFRJVnIrcVFhNjlUUDMzRTY1Uy82YUNYVXVtNHgxTVdWQUVWNW5ucm1T?=
+ =?utf-8?B?c1JLd2hkNkRYOWxCNUkvb095Y2ZXWTY1ckMyWUlYeWdtYVd6UzAvYllxVEMw?=
+ =?utf-8?B?RTJlVDdiLy9sMkxvZjhLT0s5VDc1eFNLVVpBOHpHZFFoVEpEdU10OEJlV3JB?=
+ =?utf-8?B?VTdMRWpjMXV1VnBST3JYaDRScHVURFJTNXhIUWF6K083cnJyVmwxMXV5Ukh0?=
+ =?utf-8?B?eitEaHIydEI1c29EZ3hNcm9ITHJQUG1kUEVmcllRYUd6SXFQKytrbjBvU1c0?=
+ =?utf-8?B?YkZnd25OaWs0ekU4UmQvcStZNTkwWHJqRDRoMTRSWm5ac0xCNDZFc3hPSk90?=
+ =?utf-8?B?VXZYQ29tNFQ0SkwzanQxSWYzUDlzOUFXeEdOTCtZVzhrdXN0d0JJcmRBOCtk?=
+ =?utf-8?B?bXpPYzdlWkYxZ2NFTktrUjZjaUZhdXhEWlRVZEV6STdVVjVsYWh2cVhKbUwy?=
+ =?utf-8?B?d29oazl5ZjhGVDVVTVhKeHQ2UlBpMlRFYUtITzE0aU42bkhVcHUzQmZYV3Ur?=
+ =?utf-8?B?YXZ1VHRnU1JIZXNOc2JjOWY0cjYxMS9LMStWOFlBcWUwVElWUzFLbVFrV01B?=
+ =?utf-8?B?VUlYU3pzRDFNaGx6ZFdQVUhyMjU1UFUyQVE5SWE3ZndPMDk3QkluZWN4NHpl?=
+ =?utf-8?Q?7GJ+SVVeth6kHkNis+QVxz1ku9jrHiBxp26UE?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <9DE756663F3F9B4580940E60E5D5B4A3@namprd19.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] fuse: wait for aborted connection before releasing
- last fuse_dev
-To: Pavel Begunkov <asml.silence@gmail.com>,
- Bernd Schubert <bschubert@ddn.com>, Berkant Koc <me@berkoc.com>,
- Greg KH <gregkh@linuxfoundation.org>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: "security@kernel.org" <security@kernel.org>,
- Joanne Koong <joannelkoong@gmail.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
- Jens Axboe <axboe@kernel.dk>, fuse-devel <fuse-devel@lists.linux.dev>
-References: <20260517095846.fuse-iouring-uaf.dc5f5dbb71dc@berkoc.com>
- <2026051703-equinox-multitude-91e2@gregkh>
- <20260517-fuse-uaf-cover@berkoc.com> <20260517-fuse-uaf-patch2@berkoc.com>
- <08d3f6e0-7745-4084-995a-95ddb77f7f11@ddn.com>
- <9f3f3dc7-1c52-49b6-91d5-046f1fc7b2a8@gmail.com>
-From: Bernd Schubert <bernd@bsbernd.com>
-Content-Language: fr, en-US, de-DE, ru-RU
-In-Reply-To: <9f3f3dc7-1c52-49b6-91d5-046f1fc7b2a8@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 7757856A755
+X-Exchange-RoutingPolicyChecked:
+	ZBsCv7GwnK+DgiU8y7j7jCCQnhyHNBAv98Nbm8oLMJnXxPbsANZ9NEbBqpziSxa2kWD95RksK2KbS+58ATEu3ehc9wR2lndiimfoVd0SwjIY03Zxc1UOe1PvHAVNkX4MKy3OvL9W0aalxaYHAGMFr5aRHgROH3XlKo9GW/lTH2vEyGDXymSv72Q7FNOc+eHiEYqpyUrZvsMm9sWtDzd+HXHEEzn34OGzcRb6BmgkqcLvG+RIswaEzCZO/5zvhs0YqURN7iNOqFxDl7KEz8oZVqrNDPj1/+goQALlusPIlUtF2Z+DGC4CsLkAg8SmYUBaR1rraFkdn0QyspbTD1lZmw==
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	qLPIOmclS1PIqHqsjQjWbx5gd/4XdWgSBT+k/1v+C1EdqLzawim7hKsNbvPCWqapL1jGnn7mz9onc0r8OJFauYtipRnco197O8HinMrBjP9WZBRVkIbQqLruGqUCjDp7jtuXt0uT4eweYQWO5H50YhA8kqowlsDgQRdQryPSyvtXVdQdlLNLJNTNaY/MQUxuw7GiUjc4BWEKObxdcnTrY+jSBH+0TFQebt6nDV5GDerlCeTXwRqTBQWHrLjh8zP+n62NW3Xtu/lW1ZFdPckx+mRpGaWDPP/hOQF0XgkVHIjYZ9ILROts+vQbsHK/Pud98pqBHKYk1HrqikkBFOqRMUU5h0R/etDtkPEItMcxjk4tjBdGUbRj2AdfqPhMHZYYSpW7J/EfW4PN2F9xPtPmjt57j9K/a4EXCGyZiraoOrMMXN2bpzTkq/J4aDQjfqadXXYhb9UiguGGxuazhrtLEqIxmqXbj4J+ohX19mDPbPN8ILy1jVZzWd9oUYKCKB4G20KbB+wn+FfNHAEHRlb3fZugO6T7zeWX7+Kz3HGvNqXkBM/Ij/OUD4R2K071E/S9VD7mhnQeCjCYYuYzaxyoaAt0Znw19N4TO3Tv3FEblrSMDlOudnQtLzYsiCRtSgRcywnlFy+HK6WLx+U50WxPvA==
+X-OriginatorOrg: ddn.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR19MB3864.namprd19.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b35a19c3-af7c-41e4-aa51-08deb4c3894a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 May 2026 09:55:04.7668
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Y7u3isdHgxxlaaglitgcQJCqlBkfFCoyEO31zTp3enKQB+QGhERtHQp/guwyORKhuOwiKNf8Fko6gXe8Z/OifQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SABPR19MB997500
+X-BESS-ID: 1779098106-102465-9383-6312-1
+X-BESS-VER: 2019.3_20260511.1739
+X-BESS-Apparent-Source-IP: 52.101.52.99
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVkZGFkZAVgZQMNkk2TDFxMTE2D
+	TFIDnFyNI41djSPMUwJdHQMtHCOM1YqTYWACYSTTNBAAAA
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.273289 [from 
+	cloudscan8-116.us-east-2a.ess.aws.cudaops.com]
+	Rule breakdown below
+	 pts rule name              description
+	---- ---------------------- --------------------------------
+	0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS124931 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status:1
+X-Rspamd-Queue-Id: 5EC0456A57C
 X-Rspamd-Server: lfdr
-X-Spamd-Result: default: False [5.34 / 15.00];
+X-Spamd-Result: default: False [6.44 / 15.00];
 	SEM_URIBL_FRESH15(3.00)[berkoc.com:email];
 	SUSPICIOUS_RECIPS(1.50)[];
+	ARC_REJECT(1.00)[cv is fail on i=2];
 	SUSPICIOUS_URL_IN_SUSPICIOUS_MESSAGE(1.00)[];
 	MAILLIST(-0.15)[generic];
-	MIME_GOOD(-0.10)[text/plain];
 	BAD_REP_POLICIES(0.10)[];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_BASE64_TEXT(0.10)[];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,gmail.com,vger.kernel.org,kernel.dk,lists.linux.dev];
-	TAGGED_FROM(0.00)[bounces-13384-lists,io-uring=lfdr.de];
-	FREEMAIL_TO(0.00)[gmail.com,ddn.com,berkoc.com,linuxfoundation.org,szeredi.hu];
-	DMARC_POLICY_ALLOW(0.00)[bsbernd.com,none];
-	TO_DN_SOME(0.00)[];
-	R_DKIM_ALLOW(0.00)[bsbernd.com:s=fm2,messagingengine.com:s=fm3];
-	MIME_TRACE(0.00)[0:+];
-	GREYLIST(0.00)[pass,body];
 	TO_DN_EQ_ADDR_SOME(0.00)[];
-	DKIM_TRACE(0.00)[bsbernd.com:+,messagingengine.com:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	FORGED_SENDER_MAILLIST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,gmail.com,vger.kernel.org,kernel.dk,lists.linux.dev];
+	TAGGED_FROM(0.00)[bounces-13385-lists,io-uring=lfdr.de];
+	GREYLIST(0.00)[pass,body];
+	RCVD_TLS_LAST(0.00)[];
+	R_DKIM_ALLOW(0.00)[ddn.com:s=selector2];
+	DMARC_POLICY_ALLOW(0.00)[ddn.com,reject];
+	DKIM_TRACE(0.00)[ddn.com:+];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	RCVD_COUNT_FIVE(0.00)[6];
-	NEURAL_HAM(-0.00)[-0.504];
+	NEURAL_HAM(-0.00)[-0.391];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[bernd@bsbernd.com,io-uring@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[bschubert@ddn.com,io-uring@vger.kernel.org];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	MID_RHS_MATCH_FROM(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
-	ARC_ALLOW(0.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	R_SPF_ALLOW(0.00)[+ip6:2600:3c04:e001:36c::/64:c];
 	REDIRECTOR_URL(0.00)[aka.ms];
-	R_SPF_ALLOW(0.00)[+ip6:2600:3c0a:e001:db::/64:c];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[bsbernd.com:mid,bsbernd.com:dkim,berkoc.com:email,aka.ms:url,messagingengine.com:dkim,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
-X-Rspamd-Action: no action
+	DBL_BLOCKED_OPENRESOLVER(0.00)[aka.ms:url,ddn.com:mid,ddn.com:dkim,berkoc.com:email,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+X-Rspamd-Action: add header
+X-Spam: Yes
 
-
-
-On 5/18/26 11:06, Pavel Begunkov wrote:
-> On 5/17/26 16:00, Bernd Schubert wrote:
->> On 5/17/26 14:59, Berkant Koc wrote:
->>> [You don't often get email from me@berkoc.com. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
->>>
->>> From: Berkant Koc <me@berkoc.com>
->>>
->>> fuse_dev_release() on the last fuse_dev of a connection calls
->>> fuse_abort_conn(fc) and then immediately fuse_conn_put(fc). For io-uring
->>> backed connections fuse_abort_conn() reaches fuse_uring_abort(), which
->>> runs fuse_uring_teardown_all_queues() synchronously once and then
->>> schedules ring->async_teardown_work to run after
->>> FUSE_URING_TEARDOWN_INTERVAL (HZ/20). If the synchronous pass left
->>> queue_refs > 0 the work owns further accesses to ring->queues[*]->
->>> ent_avail_queue and ent_in_userspace entries.
->>>
->>> Meanwhile fuse_conn_put() can drop the last reference and arm
->>> delayed_release() via call_rcu(). After the RCU grace period
->>> delayed_release() calls fuse_uring_destruct(), which kfree()s the ring
->>> entries on each queue->ent_released list. The previously scheduled
->>> async_teardown_work then runs and walks per-queue lists that contain
->>> freed entries, producing a slab-use-after-free reported by KASAN at
->>> fuse_uring_teardown_all_queues+0xee reading ent->list.next from a
->>> freed kmalloc-192 region.
->>>
->>> fuse_wait_aborted() already exists for this purpose: it waits on
->>> fc->blocked_waitq for num_waiting to drain and then calls
->>> fuse_uring_wait_stopped_queues(), which waits for ring->queue_refs to
->>> reach zero. Call it between fuse_abort_conn() and fuse_conn_put() on
->>> the last-device path so the io-uring teardown work has fully drained
->>> before the connection can be torn down.
->>>
->>> Fixes: c090c8abae4b ("fuse: Add io-uring sqe commit and fetch support")
->>> Cc: stable@vger.kernel.org # 6.14+
->>> Tested-by: Berkant Koc <me@berkoc.com>
->>> Signed-off-by: Berkant Koc <me@berkoc.com>
->>> ---
->>>   fs/fuse/dev.c | 1 +
->>>   1 file changed, 1 insertion(+)
->>>
->>> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
->>> index 5dda7080f4a9..7d9c06654a98 100644
->>> --- a/fs/fuse/dev.c
->>> +++ b/fs/fuse/dev.c
->>> @@ -2566,6 +2566,7 @@ int fuse_dev_release(struct inode *inode, struct file *file)
->>>                  if (last) {
->>>                          WARN_ON(fc->iq.fasync != NULL);
->>>                          fuse_abort_conn(fc);
->>> +                       fuse_wait_aborted(fc);
->>>                  }
->>>                  fuse_conn_put(fc);
->>>          }
->>
->> I might be wrong, but I don't think it is possible, Maybe Pavel or Jens
->> could help (added to CC). Basically as long as
->> fuse_uring_async_stop_queues() runs we do not have completed all
->> io-uring commands via io_uring_cmd_done() and as long as we do not have
->> completed these io-uring commands.
-> 
-> If I understand the question right, yes, fuse io_uring cmd requests hold
-> a reference to the fuse file, so until you complete them the file will
-> not get released.
-
-
-Sorry, had totally messed up the phrase, can't read it myself.
-
-What I mean is that the io-uring was set up with /dev/fuse as file and
-as long as fuse holds non-completed 'struct io_uring_cmd *cmd' objects
-there is a reference on the /dev/fuse fd, which blocks the call of
-fuse_dev_release().
-
-
-Thanks,
-Bernd
+T24gNS8xOC8yNiAwMzoxMywgQmVya2FudCBLb2Mgd3JvdGU6DQo+IFtZb3UgZG9uJ3Qgb2Z0ZW4g
+Z2V0IGVtYWlsIGZyb20gbWVAYmVya29jLmNvbS4gTGVhcm4gd2h5IHRoaXMgaXMgaW1wb3J0YW50
+IGF0IGh0dHBzOi8vYWthLm1zL0xlYXJuQWJvdXRTZW5kZXJJZGVudGlmaWNhdGlvbiBdDQo+IA0K
+PiBCZXJuZCwgdGhhbmtzIGZvciBwdXNoaW5nIGJhY2suIFN0ZXBwaW5nIHRocm91Z2ggdGhpcyBh
+Z2FpbnN0IHRoZSB0cmFjZToNCj4gDQo+IGZ1c2VfY29ubl9kZXN0cm95KCkgaW4gZnMvZnVzZS9p
+bm9kZS5jIGNhbGxzIGZ1c2Vfd2FpdF9hYm9ydGVkKCkNCj4gYmV0d2VlbiBmdXNlX2Fib3J0X2Nv
+bm4oKSBhbmQgdGhlIGV2ZW50dWFsIGZ1c2VfY29ubl9wdXQoKSAoZnJvbQ0KPiBmdXNlX3NiX2Rl
+c3Ryb3kpLiBmdXNlX2Rldl9yZWxlYXNlKCkgaW4gZnMvZnVzZS9kZXYuYyBkb2VzIG5vdCB3YWl0
+DQo+IGJldHdlZW4gaXRzIGZ1c2VfYWJvcnRfY29ubigpIGFuZCBmdXNlX2Nvbm5fcHV0KCkuIFRo
+YXQgYXN5bW1ldHJ5IGlzDQo+IHRoZSByYWNlLg0KPiANCj4gT24gdG9wb2xvZ2llcyB3aGVyZSB0
+aGUgbGFzdCBmdWQgcmVsZWFzZSBJUyB0aGUgbGFzdCBjb25uIHJlZg0KPiAobm8gc3VwZXJibG9j
+ayBtb3VudCwgbm8gb3RoZXIgZnVkIG9wZW4g4oCUIGV4YWN0bHkgdGhlIFBvQyBzZXR1cCksDQo+
+IGZ1c2VfY29ubl9wdXQoKSBkcm9wcyB0aGUgY291bnQgdG8gemVybywgY2FsbF9yY3Ugc2NoZWR1
+bGVzDQo+IGRlbGF5ZWRfcmVsZWFzZSwgYW5kIGZ1c2VfdXJpbmdfZGVzdHJ1Y3Qga2ZyZWVzIHJp
+bmcvcXVldWUvZW50X3JlbGVhc2VkDQo+IHNsYWJzLiBhc3luY190ZWFyZG93bl93b3JrLCBzY2hl
+ZHVsZWQgYnkgZnVzZV91cmluZ19hc3luY19zdG9wX3F1ZXVlcw0KPiB2aWEgdGhlIHRlYXJkb3du
+LWludGVydmFsIGRlbGF5ZWRfd29yaywgdGhlbiBydW5zIG9uIGZyZWVkIG1lbW9yeS4NCj4gDQo+
+IFRoZSBLQVNBTiB0cmFjZSBhdCB0b3AtZmluZGluZy9rYXNhbi10cmFjZS50eHQgc2hvd3MgZXhh
+Y3RseSB0aGF0DQo+IGludGVybGVhdmluZzoNCj4gDQo+ICAgZnJlZSBzaXRlOiBmdXNlX3VyaW5n
+X2Rlc3RydWN0IOKGkCBkZWxheWVkX3JlbGVhc2Ug4oaQIHJjdV9jb3JlDQo+ICAgdXNlIHNpdGU6
+ICBmdXNlX3VyaW5nX3RlYXJkb3duX2FsbF9xdWV1ZXMg4oaQIGFzeW5jX3RlYXJkb3duX3dvcmsN
+Cj4gICAgICAgICAgICAgICh3b3JrcXVldWUpLCByZWFkaW5nIGVudC0+bGlzdC5uZXh0IGZyb20N
+Cj4gICAgICAgICAgICAgIGttYWxsb2MtMTkyIGZyZWVkIGJ5IGRlc3RydWN0DQo+IA0KPiBZb3Vy
+IGluLWZsaWdodCBjbWQgcmVmIGludmFyaWFudCBob2xkcyBvbiBib3RoIGZpeGVkIGFuZCBub24t
+Zml4ZWQNCj4gcGF0aHMgKG5vbi1maXhlZCB2aWEgcGVyLWNtZCBpb19wdXRfZmlsZSBpbiBpb19m
+cmVlX2JhdGNoX2xpc3QsIGZpeGVkDQo+IHZpYSB0aGUgaW9fdXJpbmcgZmlsZSB0YWJsZSBzbG90
+IHBpbm5pbmcgc3RydWN0IGZpbGUg4oaSIGZ1ZCDihpIgZnVzZV9jb25uKS4NCj4gQnV0IG5laXRo
+ZXIgY292ZXJzIHRoZSBnYXAgYmV0d2VlbiBmdXNlX2Fib3J0X2Nvbm4gKHdoaWNoIHNjaGVkdWxl
+cw0KPiB0aGUgYXN5bmMgd29yayBhbmQgcmV0dXJucyBpbW1lZGlhdGVseSkgYW5kIHRoZSBSQ1Ug
+Y2FsbGJhY2suIFRoZQ0KPiBQb0MgdG9wb2xvZ3kgcmVtb3ZlcyBldmVyeSBvdGhlciByZWYtaG9s
+ZGVyLCBzbyB0aGF0IGdhcCBiZWNvbWVzIHRoZQ0KPiBsYXN0IGNvbm4gcmVmLg0KPiANCj4gVGhl
+IHBhdGNoIHJlc3RvcmVzIHN5bW1ldHJ5IHdpdGggZnVzZV9jb25uX2Rlc3Ryb3kgYnkgd2FpdGlu
+ZyBvbg0KPiByaW5nLT5xdWV1ZV9yZWZzID09IDAgKHZpYSBmdXNlX3dhaXRfYWJvcnRlZCDihpIg
+ZnVzZV91cmluZ193YWl0X3N0b3BwZWRfcXVldWVzKQ0KPiBiZWZvcmUgdGhlIHB1dC4gVGhhdCBn
+dWFyYW50ZWVzIGFzeW5jX3RlYXJkb3duX3dvcmsgaGFzIGZpbmlzaGVkDQo+IGJlZm9yZSBSQ1Ug
+aXMgYXJtZWQuDQo+IA0KPiBUaGUgcmFjZSBpcyByZXByb2R1Y2libGUgd2l0aCBtZGVsYXktd2lk
+ZW5pbmc7IHdpdGhvdXQgd2lkZW5pbmcgSSBzZWUNCj4gMCB0cmlwcyBpbiA1MCBpdGVyLCBidXQg
+dGhlIHdpbmRvdyBpcyBpbiB0aGUgY29kZSBwYXRocy4NCg0KSSB0aGluayBJIHNlZSB3aGF0IHRo
+ZSBhY3R1YWwgaXNzdWUgaXMsIHdlIG5lZWQgYW4gZmMgKG9yIGluIGxpbnV4LW5leHQNCnN0cnVj
+dCBmdXNlX2NoYW4pIHJlZmVyZW5jZSBhcyBsb25nIGFzIGZ1c2VfdXJpbmdfYXN5bmNfc3RvcF9x
+dWV1ZXMoKQ0KcnVucy4gUGF0Y2ggZm9sbG93cy4NCg0KDQpUaGFua3MsDQpCZXJuZA0K
 

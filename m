@@ -1,59 +1,62 @@
-Return-Path: <io-uring+bounces-13447-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13448-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id aOpfKriaDWoMzwUAu9opvQ
-	(envelope-from <io-uring+bounces-13447-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Wed, 20 May 2026 13:27:52 +0200
+	id SEDIIiybDWoU0AUAu9opvQ
+	(envelope-from <io-uring+bounces-13448-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Wed, 20 May 2026 13:29:48 +0200
 X-Original-To: lists+io-uring@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1503858C6AA
-	for <lists+io-uring@lfdr.de>; Wed, 20 May 2026 13:27:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FF6758C756
+	for <lists+io-uring@lfdr.de>; Wed, 20 May 2026 13:29:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id A342231496CC
-	for <lists+io-uring@lfdr.de>; Wed, 20 May 2026 11:21:23 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id EA9033187ABA
+	for <lists+io-uring@lfdr.de>; Wed, 20 May 2026 11:23:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 746A73DCDB5;
-	Wed, 20 May 2026 11:20:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54B723E9C35;
+	Wed, 20 May 2026 11:20:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bSDlUDOC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h80ZCS8Q"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0CD93DC4B1;
-	Wed, 20 May 2026 11:20:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 561D33E7BD0;
+	Wed, 20 May 2026 11:20:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779276009; cv=none; b=sVWGBmfgww3yRNAvU8Rrbn6sM+aQOZmibwYm5Gi71loIPmuJaPcldadNUpsVlvAKWI7rvyOJXHLS1YYHYCiethCziXT7WitGckLeamiAqLMxfoPpkqYrUGItBNFgY+XeL4+tpQNNu2voeRSKmuChTrqFf8BXyq6s4VWyhA/PezE=
+	t=1779276025; cv=none; b=TPZ4W00V++xC/YHcFafn5bJ/ImYGJBQ5W0MElt6rFl9lh4m6jKKPvFlg0hT6PYWY9uLN/XTM87FhJfz69qdDRbPyFqIKLdJZcCEvXaPX9FY/AmeN3D1QvF0ZCG7K3BptZFngMj0//aw6usZPouPCWAPa7OcJ7J2MVq9T4ESsv9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779276009; c=relaxed/simple;
-	bh=YBxiAIRhLLuhZloB1Bm/OKO7SGTkSns5aVZuj2FDPYk=;
+	s=arc-20240116; t=1779276025; c=relaxed/simple;
+	bh=lrK/RVLsY/qCQGXYaWRUszCMLjdpNFQc/u6m65KLenw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZGrQqdA2RwI7xNhwSz20PoH+XFGHaYvg2eJ3QGscDPJJbVAyHnH4ubgcNViQx0ky5TO1tYGcRdOomOu2z8c91cofEQ0cXy39/cCq9b1I/lWr2lRikLBEDeivV2efMg44KB5F8Az6tG6clUnuP0+UanHUVENx23xLWDJUNDV3Wvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bSDlUDOC; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EBAE1F00896;
-	Wed, 20 May 2026 11:20:02 +0000 (UTC)
+	 MIME-Version:Content-Type; b=lUykGmnpejgjXeO7BZwgN/lnehyLKll/MyB1fSeonyouujrx7vsnDYo7GzrgvooKuw1kJVPUTRjfei9MjmN+1O2MQPnVJWtoEMWqslnf4BMG52IzNScbKsz+kWVaPPb/hv8bzoG8LtX9lLW6wp0Va8/N5J8Wrvxv9mKBI573kSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h80ZCS8Q; arc=none smtp.client-ip=100.103.45.18
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A8561F00893;
+	Wed, 20 May 2026 11:20:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779276003;
-	bh=NuW4Ocbcj6Nn7fwFtaRlCC1fPw05KhvfeqQ4pb/u2yo=;
+	s=k20260515; t=1779276022;
+	bh=LfjXwNBzcxPNu7EJbp/UdTldeLNMpO5Skwvk4HJzxlM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=bSDlUDOCgMK9gQhkcNUg8G/iqJu8Luq4AWWmku1+goTUjV+3T/0o8dyic7BXZVzBX
-	 I1aEtYJ07ob4v7hVLTUu4i9a7WZTCc4AEPB2F3naO58jrqsPBzw20SmAJBksYiEO2z
-	 lQy2AXo2Lq0B1Hd4NmSqPmu6/cKl1t/Y7KGke21cd3z7OvreDlk4P8hWEpU4cW/woo
-	 jIVaODN+2WqP5uA9FtteiZ+lMVDPmOY+o5W7N/SBxLTmENmS1xHkjKAwxMUnQFKq9T
-	 orf4gBog0X7QXnFpK9ZGqOJMrRQRlKZSecRHcaXyWyMgLfRuhj7A47DIpU/Y6dIKj3
-	 5/6LN9vkTPeGA==
+	b=h80ZCS8QPsyYqIjFYEYo+46mMY/VqmadHrNV0ak3AlxtGg+cAy6hC08QbrDDM2SeY
+	 Hbn08EWsDX9JfwlT/7aheTfE7yMwNcVaSz4l77rs5WHEbLC9OhDfSAo/SeIBSUgRcD
+	 m1lz4tKtvfwo+FUI55UlAA0itahjiKVNKqP4OgVoDlzVR5D1ACAAg++oSb0fEnF/3S
+	 FRi4bMKx1Ci0XntkM3eYMbDYRcMlAA7YNl5QfL/F+hAKsOetkPUjav2MyOjuLIcdlb
+	 gnJhNmaV0Kb5XGoqz75BcDevVW8f+7jKYpAwWhFBd0nyBpVCA6vTNt8qAxVAV5eNA8
+	 86QBMntAecydA==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>,
+Cc: Maoyi Xie <maoyixie.tju@gmail.com>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Maoyi Xie <maoyi.xie@ntu.edu.sg>,
 	Sasha Levin <sashal@kernel.org>,
 	io-uring@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 7.0-6.6] io_uring: hold uring_lock when walking link chain in io_wq_free_work()
-Date: Wed, 20 May 2026 07:18:45 -0400
-Message-ID: <20260520111944.3424570-13-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 7.0] io_uring/wait: honour caller's time namespace for IORING_ENTER_ABS_TIMER
+Date: Wed, 20 May 2026 07:18:58 -0400
+Message-ID: <20260520111944.3424570-26-sashal@kernel.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260520111944.3424570-1-sashal@kernel.org>
 References: <20260520111944.3424570-1-sashal@kernel.org>
@@ -68,7 +71,8 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 7.0.9
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-1.16 / 15.00];
+X-Spamd-Result: default: False [0.34 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
@@ -77,320 +81,315 @@ X-Spamd-Result: default: False [-1.16 / 15.00];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13447-lists,io-uring=lfdr.de];
 	RCVD_COUNT_THREE(0.00)[4];
+	FREEMAIL_CC(0.00)[gmail.com,kernel.dk,ntu.edu.sg,kernel.org,vger.kernel.org];
 	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-13448-lists,io-uring=lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
 	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
+	TO_DN_SOME(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[sashal@kernel.org,io-uring@vger.kernel.org];
 	DKIM_TRACE(0.00)[kernel.org:+];
-	NEURAL_HAM(-0.00)[-1.000];
+	RCPT_COUNT_SEVEN(0.00)[9];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
 	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[msgid.link:url,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,kernel.dk:email]
-X-Rspamd-Queue-Id: 1503858C6AA
+	DBL_BLOCKED_OPENRESOLVER(0.00)[msgid.link:url,kernel.dk:email,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,ntu.edu.sg:email]
+X-Rspamd-Queue-Id: 1FF6758C756
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-From: Jens Axboe <axboe@kernel.dk>
+From: Maoyi Xie <maoyixie.tju@gmail.com>
 
-[ Upstream commit 20c39819a27646573dfa0ac0d01c38895298a6f6 ]
+[ Upstream commit 45d2b37a37ab98484693533496395c610a2cab96 ]
 
-io_wq_free_work() calls io_req_find_next() from io-wq worker context,
-which reads and clears req->link without holding any lock. This can
-potentially race with other paths that mutate the same chain under
-ctx->uring_lock.
+io_uring_enter() with IORING_ENTER_ABS_TIMER takes an absolute
+timespec from the caller via ext_arg->ts. It arms an ABS mode
+hrtimer in __io_cqring_wait_schedule(). The conversion path in
+io_uring/wait.c parses ext_arg->ts inline rather than going
+through io_parse_user_time(). It therefore does not pick up the
+time namespace conversion added by the previous patch.
 
-Take ctx->uring_lock around the io_req_find_next() call. Only requests
-with IO_REQ_LINK_FLAGS reach this path, which is not the hot path.
+Apply timens_ktime_to_host() to the parsed time on the
+IORING_ENTER_ABS_TIMER branch. This mirrors the IORING_TIMEOUT_ABS
+fix in io_parse_user_time(). Use ctx->clockid as the clock id.
+ctx->clockid is set either at ring creation or via
+IORING_REGISTER_CLOCK.
 
+timens_ktime_to_host() is a no-op for clocks not affected by time
+namespaces. It is also a no-op for callers in the initial time
+namespace. The fast path is unchanged.
+
+Reproducer: in unshare --user --time, with a -10s monotonic
+offset, call io_uring_enter with min_complete=1,
+IORING_ENTER_ABS_TIMER, and ts = now + 1s. The call returns
+-ETIME after <1ms instead of after the expected ~1s.
+
+Suggested-by: Pavel Begunkov <asml.silence@gmail.com>
+Suggested-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Maoyi Xie <maoyi.xie@ntu.edu.sg>
+Link: https://patch.msgid.link/20260504153755.1293932-3-maoyi.xie@ntu.edu.sg
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-## Phase 1: Commit Message Forensics
-Step 1.1 Record: Subsystem `io_uring`; action verb `hold`; intent:
-serialize linked-request chain walking in `io_wq_free_work()` with
-`ctx->uring_lock`.
+## Phase Walkthrough
 
-Step 1.2 Record: Tags present in commit
-`20c39819a27646573dfa0ac0d01c38895298a6f6`:
-- `Signed-off-by: Jens Axboe <axboe@kernel.dk>`
-- No `Fixes:`, `Reported-by:`, `Tested-by:`, `Reviewed-by:`, `Acked-
-  by:`, `Link:`, or `Cc: stable@vger.kernel.org` tags in the committed
-  message.
+### Phase 1: Commit Message Forensics
+Record: Subsystem `io_uring/wait`; action verb `honour`; intent is to
+make `IORING_ENTER_ABS_TIMER` interpret caller absolute times in the
+caller’s time namespace.
 
-Step 1.3 Record: The commit states that `io_wq_free_work()` calls
-`io_req_find_next()` from io-wq worker context, and `io_req_find_next()`
-reads and clears `req->link` without a lock. The stated failure mode is
-a potential race with other paths mutating the same chain under
-`ctx->uring_lock`. No stack trace, reproducer, affected-version
-statement, or user report is in the commit message.
+Record: Tags present:
+`Suggested-by: Pavel Begunkov`, `Suggested-by: Jens Axboe`, author
+`Signed-off-by: Maoyi Xie`, `Link:
+https://patch.msgid.link/20260504153755.1293932-3-maoyi.xie@ntu.edu.sg`,
+maintainer `Signed-off-by: Jens Axboe`. No `Fixes:`, `Reported-by:`,
+`Tested-by:`, `Reviewed-by`, `Acked-by`, or `Cc: stable`.
 
-Step 1.4 Record: This is a hidden bug fix despite the subject not saying
-“fix”: it adds missing synchronization around shared linked-request
-state. The diff confirms it is not a cleanup or feature.
+Record: The commit describes a real userspace-visible bug:
+`io_uring_enter()` with `IORING_ENTER_ABS_TIMER` parses `ext_arg->ts`
+directly, then arms an absolute hrtimer without converting from the
+caller’s time namespace to host time. The supplied reproducer in
+`unshare --user --time` with a `-10s` monotonic offset returns `-ETIME`
+in under 1 ms instead of about 1 second.
 
-## Phase 2: Diff Analysis
-Step 2.1 Record: One file changed: `io_uring/io_uring.c`, 6 insertions
-and 1 deletion. Only `io_wq_free_work()` is modified. Scope: single-file
-surgical locking fix.
+Record: This is not hidden cleanup. It is a direct correctness fix for
+absolute timeout interpretation in time namespaces.
 
-Step 2.2 Record: Before, `io_wq_free_work()` called
-`io_req_find_next(req)` directly when `IO_REQ_LINK_FLAGS` was set.
-After, it stores `req->ctx`, takes `ctx->uring_lock`, calls
-`io_req_find_next(req)`, and unlocks. The affected path is io-wq worker
-completion/freeing of linked requests, not the normal unlinked hot path.
+### Phase 2: Diff Analysis
+Record: One file changed, `io_uring/wait.c`, 5 insertions and 1
+deletion. Function modified: `io_cqring_wait()`. Scope: single-file
+surgical fix.
 
-Step 2.3 Record: Bug category is synchronization/race condition.
-`io_req_find_next()` reads `req->link` and clears it; `git grep`
-verified other link-chain assignment/mutation sites in
-submission/timeout paths. The fix serializes this worker-side chain walk
-with the mutex used by normal chain mutation paths.
+Record: Before, `ext_arg->ts` was converted with
+`timespec64_to_ktime()`. If `IORING_ENTER_ABS_TIMER` was unset, the code
+added `start_time`; if set, it used the raw caller value as a host
+absolute deadline. After, the absolute branch calls
+`timens_ktime_to_host(ctx->clockid, iowq.timeout)`, while the relative
+branch remains unchanged.
 
-Step 2.4 Record: The fix is obviously small and locally correct: it
-protects exactly the shared `req->link` read/clear. Regression risk is
-low but not zero, because it adds a mutex acquisition in worker cleanup.
-The commit message and code both verify the path is limited to requests
-with `IO_REQ_LINK_FLAGS`.
+Record: Bug category is logic/correctness in time namespace handling.
+The broken mechanism is that a namespaced absolute
+`CLOCK_MONOTONIC`/`CLOCK_BOOTTIME` timestamp was fed to a host hrtimer
+as if it were already in host time.
 
-## Phase 3: Git History Investigation
-Step 3.1 Record: `git blame` on the pre-fix parent showed the current
-direct `io_wq_free_work()` call to `io_req_find_next()` came from
-`247f97a5f19b64`, described by `git describe` as `v6.5-rc1~235^2~10`.
-Older helper-based worker cleanup existed before that;
-`io_wq_free_work()`/io-wq callback code is present from at least
-`v5.15-rc1~185^2~41`, and stable branch checks show equivalent
-vulnerable helper paths in `5.10.y`, `5.15.y`, and `6.1.y`.
+Record: Fix quality is strong: minimal, local, uses existing kernel
+helper, and no new API. Regression risk is very low because
+`timens_ktime_to_host()` is verified as a no-op for the initial time
+namespace, for unsupported clocks, and when `CONFIG_TIME_NS` is
+disabled.
 
-Step 3.2 Record: No `Fixes:` tag is present, so there was no tagged
-introducing commit to follow.
+### Phase 3: Git History Investigation
+Record: `git blame` on the changed wait lines points to `0105b0562a5e`
+(`io_uring: split out CQ waiting code into wait.c`) for the current file
+location. The same logic predates the split; `2b8e976b9842` (`io_uring:
+user registered clockid for wait timeouts`) shows this absolute-wait
+path using `ctx->clockid` and is contained by `v6.12-rc1`.
 
-Step 3.3 Record: Recent `io_uring/io_uring.c` history includes related
-io-wq/refcount work, notably `390513642ee676` / stable variants,
-“io_uring: always do atomic put from iowq,” which changed the same
-function and was KCSAN/syzbot-motivated. Mainline related commits
-immediately after this candidate are `49ae66eb8c273` and
-`a65855ec34aed`, the other two patches in the linked-request locking
-series.
+Record: No `Fixes:` tag is present, so there was no tagged introducing
+commit to follow. I inspected the companion parent commit instead:
+`9cc6bac1bebf` fixes the same time-namespace issue for
+`IORING_TIMEOUT_ABS`.
 
-Step 3.4 Record: `MAINTAINERS` verifies Jens Axboe is the `IO_URING`
-maintainer. `git log --author='Jens Axboe' -- io_uring` shows multiple
-recent io_uring commits by him.
+Record: Recent related history shows this is patch 2/2 after
+`9cc6bac1bebf`. The candidate’s parent is exactly `9cc6bac1bebf`, but
+this wait fix compiles independently as long as `timens_ktime_to_host()`
+and `ctx->clockid` exist.
 
-Step 3.5 Record: Build-wise this patch is standalone for trees with the
-current direct `io_wq_free_work()` shape. For older stable trees using
-`io_put_req_find_next()`, it needs a manual backport into the helper or
-equivalent worker path. Semantically, it is patch 1/3 of a related
-locking series; patches `49ae66eb8c273` and `a65855ec34aed` should be
-considered with it to complete the linked-chain locking invariant.
+Record: Author history in `io_uring` before this commit only showed the
+companion timeout fix. Jens Axboe applied the patch, and Pavel/Jens were
+suggested-by/review participants.
 
-## Phase 4: Mailing List And External Research
-Step 4.1 Record: `b4 dig -c 20c39819a2764` found the original submission
-at `https://patch.msgid.link/20260511182217.226763-2-axboe@kernel.dk`.
-`b4 dig -a` found only v1. The saved mbox shows this was `[PATCH 1/3]`.
+Record: Dependencies: affected stable trees need `ctx->clockid` and
+`timens_ktime_to_host()`. I verified both exist in local `for-
+greg/6.12-100`; the same `IORING_ENTER_ABS_TIMER` buggy line exists in
+`6.12`, `6.18`, `6.19`, and `7.0` local stable branches, but not in
+`5.10`, `5.15`, `6.1`, or `6.6`.
 
-Step 4.2 Record: `b4 dig -w` showed the patch was sent by Jens Axboe to
-`io-uring@vger.kernel.org`, with Jens on Cc. No separate
-reviewer/maintainer tags or replies were found in the saved matched
-thread.
+### Phase 4: Mailing List And External Research
+Record: `b4 dig -c 45d2b37a37ab...` found the original submission at `ht
+tps://patch.msgid.link/20260504153755.1293932-3-maoyi.xie@ntu.edu.sg`.
 
-Step 4.3 Record: No bug-report link or `Reported-by:` tag exists. Web
-search for the exact subject did not find a direct bug report.
+Record: `b4 dig -a` found only v1 of the series. The thread shows Jens
+applied both patches with commit IDs `9cc6bac1bebf` and `45d2b37a37ab`.
 
-Step 4.4 Record: The mbox cover letter says the series is “Linked
-request fix” and “closing some gaps on linked requests, where iterating
-a chain must hold either ->uring_lock OR ->timeout_lock, and modifying
-any existing [chain] must hold both.” Patch 2 defers linked-timeout
-splicing out of hrtimer context; patch 3 keeps `uring_lock` held across
-`io_kill_timeouts()`.
+Record: `b4 dig -w` shows the right people/lists were included: Maoyi
+Xie, Jens Axboe, Pavel Begunkov, `io-uring@vger.kernel.org`, and `linux-
+kernel@vger.kernel.org`.
 
-Step 4.5 Record: WebFetch of lore was blocked by Anubis, but `b4`
-successfully retrieved the thread. Web search did not find stable-
-specific discussion for this exact patch. No direct stable nomination
-was verified.
+Record: Reviewer feedback was positive: Pavel wrote “both look good” and
+requested a liburing test; Jens replied “+1” for the test and later
+applied the series. No NAKs or objections found.
 
-## Phase 5: Code Semantic Analysis
-Step 5.1 Record: Modified function: `io_wq_free_work()`.
+Record: No separate bug-report link exists beyond the patch
+thread/reproducer. Stable-specific WebFetch was blocked by Anubis, and
+local thread search found no stable nomination.
 
-Step 5.2 Record: Callers verified by `git grep`: `io_wq_free_work()` is
-called from `io_uring/io-wq.c` after `io_wq_submit_work()` in the worker
-loop and from the cancel path helper `io_run_cancel()`. This is io-wq
-worker context.
+### Phase 5: Code Semantic Analysis
+Record: Modified function: `io_cqring_wait()`.
 
-Step 5.3 Record: Key callee is `io_req_find_next()`, verified to read
-`req->link`, set `req->link = NULL`, and return the next linked request.
-`io_wq_free_work()` then frees the current request via `io_free_req()`.
+Record: Callers: `io_uring_enter(2)` reaches `io_cqring_wait()` when
+`IORING_ENTER_GETEVENTS` is set, after `io_get_ext_arg()` copies/parses
+the userspace getevents argument. This is directly syscall-reachable.
 
-Step 5.4 Record: Reachability is verified from userspace:
-`io_uring_enter()` locks `ctx->uring_lock` and calls `io_submit_sqes()`,
-user SQE flags include `IOSQE_IO_LINK`, `IOSQE_IO_HARDLINK`, and
-`IOSQE_ASYNC`, and async paths queue work into io-wq. This makes the
-affected path reachable by user-submitted linked async io_uring
-requests.
+Record: Key callees: `timespec64_to_ktime()`, `timens_ktime_to_host()`,
+`ktime_add()`, `io_get_time()`, `io_cqring_schedule_timeout()`, and
+hrtimer setup/start helpers.
 
-Step 5.5 Record: Similar patterns found: the normal completion/free
-batching path calls `io_queue_next()`/`io_req_find_next()` while
-`__io_submit_flush_completions()` and `io_free_batch_list()` require
-`ctx->uring_lock`. Timeout code also mutates `req->link`, and the same
-series addresses that.
+Record: Call chain: userspace `io_uring_enter()` -> `io_get_ext_arg()`
+-> `io_cqring_wait()` -> `io_cqring_wait_schedule()` ->
+`__io_cqring_wait_schedule()` -> `io_cqring_schedule_timeout()` ->
+absolute hrtimer. The buggy path is reachable from userspace with
+`IORING_ENTER_GETEVENTS | IORING_ENTER_EXT_ARG |
+IORING_ENTER_ABS_TIMER`.
 
-## Phase 6: Cross-Referencing And Stable Tree Analysis
-Step 6.1 Record: Stable branch checks verified equivalent vulnerable
-code in `stable/linux-5.10.y`, `stable/linux-5.15.y`,
-`stable/linux-6.1.y`, `stable/linux-6.6.y`, `stable/linux-6.12.y`,
-`stable/linux-6.19.y`, and `stable/linux-7.0.y`. The exact direct hunk
-exists in newer trees; older trees use `io_put_req_find_next()`.
+Record: Similar patterns: the companion commit fixes
+`io_parse_user_time()` for `IORING_TIMEOUT_ABS`; POSIX timers,
+`clock_nanosleep`, alarm timers, and `timerfd` already use
+`timens_ktime_to_host()` for absolute timers.
 
-Step 6.2 Record: `git apply --check` of the candidate patch succeeded on
-the current checked-out `stable/linux-7.0.y` tree. Backport difficulty:
-clean or near-clean for newer trees with the direct function body;
-manual but simple for older helper-based trees.
+### Phase 6: Stable Tree Analysis
+Record: Local stable-branch grep found the buggy
+`IORING_ENTER_ABS_TIMER` code in `for-greg/6.12-100`, `for-
+greg/6.18-100`, `for-greg/6.19-200`, and `for-greg/7.0-100`. It was
+absent from `5.10`, `5.15`, `6.1`, and `6.6`.
 
-Step 6.3 Record: Exact-subject `git log` over listed stable branches
-found no existing stable copy of this fix. Related stable history
-contains earlier io_uring link/refcount fixes, but not this locking fix.
+Record: Backport difficulty: current `7.0.y` apply check succeeds
+cleanly. `6.12`/`7.0` have `io_uring/wait.c`; `6.18`/`6.19` local
+branches have the same logic in `io_uring/io_uring.c`, so those need a
+path/context backport but not semantic rework.
 
-## Phase 7: Subsystem And Maintainer Context
-Step 7.1 Record: Subsystem is `io_uring`, a core async I/O subsystem
-reachable through the `io_uring_enter` syscall. Criticality:
-important/core-adjacent because it is syscall-reachable and handles
-request lifetime, completion, and linked request ordering.
+Record: No related fix with this subject was found in the checked stable
+candidate branches.
 
-Step 7.2 Record: The subsystem is active: recent mainline history around
-the candidate contains multiple io_uring fixes and refactors, and the
-candidate came through the io_uring maintainer tree.
+### Phase 7: Subsystem Context
+Record: Subsystem is `io_uring`, a core async I/O syscall subsystem.
+Criticality: IMPORTANT, not universal core MM/VFS, but directly
+userspace-facing and widely used.
 
-## Phase 8: Impact And Risk Assessment
-Step 8.1 Record: Affected users are systems using io_uring linked
-requests that can complete through io-wq, especially linked async
-operations. This is feature/config/user-workload specific, not
-universal.
+Record: Subsystem activity is high; recent `io_uring` history has many
+fixes and feature changes. This specific change is small despite the
+active subsystem.
 
-Step 8.2 Record: Trigger requires linked request chains and worker
-completion/cancellation interleaving with other chain mutation/walk
-paths. Unprivileged reachability depends on system policy, but the code
-path is syscall-reachable through io_uring submission. No public
-reproducer was verified.
+### Phase 8: Impact And Risk
+Record: Affected population: users of `io_uring_enter()` absolute CQ
+wait timeouts inside non-initial time namespaces, especially container-
+like environments. Branch-limited to stable trees that contain
+`IORING_ENTER_ABS_TIMER`.
 
-Step 8.3 Record: Verified failure mode is an unsynchronized data race on
-`req->link`. The precise observed symptom is unverified, but the raced
-state controls request-chain lifetime/progression; plausible
-consequences include lost/misordered linked request handling or memory-
-safety/lifetime bugs. Severity: medium-high to high because it is a
-syscall-reachable race in request lifetime code, though no crash report
-was verified.
+Record: Trigger: userspace can trigger via `io_uring_enter()` with
+`IORING_ENTER_ABS_TIMER` and a timespec from a shifted time namespace.
+The provided reproducer uses `unshare --user --time`; whether fully
+unprivileged depends on system user-namespace policy.
 
-Step 8.4 Record: Benefit is high enough for stable because it removes a
-real locking hole in io_uring linked-request handling. Risk is low:
-6-line contained mutex protection, not on the unlinked hot path, no new
-API, no behavior change except serialization.
+Record: Failure mode: incorrect timeout behavior. With the reproduced
+negative offset, the wait returns `-ETIME` immediately; with other
+offsets, absolute waits can be delayed incorrectly. Severity: MEDIUM to
+HIGH user-visible correctness bug, potential application timeout/hang
+behavior, but not a kernel crash, memory corruption, or security fix.
 
-## Phase 9: Final Synthesis
-Step 9.1 Evidence for backporting:
-- Verified real unsynchronized access: `io_wq_free_work()` called
-  `io_req_find_next()` without `ctx->uring_lock`, while
-  `io_req_find_next()` reads and clears `req->link`.
-- Verified reachability from user-submitted io_uring linked async
-  requests.
-- Verified equivalent code exists across active stable trees from
-  `5.10.y` through `7.0.y`.
-- Verified fix is tiny, contained, maintainer-authored, and applies
-  cleanly to `7.0.y`.
-- Verified this is part of an explicit “Linked request fix” series
-  closing locking gaps.
+Record: Benefit is moderate/high for affected containerized users
+because it restores syscall semantics. Risk is very low: one local
+conditional change plus an include, using established helper semantics.
 
-Evidence against or concerns:
-- No `Fixes:`, `Reported-by:`, `Tested-by:`, `Reviewed-by:`, stable Cc,
-  stack trace, or reproducer was verified.
-- It is patch 1/3 of a related series; for best stable correctness,
-  patches `49ae66eb8c273` and `a65855ec34aed` should be
-  evaluated/backported together.
-- Older stable trees need manual adaptation to `io_put_req_find_next()`.
+### Phase 9: Final Synthesis
+Record: Evidence for backporting: real reproduced bug, syscall-
+reachable, affects stable branches with the feature, tiny patch,
+maintainer-applied, positive reviewer feedback, matches established
+time-namespace behavior elsewhere.
 
-Step 9.2 Stable rules checklist:
-1. Obviously correct and tested? Correct by inspection; external testing
-   not verified.
-2. Fixes a real bug? Yes, verified race on `req->link`.
-3. Important issue? Yes enough for stable: syscall-reachable request-
-   chain/lifetime race, though exact crash symptom is unverified.
-4. Small and contained? Yes, one function, one file, 6 insertions.
-5. No new features/APIs? Yes.
-6. Can apply to stable? Yes for newer trees; older trees need
-   straightforward backport.
+Record: Evidence against backporting: not a crash/security/data-
+corruption fix; affects a narrower feature combination; no explicit
+stable nomination; older stable trees do not contain the affected
+feature.
 
-Step 9.3 Exception category: None. This is not a device ID, quirk, DT,
-build, or documentation-only patch.
+Record: Unresolved: I did not run the reproducer locally. Lore WebFetch
+was blocked by Anubis, but `b4` successfully fetched the thread. Exact
+first upstream introduction of `IORING_ENTER_ABS_TIMER` was not cleanly
+reconstructed from local blame alone, but affected stable branches were
+directly verified by grep.
 
-Step 9.4 Decision: Backport. The technical merit is a small, maintainer-
-authored synchronization fix for a verified io_uring linked-request race
-in code present across stable trees. Treat the rest of the 3-patch
-linked-request locking series as related follow-up material rather than
-ignoring it.
+Stable rules:
+1. Obviously correct and tested: yes by code inspection, reproducer, and
+   positive review; no formal `Tested-by`.
+2. Fixes a real bug: yes, reproduced wrong timeout result.
+3. Important issue: yes for affected users, because absolute waits can
+   return immediately or at the wrong time.
+4. Small and contained: yes, 6-line single-function change.
+5. No new features/APIs: yes.
+6. Can apply to stable: yes for current `7.0.y`; minor path adjustment
+   may be needed in some branches.
+
+No automatic exception category applies.
 
 ## Verification
-- [Phase 1] `git show --format=fuller --stat --patch 20c39819a2764`:
-  confirmed subject, body, tags, one-file diff, and absence of
-  `Fixes:`/`Reported-by:`/stable tags.
-- [Phase 2] Diff inspection: confirmed
-  `mutex_lock(&ctx->uring_lock)`/unlock added around
-  `io_req_find_next()` only in `io_wq_free_work()`.
-- [Phase 3] `git blame` on the parent: confirmed `io_wq_free_work()`
-  direct call history and `req->link` read/clear history.
-- [Phase 3] `git describe --contains`: confirmed relevant code history
-  reaches released kernels including `v6.5-rc1`, `v5.15-rc1`, and
-  earlier helper behavior.
-- [Phase 3] Stable branch `git grep`: confirmed vulnerable worker/helper
-  paths in `5.10.y`, `5.15.y`, `6.1.y`, `6.6.y`, `6.12.y`, `6.19.y`, and
-  `7.0.y`.
-- [Phase 4] `b4 dig -c`, `-a`, `-w`, and saved mbox: confirmed original
-  submission URL, v1-only series, recipients, cover-letter context, and
-  3-patch series.
-- [Phase 4] WebFetch: lore direct fetch was blocked by Anubis; b4 mbox
-  provided the thread content.
-- [Phase 5] `git grep` call tracing: confirmed `io_wq_free_work()`
-  callers in io-wq worker/cancel paths, `io_uring_enter()` to
-  `io_submit_sqes()` submission path, and user-visible link flags.
-- [Phase 6] `git apply --check`: confirmed the patch applies cleanly to
-  the current `stable/linux-7.0.y` worktree.
-- [Phase 7] `MAINTAINERS` search: confirmed Jens Axboe is the `IO_URING`
-  maintainer.
-- [Phase 8] Verified no public reproducer or exact crash symptom in the
-  commit/thread; severity assessment is based on verified race location
-  and syscall reachability, not on an observed report.
+- [Phase 1] Parsed `git show` commit message and tags for
+  `45d2b37a37ab98484693533496395c610a2cab96`.
+- [Phase 2] Verified diff is one file, `io_uring/wait.c`, 5 insertions/1
+  deletion in `io_cqring_wait()`.
+- [Phase 3] Ran `git blame` on the changed lines; current file location
+  comes from `0105b0562a5e`.
+- [Phase 3] Inspected `2b8e976b9842`; verified `ctx->clockid`,
+  `io_get_time(ctx)`, and selected-clock wait timeout support.
+- [Phase 3] Inspected companion commit `9cc6bac1bebf`; verified same
+  class of fix for `IORING_TIMEOUT_ABS`.
+- [Phase 4] Ran `b4 dig`, `b4 dig -a`, `b4 dig -w`, and `b4 mbox`;
+  verified v1-only series, correct recipients, positive feedback, and
+  applied notice.
+- [Phase 5] Read `io_uring_enter()` and `io_get_ext_arg()` call path;
+  verified direct syscall reachability.
+- [Phase 5] Verified `timens_ktime_to_host()` behavior in
+  `include/linux/time_namespace.h` and `kernel/time/namespace.c`.
+- [Phase 5] Verified similar established conversions in `kernel/time`
+  and `fs/timerfd.c`.
+- [Phase 6] Ran `git grep` on local stable branches; affected: `6.12`,
+  `6.18`, `6.19`, `7.0`; unaffected: `5.10`, `5.15`, `6.1`, `6.6`.
+- [Phase 6] Ran `git apply --check` for the candidate patch on current
+  `7.0.y`; it applies cleanly.
+- [Phase 8] Verified reproducer details from commit and mailing-list
+  cover letter; did not execute it locally.
+
+This should be backported to stable trees that contain
+`IORING_ENTER_ABS_TIMER`, with the companion timeout patch strongly
+recommended for complete io_uring absolute-timeout time-namespace
+correctness.
 
 **YES**
 
- io_uring/io_uring.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ io_uring/wait.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 97260bca67e7b..a72efb3a62bac 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -1450,8 +1450,13 @@ struct io_wq_work *io_wq_free_work(struct io_wq_work *work)
- 	struct io_kiocb *nxt = NULL;
+diff --git a/io_uring/wait.c b/io_uring/wait.c
+index 91df86ce0d18c..ec01e78a216d6 100644
+--- a/io_uring/wait.c
++++ b/io_uring/wait.c
+@@ -5,6 +5,7 @@
+ #include <linux/kernel.h>
+ #include <linux/sched/signal.h>
+ #include <linux/io_uring.h>
++#include <linux/time_namespace.h>
  
- 	if (req_ref_put_and_test_atomic(req)) {
--		if (req->flags & IO_REQ_LINK_FLAGS)
-+		if (req->flags & IO_REQ_LINK_FLAGS) {
-+			struct io_ring_ctx *ctx = req->ctx;
-+
-+			mutex_lock(&ctx->uring_lock);
- 			nxt = io_req_find_next(req);
-+			mutex_unlock(&ctx->uring_lock);
-+		}
- 		io_free_req(req);
+ #include <trace/events/io_uring.h>
+ 
+@@ -229,7 +230,10 @@ int io_cqring_wait(struct io_ring_ctx *ctx, int min_events, u32 flags,
+ 
+ 	if (ext_arg->ts_set) {
+ 		iowq.timeout = timespec64_to_ktime(ext_arg->ts);
+-		if (!(flags & IORING_ENTER_ABS_TIMER))
++		if (flags & IORING_ENTER_ABS_TIMER)
++			iowq.timeout = timens_ktime_to_host(ctx->clockid,
++							    iowq.timeout);
++		else
+ 			iowq.timeout = ktime_add(iowq.timeout, start_time);
  	}
- 	return nxt ? &nxt->work : NULL;
+ 
 -- 
 2.53.0
 

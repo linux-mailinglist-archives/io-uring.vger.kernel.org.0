@@ -1,62 +1,59 @@
-Return-Path: <io-uring+bounces-13448-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13449-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id SEDIIiybDWoU0AUAu9opvQ
-	(envelope-from <io-uring+bounces-13448-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Wed, 20 May 2026 13:29:48 +0200
+	id WPvqND+dDWoS0AUAu9opvQ
+	(envelope-from <io-uring+bounces-13449-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Wed, 20 May 2026 13:38:39 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FF6758C756
-	for <lists+io-uring@lfdr.de>; Wed, 20 May 2026 13:29:47 +0200 (CEST)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BBC858CBAC
+	for <lists+io-uring@lfdr.de>; Wed, 20 May 2026 13:38:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id EA9033187ABA
-	for <lists+io-uring@lfdr.de>; Wed, 20 May 2026 11:23:17 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 516383175959
+	for <lists+io-uring@lfdr.de>; Wed, 20 May 2026 11:27:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54B723E9C35;
-	Wed, 20 May 2026 11:20:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ECF53F6C53;
+	Wed, 20 May 2026 11:20:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h80ZCS8Q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DQlcUA4Q"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 561D33E7BD0;
-	Wed, 20 May 2026 11:20:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1B73F44CD;
+	Wed, 20 May 2026 11:20:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779276025; cv=none; b=TPZ4W00V++xC/YHcFafn5bJ/ImYGJBQ5W0MElt6rFl9lh4m6jKKPvFlg0hT6PYWY9uLN/XTM87FhJfz69qdDRbPyFqIKLdJZcCEvXaPX9FY/AmeN3D1QvF0ZCG7K3BptZFngMj0//aw6usZPouPCWAPa7OcJ7J2MVq9T4ESsv9M=
+	t=1779276056; cv=none; b=Z3qQxnETNzBF45rvuWfvIBHhSmHRb+xsZg7XZ215TrIZVVCar3pbL8xeN2xFMqMlEDpBGxlw/BK55eDKBON32hp4CXvawU0D8b1hZmLIOMG6ETEmGjbRA2qK5FmCVUx4J6qcWQ7TEJHpVKSmobSpcLLg5NFdur3Xem6V5eQVDQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779276025; c=relaxed/simple;
-	bh=lrK/RVLsY/qCQGXYaWRUszCMLjdpNFQc/u6m65KLenw=;
+	s=arc-20240116; t=1779276056; c=relaxed/simple;
+	bh=MNq/8U2j5eLB1h2VBZPHF+KZltfN65vY8n+9Z4aKw3o=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lUykGmnpejgjXeO7BZwgN/lnehyLKll/MyB1fSeonyouujrx7vsnDYo7GzrgvooKuw1kJVPUTRjfei9MjmN+1O2MQPnVJWtoEMWqslnf4BMG52IzNScbKsz+kWVaPPb/hv8bzoG8LtX9lLW6wp0Va8/N5J8Wrvxv9mKBI573kSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h80ZCS8Q; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A8561F00893;
-	Wed, 20 May 2026 11:20:21 +0000 (UTC)
+	 MIME-Version:Content-Type; b=ME/OEnDdxDt8WC7GDPyy7Osqbkax2Ou325NHK//aOsaqFCH29gneSLdgb+J35Pr8qB4+HLP5CajksRO+e///uu/QonKUm7tjHyTpUAkLhMsrbP8uJqqjUPBvbhwDFRmE7FYu/QJkPjGGkZXeWRv4nsFJAY40IwI1Rzf5PgRdmgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DQlcUA4Q; arc=none smtp.client-ip=100.103.45.18
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F4AF1F00893;
+	Wed, 20 May 2026 11:20:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779276022;
-	bh=LfjXwNBzcxPNu7EJbp/UdTldeLNMpO5Skwvk4HJzxlM=;
+	s=k20260515; t=1779276054;
+	bh=paqoOUCaaHOHHctHufFKjrS7rt6VgzjmcsNCFGativk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=h80ZCS8QPsyYqIjFYEYo+46mMY/VqmadHrNV0ak3AlxtGg+cAy6hC08QbrDDM2SeY
-	 Hbn08EWsDX9JfwlT/7aheTfE7yMwNcVaSz4l77rs5WHEbLC9OhDfSAo/SeIBSUgRcD
-	 m1lz4tKtvfwo+FUI55UlAA0itahjiKVNKqP4OgVoDlzVR5D1ACAAg++oSb0fEnF/3S
-	 FRi4bMKx1Ci0XntkM3eYMbDYRcMlAA7YNl5QfL/F+hAKsOetkPUjav2MyOjuLIcdlb
-	 gnJhNmaV0Kb5XGoqz75BcDevVW8f+7jKYpAwWhFBd0nyBpVCA6vTNt8qAxVAV5eNA8
-	 86QBMntAecydA==
+	b=DQlcUA4QdlocwEG1cIOSWNsJPdzXbAoK1ZGfNm+HlM2s88Pn7XZGjHnNvf+4OXvwm
+	 8UB5Iz9WWMaVsF6NKmkLnhFzRNSTeGExilNRppiGQrWUseOhh6iUVntwQtdqZHbXLX
+	 rQEJGLYT2/hxESD6VpmTYUaNzfGcrsWA4xCHQSYLkVR3cS57Cd6UTprBqSdH9PVvpz
+	 3x5AFS+kbmpLIbuIxYzUtUFUfldO4MI3No6eiKEalluD+WyGFsJTW+6BKZIdTWOiiO
+	 0CZ/JJaysgnTiUbo/uhDODsYP+w/P+xu0oMRv98iqHE4LXXIYKr7FfOcFDX1HublVr
+	 AIDyCXE9cGvUg==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Maoyi Xie <maoyixie.tju@gmail.com>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Maoyi Xie <maoyi.xie@ntu.edu.sg>,
+Cc: Jens Axboe <axboe@kernel.dk>,
 	Sasha Levin <sashal@kernel.org>,
 	io-uring@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 7.0] io_uring/wait: honour caller's time namespace for IORING_ENTER_ABS_TIMER
-Date: Wed, 20 May 2026 07:18:58 -0400
-Message-ID: <20260520111944.3424570-26-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 7.0] io_uring: defer linked-timeout chain splice out of hrtimer context
+Date: Wed, 20 May 2026 07:19:21 -0400
+Message-ID: <20260520111944.3424570-49-sashal@kernel.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260520111944.3424570-1-sashal@kernel.org>
 References: <20260520111944.3424570-1-sashal@kernel.org>
@@ -71,325 +68,279 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 7.0.9
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [0.34 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-1.16 / 15.00];
 	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20260515];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FREEMAIL_CC(0.00)[gmail.com,kernel.dk,ntu.edu.sg,kernel.org,vger.kernel.org];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-13448-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-13449-lists,io-uring=lfdr.de];
+	RCVD_COUNT_THREE(0.00)[4];
+	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
+	TO_DN_SOME(0.00)[];
 	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
+	RCPT_COUNT_FIVE(0.00)[6];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[sashal@kernel.org,io-uring@vger.kernel.org];
 	DKIM_TRACE(0.00)[kernel.org:+];
-	RCPT_COUNT_SEVEN(0.00)[9];
+	NEURAL_HAM(-0.00)[-1.000];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[msgid.link:url,kernel.dk:email,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,ntu.edu.sg:email]
-X-Rspamd-Queue-Id: 1FF6758C756
+	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[kernel.dk:email,msgid.link:url,sto.lore.kernel.org:rdns,sto.lore.kernel.org:helo]
+X-Rspamd-Queue-Id: 7BBC858CBAC
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-From: Maoyi Xie <maoyixie.tju@gmail.com>
+From: Jens Axboe <axboe@kernel.dk>
 
-[ Upstream commit 45d2b37a37ab98484693533496395c610a2cab96 ]
+[ Upstream commit 49ae66eb8c27375075ffa308cfd4bf25af335d41 ]
 
-io_uring_enter() with IORING_ENTER_ABS_TIMER takes an absolute
-timespec from the caller via ext_arg->ts. It arms an ABS mode
-hrtimer in __io_cqring_wait_schedule(). The conversion path in
-io_uring/wait.c parses ext_arg->ts inline rather than going
-through io_parse_user_time(). It therefore does not pick up the
-time namespace conversion added by the previous patch.
+io_link_timeout_fn() is the hrtimer callback that fires when a linked
+timeout expires. It currently calls io_remove_next_linked(prev) under
+ctx->timeout_lock to splice the timeout request out of the link chain.
+This is the only chain-mutation site that runs without ctx->uring_lock,
+because hrtimer callbacks cannot take a mutex. Defer the splicing until
+the task_work callback.
 
-Apply timens_ktime_to_host() to the parsed time on the
-IORING_ENTER_ABS_TIMER branch. This mirrors the IORING_TIMEOUT_ABS
-fix in io_parse_user_time(). Use ctx->clockid as the clock id.
-ctx->clockid is set either at ring creation or via
-IORING_REGISTER_CLOCK.
-
-timens_ktime_to_host() is a no-op for clocks not affected by time
-namespaces. It is also a no-op for callers in the initial time
-namespace. The fast path is unchanged.
-
-Reproducer: in unshare --user --time, with a -10s monotonic
-offset, call io_uring_enter with min_complete=1,
-IORING_ENTER_ABS_TIMER, and ts = now + 1s. The call returns
--ETIME after <1ms instead of after the expected ~1s.
-
-Suggested-by: Pavel Begunkov <asml.silence@gmail.com>
-Suggested-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Maoyi Xie <maoyi.xie@ntu.edu.sg>
-Link: https://patch.msgid.link/20260504153755.1293932-3-maoyi.xie@ntu.edu.sg
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-## Phase Walkthrough
+## Phase 1: Commit Message Forensics
+Record: subsystem `io_uring`; action verb `defer`; intent is to move
+linked-timeout chain splicing out of `io_link_timeout_fn()` hrtimer
+context and into task_work.
 
-### Phase 1: Commit Message Forensics
-Record: Subsystem `io_uring/wait`; action verb `honour`; intent is to
-make `IORING_ENTER_ABS_TIMER` interpret caller absolute times in the
-caller’s time namespace.
+Record: tags found only `Signed-off-by: Jens Axboe <axboe@kernel.dk>`.
+No `Fixes:`, `Reported-by:`, `Tested-by:`, `Reviewed-by:`, `Cc: stable`,
+or external `Link:` in the upstream commit.
 
-Record: Tags present:
-`Suggested-by: Pavel Begunkov`, `Suggested-by: Jens Axboe`, author
-`Signed-off-by: Maoyi Xie`, `Link:
-https://patch.msgid.link/20260504153755.1293932-3-maoyi.xie@ntu.edu.sg`,
-maintainer `Signed-off-by: Jens Axboe`. No `Fixes:`, `Reported-by:`,
-`Tested-by:`, `Reviewed-by`, `Acked-by`, or `Cc: stable`.
+Record: the body describes a locking bug: `io_link_timeout_fn()` mutates
+the linked request chain under `ctx->timeout_lock` but without
+`ctx->uring_lock`; hrtimer callbacks cannot take the mutex, so mutation
+is deferred to task_work.
 
-Record: The commit describes a real userspace-visible bug:
-`io_uring_enter()` with `IORING_ENTER_ABS_TIMER` parses `ext_arg->ts`
-directly, then arms an absolute hrtimer without converting from the
-caller’s time namespace to host time. The supplied reproducer in
-`unshare --user --time` with a `-10s` monotonic offset returns `-ETIME`
-in under 1 ms instead of about 1 second.
+Record: this is a real hidden bug fix despite not saying “fix”: it
+corrects an unsynchronized linked-list mutation in an hrtimer callback.
 
-Record: This is not hidden cleanup. It is a direct correctness fix for
-absolute timeout interpretation in time namespaces.
+## Phase 2: Diff Analysis
+Record: one file changed, `io_uring/timeout.c`, 14 insertions and 2
+deletions. Modified functions: `__io_disarm_linked_timeout()`,
+`io_req_task_link_timeout()`, `io_link_timeout_fn()`. Scope is single-
+file surgical locking/race fix.
 
-### Phase 2: Diff Analysis
-Record: One file changed, `io_uring/wait.c`, 5 insertions and 1
-deletion. Function modified: `io_cqring_wait()`. Scope: single-file
-surgical fix.
+Record: before, `io_link_timeout_fn()` called
+`io_remove_next_linked(prev)` directly from hrtimer context under only
+`timeout_lock`. After, the timer claims the timeout, stores
+`timeout->prev`, and queues task_work; `io_req_task_link_timeout()` then
+splices `req` out of `prev->link` if the normal completion path did not
+already do so.
 
-Record: Before, `ext_arg->ts` was converted with
-`timespec64_to_ktime()`. If `IORING_ENTER_ABS_TIMER` was unset, the code
-added `start_time`; if set, it used the raw caller value as a host
-absolute deadline. After, the absolute branch calls
-`timens_ktime_to_host(ctx->clockid, iowq.timeout)`, while the relative
-branch remains unchanged.
+Record: `__io_disarm_linked_timeout()` now detects `timeout->head ==
+NULL`, meaning the timer already claimed the timeout, and avoids
+cancel/list removal in that race.
 
-Record: Bug category is logic/correctness in time namespace handling.
-The broken mechanism is that a namespaced absolute
-`CLOCK_MONOTONIC`/`CLOCK_BOOTTIME` timestamp was fed to a host hrtimer
-as if it were already in host time.
+Record: bug category is synchronization/race on linked request chain
+mutation. Fix quality is good but series-sensitive: patch 3/3
+(`a65855ec34aed`) is needed to keep `io_kill_timeouts()` walking chains
+under `uring_lock` after this patch changes where splicing happens.
 
-Record: Fix quality is strong: minimal, local, uses existing kernel
-helper, and no new API. Regression risk is very low because
-`timens_ktime_to_host()` is verified as a no-op for the initial time
-namespace, for unsupported clocks, and when `CONFIG_TIME_NS` is
-disabled.
+## Phase 3: Git History Investigation
+Record: blame shows the relevant linked-timeout code and
+`io_remove_next_linked()` originated mainly from `59915143e89f`
+(“io_uring: move timeout opcodes and handling into its own file”), first
+contained around `v6.0-rc1`; later timeout-lock changes include
+`020b40f35624`, and `__io_disarm_linked_timeout()` changes include
+`78967aabf613`, first around `v6.16-rc1`.
 
-### Phase 3: Git History Investigation
-Record: `git blame` on the changed wait lines points to `0105b0562a5e`
-(`io_uring: split out CQ waiting code into wait.c`) for the current file
-location. The same logic predates the split; `2b8e976b9842` (`io_uring:
-user registered clockid for wait timeouts`) shows this absolute-wait
-path using `ctx->clockid` and is contained by `v6.12-rc1`.
+Record: no `Fixes:` tag exists, so there was no tagged introducer to
+follow.
 
-Record: No `Fixes:` tag is present, so there was no tagged introducing
-commit to follow. I inspected the companion parent commit instead:
-`9cc6bac1bebf` fixes the same time-namespace issue for
-`IORING_TIMEOUT_ABS`.
+Record: recent history shows this is patch 2/3 in a linked-request
+locking series:
+`20c39819a276` locks `io_wq_free_work()` chain walking,
+`49ae66eb8c27` defers linked-timeout splicing,
+`a65855ec34ae` keeps `uring_lock` across `io_kill_timeouts()`.
 
-Record: Recent related history shows this is patch 2/2 after
-`9cc6bac1bebf`. The candidate’s parent is exactly `9cc6bac1bebf`, but
-this wait fix compiles independently as long as `timens_ktime_to_host()`
-and `ctx->clockid` exist.
+Record: Jens Axboe is listed in `MAINTAINERS` as the `IO_URING`
+maintainer and authored the commit.
 
-Record: Author history in `io_uring` before this commit only showed the
-companion timeout fix. Jens Axboe applied the patch, and Pavel/Jens were
-suggested-by/review participants.
+## Phase 4: Mailing List And External Research
+Record: `b4 dig -c 49ae66eb8c27` found the lore submission at
+`https://patch.msgid.link/20260511182217.226763-3-axboe@kernel.dk`.
 
-Record: Dependencies: affected stable trees need `ctx->clockid` and
-`timens_ktime_to_host()`. I verified both exist in local `for-
-greg/6.12-100`; the same `IORING_ENTER_ABS_TIMER` buggy line exists in
-`6.12`, `6.18`, `6.19`, and `7.0` local stable branches, but not in
-`5.10`, `5.15`, `6.1`, or `6.6`.
+Record: `b4 dig -a` found only v1 of the 3-patch series. `b4 dig -w`
+showed recipients were Jens Axboe and `io-uring@vger.kernel.org`.
 
-### Phase 4: Mailing List And External Research
-Record: `b4 dig -c 45d2b37a37ab...` found the original submission at `ht
-tps://patch.msgid.link/20260504153755.1293932-3-maoyi.xie@ntu.edu.sg`.
+Record: the saved mbox contains the cover letter “[PATCHSET 0/3] Linked
+request fix”, stating chain iteration must hold either `uring_lock` or
+`timeout_lock`, and modification should be buttoned up. No replies,
+NAKs, review tags, or stable nominations were present in the mbox.
 
-Record: `b4 dig -a` found only v1 of the series. The thread shows Jens
-applied both patches with commit IDs `9cc6bac1bebf` and `45d2b37a37ab`.
+Record: direct `WebFetch` of lore and stable search pages was blocked by
+Anubis, so no web-side stable discussion could be verified.
 
-Record: `b4 dig -w` shows the right people/lists were included: Maoyi
-Xie, Jens Axboe, Pavel Begunkov, `io-uring@vger.kernel.org`, and `linux-
-kernel@vger.kernel.org`.
+## Phase 5: Code Semantic Analysis
+Record: key functions are `io_link_timeout_fn()`,
+`io_req_task_link_timeout()`, `__io_disarm_linked_timeout()`, and
+`io_remove_next_linked()`.
 
-Record: Reviewer feedback was positive: Pavel wrote “both look good” and
-requested a liburing test; Jens replied “+1” for the test and later
-applied the series. No NAKs or objections found.
+Record: call/reachability tracing verified `IORING_OP_LINK_TIMEOUT` uses
+`io_link_timeout_prep()` in `io_uring/opdef.c`; prep installs
+`io_link_timeout_fn()` as the hrtimer callback, and linked timeouts are
+queued on `ctx->ltimeout_list`.
 
-Record: No separate bug-report link exists beyond the patch
-thread/reproducer. Stable-specific WebFetch was blocked by Anubis, and
-local thread search found no stable nomination.
+Record: task_work runners in `io_uring/tw.c` execute callbacks while
+holding `ctx->uring_lock` in normal, fallback, and local-work paths.
+This verifies the deferred splice runs in a mutex-protected context.
 
-### Phase 5: Code Semantic Analysis
-Record: Modified function: `io_cqring_wait()`.
+Record: similar pattern search found the hrtimer callback was the unique
+changed direct chain mutation site in this diff; the related series
+covers other chain walking gaps.
 
-Record: Callers: `io_uring_enter(2)` reaches `io_cqring_wait()` when
-`IORING_ENTER_GETEVENTS` is set, after `io_get_ext_arg()` copies/parses
-the userspace getevents argument. This is directly syscall-reachable.
+## Phase 6: Stable Tree Analysis
+Record: `git merge-base --is-ancestor` verified the old timeout split
+commit exists in `v6.19.14` and `v6.6.140`; the candidate itself is not
+in `v7.0.9` or `v6.19.14`.
 
-Record: Key callees: `timespec64_to_ktime()`, `timens_ktime_to_host()`,
-`ktime_add()`, `io_get_time()`, `io_cqring_schedule_timeout()`, and
-hrtimer setup/start helpers.
+Record: `git show`/`rg` verified the buggy `io_link_timeout_fn()`
+pattern exists in `v7.0.9`, `v6.19.14`, `v6.15`, `v6.12.90`, `v6.6.140`,
+and in older `v5.15` under `fs/io_uring.c`.
 
-Record: Call chain: userspace `io_uring_enter()` -> `io_get_ext_arg()`
--> `io_cqring_wait()` -> `io_cqring_wait_schedule()` ->
-`__io_cqring_wait_schedule()` -> `io_cqring_schedule_timeout()` ->
-absolute hrtimer. The buggy path is reachable from userspace with
-`IORING_ENTER_GETEVENTS | IORING_ENTER_EXT_ARG |
-IORING_ENTER_ABS_TIMER`.
+Record: `git diff 49ae^..49ae | git apply --check` succeeded on the
+current `v7.0.9` checkout. Older trees have API/path differences such as
+task_work signature and `spin_lock` vs `raw_spin_lock`, so they need
+manual backporting.
 
-Record: Similar patterns: the companion commit fixes
-`io_parse_user_time()` for `IORING_TIMEOUT_ABS`; POSIX timers,
-`clock_nanosleep`, alarm timers, and `timerfd` already use
-`timens_ktime_to_host()` for absolute timers.
+## Phase 7: Subsystem Context
+Record: subsystem is `io_uring`, a core async I/O userspace API.
+Criticality is IMPORTANT: not universal like MM/VFS, but reachable from
+userspace and widely used.
 
-### Phase 6: Stable Tree Analysis
-Record: Local stable-branch grep found the buggy
-`IORING_ENTER_ABS_TIMER` code in `for-greg/6.12-100`, `for-
-greg/6.18-100`, `for-greg/6.19-200`, and `for-greg/7.0-100`. It was
-absent from `5.10`, `5.15`, `6.1`, and `6.6`.
+Record: `git log origin/master --oneline -20 -- io_uring` shows high
+activity, including this linked-request locking series and other recent
+fixes.
 
-Record: Backport difficulty: current `7.0.y` apply check succeeds
-cleanly. `6.12`/`7.0` have `io_uring/wait.c`; `6.18`/`6.19` local
-branches have the same logic in `io_uring/io_uring.c`, so those need a
-path/context backport but not semantic rework.
+## Phase 8: Impact And Risk
+Record: affected users are systems using io_uring linked requests with
+`IORING_OP_LINK_TIMEOUT`.
 
-Record: No related fix with this subject was found in the checked stable
-candidate branches.
+Record: trigger is a timing race between linked-timeout hrtimer expiry
+and other linked-chain completion/cancel paths; this is reachable from
+userspace via io_uring submissions.
 
-### Phase 7: Subsystem Context
-Record: Subsystem is `io_uring`, a core async I/O syscall subsystem.
-Criticality: IMPORTANT, not universal core MM/VFS, but directly
-userspace-facing and widely used.
+Record: verified failure class is unsynchronized linked-list/request-
+chain mutation. No crash report was verified, but the protected object
+is request-chain state, so the stability risk is request chain
+corruption, wrong cancellation/completion, or follow-on memory lifetime
+bugs.
 
-Record: Subsystem activity is high; recent `io_uring` history has many
-fixes and feature changes. This specific change is small despite the
-active subsystem.
+Record: benefit is high for affected io_uring users because it closes a
+real locking gap in request lifetime/chain handling. Risk is low-medium:
+the patch is small, but should be backported with the adjacent locking
+fixes, especially `a65855ec34aed`.
 
-### Phase 8: Impact And Risk
-Record: Affected population: users of `io_uring_enter()` absolute CQ
-wait timeouts inside non-initial time namespaces, especially container-
-like environments. Branch-limited to stable trees that contain
-`IORING_ENTER_ABS_TIMER`.
+## Phase 9: Final Synthesis
+Record: evidence for backporting: real race fix, userspace-reachable
+io_uring path, single-file 16-line patch, authored by subsystem
+maintainer, applies cleanly to `v7.0.9`, and the buggy pattern exists
+across active stable/LTS tags checked.
 
-Record: Trigger: userspace can trigger via `io_uring_enter()` with
-`IORING_ENTER_ABS_TIMER` and a timespec from a shifted time namespace.
-The provided reproducer uses `unshare --user --time`; whether fully
-unprivileged depends on system user-namespace policy.
+Record: evidence against/concerns: no reporter/test tag, no explicit
+stable tag, no verified crash trace, and the commit is part of a 3-patch
+locking series; backporting only this patch without the follow-up
+cancel-path lock change can leave the locking story incomplete.
 
-Record: Failure mode: incorrect timeout behavior. With the reproduced
-negative offset, the wait returns `-ETIME` immediately; with other
-offsets, absolute waits can be delayed incorrectly. Severity: MEDIUM to
-HIGH user-visible correctness bug, potential application timeout/hang
-behavior, but not a kernel crash, memory corruption, or security fix.
+Record: stable rules: obviously correct by code inspection with the
+series context; fixes a real synchronization bug; important because it
+affects request-chain mutation in a userspace API; small and contained;
+no new feature/API; applies cleanly to `v7.0.9`, with older trees
+needing backport adjustment.
 
-Record: Benefit is moderate/high for affected containerized users
-because it restores syscall semantics. Risk is very low: one local
-conditional change plus an include, using established helper semantics.
-
-### Phase 9: Final Synthesis
-Record: Evidence for backporting: real reproduced bug, syscall-
-reachable, affects stable branches with the feature, tiny patch,
-maintainer-applied, positive reviewer feedback, matches established
-time-namespace behavior elsewhere.
-
-Record: Evidence against backporting: not a crash/security/data-
-corruption fix; affects a narrower feature combination; no explicit
-stable nomination; older stable trees do not contain the affected
-feature.
-
-Record: Unresolved: I did not run the reproducer locally. Lore WebFetch
-was blocked by Anubis, but `b4` successfully fetched the thread. Exact
-first upstream introduction of `IORING_ENTER_ABS_TIMER` was not cleanly
-reconstructed from local blame alone, but affected stable branches were
-directly verified by grep.
-
-Stable rules:
-1. Obviously correct and tested: yes by code inspection, reproducer, and
-   positive review; no formal `Tested-by`.
-2. Fixes a real bug: yes, reproduced wrong timeout result.
-3. Important issue: yes for affected users, because absolute waits can
-   return immediately or at the wrong time.
-4. Small and contained: yes, 6-line single-function change.
-5. No new features/APIs: yes.
-6. Can apply to stable: yes for current `7.0.y`; minor path adjustment
-   may be needed in some branches.
-
-No automatic exception category applies.
+Record: no automatic exception category applies; this is not a device
+ID, quirk, DT, build, or documentation fix.
 
 ## Verification
-- [Phase 1] Parsed `git show` commit message and tags for
-  `45d2b37a37ab98484693533496395c610a2cab96`.
-- [Phase 2] Verified diff is one file, `io_uring/wait.c`, 5 insertions/1
-  deletion in `io_cqring_wait()`.
-- [Phase 3] Ran `git blame` on the changed lines; current file location
-  comes from `0105b0562a5e`.
-- [Phase 3] Inspected `2b8e976b9842`; verified `ctx->clockid`,
-  `io_get_time(ctx)`, and selected-clock wait timeout support.
-- [Phase 3] Inspected companion commit `9cc6bac1bebf`; verified same
-  class of fix for `IORING_TIMEOUT_ABS`.
-- [Phase 4] Ran `b4 dig`, `b4 dig -a`, `b4 dig -w`, and `b4 mbox`;
-  verified v1-only series, correct recipients, positive feedback, and
-  applied notice.
-- [Phase 5] Read `io_uring_enter()` and `io_get_ext_arg()` call path;
-  verified direct syscall reachability.
-- [Phase 5] Verified `timens_ktime_to_host()` behavior in
-  `include/linux/time_namespace.h` and `kernel/time/namespace.c`.
-- [Phase 5] Verified similar established conversions in `kernel/time`
-  and `fs/timerfd.c`.
-- [Phase 6] Ran `git grep` on local stable branches; affected: `6.12`,
-  `6.18`, `6.19`, `7.0`; unaffected: `5.10`, `5.15`, `6.1`, `6.6`.
-- [Phase 6] Ran `git apply --check` for the candidate patch on current
-  `7.0.y`; it applies cleanly.
-- [Phase 8] Verified reproducer details from commit and mailing-list
-  cover letter; did not execute it locally.
+- [Phase 1] `git show -s` confirmed subject, body, author, and absence
+  of tags beyond Jens’s SOB.
+- [Phase 2] `git show --patch 49ae66eb8c27` confirmed
+  `io_uring/timeout.c` only, 14 insertions/2 deletions.
+- [Phase 3] `git blame` confirmed relevant code history; `git describe
+  --contains` placed `59915143e89f` around `v6.0-rc1` and `78967aabf613`
+  around `v6.16-rc1`.
+- [Phase 3] `git log` confirmed related commits `20c39819a276` and
+  `a65855ec34ae`.
+- [Phase 4] `b4 dig` found the exact patch submission and v1 3-patch
+  series; saved mbox showed no review replies or stable nomination.
+- [Phase 5] `rg` and `git show` traced `IORING_OP_LINK_TIMEOUT` prep,
+  hrtimer setup, task_work execution, and task_work locking.
+- [Phase 6] stable tag checks verified the buggy pattern exists in
+  checked stable/LTS tags; `git apply --check` succeeded on current
+  `v7.0.9`.
+- [Phase 7] `MAINTAINERS` verified Jens Axboe maintains `IO_URING`.
+- [Phase 8] failure mode is verified as a locking/race bug; concrete
+  crash symptoms are UNVERIFIED.
 
-This should be backported to stable trees that contain
-`IORING_ENTER_ABS_TIMER`, with the companion timeout patch strongly
-recommended for complete io_uring absolute-timeout time-namespace
-correctness.
+The commit should be backported, preferably together with the adjacent
+linked-request locking series commits needed for a complete invariant.
 
 **YES**
 
- io_uring/wait.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ io_uring/timeout.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/io_uring/wait.c b/io_uring/wait.c
-index 91df86ce0d18c..ec01e78a216d6 100644
---- a/io_uring/wait.c
-+++ b/io_uring/wait.c
-@@ -5,6 +5,7 @@
- #include <linux/kernel.h>
- #include <linux/sched/signal.h>
- #include <linux/io_uring.h>
-+#include <linux/time_namespace.h>
+diff --git a/io_uring/timeout.c b/io_uring/timeout.c
+index e3815e3465dde..4ee1c21e1b15f 100644
+--- a/io_uring/timeout.c
++++ b/io_uring/timeout.c
+@@ -245,6 +245,10 @@ static struct io_kiocb *__io_disarm_linked_timeout(struct io_kiocb *req,
+ 	struct io_timeout *timeout = io_kiocb_to_cmd(link, struct io_timeout);
  
- #include <trace/events/io_uring.h>
+ 	io_remove_next_linked(req);
++
++	/* If this is NULL, then timer already claimed it and will complete it */
++	if (!timeout->head)
++		return NULL;
+ 	timeout->head = NULL;
+ 	if (hrtimer_try_to_cancel(&io->timer) != -1) {
+ 		list_del(&timeout->list);
+@@ -328,6 +332,14 @@ static void io_req_task_link_timeout(struct io_tw_req tw_req, io_tw_token_t tw)
+ 	int ret;
  
-@@ -229,7 +230,10 @@ int io_cqring_wait(struct io_ring_ctx *ctx, int min_events, u32 flags,
+ 	if (prev) {
++		/*
++		 * splice the linked timeout out of prev's chain if the regular
++		 * completion path didn't already do it.
++		 */
++		if (prev->link == req)
++			prev->link = req->link;
++		req->link = NULL;
++
+ 		if (!tw.cancel) {
+ 			struct io_cancel_data cd = {
+ 				.ctx		= req->ctx,
+@@ -362,10 +374,10 @@ static enum hrtimer_restart io_link_timeout_fn(struct hrtimer *timer)
  
- 	if (ext_arg->ts_set) {
- 		iowq.timeout = timespec64_to_ktime(ext_arg->ts);
--		if (!(flags & IORING_ENTER_ABS_TIMER))
-+		if (flags & IORING_ENTER_ABS_TIMER)
-+			iowq.timeout = timens_ktime_to_host(ctx->clockid,
-+							    iowq.timeout);
-+		else
- 			iowq.timeout = ktime_add(iowq.timeout, start_time);
+ 	/*
+ 	 * We don't expect the list to be empty, that will only happen if we
+-	 * race with the completion of the linked work.
++	 * race with the completion of the linked work. Splice of prev is
++	 * done in io_req_task_link_timeout(), if needed.
+ 	 */
+ 	if (prev) {
+-		io_remove_next_linked(prev);
+ 		if (!req_ref_inc_not_zero(prev))
+ 			prev = NULL;
  	}
- 
 -- 
 2.53.0
 

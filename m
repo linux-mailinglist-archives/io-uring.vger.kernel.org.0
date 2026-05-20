@@ -1,139 +1,119 @@
-Return-Path: <io-uring+bounces-13445-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13446-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id gHufCqlUDWr9wAUAu9opvQ
-	(envelope-from <io-uring+bounces-13445-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Wed, 20 May 2026 08:28:57 +0200
+	id 2J0oL0lxDWroxQUAu9opvQ
+	(envelope-from <io-uring+bounces-13446-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Wed, 20 May 2026 10:31:05 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90DF258821B
-	for <lists+io-uring@lfdr.de>; Wed, 20 May 2026 08:28:56 +0200 (CEST)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F9A8589CCA
+	for <lists+io-uring@lfdr.de>; Wed, 20 May 2026 10:31:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id DEA03300999C
-	for <lists+io-uring@lfdr.de>; Wed, 20 May 2026 06:28:54 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 362423001FF4
+	for <lists+io-uring@lfdr.de>; Wed, 20 May 2026 08:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 982A7372EE0;
-	Wed, 20 May 2026 06:28:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="WYETC6VC"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DE013AE19F;
+	Wed, 20 May 2026 08:30:54 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A720366060;
-	Wed, 20 May 2026 06:28:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F9F3A6EFC;
+	Wed, 20 May 2026 08:30:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779258533; cv=none; b=cxVgHPJpERT7hGdxW/x93h5BdD5+E9nP5r2Kltbi2+uvVHbr0cBnk13FMRAPKDRA+NdtfSNBAYlhid8qox7PQBq2nMTvR0+FSEjwuHfFPiRYmaegLFzuNcVkZLbfaPs8taWfeMMQGLbgfksA4obopxAybLX1CA0fQBlxeUJlF1o=
+	t=1779265854; cv=none; b=J9vdqMDCowwt+vIwc7wgx2wsKa4k6kFMUwlJqfJ/16+pz1qk/Oeov6Qgwg2vplPlxjn9GBWrb81eY/reoIzguhjKDYSEtAdOlc/uvXpKXG6qOuJHtVthyXATHvkiRRFygzUAF4BSR8C8JXOR7cG47NE/WATzM97SIX3syZt1XMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779258533; c=relaxed/simple;
-	bh=I+1ogSeJKYuojHSs42V27ZpdzAvHqRsNBg2CvhsGyz0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hZuYPCGbhJbYgju74zhXZSwtEVTJrVJKWr4v4oBYfTuhKxwlQfs1YyqMFUS7uzVJOVwGo82O9tKB7yM3zFHXn+Cb6jbu4X/7o5J/HUB4dX/br+u2aQwsw7bHZw2Hbi6dYAiHIJvIoBnrTjDgNpTMyLf7kTUDMor2Gkizy1ykOC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=WYETC6VC; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=V/
-	w9FUmKivkArIsAleWJ2/m6pzU1GMwFJZlkA2kvgXI=; b=WYETC6VCjRelVe8zXD
-	Ho6QzUrHpq5qLJjsuxCpJgUiE34vztRLWh59JMaA4FCi2oPIJiCN7BEClZ5VUOtn
-	ubeHkz0eRhz/HuXh5GpHHN/LjoDNPA+xVSWWOIg1mN4/RGb6JVJpSZhpNBHArsf9
-	vGuyGJOS5b4gNq9Ps41cFGoAw=
-Received: from pek-lpg-core5.wrs.com (unknown [])
-	by gzsmtp4 (Coremail) with SMTP id PygvCgBnrbWRVA1qpWqxEQ--.9S2;
-	Wed, 20 May 2026 14:28:36 +0800 (CST)
-From: Robert Garcia <rob_garcia@163.com>
-To: stable@vger.kernel.org,
-	Pavel Begunkov <asml.silence@gmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>,
-	Li Zetao <lizetao1@huawei.com>,
-	Robert Garcia <rob_garcia@163.com>,
-	io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 5.15.y] io_uring: prevent opcode speculation
-Date: Wed, 20 May 2026 14:28:33 +0800
-Message-Id: <20260520062833.2563847-1-rob_garcia@163.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1779265854; c=relaxed/simple;
+	bh=jygiFH8g59vaOuCLT8rxUUXIp0l6xQbMECWG10ie+QU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kfyYutS3C08qXtEMdiZpf2EykwjmAE+c5YPd8KPA8SDn3a0UORHSATWT6MahoFNvfDWX7u0xhY6qJsZeHRkFCEmde/+T9yj23IMFzcngp5eR1cuX29BVF4PJYbiuZjUerFcqdE/GOwya3PeU0b44QwgBnkGN+Oj+av0uJAWZ7EY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id A580068BFE; Wed, 20 May 2026 10:30:44 +0200 (CEST)
+Date: Wed, 20 May 2026 10:30:43 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+	Keith Busch <kbusch@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+	io-uring@vger.kernel.org, linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+	Nitesh Shetty <nj.shetty@samsung.com>,
+	Kanchan Joshi <joshi.k@samsung.com>,
+	Anuj Gupta <anuj20.g@samsung.com>,
+	Tushar Gohad <tushar.gohad@intel.com>,
+	William Power <william.power@intel.com>,
+	Phil Cayton <phil.cayton@intel.com>,
+	Jason Gunthorpe <jgg@nvidia.com>
+Subject: Re: [PATCH v3 04/10] block: introduce dma map backed bio type
+Message-ID: <20260520083043.GA18893@lst.de>
+References: <cover.1777475843.git.asml.silence@gmail.com> <646ecd6fde8d9e146cb051efb514deb27ce3883e.1777475843.git.asml.silence@gmail.com> <20260513081929.GD5477@lst.de> <24833f76-2289-4859-86d1-9215b11a1258@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PygvCgBnrbWRVA1qpWqxEQ--.9S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7uFWUGr45tF15Ww1rKrWUtwb_yoW8JF47pr
-	yUGa1YqrykKryxK3Z5GF43CFWUCa9xAFWxXw4Duw4Syr17ZFnIgr109FWIgFy7tFWvkry5
-	ZrZavFZYv3y7Aa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piGjg8UUUUU=
-X-CM-SenderInfo: 5uresw5dufxti6rwjhhfrp/xtbC5hQYg2oNVJQ8PAAA3O
-X-Spamd-Result: default: False [0.84 / 15.00];
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <24833f76-2289-4859-86d1-9215b11a1258@gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
+X-Spamd-Result: default: False [0.14 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[163.com,none];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
-	R_DKIM_ALLOW(-0.20)[163.com:s=s110527];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
+	DMARC_POLICY_SOFTFAIL(0.10)[lst.de : SPF not aligned (relaxed), No valid DKIM,none];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-13445-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
+	TAGGED_FROM(0.00)[bounces-13446-lists,io-uring=lfdr.de];
+	FREEMAIL_TO(0.00)[gmail.com];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_TO(0.00)[vger.kernel.org,gmail.com];
-	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
 	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[kernel.dk,huawei.com,163.com,vger.kernel.org];
-	DKIM_TRACE(0.00)[163.com:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[rob_garcia@163.com,io-uring@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	FREEMAIL_FROM(0.00)[163.com];
+	RCPT_COUNT_TWELVE(0.00)[25];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[hch@lst.de,io-uring@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
 	NEURAL_HAM(-0.00)[-1.000];
+	MID_RHS_MATCH_FROM(0.00)[];
+	R_DKIM_NA(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo,huawei.com:email,kernel.dk:email]
-X-Rspamd-Queue-Id: 90DF258821B
+	TO_DN_SOME(0.00)[]
+X-Rspamd-Queue-Id: 5F9A8589CCA
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-From: Pavel Begunkov <asml.silence@gmail.com>
+On Mon, May 18, 2026 at 11:29:54AM +0100, Pavel Begunkov wrote:
+>>>   	BIO_ZONE_WRITE_PLUGGING, /* bio handled through zone write plugging */
+>>>   	BIO_EMULATES_ZONE_APPEND, /* bio emulates a zone append operation */
+>>> +	BIO_DMABUF_MAP, /* Using premmaped dma buffers */
+>>
+>> Shouldn't this be a REQ_ flag as we should never mix and match bios with
+>> and without this flag in a single request?
+>
+> Do you mean adding both and propagating it from bio to req? submit_bio()
+> takes a bio, so we still need to set it there before it reaches blk-mq.
+> And there might be bio-based drivers using it in the future.
 
-[ Upstream commit 1e988c3fe1264708f4f92109203ac5b1d65de50b ]
+I think I forgot to reply to this, so let's do this now.
 
-sqe->opcode is used for different tables, make sure we santitise it
-against speculations.
-
-Cc: stable@vger.kernel.org
-Fixes: d3656344fea03 ("io_uring: add lookup table for various opcode needs")
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-Reviewed-by: Li Zetao <lizetao1@huawei.com>
-Link: https://lore.kernel.org/r/7eddbf31c8ca0a3947f8ed98271acc2b4349c016.1739568408.git.asml.silence@gmail.com
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-[ Use req->opcode instead of opcode here. ]
-Signed-off-by: Robert Garcia <rob_garcia@163.com>
----
- io_uring/io_uring.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 38decfc1a914..47221d7bad61 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -7365,6 +7365,8 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 		return -EINVAL;
- 	if (unlikely(req->opcode >= IORING_OP_LAST))
- 		return -EINVAL;
-+	req->opcode = array_index_nospec(req->opcode, IORING_OP_LAST);
-+
- 	if (!io_check_restriction(ctx, req, sqe_flags))
- 		return -EACCES;
- 
--- 
-2.34.1
+REQ_ is actually used by both bios and requests, so if you set it in
+bio->bi_opf it will automatically get propagated to the request, but
+it can also always be tested on the bio, including by bio-based
+drivers.
 
 

@@ -1,229 +1,270 @@
-Return-Path: <io-uring+bounces-13443-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13444-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id EOSWAcuSDGp1jAUAu9opvQ
-	(envelope-from <io-uring+bounces-13443-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 19 May 2026 18:41:47 +0200
+	id +J/KJBEoDWo8twUAu9opvQ
+	(envelope-from <io-uring+bounces-13444-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Wed, 20 May 2026 05:18:41 +0200
 X-Original-To: lists+io-uring@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 472B1582897
-	for <lists+io-uring@lfdr.de>; Tue, 19 May 2026 18:41:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 175AE58725E
+	for <lists+io-uring@lfdr.de>; Wed, 20 May 2026 05:18:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id C0362318ED58
-	for <lists+io-uring@lfdr.de>; Tue, 19 May 2026 16:09:45 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 2760B300D6B8
+	for <lists+io-uring@lfdr.de>; Wed, 20 May 2026 03:12:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D5013F1AA6;
-	Tue, 19 May 2026 16:09:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B679233262B;
+	Wed, 20 May 2026 03:12:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b="U9VlBf1d"
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="q5T3XNGC"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+Received: from va-1-112.ptr.blmpb.com (va-1-112.ptr.blmpb.com [209.127.230.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C035340403
-	for <io-uring@vger.kernel.org>; Tue, 19 May 2026 16:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3C7A233928
+	for <io-uring@vger.kernel.org>; Wed, 20 May 2026 03:12:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.127.230.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779206949; cv=none; b=i15v9F6iynCIaC0rdU68nvQMX8FzUZsUNknluqlK8PoO+e3ccycaQCfrL5CtbhB6Yo6fklCa8NGbureQzsPURKhh3iNZoxjxkj9gGjjEXAqolQhtEhrkjm4gn6np5jFVE2B5/1R0I+05yyoXjBXNs6/FrsITPSnsWKNQ+iFeXxM=
+	t=1779246778; cv=none; b=Rd49Xh6gQqQr861zpYNxIW+LO9N9GqEamiX3Ma0wdLmL5kQndE4e9wJdcc/HMly6RWbdtwCFHNSwZA1j/JUkfNz57MFisuT+8OTmCPGubdw9JHFQhZFv+L46reaUCkMpT1nt8CkpuTnU7srpPUh2zNzNIkVgMX3LuPqD9xhhpZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779206949; c=relaxed/simple;
-	bh=Ok8Nr17Ohg5okD2zAIP4CmzIfheXu62v7JM3b3yGU/s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QvZ0pIt2H9HtCjg7IUdwNy/GS6PFrao8VJoQHhUgfzHFrmMaUmECT/gXUGv3fB1Uw6+SM1B7UIwqzr9lwBefSPk30uArCW8O0A161YaDFw/qz6JRTEXWZmUCZzQ27L1ImVismSM2D23SkH5pH1jAxBw9n/F7BkIpc1/XH1l+rJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=U9VlBf1d; arc=none smtp.client-ip=209.85.210.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-7dca4debedaso3979773a34.2
-        for <io-uring@vger.kernel.org>; Tue, 19 May 2026 09:09:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1779206945; x=1779811745; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SlXePlUJFCKP1Nex3d/ApxGqDNPQ43FckLkYRQKxUgs=;
-        b=U9VlBf1dRrPv/fyNVLHxDqKp7wiffZYGDDUfwPSZmPQnUPWnSXyIe6UBRFICnTVm6A
-         sUjNtNe8xCxPlcocHxYG7ZbAk2e8dt0IW4IYKbaW717VBwnydUqeI+8m/yj1ypudBdUK
-         6bAWrdulrRJVrue/RCAc2lly2fB0VWNtI5zP7E2KVrs9WLPh1Wt44Fx5DfwfZMrB6KLg
-         UzqlK539Voczy0GINkSWpB2vi2DNLg/Ob29ZkuX5tkDbWJ3nv472G7LoigURV/Yg1SDR
-         3S9BjeQwy/QZ7DUfyDDvYk60bOkvQ5EUS94Vc2hNTHrv5dcNRo5cvu+3zF7yOSnpn5D/
-         B9fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779206945; x=1779811745;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SlXePlUJFCKP1Nex3d/ApxGqDNPQ43FckLkYRQKxUgs=;
-        b=siUeKomKTa2I0zXLskcJmgFtIUwXXl6seZTXy3r6fyPdgIVC4UdWBiK0zFI9T5FPF4
-         mtJR6NyMBOnUvKXomhnlatRAXPEytRCdKzMDQtkUqLEn+WzGb69aLk6NdIPt9FE5PGuF
-         pptUQHcrbrmUyLf2nQfTYpNq6kS8zERV0LSW+X6fC2czTrVEgLb0rrM30qigupV24IFC
-         HILt4iOzo4wekMhXIqQ+EHJTd/XPg/vU0EwejJoZQbVGiho7KUdC9KuouIdrPWT68HMa
-         NESZ5y2HKtINzHb5StXULdLk04ohEtCLmhfluWzikFW/ZQ4+USHtEdVX5JQrzY3XWgtz
-         o6nQ==
-X-Forwarded-Encrypted: i=1; AFNElJ8JsAt99tvoxuy7XtPylWI3L4fPEW+tFV3a6i1jqqveX6y5SckOWzPJMRvW4bh4efg3SEqOJidyjw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxLxdItc/PEPEd0g39mVXFdF38hcwr2TsxPzOTB5ON1/w+fcJb
-	tEGItCGZFz78Ki3hNBYE9vt4ikxTkthCSPx5oAlUIlGS9KIoRj3a8S1lXiQvi6Y4eus=
-X-Gm-Gg: Acq92OGn5S8djD1CuBp0hjWrXw7wDv/DVcoEW+G6UxJ+mYWbdV7VzXvoEeFrIlOEg1N
-	hX3PMtLWvJ6OmhF93Gpgp3iDS9dvvOL5Tufb6fWrfi3zli+iothFToNS2k1xapxhuMXj7muNwQN
-	5Na0/dJyTaSehlMJGmViJx2Y5oQNONJYeRvaOmFffSHOWvhtLAn8mvrE5fuS14bXitEjRLOJh3p
-	HtsIEl28UsFK5T1SjhKuN0j+pdgYwpEFCWb9mf35X1qD7L8fyRZpLdSIIIy6h7UsEbxeMMl03K9
-	3CJUg4XOMI3nGIuIf4uD7jpRDPuRDmnBEKVAx7cUsPv8Z0+1+tTzontwJu9KoDFIhWvBP9I68sc
-	PysTSkri/oc1cW9P+SJMHJU7IdB1UMli20+NlX+cj1NevfhirickaLo8goWJULGZlRDZJR382Hx
-	1OQI32mTVyyZMzSJeA/xXdWp1ZkiW/0lpLY1nMbHj4m/+e+nlpeRq8e/ZHqNkmyWG6RdFudlPCW
-	VYEM4Ey
-X-Received: by 2002:a05:6820:190a:b0:696:6bc7:696 with SMTP id 006d021491bc7-69c942d61b3mr13693809eaf.14.1779206945467;
-        Tue, 19 May 2026 09:09:05 -0700 (PDT)
-Received: from [192.168.1.102] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-69d04655cbcsm6936288eaf.8.2026.05.19.09.09.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 May 2026 09:09:04 -0700 (PDT)
-Message-ID: <1517926a-4a9d-4c55-958b-b9e23756dd96@kernel.dk>
-Date: Tue, 19 May 2026 10:09:03 -0600
+	s=arc-20240116; t=1779246778; c=relaxed/simple;
+	bh=4kswOfJ8zplxamkSlkSU4EKq1VQgkxSaZpC5XtjK3Nw=;
+	h=Subject:Date:Cc:Message-Id:From:Content-Type:Mime-Version:To; b=q8xSdZXR+Ai64jKFyTMBLGwS5D9MAiwW0xlmXmOsv/PnM6Te7sOWeJBP6oOEji0Y+zLQqg7qZtcSUkK0AKWD8kBiUMGWIFx/fYUL4I7zLUpSk8IYqelhKExzZ6DstH0ubD46VtNsdFiW3I84IfW6603JKU7vYBgMdI1cGApp0Hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=q5T3XNGC; arc=none smtp.client-ip=209.127.230.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=2212171451; d=bytedance.com; t=1779246758; h=from:subject:
+ mime-version:from:date:message-id:subject:to:cc:reply-to:content-type:
+ mime-version:in-reply-to:message-id;
+ bh=IQ7y2fxQ8vi9WDE9NC6Cwvxpaz8UFof8AhP2kZMCzXU=;
+ b=q5T3XNGCVe1T0BXbuxYgcJiWsQRpOIMIrLDLv3/Ye2mEhUmvmOdEGcV6Xs3rf+0jYWSkBS
+ 3FYcBNkTVsU1RR8k94R80U3wUT0Pferyg83D+Esrt42aO2K/U9F3oyV5JyUbGQ9WgmcOqL
+ LbP58rT8oc++jKSVeOjoeAKrIaPUTKhrmrnewwTZmeBLXu+QWmmMzTGR+uSrAFiOGla9x9
+ oKXpqXwf14lSYzZfDk053fNciratfpdN2EMrp2bWNB2Ov3Lu0Q+lznnX6p7Vg2WOwnkegR
+ 7w1WobcDHa6VW1nAvf7EgLcmD9iBd2fFW3/55bLTs4qCHNWH5ni8ku3ZZwpytQ==
+Subject: [PATCH] io_uring/io-wq: avoid repeated task_work scans during teardown
+Date: Wed, 20 May 2026 11:12:21 +0800
+X-Original-From: Fengnan Chang <changfengnan@bytedance.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+Cc: "Fengnan Chang" <changfengnan@bytedance.com>
+Message-Id: <20260520031221.83210-1-changfengnan@bytedance.com>
+X-Lms-Return-Path: <lba+26a0d26a4+ea906d+vger.kernel.org+changfengnan@bytedance.com>
+From: "Fengnan Chang" <changfengnan@bytedance.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/8] io_uring/zcrx: notify user when out of buffers
-To: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org
-Cc: netdev@vger.kernel.org, =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?=
- <cleger@meta.com>, Vishwanath Seshagiri <vishs@meta.com>
-References: <cover.1779189667.git.asml.silence@gmail.com>
- <35cd307a03a43583838a2e151fc641c69abd786f.1779189667.git.asml.silence@gmail.com>
- <7bfd707b-1e21-413e-a2e7-71e8df3e43d7@kernel.dk>
- <6d1187c8-ba4f-41ad-b692-351d8b072038@gmail.com>
- <a2a92049-0974-478a-9297-76af96b455d8@kernel.dk>
- <c8a21efc-1443-4ff2-ac53-7846533a26bb@gmail.com>
- <2305e4d6-55cf-421c-94b0-ad8aae8db99c@kernel.dk>
- <7db0d602-bbbd-4554-996c-1dcefd69e2bf@gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <7db0d602-bbbd-4554-996c-1dcefd69e2bf@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-1.66 / 15.00];
+Mime-Version: 1.0
+To: <axboe@kernel.dk>, <io-uring@vger.kernel.org>, 
+	<linux-kernel@vger.kernel.org>, <peterz@infradead.org>, 
+	<rostedt@goodmis.org>
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MV_CASE(0.50)[];
+	DMARC_POLICY_ALLOW(-0.50)[bytedance.com,quarantine];
+	R_DKIM_ALLOW(-0.20)[bytedance.com:s=2212171451];
 	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[kernel-dk.20251104.gappssmtp.com:s=20251104];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FROM_HAS_DN(0.00)[];
+	TAGGED_FROM(0.00)[bounces-13444-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	DMARC_NA(0.00)[kernel.dk];
-	FREEMAIL_TO(0.00)[gmail.com,vger.kernel.org];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13443-lists,io-uring=lfdr.de];
-	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[kernel-dk.20251104.gappssmtp.com:+];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	RCPT_COUNT_FIVE(0.00)[5];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
+	RCPT_COUNT_FIVE(0.00)[6];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[changfengnan@bytedance.com,io-uring@vger.kernel.org];
+	DKIM_TRACE(0.00)[bytedance.com:+];
+	NEURAL_HAM(-0.00)[-1.000];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	TAGGED_RCPT(0.00)[io-uring];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,kernel-dk.20251104.gappssmtp.com:dkim,kernel.dk:mid]
-X-Rspamd-Queue-Id: 472B1582897
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
+X-Rspamd-Queue-Id: 175AE58725E
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On 5/19/26 10:04 AM, Pavel Begunkov wrote:
-> On 5/19/26 16:43, Jens Axboe wrote:
->> On 5/19/26 9:40 AM, Pavel Begunkov wrote:
->>> On 5/19/26 16:37, Jens Axboe wrote:
->>>> On 5/19/26 9:30 AM, Pavel Begunkov wrote:
->>>>> On 5/19/26 16:26, Jens Axboe wrote:
->>>>>> On 5/19/26 5:44 AM, Pavel Begunkov wrote:
->>>>>>> @@ -1126,6 +1142,48 @@ static unsigned io_zcrx_refill_slow(struct page_pool *pp, struct io_zcrx_ifq *if
->>>>>>>         return allocated;
->>>>>>>     }
->>>>>>>     +static void zcrx_notif_tw(struct io_tw_req tw_req, io_tw_token_t tw)
->>>>>>> +{
->>>>>>> +    struct io_kiocb *req = tw_req.req;
->>>>>>> +    struct io_ring_ctx *ctx = req->ctx;
->>>>>>> +
->>>>>>> +    io_post_aux_cqe(ctx, req->cqe.user_data, req->cqe.res, 0);
->>>>>>> +    percpu_ref_put(&ctx->refs);
->>>>>>> +    io_poison_req(req);
->>>>>>> +    kmem_cache_free(req_cachep, req);
->>>>>>> +}
->>>>>>> +
->>>>>>> +static void zcrx_send_notif(struct io_zcrx_ifq *ifq, unsigned type)
->>>>>>> +{
->>>>>>> +    gfp_t gfp = GFP_ATOMIC | __GFP_NOWARN | __GFP_ZERO;
->>>>>>> +    u32 type_mask = 1 << type;
->>>>>>> +    struct io_kiocb *req;
->>>>>>> +
->>>>>>> +    if (!(type_mask & ifq->allowed_notif_mask))
->>>>>>> +        return;
->>>>>>> +
->>>>>>> +    guard(spinlock_bh)(&ifq->ctx_lock);
->>>>>>> +    if (!ifq->master_ctx)
->>>>>>> +        return;
->>>>>>> +    if (type_mask & ifq->fired_notifs)
->>>>>>> +        return;
->>>>>>> +
->>>>>>> +    req = kmem_cache_alloc(req_cachep, gfp);
->>>>>>> +    if (unlikely(!req))
->>>>>>> +        return;
->>>>>>
->>>>>> It'd be nice to avoid an allocation here inside ctx_lock and with bh's
->>>>>> disabled, which looks like is also the only reason why GFP_ATOMIC is
->>>>>> being used here.
->>>>>
->>>>> I thought about it, but it's already bh, it'd need to do pre
->>>>> allocations + caching to be reliable, but that's left out for now.
->>>>
->>>> Not sure I follow - GFP_KERNEL would be more reliable than GFP_ATOMIC.
->>>> What's the contract in terms of the notification? If we fail the alloc,
->>>> then userspace can't rely on the notification on the refill failure.
->>>>
->>>> Are we under bh save already here, before doing it ourselves? If so,
->>>> then how does the guard work?
->>>
->>> In 99% of cases it's called from softirq, not sure what you mean
->>> by how it works.
->>
->> Ah ok, I thought you meant it was already called with softirqs disabled.
->> In which case the guard would seem broken, as we'd enable softirqs when
->> exiting. But if we're just inside softirq yeah it's fine, and there's no
->> point shuffling the allocation either.
-> 
-> Softirqs are run with bh disabled, but bh_disable()/enable() are
-> reenterable.
+We hit hard-lockup reports from iou-wrk threads stuck in
+task_work_cancel_match() during io-wq teardown in syzkaller test.
+The root cause is that teardown repeatedly rescans the submitter task's
+full task_work list under pi_lock, once per matched item.
 
-No worries on that then.
+Two spots are problematic:
 
->> Question on the contract still stands, in terms of missing a
->> notification. I guess since it's a hint basically it doesn't really
->> matter, just something that should be documented on the userspace side.
-> 
-> Should rather be improved than documented, I'd say, but it's still
+1) io_wq_cancel_tw_create() loops calling task_work_cancel_match() to
+   remove worker-creation callbacks one at a time. Each call re-walks
+   the entire list from scratch while holding pi_lock.
 
-Of course, that's why I was originally asking about what the contract is
-here - is it a hint, or is it more than that? In either case, should be
-documented what the application can rely on. And might not be too bad to
-harden, since it also really doesn't make sense to have more than one of
-these inflight at the time anyway.
+2) io_worker_exit() unconditionally scans the submitter task_work list
+   for its own create_work, even when it never queued one. With many
+   workers exiting simultaneously against a large unrelated task_work
+   list, this adds up fast.
 
-> better than not getting anything at all. And it's the only place
-> where it can in theory be dropped, e.g. CQE overflow handling,
-> though different GFP.
-> 
->> Do you have test cases for these?
-> 
-> Clement needs to resend them. Actually, seems I forgot to CC Vish
-> and Clement here, my bad.
+Fix (1) by adding task_work_cancel_match_all() that unlinks all matching
+callbacks in a single traversal, then iterating the returned list locally.
+Same try_cmpxchg() synchronisation as before, stops at the work_exited
+sentinel.
 
-Sounds good.
+Fix (2) by skipping the cancel entirely unless create_state indicates a
+pending create_work. Since create_state is exclusively owned via
+test_and_set_bit_lock, at most one callback can be queued per worker, so
+the cancel is also simplified from a loop to a single call.
 
--- 
-Jens Axboe
+With this fix the reproducer (FIFO-open + MSG_RING SEND_FD stress) no
+longer triggers hard-lockup reports, and task_work_cancel_match samples
+drop to microseconds.
+
+Fixes: c80ca4707d1a ("io-wq: cancel task_work on exit only targeting the cu=
+rrent 'wq'")
+Fixes: 1d5f5ea7cb7d ("io-wq: remove worker to owner tw dependency")
+Signed-off-by: Fengnan Chang <changfengnan@bytedance.com>
+---
+ include/linux/task_work.h |  3 +++
+ io_uring/io-wq.c          | 23 +++++++++++-------
+ kernel/task_work.c        | 51 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 68 insertions(+), 9 deletions(-)
+
+diff --git a/include/linux/task_work.h b/include/linux/task_work.h
+index 0646804860ff1..fb39d18c7c1fe 100644
+--- a/include/linux/task_work.h
++++ b/include/linux/task_work.h
+@@ -31,6 +31,9 @@ int task_work_add(struct task_struct *task, struct callba=
+ck_head *twork,
+=20
+ struct callback_head *task_work_cancel_match(struct task_struct *task,
+ 	bool (*match)(struct callback_head *, void *data), void *data);
++struct callback_head *
++task_work_cancel_match_all(struct task_struct *task,
++			   bool (*match)(struct callback_head *, void *data), void *data);
+ struct callback_head *task_work_cancel_func(struct task_struct *, task_wor=
+k_func_t);
+ bool task_work_cancel(struct task_struct *task, struct callback_head *cb);
+ void task_work_run(void);
+diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
+index 7a9f94a0ce6f2..58144bd5891fa 100644
+--- a/io_uring/io-wq.c
++++ b/io_uring/io-wq.c
+@@ -234,13 +234,15 @@ static void io_worker_exit(struct io_worker *worker)
+ 	struct io_wq *wq =3D worker->wq;
+ 	struct io_wq_acct *acct =3D io_wq_get_acct(worker);
+=20
+-	while (1) {
+-		struct callback_head *cb =3D task_work_cancel_match(wq->task,
+-						io_task_worker_match, worker);
+-
+-		if (!cb)
+-			break;
+-		io_worker_cancel_cb(worker);
++	if (test_bit(0, &worker->create_state)) {
++		/*
++		 * create_state is exclusively owned via test_and_set_bit_lock,
++		 * so at most one create_work can be pending per worker =E2=80=94 a
++		 * single cancel attempt is sufficient here.
++		 */
++		if (task_work_cancel_match(wq->task, io_task_worker_match,
++					   worker))
++			io_worker_cancel_cb(worker);
+ 	}
+=20
+ 	io_worker_release(worker);
+@@ -1319,11 +1321,13 @@ void io_wq_exit_start(struct io_wq *wq)
+=20
+ static void io_wq_cancel_tw_create(struct io_wq *wq)
+ {
+-	struct callback_head *cb;
++	struct callback_head *cb, *next;
+=20
+-	while ((cb =3D task_work_cancel_match(wq->task, io_task_work_match, wq)) =
+!=3D NULL) {
++	cb =3D task_work_cancel_match_all(wq->task, io_task_work_match, wq);
++	while (cb) {
+ 		struct io_worker *worker;
+=20
++		next =3D cb->next;
+ 		worker =3D container_of(cb, struct io_worker, create_work);
+ 		io_worker_cancel_cb(worker);
+ 		/*
+@@ -1332,6 +1336,7 @@ static void io_wq_cancel_tw_create(struct io_wq *wq)
+ 		 */
+ 		if (cb->func =3D=3D create_worker_cont)
+ 			kfree(worker);
++		cb =3D next;
+ 	}
+ }
+=20
+diff --git a/kernel/task_work.c b/kernel/task_work.c
+index 0f7519f8e7c93..c133f6988e844 100644
+--- a/kernel/task_work.c
++++ b/kernel/task_work.c
+@@ -143,6 +143,57 @@ task_work_cancel_match(struct task_struct *task,
+ 	return work;
+ }
+=20
++/**
++ * task_work_cancel_match_all - cancel all pending works matching @match
++ * @task: the task which should execute the work
++ * @match: match function to call
++ * @data: data to be passed in to match function
++ *
++ * Removes all currently queued matching works in one traversal.  The retu=
+rned
++ * callbacks are linked through ->next in their original queue order.  Thi=
+s is
++ * useful for teardown paths that need to cancel many callbacks of the sam=
+e
++ * class without repeatedly rescanning the whole task_work list under
++ * task->pi_lock.
++ *
++ * RETURNS:
++ * The first found work or NULL if not found.
++ */
++struct callback_head *
++task_work_cancel_match_all(struct task_struct *task,
++			   bool (*match)(struct callback_head *, void *data),
++			   void *data)
++{
++	struct callback_head **pprev =3D &task->task_works;
++	struct callback_head *work, *next;
++	struct callback_head *head =3D NULL, **tail =3D &head;
++	unsigned long flags;
++
++	if (likely(!task_work_pending(task)))
++		return NULL;
++
++	raw_spin_lock_irqsave(&task->pi_lock, flags);
++	work =3D READ_ONCE(*pprev);
++	while (work && work !=3D &work_exited) {
++		next =3D READ_ONCE(work->next);
++		if (!match(work, data)) {
++			pprev =3D &work->next;
++			work =3D next;
++			continue;
++		}
++
++		if (!try_cmpxchg(pprev, &work, next))
++			continue;
++
++		work->next =3D NULL;
++		*tail =3D work;
++		tail =3D &work->next;
++		work =3D next;
++	}
++	raw_spin_unlock_irqrestore(&task->pi_lock, flags);
++
++	return head;
++}
++
+ static bool task_work_func_match(struct callback_head *cb, void *data)
+ {
+ 	return cb->func =3D=3D data;
+--=20
+2.39.5 (Apple Git-154)
 

@@ -1,59 +1,61 @@
-Return-Path: <io-uring+bounces-13451-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13452-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id IIDjOvqdDWpO0AUAu9opvQ
-	(envelope-from <io-uring+bounces-13451-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Wed, 20 May 2026 13:41:46 +0200
+	id KC/HHeGbDWoS0AUAu9opvQ
+	(envelope-from <io-uring+bounces-13452-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Wed, 20 May 2026 13:32:49 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECCE658CC92
-	for <lists+io-uring@lfdr.de>; Wed, 20 May 2026 13:41:45 +0200 (CEST)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id E999658C8B3
+	for <lists+io-uring@lfdr.de>; Wed, 20 May 2026 13:32:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 8AB7F307E131
-	for <lists+io-uring@lfdr.de>; Wed, 20 May 2026 11:28:58 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 73B59300767E
+	for <lists+io-uring@lfdr.de>; Wed, 20 May 2026 11:30:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBFF235200C;
-	Wed, 20 May 2026 11:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DEF3401A33;
+	Wed, 20 May 2026 11:21:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N4AXb3R9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dILIBQf1"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB5C23F9F50;
-	Wed, 20 May 2026 11:21:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DCBC400E17;
+	Wed, 20 May 2026 11:21:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779276064; cv=none; b=jnJqdUPj01DC1pHHjkRzrM7ZbA8iTgciyvBHQJvU1cUwmmuXchJsUT+D9V5vSkosanp31ZS8uX6v3kpyvvZLqijAK9PAb+KqR1bbok2CKT8uaUc/Oy7CfsnL9xCqW6TrBGmhxXt8MDnQd1gEjgXiwNqg5EpaoFl9LB8148dLjV8=
+	t=1779276077; cv=none; b=bn05Ty1/rInG5pQCv3xQ6qaIudxR7GmjZ5Njuz0Oxgmr4jO6UtqqKttL4AewrD9KBoMxIo+d2r9ed1VP6cBXccH4zrHpKhBDqkXyw2I3AR6+ocWbsEAxolajnBJuLouPwY6OsscFFhbS1r1/n9LKj/qbSa5SbpZVsrKVerPSepk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779276064; c=relaxed/simple;
-	bh=//Ly2Ai6Fh7VWI+ouLtx63/dbcphJNUEBX72m1hNbsA=;
+	s=arc-20240116; t=1779276077; c=relaxed/simple;
+	bh=B4blOnHXdI+jGuEKFGOxpG/izqDXLDPkIG4KXfH8Axc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=B6UlrkQYA8E7RMdpvbQGUww0Uk5SxB12GoV844YG4/erNsTCyJwOedZc6FBEPkpbse2O8WNdOIXvgRd76Oc6vi+I/lnJntlR7NqD7ai7vQJIP0pszsIMslnsY4TkvTYsA5MKx5b+rwt+3NAf0Ylb/IQvRGtBXzg+o4H2CzalLog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N4AXb3R9; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0010E1F00893;
-	Wed, 20 May 2026 11:21:01 +0000 (UTC)
+	 MIME-Version:Content-Type; b=K0RIo5w/Xn4wFzUQZXaa14T8xxQA+ZK5N9hUhlMqvttn/kFq2UW0lMs3mhbrx6x0HffDSUs2kDCAieYtTMD5uFwSWk8trqc0CYKESJFKYYECN0jv+wCl2AM5vf2C1m5e84ffQg2EWCwQ5LLcZP/OAas8AWp4yWfO0l+89NkKf2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dILIBQf1; arc=none smtp.client-ip=100.103.45.18
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B52951F00893;
+	Wed, 20 May 2026 11:21:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779276062;
-	bh=RCJfnfuadbZVRROwAADW2uZfH3pa61+nYcGsboUdCkE=;
+	s=k20260515; t=1779276075;
+	bh=SCmueEPDpuN64ioI9XEvbENRMV04N6Cn8zg40gHVn6A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=N4AXb3R9R/mU0Aw/YFRFyB/oxGTuLVsNByqO1dplBZ1M+m4gjtqUcobVQ62k99HQ9
-	 Q4DwABPBwflPO9xYr2kTRdx/g5l+3aCB955aGlsPqcnq6mMUTE5BOMBwmXTlZelJNX
-	 ixIpSlZRjJ0IDsO9OSATRcHbFc+93vBKu3qEUzJuPgkpqtaIzJiZoFPckzRf/muAmt
-	 +GbLzVSqYUt9vi8ty8R9ifES3vQx58RMpOqpIqLdVHwzVolBbNfRDcFT5DVlbUzDEH
-	 h1br/4uM+gjbKXqtqeetP5pAQ5GkWbtKtJdJVvAoabPJc3RYVPM2Chud8UagZe8Idn
-	 or4MJZSrR97OA==
+	b=dILIBQf1dCTSqcGvB2nVPIhNnkrt/Tq92um0jyz9WyP45dISP6sQ8U2RmtJQa9L8d
+	 dhet9WGAUr6uFD58XCMS1thW2RNiquoEV2Rxtixs0x8loEF5mkjkpmF/3zDVEjlhd+
+	 H6DI4iXaOxOSBDFfQGKYPeUm9XnNF4VzmIur5DsYzN2/m3qAU7hINSrV25pG+np6sR
+	 PfOnV2GIBAKM4jdnZ5vDXZEPG5RuGXLFAOcXQLGyhISbm+BS9ZT3FKJGSBS+UvED12
+	 QMT85vONpIGkpIp75kmddASHRv806OrnzuMa2kg+wjo0mq7m0NGM2mv4HDzMhpKSVm
+	 ozk69/VLkY0Kw==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>,
+Cc: Maoyi Xie <maoyixie.tju@gmail.com>,
+	Maoyi Xie <maoyi.xie@ntu.edu.sg>,
+	Jens Axboe <axboe@kernel.dk>,
 	Sasha Levin <sashal@kernel.org>,
 	io-uring@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 7.0] io_uring: hold uring_lock across io_kill_timeouts() in cancel path
-Date: Wed, 20 May 2026 07:19:27 -0400
-Message-ID: <20260520111944.3424570-55-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 7.0-6.12] io_uring/fdinfo: translate SqThread PID through caller's pid_ns
+Date: Wed, 20 May 2026 07:19:36 -0400
+Message-ID: <20260520111944.3424570-64-sashal@kernel.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260520111944.3424570-1-sashal@kernel.org>
 References: <20260520111944.3424570-1-sashal@kernel.org>
@@ -68,301 +70,243 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 7.0.9
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-1.16 / 15.00];
+X-Spamd-Result: default: False [0.34 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20260515];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13451-lists,io-uring=lfdr.de];
 	RCVD_COUNT_THREE(0.00)[4];
+	FREEMAIL_CC(0.00)[gmail.com,ntu.edu.sg,kernel.dk,kernel.org,vger.kernel.org];
 	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-13452-lists,io-uring=lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
 	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
+	TO_DN_SOME(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[sashal@kernel.org,io-uring@vger.kernel.org];
 	DKIM_TRACE(0.00)[kernel.org:+];
-	NEURAL_HAM(-0.00)[-1.000];
+	RCPT_COUNT_SEVEN(0.00)[8];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[kernel.dk:email,sin.lore.kernel.org:rdns,sin.lore.kernel.org:helo,msgid.link:url]
-X-Rspamd-Queue-Id: ECCE658CC92
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo,msgid.link:url,ntu.edu.sg:email,kernel.dk:email]
+X-Rspamd-Queue-Id: E999658C8B3
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-From: Jens Axboe <axboe@kernel.dk>
+From: Maoyi Xie <maoyixie.tju@gmail.com>
 
-[ Upstream commit a65855ec34aed84e1e5b4aea0323cc1745f83a5c ]
+[ Upstream commit 3799c2570982577551023ae035f5a786cf39a76e ]
 
-io_uring_try_cancel_requests() dropped ctx->uring_lock before calling
-io_kill_timeouts(), which walks each timeout's link chain via
-io_match_task() to test REQ_F_INFLIGHT. With chain mutation now
-serialized by ctx->uring_lock, that walk needs the lock too.
+SQPOLL stores current->pid (init_pid_ns view) in sqd->task_pid
+at thread creation. fdinfo prints it raw via
+seq_printf("SqThread:\t%d\n", sq_pid). A reader inside a
+non-initial pid_ns sees the host PID, not the kthread's PID in
+the reader's own pid_ns.
 
+The SQPOLL kthread is created with CLONE_THREAD and no
+CLONE_NEW*, so it lives in the submitter's pid_ns. An
+unprivileged user_ns + pid_ns submitter can read fdinfo and
+learn the host PID of a kthread whose in-namespace PID is
+different.
+
+Reproducer (mainline 7.0, KASAN): unshare CLONE_NEWUSER |
+CLONE_NEWPID | CLONE_NEWNS, mount a private /proc, then have a
+grandchild that is pid 1 in the new pid_ns open an io_uring
+ring with IORING_SETUP_SQPOLL. /proc/self/task lists {1, 2};
+the SQPOLL kthread is pid 2. Before: fdinfo prints
+SqThread = <host pid>. After: SqThread = 2.
+
+Use task_pid_nr_ns() against the proc inode's pid_ns to compute
+sq_pid, instead of reading the stored sq->task_pid (which holds
+the init_pid_ns view). pidfd_show_fdinfo() in kernel/pid.c
+follows the same pattern.
+
+Signed-off-by: Maoyi Xie <maoyi.xie@ntu.edu.sg>
+Link: https://patch.msgid.link/20260510084119.457578-1-maoyi.xie@ntu.edu.sg
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-## Phase 1: Commit Message Forensics
-Record 1.1: Subsystem `io_uring`; action verb `hold`; intent is to keep
-`ctx->uring_lock` held while `io_kill_timeouts()` walks timeout link
-chains in the cancel path.
+## Phase Walkthrough
+Phase 1, commit message forensics:
+- Record 1.1: subsystem `io_uring/fdinfo`; action verb `translate`;
+  intent is to report `SqThread` in the proc fdinfo reader’s PID
+  namespace.
+- Record 1.2: tags are `Signed-off-by: Maoyi Xie
+  <maoyi.xie@ntu.edu.sg>`, `Link: https://patch.msgid.link/2026051008411
+  9.457578-1-maoyi.xie@ntu.edu.sg`, and `Signed-off-by: Jens Axboe
+  <axboe@kernel.dk>`. No `Fixes:`, `Reported-by:`, `Tested-by:`,
+  `Reviewed-by:`, `Acked-by:`, or `Cc: stable`.
+- Record 1.3: the bug is a namespace information leak: `SqThread`
+  reports the init-namespace/host PID to a reader inside a non-initial
+  PID namespace. The message includes a concrete reproducer using
+  unprivileged user/pid/mount namespaces and an SQPOLL ring.
+- Record 1.4: this is not hidden cleanup; it is an explicit namespace
+  correctness and information disclosure fix.
 
-Record 1.2: Tags present: `Signed-off-by: Jens Axboe <axboe@kernel.dk>`.
-No `Fixes:`, `Reported-by:`, `Tested-by:`, `Reviewed-by:`, `Acked-by:`,
-`Link:`, or `Cc: stable@vger.kernel.org` tags were present in the commit
-message I verified from upstream commit
-`a65855ec34aed84e1e5b4aea0323cc1745f83a5c`.
+Phase 2, diff analysis:
+- Record 2.1: one file, `io_uring/fdinfo.c`, with 2 insertions and 1
+  deletion in `__io_uring_show_fdinfo()`. Scope is a single-function
+  surgical fix.
+- Record 2.2: before, fdinfo used stored `sq->task_pid`; after, it
+  computes `sq_pid = task_pid_nr_ns(tsk,
+  proc_pid_ns(file_inode(m->file)->i_sb))`.
+- Record 2.3: bug category is logic/security namespace translation. The
+  broken value was a raw task PID; the fix translates the live SQPOLL
+  task into the proc fdinfo file’s PID namespace.
+- Record 2.4: fix quality is high: minimal, uses existing helpers, keeps
+  the existing task lifetime protection, and follows the verified
+  `pidfd_show_fdinfo()` pattern. Regression risk is very low; host/init
+  namespace output remains equivalent.
 
-Record 1.3: The commit body describes a locking bug:
-`io_uring_try_cancel_requests()` dropped `ctx->uring_lock` before
-`io_kill_timeouts()`, but `io_kill_timeouts()` calls `io_match_task()`
-and walks linked requests to inspect `REQ_F_INFLIGHT`. The root cause
-stated by the author is that after linked-chain mutation is serialized
-by `ctx->uring_lock`, this read-side traversal also needs that lock. No
-crash log, reproducer, affected kernel version, or user report is
-included.
+Phase 3, git history:
+- Record 3.1: blame shows the current `sq_pid = sq->task_pid` line last
+  touched by `606559dc4fa36a`, while the semantic change to store/print
+  `sq->task_pid` came from `a0d45c3f596be`, first contained around
+  `v6.7-rc2`.
+- Record 3.2: no `Fixes:` tag is present, so there was no tagged
+  introducing commit to follow.
+- Record 3.3: recent `io_uring/fdinfo.c` history includes multiple
+  fdinfo correctness fixes, including SQPOLL lifetime/UAF fixes and SQE
+  display fixes. No prerequisite series was found for this patch.
+- Record 3.4: local history shows no other `Maoyi Xie` commits under
+  `io_uring`; `Jens Axboe` is the listed `IO_URING` maintainer and
+  committed/applied the patch.
+- Record 3.5: dependencies `task_pid_nr_ns()` and `proc_pid_ns()` exist
+  in relevant stable branches checked. The patch applies cleanly to
+  `p-6.12`, `p-6.18`, `p-6.19`, and `p-7.0`.
 
-Record 1.4: This is a hidden synchronization bug fix, despite the
-subject not saying “fix”. It changes lock coverage around an existing
-linked-list traversal and matches a race-condition pattern.
+Phase 4, mailing list research:
+- Record 4.1: `b4 dig -c 3799c2570982577551023ae035f5a786cf39a76e` found
+  the lore thread at the supplied patch.msgid link. `b4 dig -a` found
+  only v1.
+- Record 4.2: original recipients included Jens Axboe, Pavel Begunkov,
+  `io-uring@vger.kernel.org`, and `linux-kernel@vger.kernel.org`.
+- Record 4.3: no separate bug-report link or reporter tag was present;
+  the bug evidence is the commit’s reproducer.
+- Record 4.4: no multi-patch series or related required patches were
+  found by b4.
+- Record 4.5: no stable-specific discussion was verified. WebFetch hit
+  Anubis protection; web search did not produce usable stable discussion
+  for this exact patch.
 
-## Phase 2: Diff Analysis
-Record 2.1: One file changed: `io_uring/cancel.c`, 1 insertion and 1
-deletion. One function changed: `io_uring_try_cancel_requests()`. Scope
-is a single-file, single-hunk surgical locking fix.
+Phase 5, semantic analysis:
+- Record 5.1: modified function is `__io_uring_show_fdinfo()`.
+- Record 5.2: caller chain is `/proc/*/fdinfo` read in `fs/proc/fd.c` ->
+  `file->f_op->show_fdinfo()` -> `io_uring_show_fdinfo()` ->
+  `__io_uring_show_fdinfo()`.
+- Record 5.3: relevant callees are `rcu_dereference()`,
+  `get_task_struct()`, `io_sq_cpu_usec()`, `task_pid_nr_ns()`,
+  `proc_pid_ns()`, and `seq_printf()`.
+- Record 5.4: reachable from userspace by creating an
+  `IORING_SETUP_SQPOLL` ring and reading `/proc/self/fdinfo/<fd>`.
+  Current code has global `io_uring_allowed()` gating, but no SQPOLL-
+  specific capability check was found in the flag validation path.
+- Record 5.5: similar verified pattern exists in `pidfd_show_fdinfo()`,
+  which derives the namespace from `file_inode(m->file)->i_sb`.
 
-Record 2.2: Before: `ctx->uring_lock` was unlocked after canceling
-deferred files, poll, waitid, futex, and uring_cmd requests, then
-`io_kill_timeouts()` ran unlocked. After: `io_kill_timeouts()` runs
-before unlocking `ctx->uring_lock`. The affected path is cancellation
-during io_uring task/ring teardown, including exit/exec/SQPOLL/ring-exit
-paths verified in callers.
+Phase 6, stable tree analysis:
+- Record 6.1: `p-6.12`, `p-6.18`, `p-6.19`, and `p-7.0` contain the
+  exact `sq->task_pid` fdinfo pattern. `p-6.6` also contains
+  `sq->task_pid`; `p-6.1` uses `task_pid_nr(sq->thread)`, which also
+  returns `tsk->pid` in the checked header. `p-5.10` and `p-5.15` did
+  not show `SqThread` fdinfo matches in checked paths.
+- Record 6.2: exact patch applies cleanly to `p-6.12+` branches checked.
+  Older `p-6.1`/`p-6.6` need backport adjustment due code shape
+  differences.
+- Record 6.3: no existing stable fix for this specific namespace
+  translation was found in checked stable branch code.
 
-Record 2.3: Bug category is synchronization/race condition. The specific
-mechanism is an unlocked traversal of a linked request chain in
-`io_kill_timeouts()`/`io_match_task()` while related chain mutation is
-intended to be serialized by `ctx->uring_lock`.
+Phase 7, subsystem context:
+- Record 7.1: subsystem is `io_uring`, an important syscall-facing
+  kernel I/O subsystem; affected surface is SQPOLL fdinfo, not the core
+  I/O data path.
+- Record 7.2: file history shows active fdinfo development and recent
+  fixes. Maintainer metadata verifies Jens Axboe as `IO_URING`
+  maintainer.
 
-Record 2.4: Fix quality is high if applied with its series dependency:
-it is minimal, changes no data structures or APIs, and only extends an
-already-held mutex over one additional cancel helper. Regression risk is
-low but not zero because it extends lock scope over code that takes
-`completion_lock` and `timeout_lock`; this risk is mitigated by patch
-2/3 moving linked-timeout chain splicing out of hrtimer context.
+Phase 8, impact and risk:
+- Record 8.1: affected users are container/pid-namespace users who
+  create SQPOLL io_uring rings and read proc fdinfo.
+- Record 8.2: trigger is straightforward where io_uring is allowed:
+  create SQPOLL in non-init pid namespace and read fdinfo. It is not
+  timing-dependent.
+- Record 8.3: failure mode is host PID information disclosure and pid
+  namespace isolation violation. Severity is medium
+  security/correctness, not crash/corruption.
+- Record 8.4: benefit is meaningful for namespace isolation; risk is
+  very low due a 3-line localized proc-output fix.
 
-## Phase 3: Git History Investigation
-Record 3.1: `git blame` on current `io_uring/cancel.c` shows the old
-unlock-before-`io_kill_timeouts()` code came from `ffce324364318`
-(`io_uring/cancel: move cancelation code from io_uring.c to cancel.c`),
-first contained in `v6.19`. The timeout chain walk in `io_match_task()`
-was introduced by `59915143e89f`, first contained in `v6.0`.
-
-Record 3.2: No `Fixes:` tag is present, so there was no Fixes target to
-follow.
-
-Record 3.3: Recent history shows this commit follows `49ae66eb8c273`
-(`io_uring: defer linked-timeout chain splice out of hrtimer context`)
-and is part of the same linked-request locking series. Recent current-
-branch churn in these files is low: current `HEAD` after `v7.0` has only
-`93a9caab11350` touching these files.
-
-Record 3.4: Jens Axboe is listed in `MAINTAINERS` as the `IO_URING`
-maintainer and has extensive recent io_uring commits in local history.
-This is maintainer-authored.
-
-Record 3.5: Dependency found: upstream parent `49ae66eb8c273` is patch
-2/3, and `20c39819a276` is patch 1/3. The candidate’s rationale
-explicitly depends on patch 2/3’s serialization change. I verified the
-full 3-patch series applies cleanly to the current tree.
-
-## Phase 4: Mailing List And External Research
-Record 4.1: `b4 dig -c a65855ec34ae...` found the original patch at
-`https://patch.msgid.link/20260511182217.226763-4-axboe@kernel.dk`. Lore
-mirror confirms it was `[PATCH 3/3]` in `[PATCHSET 0/3] Linked request
-fix`. `b4 dig -a` found only v1; no newer revision was found.
-
-Record 4.2: `b4 dig -w` showed recipients were Jens Axboe and `io-
-uring@vger.kernel.org`. No separate reviewer/acked/tested tags were
-found.
-
-Record 4.3: No `Reported-by` or bug-report `Link` tag exists. I found no
-syzbot, bugzilla, or user report for this exact commit.
-
-Record 4.4: Related patches are patch 1/3 (`20c39819a276`, hold
-`uring_lock` in `io_wq_free_work()`) and patch 2/3 (`49ae66eb8c273`,
-defer linked-timeout splice out of hrtimer context). The series cover
-letter says it closes gaps where iterating a chain must hold either
-`uring_lock` or `timeout_lock`, and modifying an existing chain must
-hold both.
-
-Record 4.5: Stable-list search was limited by lore.kernel.org bot
-protection, and web search did not find stable-specific discussion for
-this exact commit. No stable-specific objection was found.
-
-## Phase 5: Code Semantic Analysis
-Record 5.1: Modified function: `io_uring_try_cancel_requests()`.
-
-Record 5.2: Callers verified: `io_ring_exit_work()` calls
-`io_uring_try_cancel_requests(ctx, NULL, true, false)` during ring exit;
-`io_uring_cancel_generic()` calls it during task cancellation;
-`sqpoll.c` calls `io_uring_cancel_generic(true, sqd)` for SQPOLL
-shutdown; `fs/exec.c` reaches this via `io_uring_task_cancel()`;
-`kernel/exit.c` reaches it via `io_uring_files_cancel()`.
-
-Record 5.3: Key callees around the fix: `io_cancel_defer_files()`,
-`io_poll_remove_all()`, `io_waitid_remove_all()`,
-`io_futex_remove_all()`, `io_uring_try_cancel_uring_cmd()`, then
-`io_kill_timeouts()`. `io_kill_timeouts()` takes `completion_lock` and
-`timeout_lock`, iterates `ctx->timeout_list`, calls `io_match_task()`,
-and flushes killed timeouts.
-
-Record 5.4: Reachability is verified from userspace lifecycle
-operations: io_uring rings/requests can reach cancellation via process
-exit, exec, SQPOLL thread shutdown, or ring teardown. Whether
-unprivileged users can create io_uring instances on a given deployment
-depends on config/sysctl and was not separately verified.
-
-Record 5.5: Similar patterns found: nearby cancel walkers such as
-`io_cancel_remove_all()` and `io_poll_remove_all()` assert or run under
-`ctx->uring_lock`; `io_match_task_safe()` exists to protect linked-
-timeout walks, and patch 1/3 fixes another unlocked link-chain walk in
-`io_wq_free_work()`.
-
-## Phase 6: Stable Tree Analysis
-Record 6.1: The exact pre-fix `io_uring/cancel.c` pattern exists in
-local `v6.19`, `v7.0`, and current `HEAD`. `v6.18` does not have this
-exact `io_kill_timeouts()` call in `io_uring/cancel.c`. The refactor
-commit `ffce324364318` is an ancestor of `v6.19`, `v7.0`, and `HEAD`,
-but not `v6.18`.
-
-Record 6.2: Backport difficulty is low for `v6.19+` style trees: `git
-apply --check` succeeded for the candidate alone and for the full
-3-patch series on the current tree.
-
-Record 6.3: No alternate stable fix for this exact locking gap was found
-in local history or web search.
-
-## Phase 7: Subsystem Context
-Record 7.1: Subsystem is `io_uring`, a core async I/O subsystem
-reachable through userspace syscalls when enabled. Criticality is
-IMPORTANT to CORE depending on deployment, because it affects process
-exit/exec and ring teardown correctness for io_uring users.
-
-Record 7.2: Subsystem activity is high; recent local history shows many
-io_uring changes by Jens Axboe and others. This patch was pulled into
-Linus’ tree for `v7.1-rc4` as part of io_uring fixes.
-
-## Phase 8: Impact And Risk
-Record 8.1: Affected users are systems with `CONFIG_IO_URING` and
-workloads using linked io_uring requests/timeouts, especially during
-cancellation/teardown paths.
-
-Record 8.2: Trigger conditions are linked request/timeouts plus
-cancellation paths such as exit, exec, SQPOLL shutdown, or ring exit.
-The exact race timing was not reproduced here.
-
-Record 8.3: Failure mode is a locking/data-race hazard on linked
-request-chain traversal. No crash report is verified, so I rate severity
-as MEDIUM-HIGH rather than proven CRITICAL: cancellation races in
-io_uring can lead to missed cancellation or unsafe traversal, but this
-specific commit message does not document an observed oops/UAF.
-
-Record 8.4: Benefit is high when backporting the linked-request locking
-series, because it completes the lock invariant introduced by patch 2/3.
-Risk is low: 1-line lock-scope adjustment, no new API, no feature, no
-data structure change. Risk rises if cherry-picked without understanding
-the series, so it should be queued with `20c39819a276` and
-`49ae66eb8c273`.
-
-## Phase 9: Final Synthesis
-Record 9.1: Evidence for backporting: real synchronization bug;
-maintainer-authored; included in an upstream fixes pull; tiny and
-contained; applies cleanly; affects userspace-reachable cancellation
-paths; needed to complete a 3-patch linked-chain locking invariant.
-Evidence against: no reported crash/reproducer; patch is part 3/3 and
-should not be treated as an isolated standalone semantic fix; older
-stable trees before the `cancel.c` refactor need separate backport
-analysis.
-
-Record 9.2: Stable rules checklist: obviously correct and tested by
-upstream integration: yes, with dependency caveat. Fixes a real bug:
-yes, a verified locking race/gap. Important issue: yes enough for
-stable, because it is a race in io_uring linked request cancellation,
-though no crash is documented. Small and contained: yes, 1 insertion/1
-deletion in one function. No new features/APIs: yes. Can apply to
-stable: yes for current `v6.19+` style trees; full series apply-check
-passed on this tree.
-
-Record 9.3: No automatic exception category applies; this is not a
-device ID, quirk, DT, build, or documentation fix.
-
-Record 9.4: Decision: backport, but queue it with the preceding linked-
-request locking patches, especially `49ae66eb8c273`, because this
-commit’s locking rationale depends on that series invariant.
+Phase 9, synthesis:
+- Record 9.1: evidence for backporting: real reproducer, unprivileged
+  namespace information leak, tiny fix, maintainer-applied, uses
+  established proc namespace helper pattern, clean applies to multiple
+  stable branches. Evidence against: no crash/data corruption; older
+  stable branches need adapted backports.
+- Record 9.2: stable rules: obviously correct yes; fixes real user-
+  visible bug yes; important enough as security/isolation info leak yes;
+  small and contained yes; no new feature/API yes; applies cleanly to
+  checked `p-6.12+`, with older-tree rework as noted.
+- Record 9.3: no automatic exception category applies.
+- Record 9.4: decision is to backport.
 
 ## Verification
-- [Phase 1] Verified upstream commit
-  `a65855ec34aed84e1e5b4aea0323cc1745f83a5c` message and tags via GitHub
-  API and Gitiles.
-- [Phase 2] Verified diff is 1 insertion/1 deletion in
-  `io_uring/cancel.c`, moving `mutex_unlock(&ctx->uring_lock)` after
-  `io_kill_timeouts()`.
-- [Phase 3] Ran `git blame` on `io_uring/cancel.c` and
-  `io_uring/timeout.c`; identified `ffce324364318`, `59915143e89f`,
-  `6971253f0787`, and `a9c83a0ab66a` as relevant historical commits.
-- [Phase 3] Verified containing tags: `ffce324364318` present from
-  `v6.19`; candidate and series commits first contained in `v7.1-rc4`.
-- [Phase 4] Ran `b4 dig -c`, `-a`, and `-w`; found the lore message ID,
-  v1-only series, and original recipients.
-- [Phase 4] Fetched lore.gnuweeb mirror for patch 0/3, 1/3, 2/3, and
-  3/3; confirmed series context and dependency.
-- [Phase 5] Used code search and file reads to trace callers from
-  `kernel/exit.c`, `fs/exec.c`, `sqpoll.c`, `io_ring_exit_work()`, and
-  `io_uring_cancel_generic()`.
-- [Phase 6] Checked `v6.18`, `v6.19`, `v7.0`, and `HEAD` for the exact
-  code pattern; verified current tree and `v6.19+` have the old unlock-
-  before-timeout call.
-- [Phase 6] Ran `git apply --check` for the candidate and the full
-  3-patch series; both apply cleanly to the current tree.
-- [Phase 7] Verified `MAINTAINERS` lists Jens Axboe as `IO_URING`
-  maintainer.
-- [Phase 8] Verified the failure class from actual code paths and series
-  discussion; no runtime reproducer or observed crash was found.
-- UNVERIFIED: Whether older pre-`v6.19` stable trees have an equivalent
-  bug in the pre-refactor `io_uring.c` layout.
-- UNVERIFIED: Any stable-list discussion, because lore.kernel.org/stable
-  fetch was blocked and web search found no exact stable discussion.
+- Phase 1: `git show --format=fuller --patch
+  3799c2570982577551023ae035f5a786cf39a76e` verified the commit message,
+  trailers, and 3-line diff.
+- Phase 2: local `io_uring/fdinfo.c` read verified the pre-patch
+  `sq->task_pid` fdinfo output and task reference context.
+- Phase 3: `git blame`, `git show a0d45c3f596be`, `git describe
+  --contains`, and file logs verified history and first-release context.
+- Phase 4: `b4 dig -c`, `b4 dig -a`, `b4 dig -w`, and `b4 mbox` verified
+  the lore thread, v1-only submission, recipients, and Jens “Applied,
+  thanks” reply with commit `3799c257...`.
+- Phase 5: reads of `fs/proc/fd.c`, `io_uring/io_uring.c`,
+  `io_uring/sqpoll.c`, `kernel/fork.c`, `include/linux/pid.h`,
+  `kernel/pid.c`, and `fs/pidfs.c` verified reachability, helper
+  semantics, SQPOLL creation flags, and the pidfd fdinfo pattern.
+- Phase 6: checked `p-6.1`, `p-6.6`, `p-6.12`, `p-6.18`, `p-6.19`,
+  `p-7.0`, and `stable/linux-7.0.y` code; worktree `git apply --check`
+  verified clean application to `p-6.12`, `p-6.18`, `p-6.19`, and
+  `p-7.0`.
+- Unverified: no kernel build or runtime reproducer was run; stable-list
+  discussion could not be verified because direct lore WebFetch was
+  blocked and search found no usable exact stable thread.
+
+This is stable material: it fixes a concrete namespace information leak
+with a tiny, conventional, low-risk change.
 
 **YES**
 
- io_uring/cancel.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ io_uring/fdinfo.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/io_uring/cancel.c b/io_uring/cancel.c
-index 65e04063e343b..1d8928c829b61 100644
---- a/io_uring/cancel.c
-+++ b/io_uring/cancel.c
-@@ -554,8 +554,8 @@ __cold bool io_uring_try_cancel_requests(struct io_ring_ctx *ctx,
- 	ret |= io_waitid_remove_all(ctx, tctx, cancel_all);
- 	ret |= io_futex_remove_all(ctx, tctx, cancel_all);
- 	ret |= io_uring_try_cancel_uring_cmd(ctx, tctx, cancel_all);
--	mutex_unlock(&ctx->uring_lock);
- 	ret |= io_kill_timeouts(ctx, tctx, cancel_all);
-+	mutex_unlock(&ctx->uring_lock);
- 	if (tctx)
- 		ret |= io_run_task_work() > 0;
- 	else
+diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
+index c2d3e45544bb4..001fb542dc11a 100644
+--- a/io_uring/fdinfo.c
++++ b/io_uring/fdinfo.c
+@@ -190,8 +190,9 @@ static void __io_uring_show_fdinfo(struct io_ring_ctx *ctx, struct seq_file *m)
+ 			get_task_struct(tsk);
+ 			rcu_read_unlock();
+ 			usec = io_sq_cpu_usec(tsk);
++			sq_pid = task_pid_nr_ns(tsk,
++						proc_pid_ns(file_inode(m->file)->i_sb));
+ 			put_task_struct(tsk);
+-			sq_pid = sq->task_pid;
+ 			sq_cpu = sq->sq_cpu;
+ 			sq_total_time = usec;
+ 			sq_work_time = sq->work_time;
 -- 
 2.53.0
 

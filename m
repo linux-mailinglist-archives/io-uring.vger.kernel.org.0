@@ -1,93 +1,93 @@
-Return-Path: <io-uring+bounces-13469-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13470-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id AGu7CysfDmpd6QUAu9opvQ
-	(envelope-from <io-uring+bounces-13469-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Wed, 20 May 2026 22:52:59 +0200
+	id 0KsTG1AfDmpd6QUAu9opvQ
+	(envelope-from <io-uring+bounces-13470-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Wed, 20 May 2026 22:53:36 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7B0D59A3F7
-	for <lists+io-uring@lfdr.de>; Wed, 20 May 2026 22:52:58 +0200 (CEST)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09AF859A433
+	for <lists+io-uring@lfdr.de>; Wed, 20 May 2026 22:53:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 9640A30625A9
-	for <lists+io-uring@lfdr.de>; Wed, 20 May 2026 20:51:27 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id E77A43067CD3
+	for <lists+io-uring@lfdr.de>; Wed, 20 May 2026 20:51:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DDD9378D63;
-	Wed, 20 May 2026 20:50:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF6B3378839;
+	Wed, 20 May 2026 20:50:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b="iHJauhNO"
+	dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b="RaMC69iL"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mx0a-00364e01.pphosted.com (mx0a-00364e01.pphosted.com [148.163.135.74])
+Received: from mx0b-00364e01.pphosted.com (mx0b-00364e01.pphosted.com [148.163.139.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEA84377553
-	for <io-uring@vger.kernel.org>; Wed, 20 May 2026 20:50:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 323603783B4
+	for <io-uring@vger.kernel.org>; Wed, 20 May 2026 20:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.139.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779310246; cv=none; b=bPsLkyMh1zAFT9CKFBsJLNqB3HLsb48e3p1CiihoyGP4AMZXc+zuV/uKIIqAUqbch3VvSQaW9GiDqEmJg56RwRydyP682lLziIJ4UUZuYTq1+El7XR2hJI4uiODYyT0nYnHOnp6T5uUlESP7QolXXXe2lXizFOK9m1M48HBB4+M=
+	t=1779310248; cv=none; b=lxybQCG03pPo/kZr8N6NoFnp1B1haBGfatu2bQ5Lnc3LhrcZXxG7ftTtlXombk+CSkXMMfQshLHj+ci6VPcmRCN1RXTfIApc9LLmHh+Af8wa74HpfDrX5N2mPsfic2xkARJvCasDXyiKbQNr0yRyTSkTR7HfaomPeAX2Bw5y0U0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779310246; c=relaxed/simple;
-	bh=rA3ee1bVN85AK8Xbqqgod0QTROlaUP31hnwYXO5EEik=;
+	s=arc-20240116; t=1779310248; c=relaxed/simple;
+	bh=sWXCb2voUNh/5RgXFZA32Pq1QXHhhJuRnYDZVKm8gu0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mpbqVUKHQLWuQpsCs9Poo5iYihdwN07KPLWQC2/OCGQhHGnyhIDhCmfZbu+uLP61topZZth1lmiiS0StPui8KGQExhuXPMEAvCGCPX1jSMM4Ga06moATAtQ9oR+daqUWLy7N27BnV9FO0wJVY34cFg8bKBwrypmltyarXf/2rxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu; spf=pass smtp.mailfrom=columbia.edu; dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b=iHJauhNO; arc=none smtp.client-ip=148.163.135.74
+	 In-Reply-To:To:Cc; b=Ak9Rh5xZwl4n+iIzQMCdEOj3y4RUkb7Ir18ojVfafLbP+1cUTz11FgEfn0v5cb+2dkhYkfS+/LOqN8AAMtkVSDS3g14mmLHs6f0asbYg0VWZXvC4h+VXvDLJ6fpWlL4ivwPmdEz3TrN2SYoKmDb2ylM/RupN8y2lIb28r12d3sQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu; spf=pass smtp.mailfrom=columbia.edu; dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b=RaMC69iL; arc=none smtp.client-ip=148.163.139.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=columbia.edu
-Received: from pps.filterd (m0167071.ppops.net [127.0.0.1])
-	by mx0a-00364e01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64KKOM4u1521408
-	for <io-uring@vger.kernel.org>; Wed, 20 May 2026 16:50:42 -0400
+Received: from pps.filterd (m0167074.ppops.net [127.0.0.1])
+	by mx0b-00364e01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64KKOCBq2145196
+	for <io-uring@vger.kernel.org>; Wed, 20 May 2026 16:50:43 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=columbia.edu; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pps01; bh=yDlB
-	tkSZ/QVPh/7V2LuCLj7vDoerhrZrGeObhOfbEDE=; b=iHJauhNOQfQGuWQ9PBMd
-	9498doyET3MaIYPPH6gAxhnfTbaNfiN2HpEWnhfQQydxrwb9YLjAr0f4Hzz9oE/O
-	fgZj57LX1AT6vGPBI4TBSadyl2n+Ha4Tz+b8UVbJXRMfLIBkIuY/Ve9fGyVT4co8
-	CWfypz/xg3x2wPetKTOGO0gbdH/nfd8bk8oUJYPlHyI8bnWD4jXB1S/B9q8XPwVg
-	a/q7T59AHt1VqQQ1Jq/DCsxu26G8aGUFIr5qhSBAsd9ZVD/1vrojSd1jGW4Sf5ya
-	FNIQdmkD5+yJCvLbmPd1L6c+MvkJlF6HEAnpWHT38ExeFCzYB0ApWQz8kBWW88CI
-	Fg==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-00364e01.pphosted.com (PPS) with ESMTPS id 4e9avn4t6w-1
+	:message-id:mime-version:references:subject:to; s=pps01; bh=NuYZ
+	UEpkdlDPA/MoPFg1KYmaCTdNZxzaMhmmXnS7n5Y=; b=RaMC69iL96yzOK/lRDf+
+	5JstGQzPJTY3tGXJTW72lq1IMm7QXNtfTzTcW2dJzro8iQN+IyGFfOMigEK5kXJC
+	TkrRPLlM6LLPe9Qif+6bs3GDBj8mFTAx3sj1CYxGfo0lwJ12gOLSKkDssy69M3pY
+	kO3SoZGr2BJkk0iYM1n0FLY1CbFqNx1ykfaoWTx5Gb/OxbWLZcWDyIt9kLP3mzNJ
+	cSuJlBH9j4SixMkwpaTYSSyeuOORn178xTCgNO7LWnmh8yB6rbXufNbbbx689Wdj
+	/ONqFgUH4ENnnf762oQfQfPGjfmIXn9BhZXTOIt21neOwtoYd6cH77WqV6mIabu4
+	Rg==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0b-00364e01.pphosted.com (PPS) with ESMTPS id 4e9ccqvatx-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <io-uring@vger.kernel.org>; Wed, 20 May 2026 16:50:42 -0400 (EDT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-90d6fe98316so1206840185a.3
-        for <io-uring@vger.kernel.org>; Wed, 20 May 2026 13:50:42 -0700 (PDT)
+	for <io-uring@vger.kernel.org>; Wed, 20 May 2026 16:50:43 -0400 (EDT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-8b58065ea15so159176376d6.2
+        for <io-uring@vger.kernel.org>; Wed, 20 May 2026 13:50:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779310241; x=1779915041;
+        d=1e100.net; s=20251104; t=1779310243; x=1779915043;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=yDlBtkSZ/QVPh/7V2LuCLj7vDoerhrZrGeObhOfbEDE=;
-        b=SKx0TRP14T36XaSRnJUpAGOYJhr9DRXsQ1H9WMJDqCnnIalsHp4YTi5VCmDI2Dc7+R
-         CnyZfG91Jeg2MHGuI771dPivm/s+8Ph2l8cFyqv9xgqeInXzgaLLVa8qiy1UWG5a4Kkp
-         p1W9kOIVPg1eFDMKFly7+5mqsotzfZZJ3tRUAi0ICPwLcIlpputUcFZMHtIZPhWk+2xD
-         Raz5oEA5QKz9CnHZT/NuLzk/qxhCntkaDwwT6KEdPhDhg9i2AvsmvsSt8UuwlJaR1s0T
-         3MjI0TAXSKs0Ud+KtahDYxRIfzwfwhdkAjrUPmK2/2CMffU8jXd8OoUPpq5SgzrioRdJ
-         a52w==
-X-Forwarded-Encrypted: i=1; AFNElJ8mWMKsUfnrS0WPs7ZiZXw9Jhm9K9zi6fnRveSsfl2xtT4L3jY+TxNKdkXEvEjtX8p1fecXsSuy9g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeYeRwT6duHj5A5toij0jnEKjBaiKSCz8ccVGPbvCLNieTA8sW
-	IvkmH1ZbUWzB8Cg3wnOZ7AWoYCeVe6qaFiURtlKHwqyiz4rG1P3WRXRAP1mpgSMUbhbAMc2ww/U
-	czrOut9KsdqCA40WCBm+o/d2xpRj9aoly6VdvyKr4DG1CLSLReByRBGgN
-X-Gm-Gg: Acq92OFBt9FPAD1wtOrof9nqGObG4FC8YWfSBASUb1WpnrY/2HcHuMOOQF6A0S6mOhj
-	ZZgb/NuoHER4hJQi6tUIcqHr6bWZKvvzo9dU3V8JWPlNKBSIhGAi6F72b3J5p60iAZ0Ki3cw00N
-	r+LNCQJrc0zuJZbuI8NoluErV/BY1Fwo0gOW08VUI+yA/9V5Q3YJpemgCIjJf3xNdtKpr49FIKd
-	1QTylHLoVvRPXD2cOGMlJBTju2CPHHvAWSD8cVox/8GUNkcoU135j5JoIo+1/On59hHxKk/GFC2
-	pMxtO+LDxmiMdxFRMJKqIwLTZH4yvSA/sbDmUSp8n7m8ACCnzdUoOZU/jPiWHF28BGa5c6DWWtD
-	0QiYk9D+4G6/5Nq4hyQJR2710hhjppBsXivbmBz0JEQVC/3t/5ZrNjyyIQkPlcukpGZwi5ABtsU
-	f1qQ==
-X-Received: by 2002:a05:620a:1986:b0:911:ed:d285 with SMTP id af79cd13be357-911cf9e0c41mr3857314985a.62.1779310241562;
-        Wed, 20 May 2026 13:50:41 -0700 (PDT)
-X-Received: by 2002:a05:620a:1986:b0:911:ed:d285 with SMTP id af79cd13be357-911cf9e0c41mr3857309585a.62.1779310241059;
-        Wed, 20 May 2026 13:50:41 -0700 (PDT)
+        bh=NuYZUEpkdlDPA/MoPFg1KYmaCTdNZxzaMhmmXnS7n5Y=;
+        b=UOWZrrywP7qMilYLWJz+NYPTW+siKBHFq9WmVx2Iq/ybV74YhGxTHHQ3M0qdHcV/8d
+         aLlXG0fpnI0TVUwO+GffrAtXpra3bd/PkGbYUyAxdjuqWJJtqy+9pKlNZAS1xUfbd8Ht
+         Ix+3V5CEYztMN3WT62lSab/2qAHMf+JNwc0Q99mUiUUQ89dyth534+MursYExUealkFH
+         NdDyDk+IMx5XPbCqLnAViAJgAR28A12sZiEua54IIwOkfK7mawE4yms7lzgkRg457pGe
+         B2m3De+cSQLw7MukxJrKkvbo+Uhj9u2rPf3AY62QspO5HOsBJ0cP4mGY7q6A0p9gXC88
+         6zHQ==
+X-Forwarded-Encrypted: i=1; AFNElJ9Bp8kSp6iz+7cBMzSdb6kKIUawIrAWfEvzswaHNHXrVuVtlRNmBGl+osEJuf2OARD9pI+Emp+/LA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVGa/pHeM5JQAmtTXLwqZAZF5jlnqGl9VfB378j289bL1ex0gi
+	N5GrlT9RCTOPSm25e4e4II+2IufU7cziGZoXxsnrS9D66Eqtt36Iax6KNJyorq31sKFZZJLFKVt
+	EDPQGFmrllD0/x4APWRqNZnU4QmBd9IuCN7Pr3tIQAOuj/J0DdBDVNmOgwl8xRRrt
+X-Gm-Gg: Acq92OHbOtjmQ/2S6Yaqk0pGrRh+PWpd0uS7Ao4q5IbK2HdPzC7jdV2cnAgnbagGIYJ
+	oyOEO0fmegrOHLZrxaLDEX5LJjwhWSY+Ya2oQNa4kjwfS6GbCPnwFliXSHx4Z4fiiC4hXXey83W
+	7265a07D8t4O/W5ZFGOnHflFw1a8NEJLWdgMeyL0pwkvqN1Cu9Fw8tjNdWGUhVTA3M9dShhIvNc
+	xrD1SaUYS6EUJEPcF6oY7oyUYsRuvRTwPANOzoHhPBh27iFKsSGUVNgVYd3ZW8Ipj4SnRFxPR/9
+	nI+Hyv5VlpfGX3c1q9ogaaRi++IT/Ds08VKgKn8IQc/5nM5slF2aP8H6nO3qv1Iva5hV2bOuzvT
+	jX94S6dUhLKhy5EBd9X7f6VWAYkOitqL6JzO6DV0JedGiYP+XCs/3z1XhkayqIddA0kulEZ12Nf
+	HCcw==
+X-Received: by 2002:a05:620a:258f:b0:8ed:dc5a:f668 with SMTP id af79cd13be357-911d00b7d27mr3703469585a.58.1779310242812;
+        Wed, 20 May 2026 13:50:42 -0700 (PDT)
+X-Received: by 2002:a05:620a:258f:b0:8ed:dc5a:f668 with SMTP id af79cd13be357-911d00b7d27mr3703462585a.58.1779310242221;
+        Wed, 20 May 2026 13:50:42 -0700 (PDT)
 Received: from [127.0.1.1] (dyn-160-39-33-242.dyn.columbia.edu. [160.39.33.242])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-910bcf37274sm2232692085a.37.2026.05.20.13.50.40
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-910bcf37274sm2232692085a.37.2026.05.20.13.50.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 May 2026 13:50:40 -0700 (PDT)
+        Wed, 20 May 2026 13:50:41 -0700 (PDT)
 From: Tal Zussman <tz2294@columbia.edu>
-Date: Wed, 20 May 2026 16:49:00 -0400
-Subject: [PATCH RFC 09/11] fs: move dir_pages() from <linux/pagemap.h> to
- <linux/fs.h>
+Date: Wed, 20 May 2026 16:49:01 -0400
+Subject: [PATCH RFC 10/11] fs: move generic_file_read_iter() to
+ fs/read_write.c
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -96,7 +96,7 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260520-filemap-split-v1-9-c36ddc2b6cf2@columbia.edu>
+Message-Id: <20260520-filemap-split-v1-10-c36ddc2b6cf2@columbia.edu>
 References: <20260520-filemap-split-v1-0-c36ddc2b6cf2@columbia.edu>
 In-Reply-To: <20260520-filemap-split-v1-0-c36ddc2b6cf2@columbia.edu>
 To: "Matthew Wilcox (Oracle)" <willy@infradead.org>, Jan Kara <jack@suse.cz>,
@@ -111,45 +111,45 @@ Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
         Tal Zussman <tz2294@columbia.edu>
 X-Mailer: b4 0.14.3-dev-d7477
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1779310229; l=1369;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1779310229; l=8508;
  i=tz2294@columbia.edu; s=20250528; h=from:subject:message-id;
- bh=rA3ee1bVN85AK8Xbqqgod0QTROlaUP31hnwYXO5EEik=;
- b=DCkZp86sCfuyRVBmRVmURwps78q7smwQhnDSiFfY5HPBUU3kJlF0UIoGU21dz9wQUTuZXJkNF
- UGqHDG78m7UBDAclN2Kez4FnTKNYWYrHvBGgRUTdHLcho2GLQ+5jpkl
+ bh=sWXCb2voUNh/5RgXFZA32Pq1QXHhhJuRnYDZVKm8gu0=;
+ b=c4SVT0/EKyeLALT++GoCtxlOHEW6EtdwGs6LfnqVwX3PEcOVGXnxyAlvuksJ5kGk//rUF733e
+ +mKRneLOBHUCwxRiU2NqVzX9ZiVWHPnX8ZDbFnwJYl64fBDuIVt5eIF
 X-Developer-Key: i=tz2294@columbia.edu; a=ed25519;
  pk=BIj5KdACscEOyAC0oIkeZqLB3L94fzBnDccEooxeM5Y=
-X-Authority-Analysis: v=2.4 cv=S6TpBosP c=1 sm=1 tr=0 ts=6a0e1ea2 cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=GaPK54s0Se3oFqK5NkZy0g==:17
+X-Authority-Analysis: v=2.4 cv=XJQAjwhE c=1 sm=1 tr=0 ts=6a0e1ea3 cx=c_pps
+ a=oc9J++0uMp73DTRD5QyR2A==:117 a=GaPK54s0Se3oFqK5NkZy0g==:17
  a=IkcTkHD0fZMA:10 a=NGcC8JguVDcA:10 a=x7bEGLp0ZPQA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=Da8U98TiO7q1upZEImrf:22 a=79PYxaXUQd1wl-QFWJnA:22
- a=8LwvE8iKX1rSyJpzT4YA:9 a=QEXdDO2ut3YA:10 a=IoWCM6iH3mJn3m4BftBB:22
-X-Proofpoint-ORIG-GUID: 7yBtaFt9Zk8vokTC4nubPHHK52q1eo1l
-X-Proofpoint-GUID: 7yBtaFt9Zk8vokTC4nubPHHK52q1eo1l
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTIwMDIwMyBTYWx0ZWRfX7OOs9wC7oW/c
- MnfQP0Awxc+Ub3DGBDva5Pfi79LXiwzosAcb6K7G8NrPRkLV/qBDTQtR3BT1DFjbEz6epjgAbO/
- Od39nDPZY31e4EMnnECLoklDp6gplXkdGk18ubaIIFmpMUTK7EIeUgfc3bJaITwJeNjlLen+Gpr
- ZBCvASm01Its2K2EnkoML1wJaUyPQzn+H23vPxSxJ3v8Lg9OIDz7Dtsp9jlhZGIPYK99GIthaXt
- MVVuW2o5vELXZrPC4MiuWge3yCETe7+vMFnO5z1jjKy8Gn7OYdHi4wwjDhf9osAnmXqhK05lKUB
- yeHvS4Zu8kFQpUcaI4tLvQY72I8cdnM84EOEWpLKJLabhSi1nG6hPpTgiZB4kUsggMzJMXjP7Rx
- Gw/uGAjXOHu1/hmbwlUImDHSB36o4fRXHUw4WrdIC5V1nJxX/Q8Rno1Y+xdJOxHXNh6Xy9Qjkt/
- 5rrT1aD8uqtt0Xf15Sg==
+ a=VkNPw1HP01LnGYTKEx00:22 a=Da8U98TiO7q1upZEImrf:22 a=azVShVRs0zEubeQ0wG0L:22
+ a=gH0tmTfNonLjgA-2hfQA:9 a=QEXdDO2ut3YA:10 a=iYH6xdkBrDN1Jqds4HTS:22
+X-Proofpoint-ORIG-GUID: ycZy8_bLtax0Tm45ZU0pek4UR2E9SRMq
+X-Proofpoint-GUID: ycZy8_bLtax0Tm45ZU0pek4UR2E9SRMq
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTIwMDIwMyBTYWx0ZWRfX7eHo132q8FE5
+ Xj/axXAYwGR7DWl0HpW4iD9jxEaMmy/V15tSfIXwQ5LUhN9TiBQknzbt6mkntj5Y2YsxmcLsbiK
+ /iNt36+rLoE4u2X1f+H7hjtKo8fh8kf3jvtuP0TDBInX3S56fjXquOj4dnbxi7keAM8wVnIc/35
+ 7ZG34/BZXEwJm1gGMUnkElhJ8b3AToxQ+gwpd7ldPF30ETjtqi4IocKHUx4SzaJpgq0iJibPbr2
+ CgL69NiafkvcfyqLwzZAOX/wsfdyD53Hy+5CTYhxqxCtKvUO6g2QLahWT/1rY9cOadWnDtrbZn4
+ 9PsKYPMCpeeyEOWKOvcecs289zqsffmksgoJrPk+3AVGScU38k53vQ+lq4U9FJdG9290WF4RmNV
+ gZy/CVTfv2YT+yVi2GE+a73d/T72bExGfs8KriY1OeIO//aBt+MtXmczXSJxjkb+5VEGf/LBeg7
+ OMEHyZmCr3fPnOhr1Sg==
 X-Proofpoint-Virus-Version: vendor=nai engine=6900 definitions=11792
  signatures=596817
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=10 spamscore=0 suspectscore=0 phishscore=0
- priorityscore=1501 clxscore=1015 adultscore=0 impostorscore=10 malwarescore=0
- bulkscore=10 classifier=typeunknown authscore=0 authtc= authcc=
+ impostorscore=10 malwarescore=0 clxscore=1015 adultscore=0
+ lowpriorityscore=10 suspectscore=0 spamscore=0 priorityscore=1501
+ bulkscore=10 phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
  route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2605130000
  definitions=main-2605200203
 X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[columbia.edu,none];
-	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
 	R_DKIM_ALLOW(-0.20)[columbia.edu:s=pps01];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-13469-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-13470-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	FUZZY_RATELIMITED(0.00)[rspamd.com];
 	FORGED_SENDER_MAILLIST(0.00)[];
@@ -162,58 +162,252 @@ X-Spamd-Result: default: False [-2.16 / 15.00];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[tz2294@columbia.edu,io-uring@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
 	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[io-uring];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	RCVD_COUNT_SEVEN(0.00)[7]
-X-Rspamd-Queue-Id: C7B0D59A3F7
+X-Rspamd-Queue-Id: 09AF859A433
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-This is an inode-based helper and should live with other inode helpers.
+generic_file_read_iter() and its kiocb_write_and_wait() helper are
+VFS-level read functions: Their callers are filesystems, and their job
+is to glue direct I/O or the page cache (filemap_read) to a struct kiocb
+and iov_iter caller.
+
+Move both to fs/read_write.c, alongside vfs_iter_read. Drop the extern
+from generic_file_read_iter()'s declaration and reflow the
+generic_file_read_iter() definition to fit on one line too.
 
 Signed-off-by: Tal Zussman <tz2294@columbia.edu>
 ---
- include/linux/fs.h      | 6 ++++++
- include/linux/pagemap.h | 6 ------
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ fs/read_write.c         | 82 +++++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/fs.h      |  3 +-
+ include/linux/pagemap.h |  1 -
+ mm/filemap.c            | 82 -------------------------------------------------
+ 4 files changed, 84 insertions(+), 84 deletions(-)
 
+diff --git a/fs/read_write.c b/fs/read_write.c
+index 50bff7edc91f..59ceea85c163 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -989,6 +989,88 @@ ssize_t vfs_iter_write(struct file *file, struct iov_iter *iter, loff_t *ppos,
+ }
+ EXPORT_SYMBOL(vfs_iter_write);
+ 
++int kiocb_write_and_wait(struct kiocb *iocb, size_t count)
++{
++	struct address_space *mapping = iocb->ki_filp->f_mapping;
++	loff_t pos = iocb->ki_pos;
++	loff_t end = pos + count - 1;
++
++	if (iocb->ki_flags & IOCB_NOWAIT) {
++		if (filemap_range_needs_writeback(mapping, pos, end))
++			return -EAGAIN;
++		return 0;
++	}
++
++	return filemap_write_and_wait_range(mapping, pos, end);
++}
++EXPORT_SYMBOL_GPL(kiocb_write_and_wait);
++
++/**
++ * generic_file_read_iter - generic filesystem read routine
++ * @iocb:	kernel I/O control block
++ * @iter:	destination for the data read
++ *
++ * This is the "read_iter()" routine for all filesystems
++ * that can use the page cache directly.
++ *
++ * The IOCB_NOWAIT flag in iocb->ki_flags indicates that -EAGAIN shall
++ * be returned when no data can be read without waiting for I/O requests
++ * to complete; it doesn't prevent readahead.
++ *
++ * The IOCB_NOIO flag in iocb->ki_flags indicates that no new I/O
++ * requests shall be made for the read or for readahead.  When no data
++ * can be read, -EAGAIN shall be returned.  When readahead would be
++ * triggered, a partial, possibly empty read shall be returned.
++ *
++ * Return:
++ * * number of bytes copied, even for partial reads
++ * * negative error code (or 0 if IOCB_NOIO) if nothing was read
++ */
++ssize_t generic_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
++{
++	size_t count = iov_iter_count(iter);
++	ssize_t retval = 0;
++
++	if (!count)
++		return 0; /* skip atime */
++
++	if (iocb->ki_flags & IOCB_DIRECT) {
++		struct file *file = iocb->ki_filp;
++		struct address_space *mapping = file->f_mapping;
++		struct inode *inode = mapping->host;
++
++		retval = kiocb_write_and_wait(iocb, count);
++		if (retval < 0)
++			return retval;
++		file_accessed(file);
++
++		retval = mapping->a_ops->direct_IO(iocb, iter);
++		if (retval >= 0) {
++			iocb->ki_pos += retval;
++			count -= retval;
++		}
++		if (retval != -EIOCBQUEUED)
++			iov_iter_revert(iter, count - iov_iter_count(iter));
++
++		/*
++		 * Btrfs can have a short DIO read if we encounter
++		 * compressed extents, so if there was an error, or if
++		 * we've already read everything we wanted to, or if
++		 * there was a short read because we hit EOF, go ahead
++		 * and return.  Otherwise fallthrough to buffered io for
++		 * the rest of the read.  Buffered reads will not work for
++		 * DAX files, so don't bother trying.
++		 */
++		if (retval < 0 || !count || IS_DAX(inode))
++			return retval;
++		if (iocb->ki_pos >= i_size_read(inode))
++			return retval;
++	}
++
++	return filemap_read(iocb, iter, retval);
++}
++EXPORT_SYMBOL(generic_file_read_iter);
++
+ static ssize_t vfs_readv(struct file *file, const struct iovec __user *vec,
+ 			 unsigned long vlen, loff_t *pos, rwf_t flags)
+ {
 diff --git a/include/linux/fs.h b/include/linux/fs.h
-index cd5088dfe9a1..776cc82932a7 100644
+index 776cc82932a7..c0151ced8e7a 100644
 --- a/include/linux/fs.h
 +++ b/include/linux/fs.h
-@@ -1171,6 +1171,12 @@ static inline void i_size_write(struct inode *inode, loff_t i_size)
- #endif
- }
- 
-+static inline unsigned long dir_pages(const struct inode *inode)
-+{
-+	return (unsigned long)(inode->i_size + PAGE_SIZE - 1) >>
-+			       PAGE_SHIFT;
-+}
-+
- static inline unsigned iminor(const struct inode *inode)
- {
- 	return MINOR(inode->i_rdev);
+@@ -3055,7 +3055,8 @@ extern int generic_write_check_limits(struct file *file, loff_t pos,
+ extern int generic_file_rw_checks(struct file *file_in, struct file *file_out);
+ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *to,
+ 		ssize_t already_read);
+-extern ssize_t generic_file_read_iter(struct kiocb *, struct iov_iter *);
++ssize_t generic_file_read_iter(struct kiocb *, struct iov_iter *);
++int kiocb_write_and_wait(struct kiocb *iocb, size_t count);
+ extern ssize_t __generic_file_write_iter(struct kiocb *, struct iov_iter *);
+ extern ssize_t generic_file_write_iter(struct kiocb *, struct iov_iter *);
+ extern ssize_t generic_file_direct_write(struct kiocb *, struct iov_iter *);
 diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 84ccb682cca8..f86a550ad516 100644
+index f86a550ad516..46cefd552a51 100644
 --- a/include/linux/pagemap.h
 +++ b/include/linux/pagemap.h
-@@ -1356,12 +1356,6 @@ static inline size_t readahead_batch_length(const struct readahead_control *rac)
- 	return rac->_batch_count * PAGE_SIZE;
- }
+@@ -59,7 +59,6 @@ int filemap_fdatawrite_range(struct address_space *mapping,
+ 		loff_t start, loff_t end);
+ int filemap_check_errors(struct address_space *mapping);
+ void __filemap_set_wb_err(struct address_space *mapping, int err);
+-int kiocb_write_and_wait(struct kiocb *iocb, size_t count);
  
--static inline unsigned long dir_pages(const struct inode *inode)
+ static inline int filemap_write_and_wait(struct address_space *mapping)
+ {
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 079f9c3ac8a2..db7c53cd681b 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2251,22 +2251,6 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
+ }
+ EXPORT_SYMBOL_GPL(filemap_read);
+ 
+-int kiocb_write_and_wait(struct kiocb *iocb, size_t count)
 -{
--	return (unsigned long)(inode->i_size + PAGE_SIZE - 1) >>
--			       PAGE_SHIFT;
--}
+-	struct address_space *mapping = iocb->ki_filp->f_mapping;
+-	loff_t pos = iocb->ki_pos;
+-	loff_t end = pos + count - 1;
 -
- /**
-  * folio_mkwrite_check_truncate - check if folio was truncated
-  * @folio: the folio to check
+-	if (iocb->ki_flags & IOCB_NOWAIT) {
+-		if (filemap_range_needs_writeback(mapping, pos, end))
+-			return -EAGAIN;
+-		return 0;
+-	}
+-
+-	return filemap_write_and_wait_range(mapping, pos, end);
+-}
+-EXPORT_SYMBOL_GPL(kiocb_write_and_wait);
+-
+ int filemap_invalidate_pages(struct address_space *mapping,
+ 			     loff_t pos, loff_t end, bool nowait)
+ {
+@@ -2302,72 +2286,6 @@ int kiocb_invalidate_pages(struct kiocb *iocb, size_t count)
+ }
+ EXPORT_SYMBOL_GPL(kiocb_invalidate_pages);
+ 
+-/**
+- * generic_file_read_iter - generic filesystem read routine
+- * @iocb:	kernel I/O control block
+- * @iter:	destination for the data read
+- *
+- * This is the "read_iter()" routine for all filesystems
+- * that can use the page cache directly.
+- *
+- * The IOCB_NOWAIT flag in iocb->ki_flags indicates that -EAGAIN shall
+- * be returned when no data can be read without waiting for I/O requests
+- * to complete; it doesn't prevent readahead.
+- *
+- * The IOCB_NOIO flag in iocb->ki_flags indicates that no new I/O
+- * requests shall be made for the read or for readahead.  When no data
+- * can be read, -EAGAIN shall be returned.  When readahead would be
+- * triggered, a partial, possibly empty read shall be returned.
+- *
+- * Return:
+- * * number of bytes copied, even for partial reads
+- * * negative error code (or 0 if IOCB_NOIO) if nothing was read
+- */
+-ssize_t
+-generic_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+-{
+-	size_t count = iov_iter_count(iter);
+-	ssize_t retval = 0;
+-
+-	if (!count)
+-		return 0; /* skip atime */
+-
+-	if (iocb->ki_flags & IOCB_DIRECT) {
+-		struct file *file = iocb->ki_filp;
+-		struct address_space *mapping = file->f_mapping;
+-		struct inode *inode = mapping->host;
+-
+-		retval = kiocb_write_and_wait(iocb, count);
+-		if (retval < 0)
+-			return retval;
+-		file_accessed(file);
+-
+-		retval = mapping->a_ops->direct_IO(iocb, iter);
+-		if (retval >= 0) {
+-			iocb->ki_pos += retval;
+-			count -= retval;
+-		}
+-		if (retval != -EIOCBQUEUED)
+-			iov_iter_revert(iter, count - iov_iter_count(iter));
+-
+-		/*
+-		 * Btrfs can have a short DIO read if we encounter
+-		 * compressed extents, so if there was an error, or if
+-		 * we've already read everything we wanted to, or if
+-		 * there was a short read because we hit EOF, go ahead
+-		 * and return.  Otherwise fallthrough to buffered io for
+-		 * the rest of the read.  Buffered reads will not work for
+-		 * DAX files, so don't bother trying.
+-		 */
+-		if (retval < 0 || !count || IS_DAX(inode))
+-			return retval;
+-		if (iocb->ki_pos >= i_size_read(inode))
+-			return retval;
+-	}
+-
+-	return filemap_read(iocb, iter, retval);
+-}
+-EXPORT_SYMBOL(generic_file_read_iter);
+ 
+ /*
+  * Splice subpages from a folio into a pipe.
 
 -- 
 2.39.5

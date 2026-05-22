@@ -1,227 +1,113 @@
-Return-Path: <io-uring+bounces-13481-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13482-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id qLqsDlSgEGonbgYAu9opvQ
-	(envelope-from <io-uring+bounces-13481-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Fri, 22 May 2026 20:28:36 +0200
+	id gC1qFduxEGpWcgYAu9opvQ
+	(envelope-from <io-uring+bounces-13482-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Fri, 22 May 2026 21:43:23 +0200
 X-Original-To: lists+io-uring@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5CE55B9096
-	for <lists+io-uring@lfdr.de>; Fri, 22 May 2026 20:28:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A92B65B98A1
+	for <lists+io-uring@lfdr.de>; Fri, 22 May 2026 21:43:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 6F1F03047414
-	for <lists+io-uring@lfdr.de>; Fri, 22 May 2026 18:21:30 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 1CC453016EEF
+	for <lists+io-uring@lfdr.de>; Fri, 22 May 2026 19:39:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35726371D1E;
-	Fri, 22 May 2026 18:21:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9C54349CCB;
+	Fri, 22 May 2026 19:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="edYPf9Rr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KyyMm4hy"
 X-Original-To: io-uring@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3ABB372050;
-	Fri, 22 May 2026 18:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A003D357CED
+	for <io-uring@vger.kernel.org>; Fri, 22 May 2026 19:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779474088; cv=none; b=EimKlslqLX4crQtWQfNGLJCgz+FX3xP3+b92l+Gfzy2shx1IxxfFG9rkyn5FulAUKfoYLT+a6Goym1w+k95pPL//Jpxrlp+9biW4HweSSbfr54RVQZE+0gXUpm+qELw7Dk4zTKsZGIavpEbglF3/Uc07hZ3bdIbcSj+b1eJT5/M=
+	t=1779478754; cv=none; b=LW5H27NHpAj9Y2DKrpi2dYWpmxgr3ff6jwWRSeoPu0W4/rKIt3UUoaFoM5aMYbeOXD+hCXlaYBb7xdYqL/6Nd+pVITTMCq3zI97UYTB11z4pgVIK1kbvsqvxNnG3968al4k/RhY9wvheuuCr/59chVBPZSgEdGCESueRO4Ktz8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779474088; c=relaxed/simple;
-	bh=7d3Ti/hdlleLXjr3sAr8veTvIAhSjpJDPwOsLjEprog=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SWxTps1G9+Ph+ZhXq3xBq0zIQTnw7wPRKfWIsjJ4Z1t/anXk99XGxTIPoOo/ZQ1R+yi2Fy+gKI6GpptaJ4HMAcYG/7pRAH2aiOZhs8rv4CCHGjGcfk1UQ/9FBp9G2xNh+LM62pLlSAofb6fqlZWwoCnaYsFkvR/xapxpme6Htb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=edYPf9Rr; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:In-Reply-To:References;
-	bh=zKLvy/XVT2bpLk4en4fS6J9Rd5aUoTUJe2g27vvq3tQ=; b=edYPf9RrqDquidBWf3LrLjCWr8
-	ohWh080hKEcac6vExpyKG6U5XH6P+E+dZdSgULWxD6I72OJhYutOSlbKYpTTFdLOR5mcLYHcY0IDU
-	GNhkRn/4TYmnPQ1tKqvbP2Y4zrJrKYYyPxiA1RQ3umXuH/GiWVePTUZ9gqi79KgnEEdK4KyjN4pi7
-	IifQXHjtqCfaWBQlFD+w2KDacSCmWUkpptnUzdCtQTIKxdT4aAeYbBwRl/6b+YTCKdjbuSUj26nAG
-	fvkUYyPbSvmOppII2AVGbp6zwYaJ5jteoiqs7qpS9un1v4oBxS9mmFOtOYSb3V769RRasMtXbdScu
-	1m/BTF6w==;
-Received: from willy by casper.infradead.org with local (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wQUUu-0000000ARbe-2m3r;
-	Fri, 22 May 2026 18:21:24 +0000
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+	s=arc-20240116; t=1779478754; c=relaxed/simple;
+	bh=Rnb6sCGmE2+AePMKOkF/S4FUG/dHdFiS/zb3G0oZDRE=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Bqz4e8pPv1eMh8f62x9dvAxY8pJdOAy/oSJEffih1DAdYT0JsbeMOYaTn1GWJxzrEUl44fBl33jqVoDRQusANNPLBG/X4PFjjjLX0Wldjzj4XsFaisrAgmhtGaNK3H5m5zek+sIq6qUXJfwEd+w9g/KUvTMmaZ00pzLifX3TyZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KyyMm4hy; arc=none smtp.client-ip=100.103.45.18
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 888331F000E9;
+	Fri, 22 May 2026 19:39:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1779478753;
+	bh=BrjrP2/DFj7iGcW6MBpJebgjDopcoshiB1FkTdNM3Tw=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc;
+	b=KyyMm4hycFBeYRCeRE8yeGn9QdTOD0a7ZN1O1pa5NopmtHoz5J5HJ4DAFmwJnCWGW
+	 arCAenNos5D2Wk3JWU3ebWA2bQJHoNa745L/8B5xPSGxXuF5eka/Jx4zLmBLFl/T90
+	 M3Ocdx7chcG2soHlQAxoIvchZEl/1eEmBH/w680BSS5D5XP5k55Bxt7/Pb9WAHpdXL
+	 TamGMdx6zZ89QmXYxOnc7PnsOCLWWJqK1Eg+jzRgRBzhbHfdmHb+GIlATBJRa9MadS
+	 NVlBOutNwKEILtaSmWtkuDOMWvNVdy2dpF2Nwbhn/MzzniKajlT1tcHGOfvfQbAFDu
+	 /HwsmmkdbcCEg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id D0B9D3930FBA;
+	Fri, 22 May 2026 19:39:23 +0000 (UTC)
+Subject: Re: [GIT PULL] io_uring fixes for 7.1-rc5
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <a2fc1873-e68c-45ad-a8db-c70eb2c9c5a8@kernel.dk>
+References: <a2fc1873-e68c-45ad-a8db-c70eb2c9c5a8@kernel.dk>
+X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
+X-PR-Tracked-Message-Id: <a2fc1873-e68c-45ad-a8db-c70eb2c9c5a8@kernel.dk>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git tags/io_uring-7.1-20260522
+X-PR-Tracked-Commit-Id: e97ff8b62d4690c69297f0f6de874f0564cc01a4
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: dbae42cfa618abc57f0bc3c28cc140292f4f7410
+Message-Id: <177947876232.1341212.4146526189439515899.pr-tracker-bot@kernel.org>
+Date: Fri, 22 May 2026 19:39:22 +0000
 To: Jens Axboe <axboe@kernel.dk>
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	io-uring@vger.kernel.org,
-	linux-mm@kvack.org,
-	Leon Romanovsky <leon@kernel.org>
-Subject: [PATCH] block: Add bvec_folio()
-Date: Fri, 22 May 2026 19:21:20 +0100
-Message-ID: <20260522182122.2489391-1-willy@infradead.org>
-X-Mailer: git-send-email 2.54.0
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, io-uring <io-uring@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 X-Spamd-Result: default: False [-0.66 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	MID_CONTAINS_FROM(1.00)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
 	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[infradead.org,none];
 	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[infradead.org:s=casper.20170209];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20260515];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[4];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13481-lists,io-uring=lfdr.de];
-	DKIM_TRACE(0.00)[infradead.org:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	TO_DN_SOME(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[willy@infradead.org,io-uring@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TO_DN_ALL(0.00)[];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	TAGGED_FROM(0.00)[bounces-13482-lists,io-uring=lfdr.de];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_THREE(0.00)[3];
+	FROM_NO_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	NEURAL_HAM(-0.00)[-1.000];
+	FROM_NEQ_ENVFROM(0.00)[pr-tracker-bot@kernel.org,io-uring@vger.kernel.org];
+	MISSING_XM_UA(0.00)[];
+	NEURAL_HAM(-0.00)[-0.999];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
-X-Rspamd-Queue-Id: A5CE55B9096
+X-Rspamd-Queue-Id: A92B65B98A1
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-This is a simple helper which replaces page_folio(bvec->bv_page).
-Minor improvement in readability, but the real motivation is to reduce
-the number of references to bvec->bv_page so that it can be changed
-with less work.
+The pull request you sent on Fri, 22 May 2026 09:50:57 -0600:
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Cc: Leon Romanovsky <leon@kernel.org>
----
+> https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git tags/io_uring-7.1-20260522
 
-Hi Jens,
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/dbae42cfa618abc57f0bc3c28cc140292f4f7410
 
-I have a pile of other patches which depend on this one, but they're
-spread all over the kernel and don't really have anything in common
-with each other.  Getting this in the next merge window will let me send
-those patches next cycle.
+Thank you!
 
- block/bio.c          |  6 +++---
- include/linux/bio.h  |  2 +-
- include/linux/bvec.h | 13 +++++++++++++
- io_uring/rsrc.c      |  2 +-
- mm/page_io.c         |  4 ++--
- 5 files changed, 20 insertions(+), 7 deletions(-)
-
-diff --git a/block/bio.c b/block/bio.c
-index 5f10900b3f42..85aab3140909 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -1300,7 +1300,7 @@ static void bio_free_folios(struct bio *bio)
- 	int i;
- 
- 	bio_for_each_bvec_all(bv, bio, i) {
--		struct folio *folio = page_folio(bv->bv_page);
-+		struct folio *folio = bvec_folio(bv);
- 
- 		if (!is_zero_folio(folio))
- 			folio_put(folio);
-@@ -1409,7 +1409,7 @@ int bio_iov_iter_bounce(struct bio *bio, struct iov_iter *iter, size_t maxlen,
- 
- static void bvec_unpin(struct bio_vec *bv, bool mark_dirty)
- {
--	struct folio *folio = page_folio(bv->bv_page);
-+	struct folio *folio = bvec_folio(bv);
- 	size_t nr_pages = (bv->bv_offset + bv->bv_len - 1) / PAGE_SIZE -
- 			bv->bv_offset / PAGE_SIZE + 1;
- 
-@@ -1443,7 +1443,7 @@ static void bio_iov_iter_unbounce_read(struct bio *bio, bool is_error,
- 			bvec_unpin(&bio->bi_io_vec[1 + i], mark_dirty);
- 	}
- 
--	folio_put(page_folio(bio->bi_io_vec[0].bv_page));
-+	folio_put(bvec_folio(&bio->bi_io_vec[0]));
- }
- 
- /**
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index dc17780d6c1e..6613ab4519bd 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -283,7 +283,7 @@ static inline void bio_first_folio(struct folio_iter *fi, struct bio *bio,
- 		return;
- 	}
- 
--	fi->folio = page_folio(bvec->bv_page);
-+	fi->folio = bvec_folio(bvec);
- 	fi->offset = bvec->bv_offset +
- 			PAGE_SIZE * folio_page_idx(fi->folio, bvec->bv_page);
- 	fi->_seg_count = bvec->bv_len;
-diff --git a/include/linux/bvec.h b/include/linux/bvec.h
-index d36dd476feda..32846079b853 100644
---- a/include/linux/bvec.h
-+++ b/include/linux/bvec.h
-@@ -74,6 +74,19 @@ static inline void bvec_set_virt(struct bio_vec *bv, void *vaddr,
- 	bvec_set_page(bv, virt_to_page(vaddr), len, offset_in_page(vaddr));
- }
- 
-+/**
-+ * bvec_folio - Return the first folio referenced by this bvec
-+ * @bv: bvec to access
-+ *
-+ * bvecs can span multiple folios.  Unless you know that this
-+ * bvec does not, you may be better off using something like
-+ * bio_for_each_folio_all() which iterates over all folios.
-+ */
-+static inline struct folio *bvec_folio(const struct bio_vec *bv)
-+{
-+	return page_folio(bv->bv_page);
-+}
-+
- struct bvec_iter {
- 	/*
- 	 * Current device address in 512 byte sectors. Only updated by the bio
-diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index 650303626be6..5d792f70ec1e 100644
---- a/io_uring/rsrc.c
-+++ b/io_uring/rsrc.c
-@@ -102,7 +102,7 @@ static void io_release_ubuf(void *priv)
- 	unsigned int i;
- 
- 	for (i = 0; i < imu->nr_bvecs; i++) {
--		struct folio *folio = page_folio(imu->bvec[i].bv_page);
-+		struct folio *folio = bvec_folio(&imu->bvec[i]);
- 
- 		unpin_user_folio(folio, 1);
- 	}
-diff --git a/mm/page_io.c b/mm/page_io.c
-index 70cea9e24d2f..a59b73f8bdd9 100644
---- a/mm/page_io.c
-+++ b/mm/page_io.c
-@@ -490,7 +490,7 @@ static void sio_read_complete(struct kiocb *iocb, long ret)
- 
- 	if (ret == sio->len) {
- 		for (p = 0; p < sio->pages; p++) {
--			struct folio *folio = page_folio(sio->bvec[p].bv_page);
-+			struct folio *folio = bvec_folio(&sio->bvec[p]);
- 
- 			count_mthp_stat(folio_order(folio), MTHP_STAT_SWPIN);
- 			count_memcg_folio_events(folio, PSWPIN, folio_nr_pages(folio));
-@@ -500,7 +500,7 @@ static void sio_read_complete(struct kiocb *iocb, long ret)
- 		count_vm_events(PSWPIN, sio->len >> PAGE_SHIFT);
- 	} else {
- 		for (p = 0; p < sio->pages; p++) {
--			struct folio *folio = page_folio(sio->bvec[p].bv_page);
-+			struct folio *folio = bvec_folio(&sio->bvec[p]);
- 
- 			folio_unlock(folio);
- 		}
 -- 
-2.47.3
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 

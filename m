@@ -1,86 +1,84 @@
-Return-Path: <io-uring+bounces-13486-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13487-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id CK0/LrOxEWruowYAu9opvQ
-	(envelope-from <io-uring+bounces-13486-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Sat, 23 May 2026 15:54:59 +0200
+	id 4DzwJFy4EWpupAYAu9opvQ
+	(envelope-from <io-uring+bounces-13487-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Sat, 23 May 2026 16:23:24 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21C9C5BF20D
-	for <lists+io-uring@lfdr.de>; Sat, 23 May 2026 15:54:58 +0200 (CEST)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 811215BF567
+	for <lists+io-uring@lfdr.de>; Sat, 23 May 2026 16:23:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 634003001AC0
-	for <lists+io-uring@lfdr.de>; Sat, 23 May 2026 13:54:57 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 09592300844F
+	for <lists+io-uring@lfdr.de>; Sat, 23 May 2026 14:23:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A5E346E7F;
-	Sat, 23 May 2026 13:54:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004B73A5E6E;
+	Sat, 23 May 2026 14:23:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b="sGmHWnB0"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b="x6e1YTwZ"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B2B19343E
-	for <io-uring@vger.kernel.org>; Sat, 23 May 2026 13:54:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B443A5E9A
+	for <io-uring@vger.kernel.org>; Sat, 23 May 2026 14:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779544495; cv=none; b=niPCmb9ZKC3WgqKwEe66NR6nqZfzwvMtkRUerWSNue60AktX+wPTwoH21Lm/u9tyrXwyX6R2A6GQyVYKT9kqEdnCDRC2z7vfcfvI6Zmleo6lrVH/WrUrWaTy8n6UzDdhDHtFpwfMa6Iy3IVi0A4sVKyHvYoEpt7GpUmzPqhOI1U=
+	t=1779546197; cv=none; b=MVuQue1iYaAS7kEW9eh7HYMAaMlcHsLO+9OYePzNSnmEhpte+3hUhEy2flb65Ba4Gvwzp460bDrA6Z9pEwygxiFUYik89M8ezwW+RAD2QKvKF98U0OcL1sfgIqkH8xkQE/MG1Rmr9X0oplcaERsauTa8OlJ5N+xs1nEkex8PkjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779544495; c=relaxed/simple;
-	bh=D4WgZ6pig8o9yZ2h3BmGKYiqAdosri5bkWl0PBFcm7g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=qyELqzfA/iAp28ZxlZTaCCIp7ZPrnZlFJrQkZOulU5IIQm/xVWnOPq1DXGkYjiFu4rMf9GoIIS/Aku0vspoSpllKNLeuZYkSexzk/qE+BZXqaG54uiYaP/gWGPkugOXFGylibcIpYSaQX80zNsqXwVO083KjkfrqsVyLbhIe4oM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=sGmHWnB0; arc=none smtp.client-ip=209.85.210.43
+	s=arc-20240116; t=1779546197; c=relaxed/simple;
+	bh=B1SkOVQybuYZKnQkgQqnT8euq6KxNqLE/BvgDc/1ZEs=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=g4YD7XTDOrlVb212zd/hmufa3xOX/CuU7vCKYASyYSuf+0+OjHQlw1rX4915+eabnOBipkDfBntfwLuctCpsP3gm1lmmKiDXpeSA2j5J+DOI5lsgroBQnVSBoCTH3ZoeOy4xe+ZbmxLi9KLfJDxe24ayC5n/d+r8DtyAGU6N/8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=x6e1YTwZ; arc=none smtp.client-ip=209.85.210.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-7e603d0ee0aso1119193a34.2
-        for <io-uring@vger.kernel.org>; Sat, 23 May 2026 06:54:52 -0700 (PDT)
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-7e582b3bcaaso6973243a34.3
+        for <io-uring@vger.kernel.org>; Sat, 23 May 2026 07:23:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1779544491; x=1780149291; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=VxUoX9oQBgBGQf9Y9Ltyy2hVrP5KJx3xuX90dX3IVEQ=;
-        b=sGmHWnB0GmNZADjvcxqdoC7Yke5W8f/F+8zjTl/shUh9apzONUA3lChPElBRdajqG3
-         IZbHM3t6fp0xShcbSLMxIg73KofzMG+X138EHyWyWOI0xw7WjjYNDoPskjr8VW/BiKi+
-         Kk7K95slWyLAIOWE56FKDQGgDGcv2vYvaexcPswOieDK1X2ouaP955uCy4IndXWCHRge
-         PX+zVbLbFMLjwqn49o5LxEnL5H1Q9ZsEv0aXDv2peRf3yX/WQDrJqAvXtlUr9rIZAKVA
-         KueGqNYgQ3tL4VWnPuQsUbh/kzYlm2wx4sDFNHY9L0009NMufFYH/6wczX14HVLz2CCc
-         DF+g==
+        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1779546195; x=1780150995; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=cy9jYvmsFlyJHrWwIX2opm2bPqsw1+AmzdT1aGicVEs=;
+        b=x6e1YTwZZFODjvh/zrZ2CQFX0aWQVybALCwEQbDWPXNhaKRclL0l4hxbwSsPil2jLZ
+         f0/J3xFVU891nMWJPA+zNeViSDXiuhg6L1kf7pC3KwxrQkWYLJhJr3gnmECtzZH50yTK
+         DKyDoKnc/OCFNy3aXINw1Q1DnnVOAav86mRCAT0B65pu6zPevXlcKJHnzZC94Z/T9t2a
+         MfKS16xz3EAD/tdS92aFsgQiaUTqOKlJ6jeE5Es5IrFyOfnal1rOXjOzDavKreJCEa1n
+         qlCHzlUHNEfTjxwB8R12ToLGH2bQaPsYevmtJt6ZVyIm23TSOngQQmbqYLvcsk0OT9og
+         R8OQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779544491; x=1780149291;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VxUoX9oQBgBGQf9Y9Ltyy2hVrP5KJx3xuX90dX3IVEQ=;
-        b=s75EypVY9RmntNx4NBuYyEaYDqjyq3bDX0QOQYvbzxIqFC7Rh6r7nQxIqWvefjtYss
-         rCh+hdVLl3gBRVw9iXmoFPmpEFpyDa/VA3gKRO9GKvPh1tXWbLs+zqHNF4tkIrhD9yCa
-         2937tU41pRC5ZFg5wyqGssRkVzrbE3Syblb67etL5ecEFNa//Dj/JSD1YO2zhtWnMnUB
-         k4T6XZqoMpDQb8ezqY7eePqGoZOmm3hyVZffqDXCAKDw2S9n6q3L1hg9XXRed3CMZsPl
-         8ixKPFNdhA/a2zwBFhcnDTmEPbH0WF1yaeJ5Mh9U20QLePdAPT/oGftxmUpKhKL8gJhf
-         7PiA==
-X-Forwarded-Encrypted: i=1; AFNElJ/ptvkzMoA5SfK6meKV/ns5mPGgonGHaamx9e6l2AW8iQdVu29IZX2xCIE+T8w+6ck3wNcWm6zPKw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKELzkWzNDMFTz6HXL+vtu3pfEfxH1oHMPWk4Gx9vmRDcvjkRJ
-	GMpWk6QJ0osOserQ2FunjJMOHs6d0qsjB5QZZowMBEgflqYHFN3yLdjLe4BQf355qQjpEqm9u/8
-	E1h5Q
-X-Gm-Gg: Acq92OGAGesLVcUZmUR9+ZHdqSQZZRCXRn1w+y81j+A4hKf43WZlD+S3EoV3spTSf/P
-	mFhvZkNZCo9jtD3yQj9TvceHFiPC5WB0HwSQfYWCXJeYaQbwMBUlsPX5KMnS0/a3uWpmSklnL91
-	6MHX3PtC0uc31kjBZSC3NrECePMeC7EFyqCJrrxiF9ArHxZZJs/tFuzObRXaiBUu/22pnR7crof
-	Jo/seP2Do60qb1bkXSV2YXcWwGNDSOMf57jj20vMtQh2xW8nsrDPi/S3kbpWE0WCXkjHVPUPcxo
-	jPOMjgsiCe5EV5cWOjyfaYtUXa+UWDToUF+oan5uG2lZTH4bloCALB9OHq3PChlFzAlNRqNUurW
-	/9Dbt91gr4EgKtSnLGJNf6M+OaIWYTua1k5reHLazaOx/Z1oQlV/HGeDzD7ZoONrBNQpSiihhB7
-	Nk4DNGwv79mEOpb+xMllZ+LCwvCd214mx/FQfmHmy1xNpgjjBrL3Daju8SxB9y/eKxLw4W6w9G5
-	eowEYWaqw==
-X-Received: by 2002:a05:6830:3c10:b0:7de:51f3:e7ed with SMTP id 46e09a7af769-7e5fef44dfcmr4930046a34.26.1779544491476;
-        Sat, 23 May 2026 06:54:51 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1779546195; x=1780150995;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cy9jYvmsFlyJHrWwIX2opm2bPqsw1+AmzdT1aGicVEs=;
+        b=NpVKQUsCzBi9ixdugRg4QqP5yXjp6ROSZ7rIUTIQrDgPA3zn2AELn4rN0qRSOuwa51
+         SKmq3sG0D9wr/6FgBTzXKQ44SnOBqskFmsXV4G2p0BFsbXrtdrTzwP4bVhRt2wv6/s/0
+         I+8w3D9YxOGSEGfN42/7yY9+mAANVoj77UYB6xlpZHKLmAcEECdfCbsJ6gcUWIhVu4LI
+         blxG75N+u50Vw47wDuiimmNfICG34mXtpX1eKW9YzYl92+1jgaWjRutFD/73xkZX/zFe
+         ae+PQimvfTRkaI8OhYuxSuwq10/nlJRjUgveZv+DHBn5rlVxR9MvR9ycFgZvlivBM+Zr
+         tYNg==
+X-Forwarded-Encrypted: i=1; AFNElJ9jKbBk2K/Z3uMan7o6FnyyQY1sw690RtMv8HGCsaYKz8eGuOw3Y40sThhyM1X3gEGDv+OAWiA6LA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRY0KfxZNLhcrBNb6piXbuiegXdrJh1ZVudhWePaU3yQg8XmJU
+	GqaaE4aIlVsEADUWDPkebpTS3oYl0OadbG0JcvzXgxeiQCH4bKtKzv9hTf3Q0mrt/g0=
+X-Gm-Gg: Acq92OHuDVPwJnt/Knipo/VPOLZKU/VurKYeqLDrQo+Uin+MD2S2rzUmQNzZHrjeTJy
+	0cY7XOnX6eVeVpcLjYLyiyLrzFbWj3emtLESV56+k1mJo5tlc3YWIAnTS6GHxDCVH3CKPx0WACN
+	ZZYTX6PraeHK2cACfbSwZFzLrWRdEELletRaD2mfpXS1ph2e7M8LaAhOV+WY+fzsXke3x+70sAs
+	w3/DALOFTzOC2YyE3k9iaQjh1du2RaPZHC7REk+2OxhDLFNCILuaOjZujXaYPF3bOHiSZCDKoaV
+	93b5jktBGrJFPTnW0gXGATJTGPCI8LO8+IQKX+shTNzocCNnJb0tY0N3HkFNpnxh+n+3Qh3xBDl
+	FOR99DaZROnlt3jFo/D/U5DQESC9Nov/Tp5EY1HperxyMpxnW2Uo5XZFrgW53fkaDf7b2Dfiglw
+	bwvz22mkTApdif5QxyEl62PWCSwcxEuqGlt2alsfv0iXA0s3RWhPcnLZwxKhACiMUBx7X03k/65
+	+9TTyXn6w==
+X-Received: by 2002:a05:6830:6285:b0:7df:5fc:3fd8 with SMTP id 46e09a7af769-7e5fed0ab9cmr4772009a34.1.1779546194811;
+        Sat, 23 May 2026 07:23:14 -0700 (PDT)
 Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7e60648257csm3255891a34.9.2026.05.23.06.54.50
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7e606459dadsm3299655a34.4.2026.05.23.07.23.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 23 May 2026 06:54:50 -0700 (PDT)
-Message-ID: <2af95968-bcb3-4ed5-9242-3f8358e71f9e@kernel.dk>
-Date: Sat, 23 May 2026 07:54:49 -0600
+        Sat, 23 May 2026 07:23:14 -0700 (PDT)
+Message-ID: <8e853555-604e-46e5-8e25-a5f80b88e51c@kernel.dk>
+Date: Sat, 23 May 2026 08:23:13 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -88,242 +86,73 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [bug] io_uring : NULL pointer deref in
- io_register_iowq_max_workers()
-To: =?UTF-8?B?7Iuc66as7Ja8?= <shja0831@gmail.com>, io-uring@vger.kernel.org
-References: <CACR30Wj7yEweYqJg4Ovrbr4s9a8EZRYD8FMAWhjWUv3XunrMFQ@mail.gmail.com>
-Content-Language: en-US
+Subject: Re: [PATCH AUTOSEL 7.0] io_uring/wait: honour caller's time namespace
+ for IORING_ENTER_ABS_TIMER
 From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CACR30Wj7yEweYqJg4Ovrbr4s9a8EZRYD8FMAWhjWUv3XunrMFQ@mail.gmail.com>
+To: Sasha Levin <sashal@kernel.org>, patches@lists.linux.dev,
+ stable@vger.kernel.org
+Cc: Maoyi Xie <maoyixie.tju@gmail.com>,
+ Pavel Begunkov <asml.silence@gmail.com>, Maoyi Xie <maoyi.xie@ntu.edu.sg>,
+ io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260520111944.3424570-1-sashal@kernel.org>
+ <20260520111944.3424570-26-sashal@kernel.org>
+ <5a50c3f5-a5ef-4b2b-821c-5858d8b1ac13@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <5a50c3f5-a5ef-4b2b-821c-5858d8b1ac13@kernel.dk>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [-0.16 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
 	R_DKIM_ALLOW(-0.20)[kernel-dk.20251104.gappssmtp.com:s=20251104];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-13486-lists,io-uring=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_TWO(0.00)[2];
-	FREEMAIL_TO(0.00)[gmail.com,vger.kernel.org];
-	DMARC_NA(0.00)[kernel.dk];
-	DKIM_TRACE(0.00)[kernel-dk.20251104.gappssmtp.com:+];
+	FREEMAIL_CC(0.00)[gmail.com,ntu.edu.sg,vger.kernel.org];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-13487-lists,io-uring=lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
+	DMARC_NA(0.00)[kernel.dk];
+	DKIM_TRACE(0.00)[kernel-dk.20251104.gappssmtp.com:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	FROM_HAS_DN(0.00)[];
 	TO_DN_SOME(0.00)[];
 	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
 	NEURAL_HAM(-0.00)[-1.000];
-	TAGGED_RCPT(0.00)[io-uring];
+	RCPT_COUNT_SEVEN(0.00)[8];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo,kernel-dk.20251104.gappssmtp.com:dkim]
-X-Rspamd-Queue-Id: 21C9C5BF20D
+	TAGGED_RCPT(0.00)[io-uring];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[kernel-dk.20251104.gappssmtp.com:dkim,sin.lore.kernel.org:rdns,sin.lore.kernel.org:helo]
+X-Rspamd-Queue-Id: 811215BF567
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On 5/23/26 6:00 AM, ??? wrote:
-> Frist I'm not good at English, so my grammar might be weird.
-> and i use translator so It may not look natural.
+On 5/20/26 5:40 AM, Jens Axboe wrote:
+> On 5/20/26 5:18 AM, Sasha Levin wrote:
+>> From: Maoyi Xie <maoyixie.tju@gmail.com>
+>>
+>> [ Upstream commit 45d2b37a37ab98484693533496395c610a2cab96 ]
+>>
+>> io_uring_enter() with IORING_ENTER_ABS_TIMER takes an absolute
+>> timespec from the caller via ext_arg->ts. It arms an ABS mode
+>> hrtimer in __io_cqring_wait_schedule(). The conversion path in
+>> io_uring/wait.c parses ext_arg->ts inline rather than going
+>> through io_parse_user_time(). It therefore does not pick up the
+>> time namespace conversion added by the previous patch.
 > 
-> I found NULL-pointer dereference (general protection fault under
-> KASAN) in io_register_iowq_max_workers() on 7.1.0-rc1. It is a race
-> between the IORING_REGISTER_IOWQ_MAX_WORKERS propagation loop and a
-> task installing its first io_uring task context (tctx) node on a
-> shared ring. A small multithreaded reproducer triggers it reliably.
-> 
-> syzkaller log:
-> 
-> Oops: general protection fault, probably for non-canonical address
-> 0xdffffc0000000003: 0000 [#1] SMP KASAN NOPTI
-> KASAN: null-ptr-deref in range [0x0000000000000018-0x000000000000001f]
-> CPU: 1 UID: 0 PID: 230570 Comm: syz.1.42039 Not tainted 7.1.0-rc1 #1
-> PREEMPT(full)
-> Hardware name: QEMU Ubuntu 26.04 PC (i440FX + PIIX, 1996), BIOS
-> 1.17.0-debian-1.17.0-1ubuntu1 04/01/2014
-> RIP: 0010:io_register_iowq_max_workers io_uring/register.c:423 [inline]
-> RIP: 0010:__io_uring_register io_uring/register.c:865 [inline]
-> RIP: 0010:__do_sys_io_uring_register.cold+0xcae/0xe32 io_uring/register.c:1029
-> Code: bd 68 09 00 00 48 89 fa 48 c1 ea 03 42 80 3c 2a 00 74 05 e8 06
-> 3a 40 01 48 8b ad 68 09 00 00 48 8d 7d 18 48 89 fa 48 c1 ea 03 <42> 80
-> 3c 2a 00 74 05 e8 e8 39 40 01 48 8b 6d 18 48 85 ed 0f 85 ec
-> RSP: 0018:ffffc90002a9fd90 EFLAGS: 00010206
-> RAX: 1ffff11004c9f63a RBX: ffff888054ee4000 RCX: 0000000000000001
-> RDX: 0000000000000003 RSI: ffffffff81364a23 RDI: 0000000000000018
-> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000001
-> R10: ffffc90002a9fd90 R11: 0000000080000000 R12: ffff8880264fb1c0
-> R13: dffffc0000000000 R14: 0000000000000013 R15: 0000000000000013
-> FS:  00007ff8525ee6c0(0000) GS:ffff8880d687a000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000000000 CR3: 000000005ea81000 CR4: 0000000000352ef0
-> Call Trace:
->  <TASK>
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xff/0xf80 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7ff8543b85fd
-> Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 48 89 f8 48
-> 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
-> 01 f0 ff ff 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007ff8525edff8 EFLAGS: 00000246 ORIG_RAX: 00000000000001ab
-> RAX: ffffffffffffffda RBX: 00007ff854645fa0 RCX: 00007ff8543b85fd
-> RDX: 0000200000000040 RSI: 0000000000000013 RDI: 0000000000000003
-> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000002 R11: 0000000000000246 R12: 0000000000000000
-> R13: 00007ffdb063f3d0 R14: 00007ff8525eece4 R15: 00007ffdb063f4c7
->  </TASK>
-> Modules linked in:
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:io_register_iowq_max_workers io_uring/register.c:423 [inline]
-> RIP: 0010:__io_uring_register io_uring/register.c:865 [inline]
-> RIP: 0010:__do_sys_io_uring_register.cold+0xcae/0xe32 io_uring/register.c:1029
-> Code: bd 68 09 00 00 48 89 fa 48 c1 ea 03 42 80 3c 2a 00 74 05 e8 06
-> 3a 40 01 48 8b ad 68 09 00 00 48 8d 7d 18 48 89 fa 48 c1 ea 03 <42> 80
-> 3c 2a 00 74 05 e8 e8 39 40 01 48 8b 6d 18 48 85 ed 0f 85 ec
-> RSP: 0018:ffffc90002a9fd90 EFLAGS: 00010206
-> RAX: 1ffff11004c9f63a RBX: ffff888054ee4000 RCX: 0000000000000001
-> RDX: 0000000000000003 RSI: ffffffff81364a23 RDI: 0000000000000018
-> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000001
-> R10: ffffc90002a9fd90 R11: 0000000080000000 R12: ffff8880264fb1c0
-> R13: dffffc0000000000 R14: 0000000000000013 R15: 0000000000000013
-> FS:  00007ff8525ee6c0(0000) GS:ffff8880d687a000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f1280e130b0 CR3: 000000005ea81000 CR4: 0000000000352ef0
-> ----------------
-> Code disassembly (best guess):
->    0: bd 68 09 00 00       mov    $0x968,%ebp
->    5: 48 89 fa             mov    %rdi,%rdx
->    8: 48 c1 ea 03           shr    $0x3,%rdx
->    c: 42 80 3c 2a 00       cmpb   $0x0,(%rdx,%r13,1)
->   11: 74 05                 je     0x18
->   13: e8 06 3a 40 01       call   0x1403a1e
->   18: 48 8b ad 68 09 00 00 mov    0x968(%rbp),%rbp
->   1f: 48 8d 7d 18           lea    0x18(%rbp),%rdi
->   23: 48 89 fa             mov    %rdi,%rdx
->   26: 48 c1 ea 03           shr    $0x3,%rdx
-> * 2a: 42 80 3c 2a 00       cmpb   $0x0,(%rdx,%r13,1) <-- trapping instruction
->   2f: 74 05                 je     0x36
->   31: e8 e8 39 40 01       call   0x1403a1e
->   36: 48 8b 6d 18           mov    0x18(%rbp),%rbp
->   3a: 48 85 ed             test   %rbp,%rbp
->   3d: 0f                   .byte 0xf
->   3e: 85 ec                 test   %ebp,%esp
-> 
-> 
-> <<<<<<<<<<<<<<< tail report >>>>>>>>>>>>>>>
-> 
-> This bug is in io_register_iowq_max_workers()
-> 
-> mutex_lock(&ctx->tctx_lock);
-> list_for_each_entry(node, &ctx->tctx_list, ctx_node) {
->     tctx = node->task->io_uring;
->     if (WARN_ON_ONCE(!tctx->io_wq)) // derefs tctx without NULL check
->         continue;
->     // skip
-> }
-> 
-> propagates the limit to all registered users (non-SQPOLL path)
-> 
-> The node is published into ctx->tctx_list before node->task->io_uring
-> is set (io_uring/tctx.c):
-> 
-> io_tctx_install_node():
->     node->task = current;
->     mutex_lock(&ctx->tctx_lock);
->     list_add(&node->ctx_node, &ctx->tctx_list);   // node visible
->     mutex_unlock(&ctx->tctx_lock); // lock dropped
-> 
-> __io_uring_add_tctx_node():
->     ret = io_tctx_install_node(ctx, tctx);
->     if (!ret)
->         current->io_uring = tctx;   // set AFTER, outside lock
-> 
-> There is a window where a node is on ctx->tctx_list while
-> node->task->io_uring is still NULL (the task is doing its first
-> io_uring op, tctx freshly allocated, not yet published). A concurrent
-> IORING_REGISTER_IOWQ_MAX_WORKERS on the same ring takes
-> ctx->tctx_lock, iterates, reads node->task->io_uring == NULL, and
-> dereferences tctx->io_wq ? GPF.
-> 
-> The other two ctx->tctx_list consumers already guard this ? cancel.c
-> io_async_cancel_one() and io_uring_try_cancel_iowq() both do if (!tctx
-> || !tctx->io_wq). io_register_iowq_max_workers() is the only consumer
-> that omits the !tctx check, so this is simply a missing guard.
-> 
-> Reproducer
-> 
-> Plain (non-SQPOLL) ring shared across threads. A stream of fresh
-> threads each do their first io_uring_enter() (hits the window) while
-> two threads spam IORING_REGISTER_IOWQ_MAX_WORKERS. GPFs within
-> seconds-to-minutes on SMP+KASAN.
-> 
-> #define _GNU_SOURCE
-> #include <pthread.h>
-> #include <string.h>
-> #include <sys/syscall.h>
-> #include <linux/io_uring.h>
-> static int ring_fd;
-> static long setup(unsigned e, struct io_uring_params *p){ return
-> syscall(__NR_io_uring_setup, e, p); }
-> static long enter(int fd, unsigned ts){ return
-> syscall(__NR_io_uring_enter, fd, ts, 0, 0, (void*)0, (size_t)0); }
-> static long reg(int fd, unsigned op, void *a, unsigned n){ return
-> syscall(__NR_io_uring_register, fd, op, a, n); }
-> static void *fresh(void *x){ enter(ring_fd, 1); return 0; }   // first
-> op -> window
-> static void *spam(void *x){ unsigned c[2]={1,1}; for(;;) reg(ring_fd,
-> IORING_REGISTER_IOWQ_MAX_WORKERS, c, 2); return 0; }
-> int main(void){
->     struct io_uring_params p; memset(&p,0,sizeof(p));
->     ring_fd = setup(8, &p);
->     pthread_t s; pthread_create(&s,0,spam,0); pthread_create(&s,0,spam,0);
->     for(;;){ pthread_t t[64];
->         for(int i=0;i<64;i++) pthread_create(&t[i],0,fresh,0);
->         for(int i=0;i<64;i++) pthread_join(t[i],0); }
-> }
-> 
-> Reproduced on 7.1.0-rc1 with KASAN; the racy ordering predates the
-> 2024 shadow-variable cleanup that last touched register.c:422.
-> 
-> Suggested fix
-> 
-> Either make io_register_iowq_max_workers() match its siblings:
-> 
-> before:
-> 
-> mutex_lock(&ctx->tctx_lock);
-> list_for_each_entry(node, &ctx->tctx_list, ctx_node) {
->     tctx = node->task->io_uring;
->     if (WARN_ON_ONCE(!tctx->io_wq)) // derefs tctx without NULL check
->         continue;
->     // skip
-> }
-> 
-> to:
-> 
-> mutex_lock(&ctx->tctx_lock);
-> list_for_each_entry(node, &ctx->tctx_list, ctx_node) {
->     tctx = node->task->io_uring;
->     if (!tctx || !tctx->io_wq)
->         continue;
->     // skip
-> }
-> 
-> or close the window in __io_uring_add_tctx_node() by publishing
-> current->io_uring = tctx before the node is added to ctx->tctx_list,
-> so a listed node always has a valid task->io_uring.
+> Once again - If you auto-pick this one, please also do the other one in
+> the series, 9cc6bac1bebf8310d2950d1411a91479e86d69a1. Makes no sense to
+> do just one of them.
 
-Setting ->io_uring = tctx before adding to the list is, by far, the
-better fix. Rather than just report it, do you want to submit an actual
-patch for that? I can surely patch it up myself, but you could also just
-send a patch for it.
+And once again, no reply. What is going on with stable these days?
 
 -- 
 Jens Axboe
+
 

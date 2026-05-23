@@ -1,55 +1,55 @@
-Return-Path: <io-uring+bounces-13491-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13493-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id 4AdPKFUDEmqntQYAu9opvQ
-	(envelope-from <io-uring+bounces-13491-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Sat, 23 May 2026 21:43:17 +0200
+	id qKs6F1YDEmqntQYAu9opvQ
+	(envelope-from <io-uring+bounces-13493-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Sat, 23 May 2026 21:43:18 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FC335C079B
-	for <lists+io-uring@lfdr.de>; Sat, 23 May 2026 21:43:16 +0200 (CEST)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B4125C079D
+	for <lists+io-uring@lfdr.de>; Sat, 23 May 2026 21:43:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 677A73009380
+	by sin.lore.kernel.org (Postfix) with ESMTP id CD07230095D4
 	for <lists+io-uring@lfdr.de>; Sat, 23 May 2026 19:43:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED30932B11C;
-	Sat, 23 May 2026 19:43:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A13333987F;
+	Sat, 23 May 2026 19:43:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J3DuJEtx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rJbsgTWu"
 X-Original-To: io-uring@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88312D3EC7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C889B2F83A2;
 	Sat, 23 May 2026 19:43:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779565389; cv=none; b=NDAv0se93hvBdmakv75t4PralmPnwH9S6E3qM8+3Kpo/MzFOOmiaAwDRQ9uRDuE/84E7Y7cl76AyWdTzVtrjtFCiRk+FQYqi/oOtqRpdKtYVNW9mF4aNLslLRCgUFvuncpSI9G6kgv+xH02qvPzHe86kaI/FOw5kGeWeLXsfGDo=
+	t=1779565389; cv=none; b=Ek19lvAXk20tiGJxE1ckEWadga5bvAI2LlSRpGXin6UZqoaQddwouJcRfmuXYR7EA/OKln5aOEDGsM1SafLbwfR+9QXyuIZJ8tE2+C1DoQtITc0Z0zifE3hU3L2SUpspuC0elU6uDYz359xAogz7w5IKxw9sM/nS5w0EjxzXWpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1779565389; c=relaxed/simple;
-	bh=DIqx3AgEaekumcir7z4dd96izRL4ntx2FIL2t/OUE5E=;
+	bh=4x+kkur+itTL+nDNhRSO2XwvgLTLFONJnU89392Z2Vs=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aEP2+XNlgVfamXVPuoFttppAywCHRe29LLF/UUCH5zShH5R8ZaVFNocl2oF5+c7Tp1bZjUQnjsCiNLeV6KgPcdahRfkYzhS9Y+Frm59JrbsNDCeC2UoI0KNQsc4TTkFJf2u/QurfRAN2BSl5YgDTyHeHfxwag8IZJgnyAHsv6og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J3DuJEtx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7EA40C2BCB8;
+	 In-Reply-To:To:Cc; b=aLBt6c9CT6uyVUSO2EAd0C9BsBDqJGWLX/1TnDJBL+R43wjZRRDxvueQi3+DQ8NQa0K+3N7pVFNlvvMCCJyZ6ynkXbM/4GCYzzCk02Py7wYW3zGMUsulEijswBlGU0o0CTwT6l8V7AZ99UuHW9QfeFqLMiUiHwUZzzlTsfKgESo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rJbsgTWu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 86A34C4AF09;
 	Sat, 23 May 2026 19:43:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1779565389;
-	bh=DIqx3AgEaekumcir7z4dd96izRL4ntx2FIL2t/OUE5E=;
+	bh=4x+kkur+itTL+nDNhRSO2XwvgLTLFONJnU89392Z2Vs=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=J3DuJEtxIXXpFTZFQjzaAjJ5zgn8UQpRrk3PWGoAszcTes5rQHxlw09TcFrVa/NKV
-	 3GUMCy/GjwP+MK52USEqXxM+44et3pZ1+D47P5oTGVhetlgprv+nYBra5gEVoY6pbI
-	 qBELdNBR1uluDuXzT20tf27EHoYHLSQbfmxCFZO4YcB8JEfsmUP/wDow9VffgfzBXt
-	 jdDQOE7tor58AHh4KOPQMEPO4mYB3ibkHeLp/r+gNC7Pa1m7iAbH0g3NkTO4l22x5n
-	 MyjJqnPetj2dEz+AT6dy+qsrcQ8HNzoh2c4m2YI7PJY84B/hCrtaprU00i4VNQnI9g
-	 YsyvvmAkdLNYA==
+	b=rJbsgTWuJl+X3OY5erMcPNBSa/w9leRseYmrl6tN4cngzWrEKZpIVOsmTkvM76t9c
+	 Eds0RYlp4LU05ENmBSeZPJP348BDz4cOXEqNkVB+lk/bcJGHg0MFVj5ZjKodf3cZmT
+	 Kvh8fdd8gbmlluKv6UCMLlbf0qHaXW4AlAXrI9zBTmWkejL497VUNuHuXlRTDVBdk5
+	 o0cULeKnfVS/96+TBXCbS9JL3bBHLtG30uyR+i2JPZMFaDrghQOYUps0WjyQWWqW/v
+	 FP5rnWsRp8RJ0af/Cbygi8GlZXvqvZ+n8Y3CX9bpKAlEkhbqsUp6ynEt8btimH1nDN
+	 BAwYWpfQwGgOQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67D3FCD5BB1;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 766E9CD5BC7;
 	Sat, 23 May 2026 19:43:09 +0000 (UTC)
 From: Demi Marie Obenour via B4 Relay <devnull+demiobenour.gmail.com@kernel.org>
-Date: Sat, 23 May 2026 15:43:02 -0400
-Subject: [PATCH 1/3] net: Remove support for AIO on sockets
+Date: Sat, 23 May 2026 15:43:03 -0400
+Subject: [PATCH 2/3] AF_ALG: Drop support for off-CPU cryptography
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -58,7 +58,7 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260523-af-alg-harden-v1-1-c76755c3a5c5@gmail.com>
+Message-Id: <20260523-af-alg-harden-v1-2-c76755c3a5c5@gmail.com>
 References: <20260523-af-alg-harden-v1-0-c76755c3a5c5@gmail.com>
 In-Reply-To: <20260523-af-alg-harden-v1-0-c76755c3a5c5@gmail.com>
 To: Herbert Xu <herbert@gondor.apana.org.au>, 
@@ -80,11 +80,11 @@ Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org, 
  Demi Marie Obenour <demiobenour@gmail.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1779565388; l=11844;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1779565388; l=6842;
  i=demiobenour@gmail.com; s=20250731; h=from:subject:message-id;
- bh=X4VpiwrEjiilqzmO26Lw8ocnY8n8PVtOcMW3zv/PW5M=;
- b=6qKjn9u6wn2u2hWtWsysheyBTd7UHG7kVKQYGIioKUJEsOegRhNcWJ72Cy0OEOte+9lRHK87v
- VdyS6TDXuZTC3+VOVpU6lzm4DVDbHFqXMnPDORctVqwON1KrrE4pf1H
+ bh=WvOsgYHUhof7lfEUPLefwcNPmpsYzNcw3EP4UmhJBvQ=;
+ b=tOimiiGZzW9nPiZOY/pmr9YuzEsYZH6qY4xlblpCOVSlHm1Vxy18eK4FnE3vInfagtRspluWZ
+ HbAqXq5Uw+4CheXH8HBI0vPX9cDE0K9IUMBEo9fknx5MbHnW7mQmmIe
 X-Developer-Key: i=demiobenour@gmail.com; a=ed25519;
  pk=4iGY+ynEKxIfs+fIUK9EzsvZ44yGE0GvXLeLTPKKPhI=
 X-Endpoint-Received: by B4 Relay for demiobenour@gmail.com/20250731 with
@@ -95,13 +95,13 @@ X-Spamd-Result: default: False [-0.16 / 15.00];
 	FREEMAIL_REPLYTO_NEQ_FROM(2.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
 	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20201202];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13491-lists,io-uring=lfdr.de,demiobenour.gmail.com];
+	TAGGED_FROM(0.00)[bounces-13493-lists,io-uring=lfdr.de,demiobenour.gmail.com];
 	FROM_HAS_DN(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
@@ -116,338 +116,179 @@ X-Spamd-Result: default: False [-0.16 / 15.00];
 	FROM_NEQ_ENVFROM(0.00)[devnull@kernel.org,io-uring@vger.kernel.org];
 	REPLYTO_DOM_NEQ_FROM_DOM(0.00)[];
 	NEURAL_HAM(-0.00)[-0.999];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
 	TAGGED_RCPT(0.00)[io-uring];
 	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:rdns,sin.lore.kernel.org:helo]
-X-Rspamd-Queue-Id: 7FC335C079B
+X-Rspamd-Queue-Id: 4B4125C079D
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
 From: Demi Marie Obenour <demiobenour@gmail.com>
 
-The only user of msg->msg_iocb was AF_ALG, but that's deprecated.
-It can be removed entirely at the cost of only supporting synchronous
-operations.  This doesn't break userspace, which will silently block
-(for a bounded amount of time) in io_submit instead of operating
-asynchronously.
+AF_ALG is deprecated and exposed to unprivileged userspace.  Only
+use the least buggy algorithm implementations: the pure software ones.
 
-This also makes struct msghdr smaller, helping every other caller of
-sendmsg().
+This removes one of the main advantages of AF_ALG, which is the
+ability to use it with off-CPU accelerators.  However, using off-CPU
+accelerators has huge overheads, both in performance and attack surface.
+I have yet to see real-world, performance-critical workloads where using
+an accelerator via AF_ALG is actually a win over doing cryptography in
+userspace.
+
+If using an off-CPU accelerator really does turn out to be a win, a new
+API should be developed that is actually a good fit for it.
 
 Signed-off-by: Demi Marie Obenour <demiobenour@gmail.com>
 ---
- crypto/af_alg.c                                | 33 +-------------
- crypto/algif_aead.c                            | 39 ++++------------
- crypto/algif_skcipher.c                        | 62 +++++---------------------
- include/crypto/if_alg.h                        |  5 +--
- include/linux/socket.h                         |  1 -
- io_uring/net.c                                 |  1 -
- net/compat.c                                   |  1 -
- net/socket.c                                   |  7 +--
- tools/perf/trace/beauty/include/linux/socket.h |  1 -
- 9 files changed, 25 insertions(+), 125 deletions(-)
+ Documentation/crypto/userspace-if.rst |  7 ++++++-
+ crypto/af_alg.c                       |  2 +-
+ crypto/algif_aead.c                   |  4 ++--
+ crypto/algif_hash.c                   |  4 ++--
+ crypto/algif_rng.c                    |  4 ++--
+ crypto/algif_skcipher.c               |  4 ++--
+ include/crypto/if_alg.h               | 14 +++++++++++++-
+ 7 files changed, 28 insertions(+), 11 deletions(-)
 
+diff --git a/Documentation/crypto/userspace-if.rst b/Documentation/crypto/userspace-if.rst
+index ea1b1b3f4049fd4673528dc2a6234f6376a3489f..b31117d4415dda6ad6ca36275e615bec7df9552e 100644
+--- a/Documentation/crypto/userspace-if.rst
++++ b/Documentation/crypto/userspace-if.rst
+@@ -9,7 +9,8 @@ symmetric cipher, AEAD, and RNG algorithms that are implemented in kernel-mode
+ code.
+ 
+ AF_ALG is insecure and is deprecated. Originally added to the kernel in 2010,
+-most kernel developers now consider it to be a mistake.
++most kernel developers now consider it to be a mistake. Support for hardware
++accelerators, which was the original purpose of AF_ALG, has been removed.
+ 
+ AF_ALG continues to be supported only for backwards compatibility. On systems
+ where no programs using AF_ALG remain, the support for it should be disabled by
+@@ -59,6 +60,10 @@ Some of the examples include:
+ - CVE-2013-7421
+ - CVE-2011-4081
+ 
++Hardware accelerator drivers are frequently buggy. To reduce attack surface,
++AF_ALG now only provides access to algorithms implemented in software. This
++means that AF_ALG no longer fulfills its original purpose.
++
+ It is recommended that, whenever possible, userspace programs be migrated to
+ userspace crypto code (which again, is what is normally used anyway) and
+ ``CONFIG_CRYPTO_USER_API_*`` be disabled.  On systems that use SELinux, SELinux
 diff --git a/crypto/af_alg.c b/crypto/af_alg.c
-index 48c53f488e0fd30818e72439fe0c0d7e4cee1432..8ccf7a737cd6ca9a5d5bf47050c9afea0dfd61bf 100644
+index 8ccf7a737cd6ca9a5d5bf47050c9afea0dfd61bf..cce000e8590e469927b5a5a0ceccfdf0ef54633d 100644
 --- a/crypto/af_alg.c
 +++ b/crypto/af_alg.c
-@@ -1085,35 +1085,6 @@ void af_alg_free_resources(struct af_alg_async_req *areq)
- }
- EXPORT_SYMBOL_GPL(af_alg_free_resources);
+@@ -181,7 +181,7 @@ static int alg_bind(struct socket *sock, struct sockaddr_unsized *uaddr, int add
+ 	if (IS_ERR(type))
+ 		return PTR_ERR(type);
  
--/**
-- * af_alg_async_cb - AIO callback handler
-- * @data: async request completion data
-- * @err: if non-zero, error result to be returned via ki_complete();
-- *       otherwise return the AIO output length via ki_complete().
-- *
-- * This handler cleans up the struct af_alg_async_req upon completion of the
-- * AIO operation.
-- *
-- * The number of bytes to be generated with the AIO operation must be set
-- * in areq->outlen before the AIO callback handler is invoked.
-- */
--void af_alg_async_cb(void *data, int err)
--{
--	struct af_alg_async_req *areq = data;
--	struct sock *sk = areq->sk;
--	struct kiocb *iocb = areq->iocb;
--	unsigned int resultlen;
--
--	/* Buffer size written by crypto operation. */
--	resultlen = areq->outlen;
--
--	af_alg_free_resources(areq);
--	sock_put(sk);
--
--	iocb->ki_complete(iocb, err ? err : (int)resultlen);
--}
--EXPORT_SYMBOL_GPL(af_alg_async_cb);
--
- /**
-  * af_alg_poll - poll system call handler
-  * @file: file pointer
-@@ -1154,8 +1125,8 @@ struct af_alg_async_req *af_alg_alloc_areq(struct sock *sk,
- 	struct af_alg_ctx *ctx = alg_sk(sk)->private;
- 	struct af_alg_async_req *areq;
- 
--	/* Only one AIO request can be in flight. */
--	if (ctx->inflight)
-+	/* Only one request can be in flight. */
-+	if (WARN_ON_ONCE(ctx->inflight))
- 		return ERR_PTR(-EBUSY);
- 
- 	areq = sock_kmalloc(sk, areqlen, GFP_KERNEL);
+-	private = type->bind(sa->salg_name, sa->salg_feat, sa->salg_mask);
++	private = type->bind(sa->salg_name);
+ 	if (IS_ERR(private)) {
+ 		module_put(type->owner);
+ 		return PTR_ERR(private);
 diff --git a/crypto/algif_aead.c b/crypto/algif_aead.c
-index c6c2ce21895dd7df51dc825ed886ba7e1aa37130..60f06597cb0b13036bc975641a0b02ea8a41ad03 100644
+index 60f06597cb0b13036bc975641a0b02ea8a41ad03..787aac8aeb24eed128f08345ba730478113919b3 100644
 --- a/crypto/algif_aead.c
 +++ b/crypto/algif_aead.c
-@@ -197,37 +197,14 @@ static int _aead_recvmsg(struct socket *sock, struct msghdr *msg,
- 	aead_request_set_ad(&areq->cra_u.aead_req, ctx->aead_assoclen);
- 	aead_request_set_tfm(&areq->cra_u.aead_req, tfm);
+@@ -342,9 +342,9 @@ static struct proto_ops algif_aead_ops_nokey = {
+ 	.poll		=	af_alg_poll,
+ };
  
--	if (msg->msg_iocb && !is_sync_kiocb(msg->msg_iocb)) {
--		/* AIO operation */
--		sock_hold(sk);
--		areq->iocb = msg->msg_iocb;
--
--		/* Remember output size that will be generated. */
--		areq->outlen = outlen;
--
--		aead_request_set_callback(&areq->cra_u.aead_req,
--					  CRYPTO_TFM_REQ_MAY_SLEEP,
--					  af_alg_async_cb, areq);
--		err = ctx->enc ? crypto_aead_encrypt(&areq->cra_u.aead_req) :
--				 crypto_aead_decrypt(&areq->cra_u.aead_req);
--
--		/* AIO operation in progress */
--		if (err == -EINPROGRESS)
--			return -EIOCBQUEUED;
--
--		sock_put(sk);
--	} else {
--		/* Synchronous operation */
--		aead_request_set_callback(&areq->cra_u.aead_req,
--					  CRYPTO_TFM_REQ_MAY_SLEEP |
--					  CRYPTO_TFM_REQ_MAY_BACKLOG,
--					  crypto_req_done, &ctx->wait);
--		err = crypto_wait_req(ctx->enc ?
--				crypto_aead_encrypt(&areq->cra_u.aead_req) :
--				crypto_aead_decrypt(&areq->cra_u.aead_req),
--				&ctx->wait);
--	}
--
-+	aead_request_set_callback(&areq->cra_u.aead_req,
-+				  CRYPTO_TFM_REQ_MAY_SLEEP |
-+				  CRYPTO_TFM_REQ_MAY_BACKLOG,
-+				  crypto_req_done, &ctx->wait);
-+	err = crypto_wait_req(ctx->enc ?
-+			crypto_aead_encrypt(&areq->cra_u.aead_req) :
-+			crypto_aead_decrypt(&areq->cra_u.aead_req),
-+			&ctx->wait);
+-static void *aead_bind(const char *name, u32 type, u32 mask)
++static void *aead_bind(const char *name)
+ {
+-	return crypto_alloc_aead(name, type, mask);
++	return crypto_alloc_aead(name, 0, AF_ALG_CRYPTOAPI_MASK);
+ }
  
- free:
- 	af_alg_free_resources(areq);
+ static void aead_release(void *private)
+diff --git a/crypto/algif_hash.c b/crypto/algif_hash.c
+index 4d3dfc60a16a6d8b677d903d209df18d67202c98..5452ad6c15069c3cb0ff78fe58868fe7ce4b0fc3 100644
+--- a/crypto/algif_hash.c
++++ b/crypto/algif_hash.c
+@@ -380,9 +380,9 @@ static struct proto_ops algif_hash_ops_nokey = {
+ 	.accept		=	hash_accept_nokey,
+ };
+ 
+-static void *hash_bind(const char *name, u32 type, u32 mask)
++static void *hash_bind(const char *name)
+ {
+-	return crypto_alloc_ahash(name, type, mask);
++	return crypto_alloc_ahash(name, 0, AF_ALG_CRYPTOAPI_MASK);
+ }
+ 
+ static void hash_release(void *private)
+diff --git a/crypto/algif_rng.c b/crypto/algif_rng.c
+index a9fb492e929a70c94476f296f5f5e7c42f0313b7..4dfe7899f8fa4ce82d5f2236297230fb44bc35d6 100644
+--- a/crypto/algif_rng.c
++++ b/crypto/algif_rng.c
+@@ -197,7 +197,7 @@ static struct proto_ops __maybe_unused algif_rng_test_ops = {
+ 	.sendmsg	=	rng_test_sendmsg,
+ };
+ 
+-static void *rng_bind(const char *name, u32 type, u32 mask)
++static void *rng_bind(const char *name)
+ {
+ 	struct rng_parent_ctx *pctx;
+ 	struct crypto_rng *rng;
+@@ -206,7 +206,7 @@ static void *rng_bind(const char *name, u32 type, u32 mask)
+ 	if (!pctx)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	rng = crypto_alloc_rng(name, type, mask);
++	rng = crypto_alloc_rng(name, 0, AF_ALG_CRYPTOAPI_MASK);
+ 	if (IS_ERR(rng)) {
+ 		kfree(pctx);
+ 		return ERR_CAST(rng);
 diff --git a/crypto/algif_skcipher.c b/crypto/algif_skcipher.c
-index ba0a17fd95aca22aa58ebf510c7d9b5f0cea2c2e..9dbccabd87b13920c27aff5a450a235cc6a27d59 100644
+index 9dbccabd87b13920c27aff5a450a235cc6a27d59..df20bdfe1f1f4e453782dee3b743dd1939ab4c6c 100644
 --- a/crypto/algif_skcipher.c
 +++ b/crypto/algif_skcipher.c
-@@ -79,20 +79,6 @@ static int algif_skcipher_export(struct sock *sk, struct skcipher_request *req)
- 	return err;
+@@ -307,9 +307,9 @@ static struct proto_ops algif_skcipher_ops_nokey = {
+ 	.poll		=	af_alg_poll,
+ };
+ 
+-static void *skcipher_bind(const char *name, u32 type, u32 mask)
++static void *skcipher_bind(const char *name)
+ {
+-	return crypto_alloc_skcipher(name, type, mask);
++	return crypto_alloc_skcipher(name, 0, AF_ALG_CRYPTOAPI_MASK);
  }
  
--static void algif_skcipher_done(void *data, int err)
--{
--	struct af_alg_async_req *areq = data;
--	struct sock *sk = areq->sk;
--
--	if (err)
--		goto out;
--
--	err = algif_skcipher_export(sk, &areq->cra_u.skcipher_req);
--
--out:
--	af_alg_async_cb(data, err);
--}
--
- static int _skcipher_recvmsg(struct socket *sock, struct msghdr *msg,
- 			     size_t ignored, int flags)
- {
-@@ -171,43 +157,19 @@ static int _skcipher_recvmsg(struct socket *sock, struct msghdr *msg,
- 		cflags |= CRYPTO_SKCIPHER_REQ_CONT;
- 	}
- 
--	if (msg->msg_iocb && !is_sync_kiocb(msg->msg_iocb)) {
--		/* AIO operation */
--		sock_hold(sk);
--		areq->iocb = msg->msg_iocb;
-+	skcipher_request_set_callback(&areq->cra_u.skcipher_req,
-+				      cflags |
-+				      CRYPTO_TFM_REQ_MAY_SLEEP |
-+				      CRYPTO_TFM_REQ_MAY_BACKLOG,
-+				      crypto_req_done, &ctx->wait);
-+	err = crypto_wait_req(ctx->enc ?
-+		crypto_skcipher_encrypt(&areq->cra_u.skcipher_req) :
-+		crypto_skcipher_decrypt(&areq->cra_u.skcipher_req),
-+					 &ctx->wait);
- 
--		/* Remember output size that will be generated. */
--		areq->outlen = len;
--
--		skcipher_request_set_callback(&areq->cra_u.skcipher_req,
--					      cflags |
--					      CRYPTO_TFM_REQ_MAY_SLEEP,
--					      algif_skcipher_done, areq);
--		err = ctx->enc ?
--			crypto_skcipher_encrypt(&areq->cra_u.skcipher_req) :
--			crypto_skcipher_decrypt(&areq->cra_u.skcipher_req);
--
--		/* AIO operation in progress */
--		if (err == -EINPROGRESS)
--			return -EIOCBQUEUED;
--
--		sock_put(sk);
--	} else {
--		/* Synchronous operation */
--		skcipher_request_set_callback(&areq->cra_u.skcipher_req,
--					      cflags |
--					      CRYPTO_TFM_REQ_MAY_SLEEP |
--					      CRYPTO_TFM_REQ_MAY_BACKLOG,
--					      crypto_req_done, &ctx->wait);
--		err = crypto_wait_req(ctx->enc ?
--			crypto_skcipher_encrypt(&areq->cra_u.skcipher_req) :
--			crypto_skcipher_decrypt(&areq->cra_u.skcipher_req),
--						 &ctx->wait);
--
--		if (!err)
--			err = algif_skcipher_export(
--				sk, &areq->cra_u.skcipher_req);
--	}
-+	if (!err)
-+		err = algif_skcipher_export(
-+			sk, &areq->cra_u.skcipher_req);
- 
- free:
- 	af_alg_free_resources(areq);
+ static void skcipher_release(void *private)
 diff --git a/include/crypto/if_alg.h b/include/crypto/if_alg.h
-index 0cc8fa749f68d2356789f72771c9e550b79e0b3d..62867daca47d76c9ea1a7ed233188788c5f6c3c0 100644
+index 62867daca47d76c9ea1a7ed233188788c5f6c3c0..7643ba954125aba0c06aaf19de087985325885ad 100644
 --- a/include/crypto/if_alg.h
 +++ b/include/crypto/if_alg.h
-@@ -80,7 +80,6 @@ struct af_alg_rsgl {
+@@ -41,7 +41,7 @@ struct af_alg_control {
+ };
  
- /**
-  * struct af_alg_async_req - definition of crypto request
-- * @iocb:		IOCB for AIO operations
-  * @sk:			Socket the request is associated with
-  * @first_rsgl:		First RX SG
-  * @last_rsgl:		Pointer to last RX SG
-@@ -92,7 +91,6 @@ struct af_alg_rsgl {
-  * @cra_u:		Cipher request
-  */
- struct af_alg_async_req {
--	struct kiocb *iocb;
- 	struct sock *sk;
+ struct af_alg_type {
+-	void *(*bind)(const char *name, u32 type, u32 mask);
++	void *(*bind)(const char *name);
+ 	void (*release)(void *private);
+ 	int (*setkey)(void *private, const u8 *key, unsigned int keylen);
+ 	int (*setentropy)(void *private, sockptr_t entropy, unsigned int len);
+@@ -243,4 +243,16 @@ int af_alg_get_rsgl(struct sock *sk, struct msghdr *msg, int flags,
+ 		    struct af_alg_async_req *areq, size_t maxsize,
+ 		    size_t *outlen);
  
- 	struct af_alg_rsgl first_rsgl;
-@@ -138,7 +136,7 @@ struct af_alg_async_req {
-  * @write:		True if we are in the middle of a write.
-  * @init:		True if metadata has been sent.
-  * @len:		Length of memory allocated for this data structure.
-- * @inflight:		Non-zero when AIO requests are in flight.
-+ * @inflight:		Non-zero when requests are in flight, for debugging only.
-  */
- struct af_alg_ctx {
- 	struct list_head tsgl_list;
-@@ -237,7 +235,6 @@ int af_alg_wait_for_data(struct sock *sk, unsigned flags, unsigned min);
- int af_alg_sendmsg(struct socket *sock, struct msghdr *msg, size_t size,
- 		   unsigned int ivsize);
- void af_alg_free_resources(struct af_alg_async_req *areq);
--void af_alg_async_cb(void *data, int err);
- __poll_t af_alg_poll(struct file *file, struct socket *sock,
- 			 poll_table *wait);
- struct af_alg_async_req *af_alg_alloc_areq(struct sock *sk,
-diff --git a/include/linux/socket.h b/include/linux/socket.h
-index ec4a0a0257939a5363c55bed3ccb20182965b2e3..3ffdfe184b23d0a739e095407e956885d116c299 100644
---- a/include/linux/socket.h
-+++ b/include/linux/socket.h
-@@ -89,7 +89,6 @@ struct msghdr {
- 	bool		msg_get_inq : 1;/* return INQ after receive */
- 	unsigned int	msg_flags;	/* flags on received message */
- 	__kernel_size_t	msg_controllen;	/* ancillary data buffer length */
--	struct kiocb	*msg_iocb;	/* ptr to iocb for async requests */
- 	struct ubuf_info *msg_ubuf;
- 	int (*sg_from_iter)(struct sk_buff *skb,
- 			    struct iov_iter *from, size_t length);
-diff --git a/io_uring/net.c b/io_uring/net.c
-index 30cd22c0b934b97ce6e265756b24daca7d398361..22100933966af547dfe6a52e69fc6882b4197234 100644
---- a/io_uring/net.c
-+++ b/io_uring/net.c
-@@ -771,7 +771,6 @@ static int io_recvmsg_prep_setup(struct io_kiocb *req)
- 		kmsg->msg.msg_control = NULL;
- 		kmsg->msg.msg_get_inq = 1;
- 		kmsg->msg.msg_controllen = 0;
--		kmsg->msg.msg_iocb = NULL;
- 		kmsg->msg.msg_ubuf = NULL;
- 
- 		if (req->flags & REQ_F_BUFFER_SELECT)
-diff --git a/net/compat.c b/net/compat.c
-index 2c9bd0edac997bc8c6ebd1bc8b92d8437ff32ea4..d68cf9c3aad5f7f1de84edbfffcf99d71e89292a 100644
---- a/net/compat.c
-+++ b/net/compat.c
-@@ -75,7 +75,6 @@ int __get_compat_msghdr(struct msghdr *kmsg,
- 	if (msg->msg_iovlen > UIO_MAXIOV)
- 		return -EMSGSIZE;
- 
--	kmsg->msg_iocb = NULL;
- 	kmsg->msg_ubuf = NULL;
- 	return 0;
- }
-diff --git a/net/socket.c b/net/socket.c
-index 22a412fdec079cf8fd829a15236de9daea09d2f2..9785363858cef0c4e6f0efc45b17c3d2add5a53c 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -1213,8 +1213,7 @@ static ssize_t sock_read_iter(struct kiocb *iocb, struct iov_iter *to)
- {
- 	struct file *file = iocb->ki_filp;
- 	struct socket *sock = file->private_data;
--	struct msghdr msg = {.msg_iter = *to,
--			     .msg_iocb = iocb};
-+	struct msghdr msg = {.msg_iter = *to};
- 	ssize_t res;
- 
- 	if (file->f_flags & O_NONBLOCK || (iocb->ki_flags & IOCB_NOWAIT))
-@@ -1235,8 +1234,7 @@ static ssize_t sock_write_iter(struct kiocb *iocb, struct iov_iter *from)
- {
- 	struct file *file = iocb->ki_filp;
- 	struct socket *sock = file->private_data;
--	struct msghdr msg = {.msg_iter = *from,
--			     .msg_iocb = iocb};
-+	struct msghdr msg = {.msg_iter = *from};
- 	ssize_t res;
- 
- 	if (iocb->ki_pos != 0)
-@@ -2612,7 +2610,6 @@ int __copy_msghdr(struct msghdr *kmsg,
- 	if (msg->msg_iovlen > UIO_MAXIOV)
- 		return -EMSGSIZE;
- 
--	kmsg->msg_iocb = NULL;
- 	kmsg->msg_ubuf = NULL;
- 	return 0;
- }
-diff --git a/tools/perf/trace/beauty/include/linux/socket.h b/tools/perf/trace/beauty/include/linux/socket.h
-index ec715ad4bf25f5f759d2cab3c6b796fed84df932..2a0a50fd66f41589f2699f7288a143873ce1bba6 100644
---- a/tools/perf/trace/beauty/include/linux/socket.h
-+++ b/tools/perf/trace/beauty/include/linux/socket.h
-@@ -89,7 +89,6 @@ struct msghdr {
- 	bool		msg_get_inq : 1;/* return INQ after receive */
- 	unsigned int	msg_flags;	/* flags on received message */
- 	__kernel_size_t	msg_controllen;	/* ancillary data buffer length */
--	struct kiocb	*msg_iocb;	/* ptr to iocb for async requests */
- 	struct ubuf_info *msg_ubuf;
- 	int (*sg_from_iter)(struct sk_buff *skb,
- 			    struct iov_iter *from, size_t length);
++/*
++ * Mask used to disable unsupported algorithm implementations.
++ *
++ * This is the same as FSCRYPT_CRYPTOAPI_MASK in fs/crypto/fscrypt_private.h.
++ * In additions to the motivations there, this API is exposed to userspace
++ * that might not be fully trusted.
++ */
++#define AF_ALG_CRYPTOAPI_MASK                             \
++	(CRYPTO_ALG_ASYNC | CRYPTO_ALG_ALLOCATES_MEMORY | \
++	 CRYPTO_ALG_KERN_DRIVER_ONLY)
++
++
+ #endif	/* _CRYPTO_IF_ALG_H */
 
 -- 
 2.54.0

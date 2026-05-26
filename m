@@ -1,224 +1,127 @@
-Return-Path: <io-uring+bounces-13507-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13508-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id AMBEGYXRFWrwcQcAu9opvQ
-	(envelope-from <io-uring+bounces-13507-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 26 May 2026 18:59:49 +0200
+	id 2BLNBtHcFWrTdQcAu9opvQ
+	(envelope-from <io-uring+bounces-13508-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 26 May 2026 19:48:01 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id C28925DA43B
-	for <lists+io-uring@lfdr.de>; Tue, 26 May 2026 18:59:48 +0200 (CEST)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D58C5DAE8D
+	for <lists+io-uring@lfdr.de>; Tue, 26 May 2026 19:48:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id B64783009B33
-	for <lists+io-uring@lfdr.de>; Tue, 26 May 2026 16:50:38 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 9AC16300E5FE
+	for <lists+io-uring@lfdr.de>; Tue, 26 May 2026 17:47:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D8BC285C8B;
-	Tue, 26 May 2026 16:50:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F2A941B366;
+	Tue, 26 May 2026 17:47:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fmmr.tech header.i=@fmmr.tech header.b="UVXiPdeA"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZDbJ9u9B"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mailtransmit05.runbox.com (mailtransmit05.runbox.com [185.226.149.38])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF03938C412
-	for <io-uring@vger.kernel.org>; Tue, 26 May 2026 16:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9ED3F7AB2;
+	Tue, 26 May 2026 17:47:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779814236; cv=none; b=N47X1shrPt5Yc9MCZTtTx0jpvHtYa+6FJxJNTqXGyAh+itQtRU0dW83NSnFKUeIlAxqBl1stb0+7N2JmC+cGykB/syR4uBiOyn6ERSYgaSrUlxaXaSLeBd60XYZIEWxFhQ3v4Qf9FzkPRYu/HUK2xpEFpmCM+Mmb20jh06AelbI=
+	t=1779817657; cv=none; b=YLseScKvRDWkwwUbqKuhp4bZIt7mLd+TJNHUG8Jx56e4sywtKPTix51NVQtRqW39+RIqR9A10YvDd2esX3yqPz7vq8C2vULrcY6j2wK7cthvI8VWxiS9djOcaiX23FArQWbOqqpLpHHXhRvpVIr7S+A1dNFMfTHgUOnjWXjIN3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779814236; c=relaxed/simple;
-	bh=LyhAuZyBNjCVPpSmEUZxBC0lbOERPHlAs3FzYI6JGFg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TH9nO79r8V8C2aNc8k02om9wX9BpaXLvV9ZBNZc3Yy0TO02mAA3L3+WY36NTe752LF91pbzNbLrAsQZm/fgJoQZeHOt2MZjjEKNpLJtoo5WUKCYijbQL1EK9Q8YU/6ziG4yVijjnaf8JPq3XohT3rfW7hG4DDQww50F14mU7hwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fmmr.tech; spf=pass smtp.mailfrom=fmmr.tech; dkim=pass (2048-bit key) header.d=fmmr.tech header.i=@fmmr.tech header.b=UVXiPdeA; arc=none smtp.client-ip=185.226.149.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fmmr.tech
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fmmr.tech
-Received: from mailtransmit02.runbox ([10.9.9.162] helo=aibo.runbox.com)
-	by mailtransmit05.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.93)
-	(envelope-from <robert@fmmr.tech>)
-	id 1wRuz1-001Hnp-MJ; Tue, 26 May 2026 18:50:23 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fmmr.tech;
-	 s=selector1; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To
-	:Message-ID:Date:Subject:Cc:To:From;
-	bh=wQFjOzaWHi6FynNYotPoMmijq2eMjlCYQDUv20KCtPU=; b=UVXiPdeAUjLOJdtEN4JDY5ITgk
-	hNmx6OY/w56gpoBXpOn19LXqROeUVvk1deG+I/fqDiJzHfQ9LdT15LFeTXWuonDFAzeCvHmvgKtiQ
-	OQgJVyFSfOMvHCyk7Dj7anJpa21XKyVY1atHXDV76btPV2ag1h3xyDvUWbC5HssNDUAmxTLbnAYOj
-	C4hq3pMMLeLntbnQDRJ4xnGd5EFIh564pXIvQajZ4SpW6T+zC+hbpIPKgFDKrLw3aylqLE4PzEGYL
-	DXcRxy+Dqz3ALbD4N10ewrso6m5oKPCVJRhqGiNHr6RKAP7Ebk3ffAgNhVYSgQewTl1AJ1we6HE4H
-	v66LettA==;
-Received: from [10.9.9.73] (helo=submission02.runbox)
-	by mailtransmit02.runbox with esmtp (Exim 4.86_2)
-	(envelope-from <robert@fmmr.tech>)
-	id 1wRuz1-0000sQ-DG; Tue, 26 May 2026 18:50:23 +0200
-Received: by submission02.runbox with esmtpsa  [Authenticated ID (1125095)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.95)
-	id 1wRuyj-00AjAH-7w;
-	Tue, 26 May 2026 18:50:05 +0200
-From: Robert Femmer <robert@fmmr.tech>
-To: io-uring@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	kasan-dev@googlegroups.com,
-	Robert Femmer <robert@fmmr.tech>
-Subject: [PATCH v3] io_uring: annotate remote tasks for kcoverage
-Date: Tue, 26 May 2026 18:49:49 +0200
-Message-ID: <20260526164948.831543-2-robert@fmmr.tech>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <CA+fCnZeE6-8NFXjguJJKc_=UuF-Puw8BdtiFcUhOd23y9pAKOw@mail.gmail.com>
-References: <CA+fCnZeE6-8NFXjguJJKc_=UuF-Puw8BdtiFcUhOd23y9pAKOw@mail.gmail.com>
+	s=arc-20240116; t=1779817657; c=relaxed/simple;
+	bh=avkOWiNgD9pXcohll8sYbzk80rwewxXGSC2exgbOpiY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ocFQ9UuJnVluQBEKYnhQEY66RHbG8zAdm1L4wIdrPcJw8+trb1tyJlaD+AiVCqJ/fxdl/aS473gDSVgpwAXkgDTk6Ghm7z3M8NT2KYCWR+VjqnBeDyIqOwLx+mrBnKEnwDwaxB2f0FED7vydVkO96TSx40VnnPB6oEquXA7jow0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZDbJ9u9B; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=obRsQ1GuuOVKjDYMtGxxbgivbv2h67tD79o7v9BhPZI=; b=ZDbJ9u9BFvwxXxLG1LFlcEvnKw
+	i1CjHb0eytwQjIOb6IV6mejfIJePHkJ1GI1eizRXJ4YdJUyzSRVO/k3bQT0xYGd6FvX2owKIQzQbG
+	sKIBX3igF9DaozOI76Voyomv+o5dlknH7Gfi3kzMPSHvoCNpQx9HCganUiOOdKpveeFJdeCWnesXp
+	hBF9AfTT0IBl8crJyGIzS3YQgEFkZdx1Ro86ISN3Nl+0dJLZP+gptI6T16ljh/qVlRoTszpRLzOKJ
+	tdSpxrNraKn1Rn4NoRYTYh4J49Fx5XgHXihgpnee5Sf+RsicqB0ibQQ4KittPIrqtUbZL+Y/qx0ZP
+	kThsRjKA==;
+Received: from willy by casper.infradead.org with local (Exim 4.99.1 #2 (Red Hat Linux))
+	id 1wRvsI-00000001MNz-2rl4;
+	Tue, 26 May 2026 17:47:30 +0000
+Date: Tue, 26 May 2026 18:47:30 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
+	linux-mm@kvack.org, Leon Romanovsky <leon@kernel.org>
+Subject: Re: [PATCH] block: Add bvec_folio()
+Message-ID: <ahXcsrxUFfzoVCOr@casper.infradead.org>
+References: <20260522182122.2489391-1-willy@infradead.org>
+ <ahPm4h2gKgyEEuvV@infradead.org>
+ <ahROtyLcr567wM8l@casper.infradead.org>
+ <ahVBCtsodsM2FHis@infradead.org>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-0.16 / 15.00];
-	MID_CONTAINS_FROM(1.00)[];
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ahVBCtsodsM2FHis@infradead.org>
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[fmmr.tech:s=selector1];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	DMARC_POLICY_ALLOW(-0.50)[infradead.org,none];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	R_DKIM_ALLOW(-0.20)[infradead.org:s=casper.20170209];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-13507-lists,io-uring=lfdr.de];
-	FREEMAIL_CC(0.00)[kernel.dk,google.com,gmail.com,googlegroups.com,fmmr.tech];
-	TO_DN_SOME(0.00)[];
+	TAGGED_FROM(0.00)[bounces-13508-lists,io-uring=lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	DKIM_TRACE(0.00)[infradead.org:+];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	DMARC_NA(0.00)[fmmr.tech];
-	DKIM_TRACE(0.00)[fmmr.tech:+];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	RCPT_COUNT_FIVE(0.00)[6];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[robert@fmmr.tech,io-uring@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
-	TAGGED_RCPT(0.00)[io-uring];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	TO_DN_SOME(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[willy@infradead.org,io-uring@vger.kernel.org];
+	MISSING_XM_UA(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo,fmmr.tech:email,fmmr.tech:mid,fmmr.tech:dkim]
-X-Rspamd-Queue-Id: C28925DA43B
+	RCPT_COUNT_SEVEN(0.00)[7];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	TAGGED_RCPT(0.00)[io-uring];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[casper.infradead.org:mid,infradead.org:dkim]
+X-Rspamd-Queue-Id: 2D58C5DAE8D
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-Fuzzers use coverage information to guide generation of test cases
-towards new or interesting code paths. Syzkaller, specifically, makes
-use kcoverage (CONFIG_KCOV). Coverage information is not collected for
-kernel tasks unless annotated by kcov_remote_start and kcov_remote_stop.
-This patch annotates io-uring's work queue and sqpoll tasks.
+On Mon, May 25, 2026 at 11:43:22PM -0700, Christoph Hellwig wrote:
+> On Mon, May 25, 2026 at 02:29:27PM +0100, Matthew Wilcox wrote:
+> > > So I'm not against the function per se, but the documentation must
+> > > explain the minefields it is stepping into a bit better.
+> > 
+> > Lower level drivers shouldn't be concerning themselves with folios.
+> > For a start, we can put non-folios (eg slab memory) into bvecs.
+> 
+> Well, that is a very good thing to put into the comment.  We can also
+> put them into high-level bvecs, so framing this as 'only use if you
+> know the memory is folios, which you can't unless you are the entity
+> who filled the bio' might be a good choice.
 
-Depends-on: 20260430-kcov-refactor-common-handle-v1-1-23a0c7a0ba38@google.com
-Signed-off-by: Robert Femmer <robert@fmmr.tech>
----
- include/linux/io_uring_types.h | 2 ++
- io_uring/io-wq.c               | 4 ++++
- io_uring/io_uring.c            | 1 +
- io_uring/io_uring.h            | 2 ++
- io_uring/sqpoll.c              | 4 ++++
- 5 files changed, 13 insertions(+)
+How about:
 
-diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index 244392026c6d..b6590b2b350c 100644
---- a/include/linux/io_uring_types.h
-+++ b/include/linux/io_uring_types.h
-@@ -504,6 +504,8 @@ struct io_ring_ctx {
- 	struct io_mapped_region		ring_region;
- 	/* used for optimised request parameter and wait argument passing  */
- 	struct io_mapped_region		param_region;
-+
-+	struct kcov_common_handle_id	kcov_handle;
- };
- 
- /*
-diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
-index 8cc7b47d3089..9ade4c4f4983 100644
---- a/io_uring/io-wq.c
-+++ b/io_uring/io-wq.c
-@@ -639,6 +639,7 @@ static void io_worker_handle_work(struct io_wq_acct *acct,
- 		/* handle a whole dependent link */
- 		do {
- 			struct io_wq_work *next_hashed, *linked;
-+			struct io_kiocb *req;
- 			unsigned int work_flags = atomic_read(&work->flags);
- 			unsigned int hash = __io_wq_is_hashed(work_flags)
- 				? __io_get_work_hash(work_flags)
-@@ -649,7 +650,10 @@ static void io_worker_handle_work(struct io_wq_acct *acct,
- 			if (do_kill &&
- 			    (work_flags & IO_WQ_WORK_UNBOUND))
- 				atomic_or(IO_WQ_WORK_CANCEL, &work->flags);
-+			req = container_of(work, struct io_kiocb, work);
-+			kcov_remote_start_common(req->ctx->kcov_handle);
- 			io_wq_submit_work(work);
-+			kcov_remote_stop();
- 			io_assign_current_work(worker, NULL);
- 
- 			linked = io_wq_free_work(work);
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 103b6c88f252..89cb649944d9 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -293,6 +293,7 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
- 	INIT_HLIST_HEAD(&ctx->cancelable_uring_cmd);
- 	io_napi_init(ctx);
- 	mutex_init(&ctx->mmap_lock);
-+	ctx->kcov_handle = kcov_common_handle();
- 
- 	return ctx;
- 
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index e612a66ee80e..7226fbbbf9f0 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -7,6 +7,7 @@
- #include <linux/resume_user_mode.h>
- #include <linux/poll.h>
- #include <linux/io_uring_types.h>
-+#include <linux/kcov.h>
- #include <uapi/linux/eventpoll.h>
- #include "alloc_cache.h"
- #include "io-wq.h"
-@@ -581,4 +582,5 @@ static inline bool io_has_work(struct io_ring_ctx *ctx)
- 	return test_bit(IO_CHECK_CQ_OVERFLOW_BIT, &ctx->check_cq) ||
- 	       io_local_work_pending(ctx);
- }
-+
- #endif
-diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
-index 46c12afec73e..c7b78ea98587 100644
---- a/io_uring/sqpoll.c
-+++ b/io_uring/sqpoll.c
-@@ -342,19 +342,23 @@ static int io_sq_thread(void *data)
- 
- 		cap_entries = !list_is_singular(&sqd->ctx_list);
- 		list_for_each_entry(ctx, &sqd->ctx_list, sqd_list) {
-+			kcov_remote_start_common(ctx->kcov_handle);
- 			int ret = __io_sq_thread(ctx, sqd, cap_entries, &ist);
- 
- 			if (!sqt_spin && (ret > 0 || !list_empty(&ctx->iopoll_list)))
- 				sqt_spin = true;
-+			kcov_remote_stop();
- 		}
- 		if (io_sq_tw(&retry_list, IORING_TW_CAP_ENTRIES_VALUE))
- 			sqt_spin = true;
- 
- 		list_for_each_entry(ctx, &sqd->ctx_list, sqd_list) {
-+			kcov_remote_start_common(ctx->kcov_handle);
- 			if (io_napi(ctx)) {
- 				io_sq_start_worktime(&ist);
- 				io_napi_sqpoll_busy_poll(ctx);
- 			}
-+			kcov_remote_stop();
- 		}
- 
- 		io_sq_update_worktime(sqd, &ist);
--- 
-2.54.0
+/**
+ * bvec_folio - Return the first folio referenced by this bvec
+ * @bv: bvec to access
+ *
+ * bvecs can contain non-folio memory, so this should only be called by
+ * the creator of the bvec; drivers have no business looking at the owner
+ * of the memory.  It may not even be the right interface for the caller
+ * to use as bvecs can span multiple folios.  You may be better off using
+ * something like bio_for_each_folio_all() which iterates over all folios.
+ */
 
 

@@ -1,157 +1,200 @@
-Return-Path: <io-uring+bounces-13518-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13519-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id KJNEN9y7FmqHqQcAu9opvQ
-	(envelope-from <io-uring+bounces-13518-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Wed, 27 May 2026 11:39:40 +0200
+	id 8AXVOVnQFmowsgcAu9opvQ
+	(envelope-from <io-uring+bounces-13519-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Wed, 27 May 2026 13:07:05 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id A27135E1ED1
-	for <lists+io-uring@lfdr.de>; Wed, 27 May 2026 11:39:40 +0200 (CEST)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45D3E5E314D
+	for <lists+io-uring@lfdr.de>; Wed, 27 May 2026 13:07:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 251A4301CD94
-	for <lists+io-uring@lfdr.de>; Wed, 27 May 2026 09:38:37 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 7D6203018D67
+	for <lists+io-uring@lfdr.de>; Wed, 27 May 2026 11:05:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED3F3ED12D;
-	Wed, 27 May 2026 09:38:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E4A3F44E7;
+	Wed, 27 May 2026 11:05:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fr7UQCUm"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=rexion.ai header.i=@rexion.ai header.b="Rx2XAw4e"
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from out-13.smtp.spacemail.com (out-13.smtp.spacemail.com [63.250.43.96])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 291F03783AF;
-	Wed, 27 May 2026 09:38:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94B803914FF;
+	Wed, 27 May 2026 11:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.250.43.96
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779874712; cv=none; b=MysC2jQJ34MBzE3FJu6CCeH8wYY4scxPJr6HloU4yLEUIxSuEjeb7eTlrFbBklDPP9/Qr9+kR6/1yH4IqwUOXqIbukhclx4BGwHQjWdj8Fsa7rCVUTuQf34hb57OYEFqLxVcDNJJT3O8EHuRQoGdbqQCuUJuwGrMO2ddCQkhpH0=
+	t=1779879905; cv=none; b=AqT1U21bsJ4tJ3nzWtywvqoLr2AVPBbJAbOQu/xJQFnGG6HBuwlURj/uoEvF0uDXUL5hSsSE2CJ2mIiq+OAwWg24eCpdbMAkZ3uI5HSGlPYIGZrbm9DkAwSIN0/9hUtIXOLwIysntL8fiLELAUa6pcMnmENfpAkUmwfqquw4Ggs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779874712; c=relaxed/simple;
-	bh=6qZqFcxUhtLffjqo4KyIWK1FZl81UuCOmaM2W18nhxo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n/Ny6VOrpjqO45RWryhtf3kP9dMhBFakx2Qo0LlP/frNjN1ZhqIu+SBphv3XgHS+VkXVzZraVWbRCzGHudpeCm2xUbGlpRh1W84dl2mwi+oAQJGg/e3wgbZkYokG0eCRDIvnkOycDMHZjyoNET28QUo871Du2dFOTH2QJxSu0T4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fr7UQCUm; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D8211F000E9;
-	Wed, 27 May 2026 09:38:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779874706;
-	bh=5EPgL4FAe9Q1HpUW4tud1I2dVamBDFhNI1A3ygm0Wgw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=fr7UQCUm5cprOrQGU5TbDClX+R7dEqRJjoGjS0k5gjydzKuG1ACoNftI/UA+F9ZYV
-	 kUAjPhUGoVpcUj8H4cLZ00oBUZK5oxIBiyuxLccRqsuZPv8L6vnbNO6e5AbFUsmP9O
-	 hRwUh+bWssxFUwT9RMOkWFh8U0sQ6pY/o6w/hkJRkSaESagT8LptRA8x3Y6kR6O2Z/
-	 BryXQg098y6OJ9ZI3SMWHBpn8H0MU7+hO95viQNGdondhORmhsxy0aY1XgSfmfWjVo
-	 LgyOBf7KaZ/RLeZLaociiRSH30fkZbJGbXxZVcFCRxRM/JvjIbfEYFdTcCXGWYVypC
-	 Mhd7NZs0NEfyQ==
-Message-ID: <f7f35169-f77d-4678-8797-a2ad00d89e6c@kernel.org>
-Date: Wed, 27 May 2026 11:38:21 +0200
+	s=arc-20240116; t=1779879905; c=relaxed/simple;
+	bh=RFxwCps8BRo0X7Ta0ylRSygPBnYr60aPkBIthbUKDbs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Oy+ECP3p/dGb4t0Nj5cHbMf8tkvAMcKSccsWP+Yh9y0ownMl7YMyHvJDhimdXzHbIc05uXIukX46igCeg53iuOo0WW3zxCSslPFlrgN0115z3Q7oPBJM3c4YtnTQKQIVWa1eyZEvPt3hNyJ6Wp6NxNxXhMlI0TY4QGCuiN3getI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rexion.ai; spf=pass smtp.mailfrom=rexion.ai; dkim=fail (0-bit key) header.d=rexion.ai header.i=@rexion.ai header.b=Rx2XAw4e reason="key not found in DNS"; arc=none smtp.client-ip=63.250.43.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rexion.ai
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rexion.ai
+Received: from Kyren (unknown [49.207.213.66])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.spacemail.com (Postfix) with ESMTPSA id 4gQRTS2sMkz8sWq;
+	Wed, 27 May 2026 10:59:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rexion.ai;
+	s=spacemail; t=1779879584;
+	bh=DgDokx5pIAzNQ53sXah/UBDCt3R4wUhOvqyXIza65bI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Rx2XAw4eoq8Z2KPLh2pTGEvqZSYW4KJh8StEC5Wo5cla2t6eNVJDOKBrahImyNtr5
+	 H89keCEG4V2JSzgSBJq7SHrgTnouVGVc9CP0DnRv9t1kGfZXGgtrQE6Xrst+1KgUqV
+	 VYgv9kx+oYMmjP2ab6b+Fm6Q9MQ0ot3DGD9/WJbPDD9jzp0TJehelBPQOc3tbIhUqK
+	 73huw5rtNvtzyQeHEWizESIsEG5oqxN7aY6Wf+4TJ1VzAVQpIStdHLIL622s9JhK2E
+	 p0+rtVzXP9OWzH6x9S2No4F+xw9kRAeDp0EYk+crHk8Lkf2BbodzWYEwYiVz93mTki
+	 hHh5i3fJ2zojQ==
+From: Rahul Chandelkar <rc@rexion.ai>
+To: rc@rexion.ai,
+	"James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>
+Cc: linux-scsi@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH] scsi: bsg: copy uring_cmd payload to prevent double-fetch from shared SQE
+Date: Wed, 27 May 2026 16:29:18 +0530
+Message-ID: <20260527105931.3950913-1-rc@rexion.ai>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/slab: improve kmem_cache_alloc_bulk
-Content-Language: en-US
-To: Christoph Hellwig <hch@lst.de>, Harry Yoo <harry@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Hao Li <hao.li@linux.dev>, Christoph Lameter <cl@gentwo.org>,
- David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Jesper Dangaard Brouer <hawk@kernel.org>, linux-arm-msm@vger.kernel.org,
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, io-uring@vger.kernel.org,
- kasan-dev@googlegroups.com, bpf@vger.kernel.org, netdev@vger.kernel.org
-References: <20260527070239.2252948-1-hch@lst.de>
- <20260527070239.2252948-2-hch@lst.de>
-From: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
-Autocrypt: addr=vbabka@kernel.org; keydata=
- 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
-In-Reply-To: <20260527070239.2252948-2-hch@lst.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-2.16 / 15.00];
+Content-Transfer-Encoding: 8bit
+X-Envelope-From: rc@rexion.ai
+X-Spamd-Result: default: False [0.04 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20260515];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	DMARC_NA(0.00)[rexion.ai];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13518-lists,io-uring=lfdr.de];
-	FROM_HAS_DN(0.00)[];
 	RCVD_COUNT_THREE(0.00)[4];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[17];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
-	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[vbabka@kernel.org,io-uring@vger.kernel.org];
+	R_DKIM_PERMFAIL(0.00)[rexion.ai:s=spacemail];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-13519-lists,io-uring=lfdr.de];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
+	FROM_NEQ_ENVFROM(0.00)[rc@rexion.ai,io-uring@vger.kernel.org];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	NEURAL_HAM(-0.00)[-0.983];
+	DKIM_TRACE(0.00)[rexion.ai:~];
 	TAGGED_RCPT(0.00)[io-uring];
-	MID_RHS_MATCH_FROM(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo,lst.de:email]
-X-Rspamd-Queue-Id: A27135E1ED1
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,rexion.ai:mid,rexion.ai:email]
+X-Rspamd-Queue-Id: 45D3E5E314D
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On 5/27/26 09:02, Christoph Hellwig wrote:
-> The kmem_cache_alloc_bulk return value is weird.  It returns the number
-> of allocated objects, but that must always be 0 or the requested number
-> based on the implementations and the handling in the callers, but that
-> assumption is not actually documented anywhere, which confuses automated
-> review tools.
-> 
-> Fix this by returning a bool if the allocation succeeded and adding a
-> kerneldoc comment explaining the API.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+scsi_bsg_uring_cmd() and scsi_bsg_map_user_buffer() read bsg_uring_cmd
+fields directly from the shared mmap'd io_uring submission ring via
+io_uring_sqe128_cmd().  On the inline execution path, io_uring has not
+yet copied the SQE to kernel memory, so a concurrent userspace thread
+can modify fields between reads.
 
-Would 0 / -ENOMEM be more like what people would expect? I guess both that
-and bool are better than the current API.
+cmd->request_len is read for the bounds check, for the cmd_len
+assignment, and for the copy_from_user length.  A racing thread can
+change request_len between the bounds check (passes with <= 32) and
+copy_from_user (uses the enlarged value), overflowing the 32-byte
+scmd->cmnd[] buffer into subsequent struct scsi_cmnd fields.
+
+scsi_bsg_map_user_buffer() independently re-derives its cmd pointer
+from the same shared SQE, re-reading dout_xfer_len, din_xfer_len,
+dout_xferp, and din_xferp, enabling direction confusion and buffer
+length races.
+
+Copy struct bsg_uring_cmd to a stack-local variable before use in both
+functions.  The pointer variable 'cmd' is redirected to the local copy
+so the rest of each function is unchanged.
+
+Tested with KASAN on QEMU (virtio-scsi, 2 vCPUs).  Without this fix,
+a two-thread race produces:
+
+  BUG: KASAN: wild-memory-access in scsi_queue_rq+0x4a3/0x58a0
+  Write of size 96 at addr dead000000001000 by task poc/67
+  Call Trace:
+   kasan_report+0xce/0x100
+   __asan_memset+0x23/0x50
+   scsi_queue_rq+0x4a3/0x58a0
+   scsi_bsg_uring_cmd+0x942/0x1570
+   io_uring_cmd+0x2f6/0x950
+   io_issue_sqe+0xe5/0x22d0
+
+Fixes: 7b6d3255e7f8 ("scsi: bsg: add io_uring passthrough handler")
+Cc: stable@vger.kernel.org
+Signed-off-by: Rahul Chandelkar <rc@rexion.ai>
+---
+ drivers/scsi/scsi_bsg.c | 23 ++++++++++++++++++-----
+ 1 file changed, 18 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/scsi/scsi_bsg.c b/drivers/scsi/scsi_bsg.c
+index e80dec53174e..244740655eb0 100644
+--- a/drivers/scsi/scsi_bsg.c
++++ b/drivers/scsi/scsi_bsg.c
+@@ -78,13 +78,21 @@ static int scsi_bsg_map_user_buffer(struct request *req,
+ 				    struct io_uring_cmd *ioucmd,
+ 				    unsigned int issue_flags, gfp_t gfp_mask)
+ {
+-	const struct bsg_uring_cmd *cmd = io_uring_sqe128_cmd(ioucmd->sqe, struct bsg_uring_cmd);
+-	bool is_write = cmd->dout_xfer_len > 0;
+-	u64 buf_addr = is_write ? cmd->dout_xferp : cmd->din_xferp;
+-	unsigned long buf_len = is_write ? cmd->dout_xfer_len : cmd->din_xfer_len;
++	struct bsg_uring_cmd local_cmd;
++	const struct bsg_uring_cmd *cmd;
++	bool is_write;
++	u64 buf_addr;
++	unsigned long buf_len;
+ 	struct iov_iter iter;
+ 	int ret;
+ 
++	memcpy(&local_cmd, io_uring_sqe128_cmd(ioucmd->sqe, struct bsg_uring_cmd),
++	       sizeof(local_cmd));
++	cmd = &local_cmd;
++	is_write = cmd->dout_xfer_len > 0;
++	buf_addr = is_write ? cmd->dout_xferp : cmd->din_xferp;
++	buf_len = is_write ? cmd->dout_xfer_len : cmd->din_xfer_len;
++
+ 	if (ioucmd->flags & IORING_URING_CMD_FIXED) {
+ 		ret = io_uring_cmd_import_fixed(buf_addr, buf_len,
+ 						is_write ? WRITE : READ,
+@@ -104,13 +112,18 @@ static int scsi_bsg_uring_cmd(struct request_queue *q, struct io_uring_cmd *iouc
+ 			       unsigned int issue_flags, bool open_for_write)
+ {
+ 	struct scsi_bsg_uring_cmd_pdu *pdu = scsi_bsg_uring_cmd_pdu(ioucmd);
+-	const struct bsg_uring_cmd *cmd = io_uring_sqe128_cmd(ioucmd->sqe, struct bsg_uring_cmd);
++	struct bsg_uring_cmd local_cmd;
++	const struct bsg_uring_cmd *cmd;
+ 	struct scsi_cmnd *scmd;
+ 	struct request *req;
+ 	blk_mq_req_flags_t blk_flags = 0;
+ 	gfp_t gfp_mask = GFP_KERNEL;
+ 	int ret;
+ 
++	memcpy(&local_cmd, io_uring_sqe128_cmd(ioucmd->sqe, struct bsg_uring_cmd),
++	       sizeof(local_cmd));
++	cmd = &local_cmd;
++
+ 	if (cmd->protocol != BSG_PROTOCOL_SCSI ||
+ 	    cmd->subprotocol != BSG_SUB_PROTOCOL_SCSI_CMD)
+ 		return -EINVAL;
+-- 
+2.54.0
 
 

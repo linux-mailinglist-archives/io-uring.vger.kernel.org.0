@@ -1,125 +1,152 @@
-Return-Path: <io-uring+bounces-13547-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13548-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id mLk0Gmw7GGpfhggAu9opvQ
-	(envelope-from <io-uring+bounces-13547-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Thu, 28 May 2026 14:56:12 +0200
+	id +JX7Kq1NGGomiwgAu9opvQ
+	(envelope-from <io-uring+bounces-13548-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Thu, 28 May 2026 16:14:05 +0200
 X-Original-To: lists+io-uring@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id B812F5F2591
-	for <lists+io-uring@lfdr.de>; Thu, 28 May 2026 14:56:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CBE015F37DC
+	for <lists+io-uring@lfdr.de>; Thu, 28 May 2026 16:14:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id B16B831429E3
-	for <lists+io-uring@lfdr.de>; Thu, 28 May 2026 12:49:48 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 98D4831033AC
+	for <lists+io-uring@lfdr.de>; Thu, 28 May 2026 14:03:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC2B3EFFDA;
-	Thu, 28 May 2026 12:49:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C289262D0B;
+	Thu, 28 May 2026 14:03:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AcBo2kFB"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b="S37+HRHL"
 X-Original-To: io-uring@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90E8E1D130E;
-	Thu, 28 May 2026 12:49:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21BD1282F09
+	for <io-uring@vger.kernel.org>; Thu, 28 May 2026 14:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779972587; cv=none; b=EHpRUitifn3LhCApPl9vzWVAYmKyrRPNUNmS/77mclToGI9T8qq5/NbAuF6tFc0fwomdP9sL2X2O/9nYUz2w1+qzQBCU/MLNe6qj6TGPryddVbNsZjgSj5wyZsZmCuF7E4sEueYyk34IGPHzhy0JaPS0hsC3sy3GTixT9Tl+4qY=
+	t=1779976999; cv=none; b=MHOHKaFAMXqSREQ5YLkh0Xa8WV0+g/u59h2u76dAJk5BGMgrnyzn15KUSBQ0vNgG23nbvWFeyfN7jUQY8iWhZKqRjxqkT/9FIeVCY4aEsxyBY4zjNlHIxzjraY9cj8y3xAxs9dQ2KxTSWllwsrvTIA/AzblMH6ESnO1Ykm6g0Yg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779972587; c=relaxed/simple;
-	bh=BxsZlQH/NmhJWCy0C0vQPhklXsles/VSUoE8slX9KFM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D6RKMkXKViyxKLL15dUrFGIydHyKoA78t0RZueis4tF7r/sGeAcqevR5XaS2DRfgaGBELFfDxY2evNfTXI1HT6TvLR0sbA9cwOe6k0rcYu/XKyl8II/HqW6BWxY9ZNPq9dXaNnGIhMu+mX71mboQ1n9VZgdV+Z3uK45ukI6F/NA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=AcBo2kFB; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=7G6U2FOW7FeLuMO+G3YOi7XP6zPp5DB5XZz1vAGJDdM=; b=AcBo2kFBlUmREj6D6f0eKT4T4y
-	46dZcGN/eLbRRLwv26lUr6d8nBZ0DIrSduOoMatNxpjeLqIgYQaXCdrqIivgiBHMSBojOcil+KSF5
-	b9U1sMiwffkblDJ+zhJF+unRt5BfW8oj4Q1CAq3TbVB3RigiyZdEiDvgx/xQ0vk2zurn7JXidKboT
-	RBGLE8aMptY21RjCVD6XyVH4pqPz7u1ZJn3tCoMfj6+v09920aPPwS6PuceYOOt5MbT303mbhXVuz
-	h09jXnUKm+dAQEanZ5//GDHo0yMbBZcjnqu8FYS+kxM7k/NJZzzevOeDt5CThnMzUsLBxTSj5/s7K
-	AiDiENhg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wSaBA-00000005jvl-2bcT;
-	Thu, 28 May 2026 12:49:40 +0000
-Date: Thu, 28 May 2026 05:49:40 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Tal Zussman <tz2294@columbia.edu>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@kernel.org>,
-	Lorenzo Stoakes <ljs@kernel.org>,
-	"Liam R. Howlett" <liam@infradead.org>,
-	Vlastimil Babka <vbabka@kernel.org>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	io-uring@vger.kernel.org
-Subject: Re: [PATCH RFC 00/11] mm/filemap: split out folio wait and VFS code
-Message-ID: <ahg55Ei8Fc3iRsnA@infradead.org>
-References: <20260520-filemap-split-v1-0-c36ddc2b6cf2@columbia.edu>
- <3dxzu3ck5y3wxw4pp2qhzwwb6y3f7mwhvgxfpl56sokw4ymop7@xaaoxsa5yu5q>
+	s=arc-20240116; t=1779976999; c=relaxed/simple;
+	bh=sJisxNe55RkYYSr/s9gRzLHBFiSJqYl8FUZ2JKvOYB0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=u/Cy4c9fTbR2hOmdFson3YMsiFdOnCu+L1GopQjhOdcrfAYoI17EwsA8vtMc6JNSQcj6JrIQuOwoQ96v+Beatf0kOXkm1IehaHe3Aa+AmeD+7ZiZfl3eoREhf4x0ls2XA/1IisayDFRAogZIa3vmoXvMW6agPfO1YzHSweMum28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=S37+HRHL; arc=none smtp.client-ip=209.85.167.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-47c35be031dso8618360b6e.3
+        for <io-uring@vger.kernel.org>; Thu, 28 May 2026 07:03:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1779976997; x=1780581797; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Q9fibQwo8tBoetcUT0JvZYoDNGUCERf+5RjvOEjW78Y=;
+        b=S37+HRHLMfe4I8WRGiAn6bvRj/02zM/WEjXvHLG3MLvQqZHt35bHOI9OzkY+ffZ24W
+         az9cuchNyp0PCESZXotrBn61O/s3DeY93UUgXDjSpNOosyk85FgRgxQJflxewImD2Mrk
+         1allx2pUtQuH1lZ6Idskh1xwQXCEGOgcg80e85B8tOqU3hssuV6+30i2PLBQCCrBVIAr
+         DLxxbmmEE+V6nOEpm4HeBaK//VLcrtAj/9tfNlcLE6BLR0RNUDSLzvnRgc5ZerS37o/n
+         SrfwAqfVA3mqCugvkILLifCR1oyPiYWG0A3o9/jg/8wTJXix+yb/ler0UcJgwZAyCfhX
+         JNyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779976997; x=1780581797;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Q9fibQwo8tBoetcUT0JvZYoDNGUCERf+5RjvOEjW78Y=;
+        b=WczT2DTSwAt0S76Y33X7e8/q3g+5TkrFnX9Mt3a25vKTprmCD4nR7qKPRGK2D36G3+
+         wp7va2O1w3u8vKild3QsEI4VXXrkGF4zAIQPkvpGDoHpN1++rvUJCXW2+/6QY7sd4/YC
+         ZIyRvqYb5xsI2bsw84D2dWsHG6k9F8NdXQ9q+a47ttJoCAD0dAZSTeK9rSrRTDdp7FCs
+         ttBX1gEM7TdpuVDZTQHJu/zKGcSsvDoofSF93cgDsDVayA9EDkgCCeixios0uQ4D//8e
+         U69vG3LMvXIhsduWChq7E4SdHNt63f74bkvh04JGFfq5GprWBC5Wgwg0sEV7QiJEnRAK
+         IztA==
+X-Gm-Message-State: AOJu0Yz1WnBDJNKNJaXm+ArZpzrAL8FZWqi/D+g66YE4RzAFKtmlbfsn
+	wbOX1mbK/MGN+ow2AGA/Bq+3LUmZZAbUARSWTHaGu2YwJ3FI8dup46BXjduIdKzQd6k=
+X-Gm-Gg: Acq92OFwkOw4aqxCFkwNBkMlPCmrVzYWP+4WN6FogrPJrVRtUdOLdwidpfYoLe6UQIr
+	SgW3dLGqBQYzc5JFcNX5Rw1YgL3c2aF7W0A4BMd0LlgUlB5ALShNcmCUi3uom/MrJPXi+jEOY32
+	xhESCHFVQpE5gLomnnGFj46Q8nrZIZds6CxlBRaqxjH19q6TvJYIzqMAWxExQ4jKV4Khth2DOve
+	KROcS8lVTmX1JUMTrw5e88bcApQbg1nv1Alw2KXkoZoEupTN6/+9p028/zYWGU0xAXr0WQncGTu
+	SEghCC5Lm5I8lLYYd6jGZfEJeM8VTRUbyq9+EV8Lmn7Q7pJuE4DCNm8jm0EFspcpGwFw1n4XSVU
+	T14vuSEpr2diVmrYR7iVL7+HGE0GNlx+TdEnhDZOrLI73jcFXFdLldkrfctJvBCl8f8HkCtKvAb
+	BNToj/RwYRylvlyu03Mq347uPuP+3qRkixPhPlMWZt2QRsz7MDTkxLsxHYNot7bDNA5ptB7WHHO
+	PHH00HFZ4jDXg==
+X-Received: by 2002:a05:6808:2202:b0:485:403d:9b8d with SMTP id 5614622812f47-48549e950a8mr17977592b6e.11.1779976996514;
+        Thu, 28 May 2026 07:03:16 -0700 (PDT)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-485546ed055sm9116166b6e.12.2026.05.28.07.03.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 May 2026 07:03:15 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: dayou5941@163.com
+Cc: io-uring@vger.kernel.org, liyouhong@kylinos.cn
+In-Reply-To: <20260528024936.3672659-1-dayou5941@163.com>
+References: <20260528024936.3672659-1-dayou5941@163.com>
+Subject: Re: [PATCH] io_uring/kbuf: align legacy buffer add limit with
+ MAX_BIDS_PER_BGID
+Message-Id: <177997699463.94267.12840010669165233758.b4-ty@b4>
+Date: Thu, 28 May 2026 08:03:14 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3dxzu3ck5y3wxw4pp2qhzwwb6y3f7mwhvgxfpl56sokw4ymop7@xaaoxsa5yu5q>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spamd-Result: default: False [-2.16 / 15.00];
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15.2
+X-Spamd-Result: default: False [-1.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[infradead.org,none];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[kernel-dk.20251104.gappssmtp.com:s=20251104];
 	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[infradead.org:s=bombadil.20210309];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13547-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-13548-lists,io-uring=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	MIME_TRACE(0.00)[0:+];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[18];
-	DKIM_TRACE(0.00)[infradead.org:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[hch@infradead.org,io-uring@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
-	TAGGED_RCPT(0.00)[io-uring];
-	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_TO(0.00)[163.com];
+	DMARC_NA(0.00)[kernel.dk];
+	DKIM_TRACE(0.00)[kernel-dk.20251104.gappssmtp.com:+];
 	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:mid,infradead.org:dkim,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
-X-Rspamd-Queue-Id: B812F5F2591
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
+	RCPT_COUNT_THREE(0.00)[3];
+	TO_DN_NONE(0.00)[];
+	TAGGED_RCPT(0.00)[io-uring];
+	NEURAL_HAM(-0.00)[-1.000];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,kernel-dk.20251104.gappssmtp.com:dkim]
+X-Rspamd-Queue-Id: CBE015F37DC
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On Thu, May 28, 2026 at 11:22:37AM +0200, Jan Kara wrote:
-> Overall this makes sense to me. In particular I agree it makes sense to
-> move the file read/write helpers into fs.
 
-I disagree very strongly.  Mixing default implementations with the
-higher level APIs is a really bad idea and leads to people taking
-stupid shortcuts and other layering violations.
+On Thu, 28 May 2026 10:49:36 +0800, dayou5941@163.com wrote:
+> io_provide_buffers_prep() accepts nbufs up to MAX_BIDS_PER_BGID, but
+> io_add_buffers() stops when bl->nbufs reaches USHRT_MAX. This makes the
+> effective add limit one lower than the validated limit.
+> 
+> Use MAX_BIDS_PER_BGID in the add-side boundary check so validation and
+> execution use the same limit, and update the comment to refer to the
+> actual limit constant.
+> 
+> [...]
 
-Splitting up filemap.c makes sense, but I'd rather keep the generic copy
-into and out of the pagecache code with the MM infrastructure for it,
-as it is not VFS code, and making that clear to anyone touching the code
-is important.
+Applied, thanks!
+
+[1/1] io_uring/kbuf: align legacy buffer add limit with MAX_BIDS_PER_BGID
+      commit: ca55f98d6ff1ecb31a07b668a8d105b4e0829c6a
+
+Best regards,
+-- 
+Jens Axboe
+
+
 
 

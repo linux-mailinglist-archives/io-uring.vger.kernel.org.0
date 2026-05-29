@@ -1,166 +1,157 @@
-Return-Path: <io-uring+bounces-13562-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13563-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id OIBOMEWdGWq7xwgAu9opvQ
-	(envelope-from <io-uring+bounces-13562-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Fri, 29 May 2026 16:05:57 +0200
+	id mGCOChTIGWoIzAgAu9opvQ
+	(envelope-from <io-uring+bounces-13563-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Fri, 29 May 2026 19:08:36 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 208E860341E
-	for <lists+io-uring@lfdr.de>; Fri, 29 May 2026 16:05:56 +0200 (CEST)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0857A60624F
+	for <lists+io-uring@lfdr.de>; Fri, 29 May 2026 19:08:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 387D93058BA2
-	for <lists+io-uring@lfdr.de>; Fri, 29 May 2026 13:59:40 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 6CABB300B9C3
+	for <lists+io-uring@lfdr.de>; Fri, 29 May 2026 17:02:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DF8F3451A6;
-	Fri, 29 May 2026 13:59:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02BDD370D62;
+	Fri, 29 May 2026 17:02:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="t4lUbtZl"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b="vErsWSzx"
 X-Original-To: io-uring@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225932D5C83;
-	Fri, 29 May 2026 13:59:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 623A836E48D
+	for <io-uring@vger.kernel.org>; Fri, 29 May 2026 17:02:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780063179; cv=none; b=Dp5lHu8aW/IXqdMD37O87er8Kk4zoCdqbwxChTzicGl/WjDkcPb1APOYB7MZTse+0gqrJ9+XXo4kezh/p8IwRCLz3XG/9aaczqeqc3eTA3ncmRQO8afCTATqXHQKe53s6Gbv54/8/gZVORE4W1iaHfqKFeo4qZoe8E1zl6L0RrY=
+	t=1780074138; cv=none; b=V++UIDUnRgsj9R60aQCD55iS75Df5ES+e09SqBDBwwoocBf0/Yh/dwoc3+ncedJwoI7eqDx9Ju7kLfQJ86Wmd65pDdf0iFsdN8yJYJNgeFZwyXEw9QhYntDk6Alvdn20hEupRNzV0veSCqioJOwiD53A/fqdKOrt9Woh377qNhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780063179; c=relaxed/simple;
-	bh=OIfcxw6L7juAJ+MhhKySY0equp2hvB1yaaAjhl0zNjc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R7fmsVGQS0clIL3BOeuMcyYebiiwKpeJOgZdYaukSWiHRmZhT9eElVPmy7C8swlwpUKJY1MEQ9T9v/wUiRyB18/h0rAuv1xa035qC4xabVjZbBDDgNW1FataNgSmtmhvdH1fwG+TZ22r9msSEDGPsOL+rYUJBHK0SycPxETb0pQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=t4lUbtZl; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=krC21NLD30nrg01fSvUce7Fe+FnXVEhQr9QoYVMHRHI=; b=t4lUbtZlab0axYF0lmbW0CYbZ3
-	/JMaNPB4pXiSA68du4121/lvny2qQTj6r0QLLa3lvEiRGZzzI6ujKm+v/rgLwKfJXpGVb92BYVDp5
-	1+LI2tB7gw/1/qjbqSRu/o7jBzPpGIHStF7XhGfgk7wgr6mWl1Iy7z6ClDLlVrqU/fciiDY5cB+Dl
-	ov41tGJ1yiWyQKSwoA8Vxgobs13MaHEc3/wDb3MBrW8ouEjIj0p+kEAFHPvp17HszODSNJoclwbos
-	/LHuaQP/5EWbw3fTftd57ASuqWeQfloci3OE6ljXro3cxHW3c8F9WmYxDjA/J56FG/IhARBULEi+o
-	zutNVb1g==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wSxk9-00000007TtN-0ATY;
-	Fri, 29 May 2026 13:59:21 +0000
-Date: Fri, 29 May 2026 06:59:21 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Christoph Hellwig <hch@infradead.org>, demiobenour@gmail.com,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Kuniyuki Iwashima <kuniyu@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Willem de Bruijn <willemb@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Eric Biggers <ebiggers@google.com>,
-	Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org,
-	netdev@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@toke.dk>,
-	linux-api@vger.kernel.org, David Howells <dhowells@redhat.com>
-Subject: Re: [PATCH 1/3] net: Remove support for AIO on sockets
-Message-ID: <ahmbucsrd-W4BVhz@infradead.org>
-References: <20260523-af-alg-harden-v1-0-c76755c3a5c5@gmail.com>
- <20260523-af-alg-harden-v1-1-c76755c3a5c5@gmail.com>
- <ahQCZQNoyO8GQt3H@infradead.org>
- <92db3ff0-8f0b-4b61-a167-5004ffcf9025@kernel.dk>
- <ahanjVfIDlCmeCUE@infradead.org>
- <2cfd6455-7b5b-4974-b8a1-4a0abca69768@kernel.dk>
+	s=arc-20240116; t=1780074138; c=relaxed/simple;
+	bh=ENRJWZnXpjCoKyjt43nO/eSIkE7ZeW0EUEysBoPtJxs=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=YyGOoIoDXeGmHrnxossvX+Jw9IW6vhjGwNg/TMHGHRJZFa2KsYaKHqUu/T5rza7Weqfc9GBFY5Q0LnuGVTwVCQp7fhp0dxEh6OxByA8iENHsm9NLJSEqPeexPDhO5c6IWJkvomktwNsPbOAMBYG6FxFwcv3++doasIg8oywjTwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=vErsWSzx; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-490686877a1so42290585e9.0
+        for <io-uring@vger.kernel.org>; Fri, 29 May 2026 10:02:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1780074135; x=1780678935; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fz6Fk/GRnyy47DPd+/A2va/b1LBHsIs/lBQBJR+raAs=;
+        b=vErsWSzxCQ+M/DU0nLZBWSFw6R8Id0EJqLEB26k3B8UliiseOlPKP8NJMVd9Qhw7xQ
+         Hjo5fIdKSop6dtZ0+bnm8AO5z9GospqVLOzDXByuhD9ter9Vi3Q/EoqTdwFGPziilX4J
+         7Z+WC7JYiMWghnaSS+hI5uGY3hd6i0KO1ZomKwp9yvO9mqXDaKHqpW7z421G1SwL1ucb
+         z0yw/9p/hzs3lNQkYNDGM88hDVG0wIbdX3ZFs4wAgP064F+xsvUyLxvgYFttnWvjrt0f
+         Y9Sw68ECBRa0vpFQsBdegXZkmrAKeqfu5qaZI8ycghofSWsSiGa11EBkzJyPPKVVU0N2
+         qqIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780074135; x=1780678935;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fz6Fk/GRnyy47DPd+/A2va/b1LBHsIs/lBQBJR+raAs=;
+        b=LA6/gL1MVEfAhaRHgzBrvV/Z3vVYQOgb4OyGRPykN6POEbGOel7y5l1qrNq33ip+nq
+         LrjfN/xWHI6lqY7RNrvzvDmtocfnr4Vzyjf9a/YJN+ClYQOIwlii1LuR0gZegWgyOaYm
+         HQiF5jK15BRicks+jAZ4o03/T/G95n+shgOKObs3XMo/R3Ff0iiIKegR3ucHx1SoHeX2
+         h0Sjw5hoaw+N7y1YKlGry8JCVVhJxRlFpPbDOY+o4dFaaVeekyHKG2oDfjXFfdpK6b98
+         DS01W8Hht3eYUbjNAh/HVSKZcC4p/eshCht2/x+Oo9VXjfgpMMBUY5hAtEhIyljaKkgB
+         65pw==
+X-Gm-Message-State: AOJu0YwUmXHMsPmB83Pi7hwrpeEVZR85/eFKTAfEj5amr1PHgLhsQIqF
+	x2axSrSBA75Qhb61208KNM65sHKUgpcMi3nDH9HbQI1LZDleoHEzBu7Y4WPa62bS5ZxnVd6kxK/
+	Phae3
+X-Gm-Gg: Acq92OG9E5JEXaMYZH5OEyB997imToOHDmLix2WO7MooO4g5Ptl/p2R2+mc/zIaWk3q
+	mbXewCX/HwuyhYf6C9DWUvrDy40Qy9hipok6Jl6wD8Me801vFTIAqc8SHkWrmLmYots9IQU7Ai+
+	Lt/PTdtyPKfCv3DOZkZj6+oNN82xznELK7kHiPdU7wl4BFhy7dotS0RS2GaKIGxU4Th1jIMPIm/
+	cJlh0O2hcOm9YUqHQgaZrBE2zfA2h2HmajhXS9PCnatLT2DMT+fbJ0oBMpHUOb9u4DbKvShqruQ
+	gcfiB1SkdibPMVKsn0xJReWVOiuxD+eOO3ewspWOCJjlYEEBCBTx6Eu28p74SA2f8n0rrL6p31o
+	zgsFvfVQv5OIL1sj+F8sTkdx2VUjwHQBX/tPHDH2MgacAA3oc+FgUPdjiNw50z76i0inXP1mQxl
+	HIrgylvh4JPhWaeA5J3RUIS/CyYwlTKMYDej/SLE+tIL2uc5T3t26TxPjZXD6Y3bEn/4Y2eBPeg
+	7faaNW22Es7gSEAajxadsnE1GnBzpyIFnJ1bcMALae1ZPweOYk=
+X-Received: by 2002:a05:600c:1387:b0:490:3cf0:8d81 with SMTP id 5b1f17b1804b1-490a2a4e8ebmr3348135e9.13.1780074134631;
+        Fri, 29 May 2026 10:02:14 -0700 (PDT)
+Received: from [172.19.131.179] ([216.250.207.179])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4909c1049f8sm17663765e9.18.2026.05.29.10.02.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 May 2026 10:02:13 -0700 (PDT)
+Message-ID: <21ba7f4f-91f5-4157-b4ed-385359b487d5@kernel.dk>
+Date: Fri, 29 May 2026 11:02:02 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2cfd6455-7b5b-4974-b8a1-4a0abca69768@kernel.dk>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: io-uring <io-uring@vger.kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] io_uring fix for 7.1-rc6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[infradead.org,none];
-	R_DKIM_ALLOW(-0.20)[infradead.org:s=bombadil.20210309];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
+	R_DKIM_ALLOW(-0.20)[kernel-dk.20251104.gappssmtp.com:s=20251104];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13562-lists,io-uring=lfdr.de];
-	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[infradead.org,gmail.com,gondor.apana.org.au,davemloft.net,google.com,redhat.com,kernel.org,arm.com,linux.intel.com,intel.com,linaro.org,lwn.net,linuxfoundation.org,vger.kernel.org,toke.dk];
-	RCPT_COUNT_TWELVE(0.00)[34];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
+	TAGGED_FROM(0.00)[bounces-13563-lists,io-uring=lfdr.de];
+	TO_DN_ALL(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	DMARC_NA(0.00)[kernel.dk];
+	RCPT_COUNT_TWO(0.00)[2];
+	DKIM_TRACE(0.00)[kernel-dk.20251104.gappssmtp.com:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	NEURAL_HAM(-0.00)[-1.000];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[hch@infradead.org,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[infradead.org:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[io-uring];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:mid,infradead.org:dkim,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
-X-Rspamd-Queue-Id: 208E860341E
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:rdns,sin.lore.kernel.org:helo,kernel.dk:mid]
+X-Rspamd-Queue-Id: 0857A60624F
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On Thu, May 28, 2026 at 10:56:06AM -0600, Jens Axboe wrote:
-> > Where?  And how do make that available to in-kernel users like
-> > storage protocols and network file system, which really suffer from
-> > the current MSG_SPLICE_PAGES semantics.
-> 
-> For zero copy, on both the receive and send side. Since we have a proper
-> notification channel, that's what we use rather than the hack that is
-> the error queue.
+Hi Linus,
 
-Can you point me to that notification channel? 
+Just a single fix for a regression introduced in this cycle, where we
+should ensure the node is visible before the entry is added to the tctx
+list. Please pull!
 
-> >> , and without needing msg_kiocb or the
-> > 
-> > What do you think is the downside of using a kiocb here like for
-> > everything else with async notifications?
-> 
-> Where would the notifications go?
 
-For userspace: io_uring or the error queue for the synchronous calls.
-For in-kernel APIs whatever the callers wants to do by doing it from
-ki_complete.
+The following changes since commit e97ff8b62d4690c69297f0f6de874f0564cc01a4:
 
-> You'd end up inventing something new
-> to propagate them to userspace then.
+  io_uring/nop: pass all errors to userspace (2026-05-21 11:10:56 -0600)
 
-The main aim here is to have a way to get these completions from
-kernelspace to get rid of the current horrors around MSG_SPLICE_PAGES.
+are available in the Git repository at:
 
-> The io_uring side does not rely on
-> using msg_kiocb, and iirc that part was only ever used for the crypto
-> stuff and largely broken. Which is why I do agree with just yanking it
-> out.
+  https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git tags/io_uring-7.1-20260529
 
-I'm not arguing for how msg_kiocb as that is a mess.  But having an
-explicit kiocb API like all the other async file operations would
-make things a lot simpler.
+for you to fetch changes up to a88c02915d9c6160cfc7ab1b26ed64b2993e2b94:
+
+  io_uring/tctx: set ->io_uring before publishing the tctx node (2026-05-24 12:01:15 -0600)
+
+----------------------------------------------------------------
+io_uring-7.1-20260529
+
+----------------------------------------------------------------
+Lim HyeonJun (1):
+      io_uring/tctx: set ->io_uring before publishing the tctx node
+
+ io_uring/tctx.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+-- 
+Jens Axboe
 
 

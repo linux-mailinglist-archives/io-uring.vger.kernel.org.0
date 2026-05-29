@@ -1,92 +1,92 @@
-Return-Path: <io-uring+bounces-13565-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13566-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id eC7JMIMUGmrj1AgAu9opvQ
-	(envelope-from <io-uring+bounces-13565-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Sat, 30 May 2026 00:34:43 +0200
+	id qI+8EIQZGmo+1ggAu9opvQ
+	(envelope-from <io-uring+bounces-13566-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Sat, 30 May 2026 00:56:04 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44D0D6095FE
-	for <lists+io-uring@lfdr.de>; Sat, 30 May 2026 00:34:43 +0200 (CEST)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9352E609872
+	for <lists+io-uring@lfdr.de>; Sat, 30 May 2026 00:56:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 71A9F30EF99E
-	for <lists+io-uring@lfdr.de>; Fri, 29 May 2026 22:29:39 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id B6FD030488CB
+	for <lists+io-uring@lfdr.de>; Fri, 29 May 2026 22:54:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D002DA749;
-	Fri, 29 May 2026 22:26:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B813A960E;
+	Fri, 29 May 2026 22:54:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b="eSTg8+oJ"
+	dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b="UwuJ6v5W"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mx0b-00364e01.pphosted.com (mx0b-00364e01.pphosted.com [148.163.139.74])
+Received: from mx0a-00364e01.pphosted.com (mx0a-00364e01.pphosted.com [148.163.135.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F21B03C0A12
-	for <io-uring@vger.kernel.org>; Fri, 29 May 2026 22:26:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.139.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7596A388E57
+	for <io-uring@vger.kernel.org>; Fri, 29 May 2026 22:54:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780093600; cv=none; b=RbgibduaZK4tp6Z5zXYlOjTHu7gOncIz19JvFCAjpxtWZdkIspa8/GKaltHZKqhKOmSFEv4u8lz2bor26NA/4dwgmtNdbOLL5Qru5cfQ8HJsnbMVaRr2QogkTGzpfpBCSJPuWJ8Jo8XhUcMpNKszYwrBQRL9mF9x+fA0BawmHPQ=
+	t=1780095252; cv=none; b=qBbWG0H5EoNVQqay8P44t7rbYubMJuxLAwAjhwTTVSY84Yxe2Fh4YBXMx/buPSDI5kCmwnrAhpHCvrk8+Y6pH19RHDd9F5dep4CsX+KS5bQ+Gdo+7WIVYKPMDXBrE7KrGMSP2wJ4gxnuQKVLJ9IHhIIjYeJ2EK8L6gUV0wMeAQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780093600; c=relaxed/simple;
-	bh=ENbFljKVw68AZqog/6x3mb9fPnIVpOTl56N7EZpGlqs=;
+	s=arc-20240116; t=1780095252; c=relaxed/simple;
+	bh=VqUDarAfMpodcO2RjjjUxeiD3RKyxcs+yKqS/ZiCUh4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lQp3Uxv6C3uPdWyG+VEnoo66I4rB2Fv46C3tEJqWL68/WizsJ6rEomcJr9ZiUtPL79ghlk/1n+Zb3YYztm2b4azDG81r+oq/6n2LVvVXp9NzWNI3n3v0GE2KOTVfIZFPHX4GasZrW6M/EBAbyt3OIfLghUtCAmQgE88M/eed1hU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu; spf=pass smtp.mailfrom=columbia.edu; dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b=eSTg8+oJ; arc=none smtp.client-ip=148.163.139.74
+	 In-Reply-To:Content-Type; b=HvuoFTW5A7eBgCk003KrRWov3oT/0rzGhypAkTSAS6GTTJ+r4B/Pu4ZGuVeVhPftKICtSiiKBT6Ti+CYMPMZ8bQSps390jv+jl9ElCP0X6LXdjWR+GD+GPj0clQby2AOJOn7yULWot3YYQVXvU7iivUpsg3Io1jNQ1BYHCpWQKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu; spf=pass smtp.mailfrom=columbia.edu; dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b=UwuJ6v5W; arc=none smtp.client-ip=148.163.135.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=columbia.edu
-Received: from pps.filterd (m0167074.ppops.net [127.0.0.1])
-	by mx0b-00364e01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64TMEMDq1884010
-	for <io-uring@vger.kernel.org>; Fri, 29 May 2026 18:26:37 -0400
+Received: from pps.filterd (m0499199.ppops.net [127.0.0.1])
+	by mx0a-00364e01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64TMCHFg1862262
+	for <io-uring@vger.kernel.org>; Fri, 29 May 2026 18:54:11 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=columbia.edu; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pps01; bh=iZ/C
-	vHIaEtxesqHd176lUmCe2CW9FRR63TiqxgWScco=; b=eSTg8+oJ5fRfpIsx6Tcq
-	92PnYHoBuV3eXLxsANRD4phElJOVL5OrwGQgCP77zxwra/FJ30+BKPxbno6PYIIp
-	5faeDnrGsEhAaigVZ7MBPyHYqiB3nkH6XrhhfogAi7EAEk2vaZ9IeSxT8CondLr7
-	jqJMA5R/00D8iXke54BONNZvImIY+LumJP6u79cKGBhJJ2R+IZI7De0/CNGwfz1N
-	ns790QCfOjIVyGPyf7xXcJ8wj3/tGdHl3rB3XwyKzLsbqUIFVrXiB4Rsm6AREvGP
-	syQ4v6JgLIluuEfGsF9GMof5QRRNI5Qch2IOEwBqpN5zOehwtmi/QVYxaIhKdF2f
-	2Q==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0b-00364e01.pphosted.com (PPS) with ESMTPS id 4efbsk409u-1
+	:message-id:mime-version:references:subject:to; s=pps01; bh=GOZu
+	5NR42SpEsku8Ns1Xem+A9XCgYdtBxKbxW3wb/Q8=; b=UwuJ6v5WZJ0OeCqb38nZ
+	HxEw2K5Cim53nr0/UyKGLlTxJ8iXCu7a1kzXow6FM8Jm2xVS/jS6fXhXw7NmrG+i
+	6Ynjd0MEmmJHxai0llD5mTU106Dx+HBK2yTwvKbRxKZ0Gi3l2kG4Evjxx9XH5tnf
+	U6xdc7bZuNMv8AdFXqojAJecp7t44lFRQjuiCn2fRWu3hGsG/u83f6ivFjj67M93
+	DssaA27UFx5/Z6enDS2FA5FfbGcpreXwLfICcVDyOb0KSG3OGeelkvVpmMdzfyVV
+	qhIQRMNBFt+9suOoW4qapI52ys14Wg13IPwJ73GHax4AgwXM6/Y2JPKDy3tT63tc
+	zQ==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-00364e01.pphosted.com (PPS) with ESMTPS id 4efh64s4vw-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <io-uring@vger.kernel.org>; Fri, 29 May 2026 18:26:37 -0400 (EDT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-90cbd806004so2908881085a.0
-        for <io-uring@vger.kernel.org>; Fri, 29 May 2026 15:26:37 -0700 (PDT)
+	for <io-uring@vger.kernel.org>; Fri, 29 May 2026 18:54:10 -0400 (EDT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-8ccdcc89495so42066186d6.0
+        for <io-uring@vger.kernel.org>; Fri, 29 May 2026 15:54:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780093597; x=1780698397;
+        d=1e100.net; s=20251104; t=1780095250; x=1780700050;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=iZ/CvHIaEtxesqHd176lUmCe2CW9FRR63TiqxgWScco=;
-        b=Ov+z7QDuDUw22YH646gxHIw5CLcx9WPRqqv28fcyHRwCIEdvoVeXXeui/OY5xSHR0e
-         O9BttXMg6u3ZRrpsPNaczhVdf2YH0xRLwYfmASz9NEXTfqz03puiY+0DdLmFhI7U2/qJ
-         VrZjNlHoKIyG9gPfqz0k1RfQKQnfSo7sZQztvmgYa0SQhPix4t5cE16W/xR6gfDFfwHn
-         cZMV8XTWYZlfLlpQuCr349kJoyX35RsD7mtNny9/ZHvJtmMokO12KAaI5+aOebbYGshn
-         6tZw+WHQUDaBLSwwAfBVNFw7p2q6geVLNbL0oN5RGQ8D++XXSInC/hmtRNg2FoVFGPS+
-         2vAQ==
-X-Forwarded-Encrypted: i=1; AFNElJ+mMcYgyhCBqc12+RfxJLbxoRj8Wq8UDzDYdwQecUr78B1opUmKPxemhuHby2ttOULeRKu2nP7NjQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywy9OdC6Ld54k6zIIR+yG96lhSHvdGDI3ZEXIty8tYMhH4jEB71
-	BlRyS5uFiyXGLcHI5qu/GfwidFA4DaWbKzCf9b+v1f/dPQPeyL4EJ6IYvNxAMGFmsg25gF79qMC
-	HukHF69mzeOk9mh1FztPJPuU/PEAT60Ns1lcS0ggHwp0BCK/v0jWLIbam
-X-Gm-Gg: Acq92OE9eTjah8waSP65ZlaTcT67ok4YUKUmaLwqJwujjBRJVs7D7LRGjviA/rhp+fo
-	5E7lW+6qADgo51HShjcGhvz9+LpYF0yxkfQr4qelMGpJocgnH+ra6IYLZwZYGG/Abia9O3D9iwS
-	hr2xSjnWJ6pmfZ1PfuYYW+gKPiM+yuptt8JZRFqmQbXvlNp5yhQ2tdNkzRshAh5pJSl/Bb85EzL
-	yrfvfHB0uCXQUwqEGv3GDRs151U8AQfzPxp3TlKwe2HNgGPN9AHwTsBrdYw44jDj0ZatC+yTbK/
-	tMkcyMxSnne5ldY2pSZwNCI861k3LYYZr5LfaPSkpj6+Rnn7VwWByo9tC2VKO1ODCrtT6ISlefX
-	HLqiLuEsw59TqfiLVL520iXA6KP0f/i5o9I/ljxsFA5uwEr9LqxZHswuWgJ1aJ5B2dpqhVzDaTQ
-	Bu3abEvJPa56Zfib6tevod6XUbIQ==
-X-Received: by 2002:a05:620a:2a0e:b0:915:2b21:c74e with SMTP id af79cd13be357-9153d9776camr269384185a.24.1780093597066;
-        Fri, 29 May 2026 15:26:37 -0700 (PDT)
-X-Received: by 2002:a05:620a:2a0e:b0:915:2b21:c74e with SMTP id af79cd13be357-9153d9776camr269379685a.24.1780093596656;
-        Fri, 29 May 2026 15:26:36 -0700 (PDT)
+        bh=GOZu5NR42SpEsku8Ns1Xem+A9XCgYdtBxKbxW3wb/Q8=;
+        b=U6nraaMFKj4OEH7tJWJkgCtYDfJlAekOY7FYp3dlEZOzcRzK0mkWXQPgHAHu3qQwzi
+         gL38aP+xYHVDe78YExWBxujFZrhMXTng4QaRPnA394T0T7X47YBek2bjKvwzV261LlrG
+         wHdu6oIb6dwTYYj9VeczSR+D6IQ7534LX5D4r020I3JTO0TaGM20GUEEyGJtOOOtI233
+         LoVJQ3msZtgUFbbPUjVOWFGyKnLjvzdaUjN/xYrdHwL1VMtW/Bw1rHTeI1JpdMPUFs1/
+         +WtxuPHMpgiQ6Kf7d3fsRhSw0Zx0PLy7I/djbLu3cyZ+qlb1R7YTMssyRJohK7bSEq5C
+         usFA==
+X-Forwarded-Encrypted: i=1; AFNElJ+t/zCeYKeQLOehAKUuWPGAnV4tAOL5WU6CRDb2jT3+0NrSX31QpzV8Q1snYxIVVWQwu0IATsBA5Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyYVFHC1Diu0mkzhzSyTKiS5JK8oOTopWnqTmLskXDUdgO8P3l
+	mCqVbVjvlaFmLjCZMo2eDIBmg5QegBOjaYeFbK/YwWI5vXcXNWgOaIaEYJLZ2f9u/9kYAIhNhRJ
+	MH5lQeGKBHhtJnBgTS6UFSH87G2v9P6pxREaCgvvyCGodEgrhWObU328M
+X-Gm-Gg: Acq92OG/uzsUvD9cLanUXE16OpNKSJLi5zOcLrARlxGyrLrJmaSTggtyNrXuJAU42BC
+	we35yGhtaW9DPea7AUf3MM5SvyyPnneyn2pjxYXGIcY02R6+OxEj6mGuEob50aBAR8jVzTsUc4Z
+	8oVxR0oa8REtiaJBAe/nvNJNeEpnmEgCXR+xTA/tPOMTH8kaK5M34L+J9hg/di8Gl2zQ6zlUsfo
+	ErCizUQ9FhfOt0YGa8LD1v3YSPEzPJs+ovU/brTMdv6fu3mSeo9cl0TWtLg9K8ixw8RDtNwd75j
+	ZXc1xSiQELiuo+U4xJOL0J5QSDPiz+WfPw/2RPFSguFXEG6s+579Vw6L26S9SqIth+SqflKuAUG
+	nohR3cLgwB0CvqILcr6XBmjo/c9KyQiXqD1QsDPZ0mwWgEfh+LBwDmDDhk+2Q6J3QkZ4TkroSYq
+	37FCLL4v20F59WTqQcjh1csC+Ubw==
+X-Received: by 2002:a05:620a:7005:b0:911:d96d:139 with SMTP id af79cd13be357-9152f91aae8mr628980885a.11.1780095249714;
+        Fri, 29 May 2026 15:54:09 -0700 (PDT)
+X-Received: by 2002:a05:620a:7005:b0:911:d96d:139 with SMTP id af79cd13be357-9152f91aae8mr628978785a.11.1780095249321;
+        Fri, 29 May 2026 15:54:09 -0700 (PDT)
 Received: from ?IPV6:2600:4040:974e:fe00:c8bb:325f:9d37:a5f? ([2600:4040:974e:fe00:c8bb:325f:9d37:a5f])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-915325fae79sm323170185a.26.2026.05.29.15.26.35
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-91532628f87sm335923385a.35.2026.05.29.15.54.08
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 May 2026 15:26:36 -0700 (PDT)
-Message-ID: <205bb690-2874-47c3-b352-33ee96026196@columbia.edu>
-Date: Fri, 29 May 2026 18:26:35 -0400
+        Fri, 29 May 2026 15:54:08 -0700 (PDT)
+Message-ID: <fb59cca8-28b0-4231-a109-a6ae0ea12a03@columbia.edu>
+Date: Fri, 29 May 2026 18:54:07 -0400
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -95,7 +95,7 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH RFC 00/11] mm/filemap: split out folio wait and VFS code
-To: Jan Kara <jack@suse.cz>
+To: Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>
 Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         David Hildenbrand <david@kernel.org>, Lorenzo Stoakes <ljs@kernel.org>,
@@ -108,106 +108,87 @@ Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
 References: <20260520-filemap-split-v1-0-c36ddc2b6cf2@columbia.edu>
  <3dxzu3ck5y3wxw4pp2qhzwwb6y3f7mwhvgxfpl56sokw4ymop7@xaaoxsa5yu5q>
+ <ahg55Ei8Fc3iRsnA@infradead.org>
 Content-Language: en-US
 From: Tal Zussman <tz2294@columbia.edu>
-In-Reply-To: <3dxzu3ck5y3wxw4pp2qhzwwb6y3f7mwhvgxfpl56sokw4ymop7@xaaoxsa5yu5q>
+In-Reply-To: <ahg55Ei8Fc3iRsnA@infradead.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTI5MDIyMiBTYWx0ZWRfXyV1CX2Ey/VGP
- ctwVH5dk5w9eDRTjOLnhLpcpqeAMkf4x9gL4hICeJCYSy1TfT4xeM8QuVykIF2IvV3pknJKAHMe
- cUjQoSqe0BDOt/e0hun5rGiAv7YEr0ih4AJnYc4CS+fLEGSv8AoU93GYwlpoGs+wumqs2OjAUKf
- EGZtcgggTLjbX+or429qCRS8+lcmTIAjwvthoSOU2WaEzhMyJ2+B+7HCMj3pfWRQePhdBCfQsXM
- QXWZeVpSH/SEZuSHai8k544GAhs4C63hJHAGIK+aZISuX9IfUtc3pnm4yWJs8IZ53YlY0OgKSFr
- PEFR79aHmBYfZZCCYGFeAqyHmyhHoZnVgs+2sSiug4y+ZUVhPIgzBXQ8+6FDezWcIHfFU06tqam
- E+Td+Yc1WUMTHnxGrt9kqKCC6298EVY1oK3ClU1cwDhjxmx5eZ6LCLlE99bp7Ex0EgqSligEIW0
- piNDQJ9A6UYBgvcK/eg==
-X-Proofpoint-ORIG-GUID: 6Uuq3HxiREQtL0EVDwgVy747PQnVu9mC
-X-Authority-Analysis: v=2.4 cv=SZ/HsPRu c=1 sm=1 tr=0 ts=6a1a129d cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+X-Authority-Analysis: v=2.4 cv=JJQLdcKb c=1 sm=1 tr=0 ts=6a1a1912 cx=c_pps
+ a=UgVkIMxJMSkC9lv97toC5g==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
  a=NGcC8JguVDcA:10 a=x7bEGLp0ZPQA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=Da8U98TiO7q1upZEImrf:22 a=azVShVRs0zEubeQ0wG0L:22 a=aRezoWbpNT72RPsyBYsA:9
- a=QEXdDO2ut3YA:10 a=NFOGd7dJGGMPyQGDc5-O:22
-X-Proofpoint-GUID: 6Uuq3HxiREQtL0EVDwgVy747PQnVu9mC
+ a=Da8U98TiO7q1upZEImrf:22 a=G--0XuH5328wxK7v7Suf:22 a=lO0XnYq6BgjnjRCXdOAA:9
+ a=QEXdDO2ut3YA:10 a=1HOtulTD9v-eNWfpl4qZ:22
+X-Proofpoint-ORIG-GUID: GXtkCDFv-fgCsETjUtIFNC8Aw_6bLjSj
+X-Proofpoint-GUID: GXtkCDFv-fgCsETjUtIFNC8Aw_6bLjSj
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTI5MDIyNyBTYWx0ZWRfX9nsQlg4LxTRQ
+ XDVMJ1C8U02K3rqRj3G7bFIXHQoQCGLcj2lyQPZVGg0eitqLA+lu2ttK5i/lvPO+/9p0nN8y6nV
+ driwbCUltTxNau8QlXHfjzeXS5XR5+IKOTEFZlFwFeSe4PncNGG2PXhpPO9S5/ruan3OOxmJ985
+ QhB6Ev146q02GkCTKIeBuhDaWnrDbLDCA91LWYn8yol+FWLXIz+LBB+4xNhjI7tMVW/dj+OZA8d
+ 4f8Jxep6PYKN3XrylDD255/8v7a1yR9O0LwSYLz3Q1AzRbafpdtV7h+PVsfOcWec5Oxszsy0Pfv
+ xzggnA8RKxeDWdNsGN921/dGt+5XJHy+nTXFlpjHvPE9bYwqojqp6mytZwSv1EqE1hUEXUcWppS
+ 8FaMWCpkwpGxVI1JFcwx6PTguridX2QSO13X+sfeO64tGGSRy01WWAd8WkbYDelF62fEpAYg217
+ ZhfL6x/VWmNflmWlEBQ==
 X-Proofpoint-Virus-Version: vendor=nai engine=6900 definitions=11801
  signatures=596817
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=10 phishscore=0 lowpriorityscore=10 spamscore=0 suspectscore=0
- malwarescore=0 adultscore=0 priorityscore=1501 clxscore=1015 impostorscore=10
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2605210000 definitions=main-2605290222
+ phishscore=0 priorityscore=1501 spamscore=0 bulkscore=10 suspectscore=0
+ lowpriorityscore=10 adultscore=0 impostorscore=10 clxscore=1015
+ malwarescore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2605210000
+ definitions=main-2605290227
 X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	DMARC_POLICY_ALLOW(-0.50)[columbia.edu,none];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	R_DKIM_ALLOW(-0.20)[columbia.edu:s=pps01];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[17];
-	TAGGED_FROM(0.00)[bounces-13565-lists,io-uring=lfdr.de];
-	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-13566-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	MIME_TRACE(0.00)[0:+];
 	DKIM_TRACE(0.00)[columbia.edu:+];
+	RCPT_COUNT_TWELVE(0.00)[18];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:rdns,sto.lore.kernel.org:helo];
+	FROM_HAS_DN(0.00)[];
 	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[tz2294@columbia.edu,io-uring@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	NEURAL_HAM(-0.00)[-1.000];
 	TAGGED_RCPT(0.00)[io-uring];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	RCVD_COUNT_SEVEN(0.00)[7]
-X-Rspamd-Queue-Id: 44D0D6095FE
+X-Rspamd-Queue-Id: 9352E609872
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-On 5/28/26 5:22 AM, Jan Kara wrote:
-> On Wed 20-05-26 16:48:51, Tal Zussman wrote:
->> mm/filemap.c has accumulated additional infrastructure over the years
->> that is not directly related to the page cache. It is currently nearly
->> 5000 lines long. This series splits out the folio bit-lock and wait
->> queue code into separate files, and moves the VFS-level
->> generic_file_{read,write}_iter() family of files to fs/read_write.c, in
->> order to provide better separation of concerns. This also slims down
->> mm/filemap.c by ~1000 lines.
->> 
->> The folio wait infrastructure is centralized in mm/folio_wait.c and
->> include/linux/folio_wait.h, with functions moved from mm/filemap.c,
->> mm/page-writeback.c, and include/linux/pagemap.h. Afterwards, the code
->> is cleaned up a little, with functions and data types renamed to refer
->> to folios rather than pages.
->> 
->> generic_file_{read,write}_iter() implement the VFS-level read/write path
->> for filesystems, including support for direct I/O. These functions and
->> their helpers are moved to fs/read_write.c, along with other VFS-level
->> read/write functions. dir_pages() is also moved to include/linux/fs.h.
->> i_blocks_per_folio() is not moved from include/linux/pagemap.h, as it
->> requires folio_size(), which is not currently available in
->> include/linux/fs.h.
->> 
->> No functional change is intended.
->> 
->> Note: I have additional cleanups to mm/filemap.c ready to go, foremost
->> among them centralizing on the filemap_*() naming convention and making
->> the exposed page cache API clearer and more consistent, but I've split
->> these patches off from that in order to avoid sending these logically
->> separate patches to ~60 maintainers.
+On 5/28/26 8:49 AM, Christoph Hellwig wrote:
+> On Thu, May 28, 2026 at 11:22:37AM +0200, Jan Kara wrote:
+>> Overall this makes sense to me. In particular I agree it makes sense to
+>> move the file read/write helpers into fs.
 > 
-> Overall this makes sense to me. In particular I agree it makes sense to
-> move the file read/write helpers into fs. Regarding the page waiting bits
-> it makes some sense to me as well although there it's more of "I don't
-> really care" opinion so let's see what Matthew and others think...
+> I disagree very strongly.  Mixing default implementations with the
+> higher level APIs is a really bad idea and leads to people taking
+> stupid shortcuts and other layering violations.
 
-Sounds good, thanks. For the folio wait/lock code, my reasoning was that
-it's used well beyond the page cache and independent of it, so there's no
-reason to clog up filemap.c with 700 lines of infrastructure for a more
-generic interface (and splitting up pagemap.h a little is a nice bonus).
-But yes, let's see what Matthew thinks.
+fs/read_write.c already contains some of these "generic" function
+implementations, including generic_write_checks(), which is called by
+generic_file_write_iter() in mm/filemap.c. Right now the two files are
+unnecessarily interdependent. I do think fs/read_write.c is the natural home
+for these functions.
 
-Thanks,
-Tal
+> Splitting up filemap.c makes sense, but I'd rather keep the generic copy
+> into and out of the pagecache code with the MM infrastructure for it,
+> as it is not VFS code, and making that clear to anyone touching the code
+> is important.
+
+About half the code moved is implementing direct I/O or multiplexing between
+page cache I/O and direct I/O. It definitely shouldn't be in the page cache,
+and I do think it is VFS code. The one exception I see is
+generic_perform_write(), which is analogous to filemap_read() and should stay
+in filemap.c (and probably be renamed to something like filemap_write()).
 

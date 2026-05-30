@@ -1,79 +1,81 @@
-Return-Path: <io-uring+bounces-13569-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13570-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id +CUIJWRjG2o2BwkAu9opvQ
-	(envelope-from <io-uring+bounces-13569-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Sun, 31 May 2026 00:23:32 +0200
+	id aFi+OqpjG2o2BwkAu9opvQ
+	(envelope-from <io-uring+bounces-13570-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Sun, 31 May 2026 00:24:42 +0200
 X-Original-To: lists+io-uring@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12F6D613A46
-	for <lists+io-uring@lfdr.de>; Sun, 31 May 2026 00:23:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BA43613A6C
+	for <lists+io-uring@lfdr.de>; Sun, 31 May 2026 00:24:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id D1B5E300F145
-	for <lists+io-uring@lfdr.de>; Sat, 30 May 2026 22:20:35 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id B1FCC30782F3
+	for <lists+io-uring@lfdr.de>; Sat, 30 May 2026 22:20:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 180F3378D82;
-	Sat, 30 May 2026 22:20:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187F537C904;
+	Sat, 30 May 2026 22:20:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oBGLyviT"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GPq5gxhV"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BCD42DCBF8
-	for <io-uring@vger.kernel.org>; Sat, 30 May 2026 22:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2FA6378825
+	for <io-uring@vger.kernel.org>; Sat, 30 May 2026 22:20:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780179610; cv=none; b=d+pVZiArZByxyiTuID1A9Ty0IrI3lDmWpGGL8/x4Je25okatnb9H7h78hwTJLv94WC8FARPIwgQbUswwDTId8x8b0FuKrfjqzPfi/1rT2MGjo5RYCKbDDd9AIIZoaFl3zv7iFxLtxY9mxh7Q7DzPdd9pbuZIgQGz6tJO9MP4Ab4=
+	t=1780179610; cv=none; b=cDo2dZV+PrGu8PwmLGM7tvsSRaBI7czkEmIv53oCD7Pj251VrsOLG88ZZCDAQViiPtDu7iVz8+r9EUvr/LdJuk6kvRR522HUTJn/WpZgAAYKfRVZE6hCC/o/y0RNNJE5BYTox/I/oXtW3AleoWdxi5Snf9uc6dd2ksQylTnof2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1780179610; c=relaxed/simple;
-	bh=4TSPlN5o+JecYW1sd+ZzXQj8yAEreCv2H17czKFowr4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CmbET9QDlIFkZLcnGhgFBMTENVnl73RIyJCI098a/BKOoEOPqmrvW+9w7sVFsWhgObUKWWnEfNdtRhSwFo8rBbx9QDFv1fgLiHhVRDAhL/H9gy884DTamEjUPUmQ8U2+UbO06SvpCZP7Xa6d0uLKplHQDY8dpNycL005rF2ljhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=oBGLyviT; arc=none smtp.client-ip=209.85.128.48
+	bh=fXiH8h7PEvwaHD4dyUu+ol+a5g1XNap+MJztQQxaw6g=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ZwxLCRxRi11uWXZsXJS/9Enq8+5Xl55kE9GGURDQW8RuGEAW0HhUjyqO6cdlVvnd9rf7McsX/JmyHbWKmH7b7kCytlEJJBAxOqAe0Mqp3nk/EoJOnC8/yoEpHHWDtw6j9CLrFcRr3NA8E03TQ3JxXOoRCeGKSQveSWTNoRkpmvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GPq5gxhV; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-490a765f2feso1338455e9.1
-        for <io-uring@vger.kernel.org>; Sat, 30 May 2026 15:20:07 -0700 (PDT)
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-45efb698ef2so273967f8f.3
+        for <io-uring@vger.kernel.org>; Sat, 30 May 2026 15:20:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780179606; x=1780784406; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0Lsn3u4lBncf/2naAXkema/EpB2mW522r7UH8V++Vow=;
-        b=oBGLyviTDtrrcoAMvYKo6bwpCL97ZKQHEdWZvjOGGdId1LaaVAfsH4TyeKwtXwcw/K
-         uizDoK+wFtZ0hr5Xp6T3NX5MIUMeGm0lqRLqDPtsx43Fxwvf6k1oUEEDJd9QcXttc5sF
-         c6PNbsC14QDGPfPfakPodXDsrGz334sxquMX+9C0tij+D3cQX6UO8pb6oTuBZtSAAGnU
-         FprxaXyhjyGR+I0oy1VoiHqOE7dlRKkKjudj9pQ8cme+1lIDqFpc3+IW4Dij2uUCge21
-         wgjnS6GKkxUMhj2owln54WUxHkPMYAdfKjxzQAdbXkGIMJwvU2buv9wq9TKhI038penz
-         7N9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780179606; x=1780784406;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1780179607; x=1780784407; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0Lsn3u4lBncf/2naAXkema/EpB2mW522r7UH8V++Vow=;
-        b=MUWGKc1k81pKFWamcrtAswgeeCzdZO57sUuyOQhCEU8TdXnhMoY1KiDrmvW7ekHWuS
-         39yfA929un1oANJuIcU7OEELPAnlq3/r0qNeUmzoRAjTzGGlvWr4Af/eCg5xZhwZjR9n
-         Kl3Fvr8w1rQQfYsSDt8ikNQhSrcTrxUbgq0WXtiqluA4iSNl/QhCjOUbmPguj2KGE4De
-         Q1x9pgc90oVSidTZzwL02bOXK4uSyr6Pei+Qp72viCecpOg5R+ItBEB5b31AVWCSYRUG
-         r4lc/ysQdjKUKfvEPxGv4ZhRyzLirOa9CZe9AJdCPhOtkJDkgWZ3maZwa4cdFNq5cdnD
-         iQCA==
-X-Forwarded-Encrypted: i=1; AFNElJ8hgnGZ3xMjR9LqDtHsrOXowf4ickVDSn8NKGi437UNu6V0HR+FBBbYT4LIG9tCFR7jh9dk4xoF0A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKSs0j3X/3QaqL58KWtpzg1uVXY7rS8vkS4wAK8v40p/kTJXgN
-	bHXU73KKpSLbXbc5eyUi1XoUc/TMpXPeqWz1/5OzA2ndnTHfgJL5mGh3
-X-Gm-Gg: Acq92OGPebIFb313v/WWW4X8mVwmkvVs1rRfEpG1v/v7iaZQpKU6KDEMAErDgJTiWYO
-	YTSu53LMKDKkwUwBd3yZRWv3TqDJhbyzuLHyoXqxIoxMPhoeahOC2SRw7gDx7eInLwNhb6DZBxA
-	IYQeo6yO+KonJuFDEH54N8DCT2naHUWN6L/b3XbULsgGiM0j1eNlD0TLhIpcgcljYxSnY5vjsoL
-	IM68NQrk7KWajRC7tWPmCDSKB9E4FlIrA4NY2X49BAooJzvym2kf+wFKlld+MKrs1swu+mdgwn+
-	qh/9SUbJXaJffiHdyUt+kGm1EWLqENgv9fHA1VnUmQ6/N2PTlr+P1us5p1dlrwEOd7RUGY4QbvA
-	myuJKvsWYqqif2sm3PdduhRz7wSUjDvBhwqKQeUBnn+i/LY6k+rX79YXrwZQoBMqhlmUJBnYjqH
-	0Za71eiTSm/k4GrtlJBfgsHmTdAkK7wtnj60Nf/kRWDK0f4tL5q1hl
-X-Received: by 2002:a05:600c:190b:b0:48f:f64c:c2fe with SMTP id 5b1f17b1804b1-490a298f29amr87406325e9.22.1780179606187;
-        Sat, 30 May 2026 15:20:06 -0700 (PDT)
+        bh=gRFbpWDbRDz2hKuWATKrH2KKYigHlPqpASSyCuCCDYY=;
+        b=GPq5gxhVlm9YIJHjdmYhTzupiSsKiq8J8wNYnMPM4Py9PoeUPb0StlZZ/JwWOBU/VN
+         Q6TzuNtyS7uvm6ilHSQdKgvADYYKejGJzNl/m3GKKa93halpCta6rhwUsZ+pAkpMU4Sd
+         cI7w4yfCArHTj6sJhvvUiil44eH1iSzqLdz73RcTR7+k6is/I8iiLuT2h6ma2L6cF1YR
+         7F9z1Xi4spd2AnLTRi7GxICXBs1Ert6BIbrLPlc/945a/Dghch+NWtlWNnlge7OHXqoU
+         DzusABHQHDJgdJgjZKELQM43vhx5rxQlmOZmThFujpuZOlEmHnukZtWB349t3vTq+HIR
+         ZomQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780179607; x=1780784407;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=gRFbpWDbRDz2hKuWATKrH2KKYigHlPqpASSyCuCCDYY=;
+        b=Ac4yh09uDAJxQhWxb2btkX8AI60mpyQuCDTmY0GaNkezSh1YdxF0dfIL8N1lhNSpSz
+         h6Ktzy6ZD3s2Y1t790vdfh7Ttg3kNF2xdAV29RWpdfzEkHlGAnL6LtyQuaV3KFVTE5Wj
+         kuW5g469CbgsOm/YSrbejSRL/jx8MvIpSQtYG1C4/ig6unreWNKwQ/dr8wRZaWXf6Rzu
+         aVEOzTz3C9gmwo3tvoM0GPiQF6q3tqrfe0KsktpsSFeUa2aEKQm/pTV0vcum0XI8w3EJ
+         ltNiTRx2imCK7EpIZPPN/Za93uVvUgvVzaSOWgWGqrd3ibqDi6pCcH22ForaD9A7q5n/
+         4LwQ==
+X-Forwarded-Encrypted: i=1; AFNElJ/WM8uq7VCsVw12PFJFPV9vD9J+F+EqqPbrVRmrzoMtoWDK6I3WOycr3OwJwJZvqhyim4D+z4ta5g==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1nJ2pMnmHHnFDv5v2R+a2S+ELkYyjEmJNKQ/eHzJ8ydvrts9Z
+	Sitz4fxSjmMuxqoOgYmDpNPCZ9IAwk4d1/tcTLyzFLbaXNsaossWU3Sg
+X-Gm-Gg: Acq92OGHP3yPPrEvgzlI+wSXe37Rs8b39ZYx+6rSoiytp0WM6hJUoWSfZgw5aKjkfrV
+	Y6i7iZIxo3LmtiP411raHDw4ddORcKhcakx+mHeYLTuOU+HtVE/Z+H/JxpkdvouA5cw1Q4smsFp
+	SVnAHPQpcJ3/8L1qz3D5s6PVeOSjkZrjCkSXa89bRD+AVUBbYxItT4XuOTqC8455l2tu7kxIELc
+	hIAHUOaLABQK4wRQE/VE2WaIJcYYnTE8ROJKTXz4i+bBDjxBldnO+yvdstIQoqPQeY1xsEy9ZSN
+	+poc8eGcD3QaC8N4t7LQoCu3ZLY0c8AEN8S1fR9+tfd7HB5HGWo4J4FvzHJ7DyYCF/6vVu91eHa
+	wq2Q/PMfAAWjDBiHQVukAhjIsbJKxPOIhb05mYhszDqHxQKur0C31quZjN3wS9yoiicq+U5m7I3
+	UXD+O+M286As5MVSbFiVHkgxhWahMI+2J03AY3e3j+7hU8UCHGllvW
+X-Received: by 2002:a5d:4b04:0:b0:43c:fa96:d939 with SMTP id ffacd0b85a97d-45ef6b5b49dmr6538243f8f.22.1780179607132;
+        Sat, 30 May 2026 15:20:07 -0700 (PDT)
 Received: from puck (234.243.199.146.dyn.plus.net. [146.199.243.234])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45ef354cd7csm13443784f8f.18.2026.05.30.15.20.05
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45ef354cd7csm13443784f8f.18.2026.05.30.15.20.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 May 2026 15:20:05 -0700 (PDT)
+        Sat, 30 May 2026 15:20:06 -0700 (PDT)
 From: Dylan Yudaken <dyudaken@gmail.com>
 To: trondmy@kernel.org,
 	anna@kernel.org,
@@ -82,10 +84,12 @@ Cc: axboe@kernel.dk,
 	io-uring@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Dylan Yudaken <dyudaken@gmail.com>
-Subject: [PATCH 0/2] nfs: support FMODE_NOWAIT on O_DIRECT reads
-Date: Sat, 30 May 2026 23:19:45 +0100
-Message-ID: <20260530221947.49518-1-dyudaken@gmail.com>
+Subject: [PATCH 1/2] nfs: add nowait version of nfs_start_io_direct
+Date: Sat, 30 May 2026 23:19:46 +0100
+Message-ID: <20260530221947.49518-2-dyudaken@gmail.com>
 X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20260530221947.49518-1-dyudaken@gmail.com>
+References: <20260530221947.49518-1-dyudaken@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -99,13 +103,13 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
 	R_MISSING_CHARSET(0.50)[];
 	R_DKIM_ALLOW(-0.20)[gmail.com:s=20251104];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
 	FREEMAIL_CC(0.00)[kernel.dk,vger.kernel.org,gmail.com];
-	TAGGED_FROM(0.00)[bounces-13569-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-13570-lists,io-uring=lfdr.de];
 	RCVD_COUNT_FIVE(0.00)[5];
 	FORGED_SENDER_MAILLIST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
@@ -122,48 +126,99 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo]
-X-Rspamd-Queue-Id: 12F6D613A46
+X-Rspamd-Queue-Id: 8BA43613A6C
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-I had noticed that io_uring always punts O_DIRECT NFS reads to a background thread
-since the file does not advertise FMODE_NOWAIT.
+nfs_start_io_direct might block on existing operations to the same
+inode. In order to support NOWAIT O_DIRECT reads, add a non-blocking
+version of this nfs_start_io_direct that just returns -EAGAIN if locks
+could not be taken.
 
-I am not very familiar with the NFS codebase, but looking around suggests a simple change
-to nfs_start_io_direct is all that is required to properly support this functionality.
-On the request issue side, it seems everything in NFS is actually run in the background
-(post this lock change), and the completion codepaths all look to have no similar locking
-semantics.
-
-I unfortunately do not have the means to test the performance improvement, since even
-without this change my local network is the bottleneck here.
-However I do suspect that there are people that would want this fix ([1]).
-Applying a similar patch on that GitHub issue did give performance gains.
-
-To convince myself this works at all I did trace io_uring events through with and
-without the patch.
-Using a test app ([2]) to issue O_DIRECT io_uring reads calls io_uring_queue_async_work
-without this patch, while with it the call is skipped and the completion is queued into
-io_uring directly from nfs_direct_read_completion.
-
-Patch 1 here adds an unused nfs_start_io_direct_nowait which patch 2 uses in order to safely
-advertise FMODE_NOWAIT.
-
-[1]: https://github.com/axboe/liburing/issues/1499
-[2]: https://github.com/DylanZA/liburing/commit/264c06f1939dfd6b6bc4c967ada5960c4f4f2db3
-
-Dylan Yudaken (2):
-  nfs: add nowait version of nfs_start_io_direct
-  nfs: expose FMODE_NOWAIT for O_DIRECT read files
-
- fs/nfs/direct.c   |  5 ++++-
- fs/nfs/file.c     | 13 ++++++++++++-
+Signed-off-by: Dylan Yudaken <dyudaken@gmail.com>
+---
  fs/nfs/internal.h |  1 +
  fs/nfs/io.c       | 38 ++++++++++++++++++++++++++++++++++++--
- 4 files changed, 53 insertions(+), 4 deletions(-)
+ 2 files changed, 37 insertions(+), 2 deletions(-)
 
-
-base-commit: 670b77dfebe7257adc0defbc48a4c43cfdf6c8f6
+diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
+index 18d46b0e71dd..0c9aca624353 100644
+--- a/fs/nfs/internal.h
++++ b/fs/nfs/internal.h
+@@ -532,6 +532,7 @@ extern void nfs_end_io_read(struct inode *inode);
+ extern  __must_check int nfs_start_io_write(struct inode *inode);
+ extern void nfs_end_io_write(struct inode *inode);
+ extern __must_check int nfs_start_io_direct(struct inode *inode);
++extern __must_check int nfs_start_io_direct_nowait(struct inode *inode);
+ extern void nfs_end_io_direct(struct inode *inode);
+ 
+ static inline bool nfs_file_io_is_buffered(struct nfs_inode *nfsi)
+diff --git a/fs/nfs/io.c b/fs/nfs/io.c
+index 8337f0ae852d..f359a19f7879 100644
+--- a/fs/nfs/io.c
++++ b/fs/nfs/io.c
+@@ -101,12 +101,15 @@ nfs_end_io_write(struct inode *inode)
+ EXPORT_SYMBOL_GPL(nfs_end_io_write);
+ 
+ /* Call with exclusively locked inode->i_rwsem */
+-static void nfs_block_buffered(struct nfs_inode *nfsi, struct inode *inode)
++static int nfs_block_buffered(struct nfs_inode *nfsi, struct inode *inode, bool nowait)
+ {
+ 	if (!test_bit(NFS_INO_ODIRECT, &nfsi->flags)) {
++		if (nowait && !mapping_empty(inode->i_mapping))
++			return 1;
+ 		set_bit(NFS_INO_ODIRECT, &nfsi->flags);
+ 		nfs_sync_mapping(inode->i_mapping);
+ 	}
++	return 0;
+ }
+ 
+ /**
+@@ -143,12 +146,43 @@ nfs_start_io_direct(struct inode *inode)
+ 	err = down_write_killable(&inode->i_rwsem);
+ 	if (err)
+ 		return err;
+-	nfs_block_buffered(nfsi, inode);
++	nfs_block_buffered(nfsi, inode, false);
+ 	downgrade_write(&inode->i_rwsem);
+ 
+ 	return 0;
+ }
+ 
++/**
++ * nfs_start_io_direct_nowait - non-blocking variant of nfs_start_io_direct()
++ * @inode: file inode
++ *
++ * Try to declare that a direct I/O operation is about to start without
++ * blocking.
++ * Ensure all buffered I/O is blocked.
++ * If this could not be done without blocking then returns -EAGAIN.
++ */
++int
++nfs_start_io_direct_nowait(struct inode *inode)
++{
++	struct nfs_inode *nfsi = NFS_I(inode);
++
++	if (!down_read_trylock(&inode->i_rwsem))
++		return -EAGAIN;
++	if (test_bit(NFS_INO_ODIRECT, &nfsi->flags))
++		return 0;
++	up_read(&inode->i_rwsem);
++
++	/* Slow path: try to flip NFS_INO_ODIRECT without blocking. */
++	if (!down_write_trylock(&inode->i_rwsem))
++		return -EAGAIN;
++	if (nfs_block_buffered(nfsi, inode, true)) {
++		up_write(&inode->i_rwsem);
++		return -EAGAIN;
++	}
++	downgrade_write(&inode->i_rwsem);
++	return 0;
++}
++
+ /**
+  * nfs_end_io_direct - declare that the direct i/o operation is done
+  * @inode: file inode
 -- 
 2.50.1
 

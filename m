@@ -1,195 +1,153 @@
-Return-Path: <io-uring+bounces-13571-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13572-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by lfdr with LMTP
-	id OFv5GFFjG2o2BwkAu9opvQ
-	(envelope-from <io-uring+bounces-13571-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Sun, 31 May 2026 00:23:13 +0200
+	id GDdFIB/lHGqZTwkAu9opvQ
+	(envelope-from <io-uring+bounces-13572-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Mon, 01 Jun 2026 03:49:19 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7222F613A3F
-	for <lists+io-uring@lfdr.de>; Sun, 31 May 2026 00:23:11 +0200 (CEST)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id D73CB618AC9
+	for <lists+io-uring@lfdr.de>; Mon, 01 Jun 2026 03:49:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id B85593021D1B
-	for <lists+io-uring@lfdr.de>; Sat, 30 May 2026 22:20:48 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id EADD23007E3C
+	for <lists+io-uring@lfdr.de>; Mon,  1 Jun 2026 01:47:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 614F83793B6;
-	Sat, 30 May 2026 22:20:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF7A1A6815;
+	Mon,  1 Jun 2026 01:47:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PpJSh87t"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b="jWBrBFEu"
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E12737BE9C
-	for <io-uring@vger.kernel.org>; Sat, 30 May 2026 22:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113B91448D5
+	for <io-uring@vger.kernel.org>; Mon,  1 Jun 2026 01:47:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780179612; cv=none; b=OQWa2e8fGN1nxSEVhx062A7urunpfyBmttS7S6/S59jPwTs7xYvl1BZi230NT9hidKswFBQx77insjC1sl9uN6ySqCP1xCQR/FFwKNxsL5BEttZNkAnNmpL0w4JvnITn3eou712sTHbY85cyprileSmMIbTA5xLZVE1Rj/wBzfE=
+	t=1780278468; cv=none; b=mLYmBbsNAHCRlO9IFNUkmx2aV/WB+UfA9chW7zJMhbEsqQ7EDZ1yqhhCKyt7SSi2sGtLaHoc5Qw3kDDri807BW5KTA9V+pCK+OPIDsA6du232EqxuTUWkfxZv7I2AzjZVqbWLMIb2qHKUM1VYdj9r/F+fJGix4utRywsTaQv94E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780179612; c=relaxed/simple;
-	bh=KUklTCUYJp1BJPLfkblwKXuxVsFK8XGxI5dwHrsx8X0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kPj98q7wvFMta48x9FDrYpENshv6rqBrf6dbQVBrnvR6Vwdy1firRmx9kK8GYPAH+5lN7drJuc91CXe58zkvKzk/dcTR4/VC50awYZ95QcFKkfRRUfMPAPa6emgCpNDpKZLtIj9su/Pr+30QJfr4/GzFUvMjBZA9V9o5PjC2v80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PpJSh87t; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-45ef616daf6so1402648f8f.3
-        for <io-uring@vger.kernel.org>; Sat, 30 May 2026 15:20:10 -0700 (PDT)
+	s=arc-20240116; t=1780278468; c=relaxed/simple;
+	bh=WnRyvGjpMt5RBQl70VieCFocaB97nn4QrlAXnPCTCuE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=opP8byBvVo5GU+5zs+hAWY/B3LJllAadL+Efq2MtEts4IdgHYWfr4/1UR/ivN6ItkjGBLm79Ilha/hudkRhLAinDioXZiKFfm2bdHQ6tMm2vIuHDRpbNMZdPEvAKrspcejsVoSpRI39FnFVksvlffdWoCwli2sZMMo/2aNdCHmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=jWBrBFEu; arc=none smtp.client-ip=209.85.160.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-43bf5f4ee8dso2694828fac.3
+        for <io-uring@vger.kernel.org>; Sun, 31 May 2026 18:47:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780179609; x=1780784409; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1780278465; x=1780883265; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZDT9fVob8Oysx5eRe3qdB0UmTNnWot9MWKxTp6EWmjg=;
-        b=PpJSh87t8gD1KAmrvyf9Je9zYE7HS5sM15KI5x9ORgYWPFgrvseDBL7HRX/b5jWRXA
-         KljLLiUJbFsSYx/DNOTb+StCpAHGDvo4VR1BiicXJJCtMf+IVrIj8QOZoarquit+ENfa
-         J4bvUrBCLVhzGrv8BxwdHwW50fEp5cIUedlAMmL/VX5q5ZTN7wqTKZY7tU+lLTmV1OfC
-         mX2DEZp7Jj9cJP6Pbf0A/KrbYFuGAZAV+c5M5WHiiZV+2vXYSnibqubhKm1HY47YGp4M
-         7gHlUlnh023gxekMnoGetvL5bp5riIuWR58VwK+MREPqibB/kniNzgUhXVD/90zA+65u
-         XgFA==
+        bh=tB5EL8Rhi9qKT2QoOgXudFsNdbKOqjFRFUpfHfwDsc0=;
+        b=jWBrBFEuKZbhAG/GOmNfoxhOELcM9kYInNjH85p3YpFgKLWLpFLDV65aqVujN1btH/
+         6BtSq7JYmqpfI3DZqBrbe9kDdtctDBoEW+I4pohyD4/h3zCKGh/GYNvMhlQ7qPm8s3+b
+         s9EjOB4G4z4mhgGbcbWSxlHHBKMUNopKFgr56XOmcOIr0W7fZlxsCybcPOgNeTSjv4C3
+         d6PyynfIY6uRcl4ZRNU4DDv1tflqfhBjVXQ2P+8Yf+jh+ywgtrJSx0Ojc34CzZilSDCd
+         LGeOWvG96YkOrGfw9Pv3A2oYz/WVTlireMFDU6N7xBhunNgETa6oKqybSjPOTci/dVr/
+         FgmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780179609; x=1780784409;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20251104; t=1780278465; x=1780883265;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=ZDT9fVob8Oysx5eRe3qdB0UmTNnWot9MWKxTp6EWmjg=;
-        b=lMcNQrqp5fEj0P6zQGGk7ZVU1h+cbSMOlB5hG8PJU1wdskpStZWn51Km3OUEAYjzPO
-         aUub+zHJx3nXQ2p4r0f7w8nxBoGcMn/DiqjeVbn2LqtL3m1WZarkA67aGEtPkd/f7aRq
-         uFCkJM8DlpBm8odLfbWWHYcf4T5nQN7Eecgalj7qjY74/qTCUAJIprQPj647erjWaPLb
-         ahk1gfN2MgiWRbSu3WPck/3eRouT/mhc8MR+F8xK51y3Grd6T3WBeYnbH8/TKlkyZUZL
-         nrajZluSusmX+uP4lZ7QizYFKGoJsdUyirxDD/6e8bEH0eCJrwWgWEtVSGy+rgYwwewA
-         McTg==
-X-Forwarded-Encrypted: i=1; AFNElJ9AEe+LPLjvVKfIdPoFJVDHGjbgyKx1chfcSD8BOs5dT6UGydNYcszncLuw1ncVpCuGpoxFbLf0xg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzC4OXPm+ZGt43WQZHmzy6kdEDdzKijALA0I0pNabRhZSl+fSwr
-	TW0MVcpkCZsMfle+MXle8pgfZDtD2fkOaAwBqegOA9D20IoQyVQM4E3b
-X-Gm-Gg: Acq92OHrZlgTdww7pOF4UN4v5nOldh+kwBkWvRknCx+/HqId4Hn9y47xQR6MRPIAX67
-	/0CcEKrKsFrnG20/PFUCXqsmErHirZjLDvAKdmq1dToT8A7KrjwyqxQSpkjNEs39kMYo0Tw7erj
-	pgH827zRx/2IwV9ekX69NoYiLwTZyUzgMucvv9sK9rIIfPncrF/GhsGXt2PkTcN4NnQ1WfF8CZu
-	EAmw7k6nt98NEfiSViGOD1UTddtaGjlPmYoIf9w9mkGPXdYmZa5vcj6lVybrKr15LRtgkJLcE2Q
-	tsczsWYflawt8RIT6OrYxZSLCt7V4aDoeZT3/KrEaeyn65mriyqzmK74MRofq0Hb+i3pu6kuWEd
-	ArbsTI35LoAP7dMaZZHYRBYTqvdjFeQK9RDwCB1SWOMX5xEiJ4aJJgppYEkGhUp9mz0tDImMT+j
-	nHOc3QNC1Pigts7RrUjNjciCiEXSxtYZxRmbdA0eSNYnG/KG2NqoSu
-X-Received: by 2002:adf:e510:0:b0:441:1e41:19c with SMTP id ffacd0b85a97d-45ef6b5a7femr6668438f8f.20.1780179608629;
-        Sat, 30 May 2026 15:20:08 -0700 (PDT)
-Received: from puck (234.243.199.146.dyn.plus.net. [146.199.243.234])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45ef354cd7csm13443784f8f.18.2026.05.30.15.20.07
+        bh=tB5EL8Rhi9qKT2QoOgXudFsNdbKOqjFRFUpfHfwDsc0=;
+        b=VwEzHkHZus8UFhSDhq5D7JMXkdJZbRwFAVfHg7p5xZCr8LTxWocnfzWxFve6vU2n44
+         hzAWFklUBXkvf+3hok6GIiaTX3CZbhuIkd/11ZydDGa/mnp8eJb9B8y/IXAo+QSc7Rm8
+         7SGj2ejOVWB1aYr1JwYs3RrWj4AmxCD9bmocXBCvJGt/p7TA0fdBX7+eIH3ugrvs1VtH
+         soyrEuOVreExyoIggXGGibbQkNsDkL8G8PB2v7QW+A1w+rIs896AWusy+2mR1nYjqSgJ
+         Co1VFCWtpHyyOUUiPAGk1H1yvHnLDfX79Lv5koZeh6xvyUn6CooCUB7yTYCzMLzFnDvU
+         aVFA==
+X-Forwarded-Encrypted: i=1; AFNElJ+hO882v7bjnfeUZKzjgHCg0YWzDMffwqrgp6PvrYPd5sf48A1pmeUJFcHae8ZiSjuCROpkKJYNFg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5esAsW4qFmJqwxuaKdBJm0S/8sSmFmgry+g1mLS7W3foL9XQT
+	Nxd31i7UXYAjnAqSaqc5SCzhnqoAoPN1GJ6wKCBi1YE1d+W4A1kwVgTjW2PqgjGxZbM=
+X-Gm-Gg: Acq92OHXXzu66ZkU65KbRJMvSOxA3EU6imwqH47XIAOtJAUaaj9WgK8TBhCWXGtoVFi
+	wlek/GV3F83YNHWn2jvTwaudjtUqIWn+VmLM2O/lESSP8dXbHddYZv6C1Q4OiR1XfXD/jU7U37V
+	qWnwVbooq5AXnlGLHCyptgjztvYsGdJKjw5cHk9GlBQtPvWDbanxkwvzV0wGzZhK0A+pPfJ8qP9
+	JfNm77WZabSG7Bx+YP8//9bRMf2qyCIe/izIbSn/m6nWBUYxEuORgyDqsSrlK+EQe4Wgvw5tV87
+	rqinfS7TxYLK8kPTp9fXOUe/RVNG7emMev/gqEuDRVLd8AJWxMjkyaQ6QNpg4wSqj6Z9QI44N9K
+	Q1ARHSMvmcIJ3J3dbTx0o0f2YKxj0MjTFfzg5gzx4YnzT+XLbwYwIttSnFBgEDLmDA/tx+8dczS
+	x089wzhn8FhhOLm4qi8I2YkjcjoBMP/m0KNS1SvnmMjqcmZ4DPURSZEqWx
+X-Received: by 2002:a05:6808:1514:b0:467:70c:a7d1 with SMTP id 5614622812f47-485fb43370fmr4269971b6e.27.1780278464735;
+        Sun, 31 May 2026 18:47:44 -0700 (PDT)
+Received: from [127.0.0.1] ([99.196.133.55])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-48605f6a38esm3494847b6e.2.2026.05.31.18.47.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 May 2026 15:20:07 -0700 (PDT)
-From: Dylan Yudaken <dyudaken@gmail.com>
-To: trondmy@kernel.org,
-	anna@kernel.org,
-	linux-nfs@vger.kernel.org
-Cc: axboe@kernel.dk,
-	io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dylan Yudaken <dyudaken@gmail.com>
-Subject: [PATCH 2/2] nfs: expose FMODE_NOWAIT for O_DIRECT read files
-Date: Sat, 30 May 2026 23:19:47 +0100
-Message-ID: <20260530221947.49518-3-dyudaken@gmail.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20260530221947.49518-1-dyudaken@gmail.com>
-References: <20260530221947.49518-1-dyudaken@gmail.com>
+        Sun, 31 May 2026 18:47:43 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ io-uring@vger.kernel.org, linux-mm@kvack.org, 
+ Leon Romanovsky <leon@kernel.org>, Christoph Hellwig <hch@infradead.org>
+In-Reply-To: <20260528175905.1102280-1-willy@infradead.org>
+References: <20260528175905.1102280-1-willy@infradead.org>
+Subject: Re: [PATCH v2 0/2] Add bvec_folio and its kernel-doc
+Message-Id: <178027845531.370486.4907470779948430731.b4-ty@b4>
+Date: Sun, 31 May 2026 19:47:35 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-0.66 / 15.00];
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15.2
+X-Spamd-Result: default: False [-1.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_CONTAINS_FROM(1.00)[];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20251104];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[kernel-dk.20251104.gappssmtp.com:s=20251104];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.dk,vger.kernel.org,gmail.com];
-	TAGGED_FROM(0.00)[bounces-13571-lists,io-uring=lfdr.de];
-	RCVD_COUNT_FIVE(0.00)[5];
-	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-13572-lists,io-uring=lfdr.de];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
+	DMARC_NA(0.00)[kernel.dk];
+	DKIM_TRACE(0.00)[kernel-dk.20251104.gappssmtp.com:+];
 	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	FROM_HAS_DN(0.00)[];
 	TO_DN_SOME(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[dyudaken@gmail.com,io-uring@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
+	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	NEURAL_HAM(-0.00)[-1.000];
-	DKIM_TRACE(0.00)[gmail.com:+];
 	TAGGED_RCPT(0.00)[io-uring];
-	FREEMAIL_FROM(0.00)[gmail.com];
+	RCPT_COUNT_SEVEN(0.00)[7];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:rdns,sin.lore.kernel.org:helo]
-X-Rspamd-Queue-Id: 7222F613A3F
+	DBL_BLOCKED_OPENRESOLVER(0.00)[kernel-dk.20251104.gappssmtp.com:dkim,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
+X-Rspamd-Queue-Id: D73CB618AC9
 X-Rspamd-Action: no action
 X-Rspamd-Server: lfdr
 
-O_DIRECT reads already (mostly) handle async requests, with the
-exception of locking the inode for direct.
-Handle async requests properly by using nfs_start_io_direct_nowait,
-and then expose FMODE_NOWAIT since it's now properly supported.
 
-Signed-off-by: Dylan Yudaken <dyudaken@gmail.com>
----
- fs/nfs/direct.c |  5 ++++-
- fs/nfs/file.c   | 13 ++++++++++++-
- 2 files changed, 16 insertions(+), 2 deletions(-)
+On Thu, 28 May 2026 18:59:02 +0100, Matthew Wilcox (Oracle) wrote:
+> Add the convenience helper bvec_folio() to avoid references to bv_page.
+> Convert a few of the obvious users.
+> 
+> v2:
+>  - Tweak the kernel-doc (Christoph)
+>  - Add the bvec kerneldoc to the documentation build
+> 
+> [...]
 
-diff --git a/fs/nfs/direct.c b/fs/nfs/direct.c
-index 48d89716193a..bf0bad971d22 100644
---- a/fs/nfs/direct.c
-+++ b/fs/nfs/direct.c
-@@ -473,7 +473,10 @@ ssize_t nfs_file_direct_read(struct kiocb *iocb, struct iov_iter *iter,
- 		dreq->flags = NFS_ODIRECT_SHOULD_DIRTY;
- 
- 	if (!swap) {
--		result = nfs_start_io_direct(inode);
-+		if (iocb->ki_flags & IOCB_NOWAIT)
-+			result = nfs_start_io_direct_nowait(inode);
-+		else
-+			result = nfs_start_io_direct(inode);
- 		if (result) {
- 			/* release the reference that would usually be
- 			 * consumed by nfs_direct_read_schedule_iovec()
-diff --git a/fs/nfs/file.c b/fs/nfs/file.c
-index 25048a3c2364..c5eb22036e71 100644
---- a/fs/nfs/file.c
-+++ b/fs/nfs/file.c
-@@ -72,8 +72,13 @@ nfs_file_open(struct inode *inode, struct file *filp)
- 		return res;
- 
- 	res = nfs_open(inode, filp);
--	if (res == 0)
-+	if (res == 0) {
- 		filp->f_mode |= FMODE_CAN_ODIRECT;
-+		/* flag NOWAIT on read-only O_DIRECT files only */
-+		if ((filp->f_flags & O_DIRECT) &&
-+		    !(filp->f_mode & FMODE_WRITE))
-+			filp->f_mode |= FMODE_NOWAIT;
-+	}
- 	return res;
- }
- 
-@@ -705,6 +710,12 @@ ssize_t nfs_file_write(struct kiocb *iocb, struct iov_iter *from)
- 
- 	trace_nfs_file_write(iocb, from);
- 
-+	/*
-+	 * FMODE_NOWAIT is not set for writable files
-+	 */
-+	if (WARN_ON_ONCE(iocb->ki_flags & IOCB_NOWAIT))
-+		return -EAGAIN;
-+
- 	result = nfs_key_timeout_notify(file, inode);
- 	if (result)
- 		return result;
+Applied, thanks!
+
+[1/2] block: Add bvec_folio()
+      (no commit info)
+[2/2] block: Include bvec.h kernel-doc in the htmldocs
+      (no commit info)
+
+Best regards,
 -- 
-2.50.1
+Jens Axboe
+
+
 
 

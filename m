@@ -1,158 +1,148 @@
-Return-Path: <io-uring+bounces-13612-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13613-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by mail.lfdr.de with LMTP
-	id ATA6JVOxImrscAEAu9opvQ
-	(envelope-from <io-uring+bounces-13612-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Fri, 05 Jun 2026 13:21:55 +0200
+	id Qc0fJqfCImpSdQEAu9opvQ
+	(envelope-from <io-uring+bounces-13613-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Fri, 05 Jun 2026 14:35:51 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED818647AE5
-	for <lists+io-uring@lfdr.de>; Fri, 05 Jun 2026 13:21:54 +0200 (CEST)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 626ED64836A
+	for <lists+io-uring@lfdr.de>; Fri, 05 Jun 2026 14:35:51 +0200 (CEST)
 Authentication-Results: mail.lfdr.de;
-	dkim=pass header.d=kernel-dk.20251104.gappssmtp.com header.s=20251104 header.b=r3yGxRCx;
-	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13612-lists+io-uring=lfdr.de@vger.kernel.org" designates 172.105.105.114 as permitted sender) smtp.mailfrom="io-uring+bounces-13612-lists+io-uring=lfdr.de@vger.kernel.org";
-	dmarc=none;
+	dkim=pass header.d=debian.org header.s=smtpauto.stravinsky header.b=O33AwwK3;
+	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13613-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c09:e001:a7::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-13613-lists+io-uring=lfdr.de@vger.kernel.org";
+	dmarc=pass (policy=none) header.from=debian.org;
 	arc=pass ("subspace.kernel.org:s=arc-20240116:i=1")
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 9A182302DE1C
-	for <lists+io-uring@lfdr.de>; Fri,  5 Jun 2026 11:21:41 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 5D6743056352
+	for <lists+io-uring@lfdr.de>; Fri,  5 Jun 2026 12:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A61D407CCD;
-	Fri,  5 Jun 2026 11:21:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6174D32B9A2;
+	Fri,  5 Jun 2026 12:25:40 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 958D43D8137
-	for <io-uring@vger.kernel.org>; Fri,  5 Jun 2026 11:21:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B409221770B;
+	Fri,  5 Jun 2026 12:25:38 +0000 (UTC)
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780658499; cv=none; b=O1bBmqaATKgM4IOKCliqivPaF4rCD74NaS7JRQJ1Y6ezkh98Wl0kgXXSMhciQL5iubD+83efLwQj65k8XZvkGCxLi4V1hb8Ni0D7WUpCH981lAkyv7seQt4YKOOPZ8+8MnSz+x2xgAyNLOBxivrkgQ+ua2X3XuPZPvuZcCadNxU=
+	t=1780662340; cv=none; b=Qz0M2bOYHQS25jGFJKERXMnFp5sZguWz3e1DZHSLKfju8ASJVToFBIuQYfNrtz8oMe4FwLr7sjx765rI6Iw1XWFHVabVtjhj0KidtmJEsL9xf3Z1bSXUag29eEqUeQQ1XEjXcS6kFj3obSN7L53s9ix6/VINgzat4tlZG01Prwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780658499; c=relaxed/simple;
-	bh=hgqRpZbOUEZXd4Qi4NwddlSDDWqe/FPbm3DOSkVfurw=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=LOkBaVapJvi5R+MbMOPxGiHUA7WPZzcb6igSWPsEmg8K3FitPUIGeNxrCLREnfKfc6lrYWcXnNwytmYf60PzLbJ9fqEKgE/4VpVLt1SHp2xpm8KLl9Un4EItW9jpz74EiakW2BOWABbwML0t5dqBm+lthL7717PXKBXzhnGjdPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=r3yGxRCx; arc=none smtp.client-ip=209.85.167.177
-Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-486304fa184so1419090b6e.1
-        for <io-uring@vger.kernel.org>; Fri, 05 Jun 2026 04:21:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1780658496; x=1781263296; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SNa/02L3ctbj2gkZFvzjHgndeIXLqv08D8Y5YnC2aOQ=;
-        b=r3yGxRCxwSkM6Uc0BtD7nf+a3mKL4S3+OOUuaYoswqpL04vrjLIH2YG49mrseBEKZe
-         JSBZY7k0eIEkPWF7snhy/Z90EbVnfKzeSozlmsy0TkKDUCyOmFd4M/WyxNf8pU+/z1ul
-         gpqIvdaZfc6tnWtxrGZCQdNCN1LCVyRYoI3wcEn3xBdpV79al4Oq7uhDrqyEBKAQYfAD
-         /UdDZpAHdDr7MjbaPrh5Mn4JQzjQVxNHU8XaNUi8AO00BdXAdXtVZJXHIwEL/gqEAi3h
-         0SzKPEX273P1uoDX5VInZYq8KXFNILe6kfousEBe26stWd90qT+Y8PNeqz6mGBRcn5ug
-         FCoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780658496; x=1781263296;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=SNa/02L3ctbj2gkZFvzjHgndeIXLqv08D8Y5YnC2aOQ=;
-        b=UEX4JqELHb0DnkCsMCbxSJXQJTtGaKP6RUB42WJHUwlhKCAu9A0Wf/aj7PCRkad7w5
-         iKZIwOFWa18HdSlc/MoIKjy+hiMFVINWq86TVEc5y9DfpUVOTK21MsRafW+MByoZaX/R
-         BPbskrBUMA0mGvMeo6reTePLiw9FDoqIodrTXfNy5ZL59Yj/y7wkSkjhY3A9DgSNqm7g
-         0RTVko+ldfTZm+dyDNudIgJUsJEhYiWnjOgek+fuECbKdJxqsF7ESVxrMgKrHyDRkEO/
-         QtdZDGrCleUccO2AKjqonwlDY97aL8pVlgut2THehHf7p1QJqMfeaHi24eaRTUWEi/Jg
-         3Bag==
-X-Gm-Message-State: AOJu0YwH0DL1T2zTcrgI+QMVX1ar1AhUMqFTziXgxzoZvkakwkcz6Rrq
-	riDck6en2bWouVNBytFYHNsi1Dd8A1wX8xuespai7OEmfi3+mCIif2pHb/yeZdiJBMs=
-X-Gm-Gg: Acq92OFuvGx0p3Nmc5heOemMueHT7liPn6vAoTGFnCXyRIkVjfq6kw1cf0bOVC0TsKt
-	Kpl+YjNqPZGszx1UY+gWjNyxNzAvbBQhgA057DD24dsa1VYTpdZZoTIYOW4Va9G8VbnZ5vAeH3b
-	Qxtfc22D18TdvMpzEguN/Bc2eAgjgNuPjtxma613IG73u2Gup6zJQUjZ9cF0Vtkqic1nTA9vZKy
-	JYPAc9YCAtb2KPtGA2+taUSyFVM6e7FBTja7ZDQzT1v+i7svJBYkxWjhvOj8ZKak7mXt9mCiWem
-	KUV+3ionmnZYZRyTPYEg4R+NkAtKd4cw/6rAt5Rd9HkQnemU3bmV+RcVZ7bcJlY14lELxwj9qen
-	xNEqnY4IKohSOt7+untOTNKFLr58uk5OSiBSL16NxBQA9wYZ+Z6Q1KOhx76RuoVFNjPOyC+uL6H
-	LxZ+OqD3G9rQis5bi+5BqpStZapi42oalEljXFuqq7FXDWygI5ngDtwk2WJ14iI0eWAjyOxTF/b
-	ihx4vFwy7PQp6E=
-X-Received: by 2002:a05:6808:1b0e:b0:479:e7c7:dc76 with SMTP id 5614622812f47-4868df5a0camr1715349b6e.26.1780658496070;
-        Fri, 05 Jun 2026 04:21:36 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-4865b760799sm6634155b6e.7.2026.06.05.04.21.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jun 2026 04:21:35 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org, 
- =?utf-8?q?Cl=C3=A9ment_L=C3=A9ger?= <cleger@meta.com>
-In-Reply-To: <20260604160715.2482972-1-cleger@meta.com>
-References: <20260604160715.2482972-1-cleger@meta.com>
-Subject: Re: [PATCH] io_uring/net: inherit IORING_CQE_F_BUF_MORE across
- bundle recv retries
-Message-Id: <178065849466.805549.13653501857626235057.b4-ty@b4>
-Date: Fri, 05 Jun 2026 05:21:34 -0600
+	s=arc-20240116; t=1780662340; c=relaxed/simple;
+	bh=7hiGcFLxFEKhHkZjVyJqJBXCTKtT6gXdmQ9JGqsFrVs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QjNYGHw7HAa+9UW2OeyFAlsm6+2hI6sOd12W4v2PM2oolHubS78Dl1ZUA37Xh5IEJJxJlt9Wfa9XV6H9d5o3MgFBDa8mSt8EPQ9wLAsj/cZOfL/HUhtbQI9NyTow3Bad+ZdVoraZakqV7w4O39GwmKmSoJDpSvJJCyFNDbPyhi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=O33AwwK3; arc=none smtp.client-ip=82.195.75.108
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
+	s=smtpauto.stravinsky; h=X-Debian-User:In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=554cJHTZWjVGBaLg4qLyp/xmftBxh0/L7bcES1SXh00=; b=O33AwwK3/CjjUs+yB1ErwPMdbt
+	FD+oeo1ZO6j36NurPsHeHl41fV3SewL9z8gH0JLY3rqF+25F3LTO1iVDxPAOq3IbHGsM8EjvLmdsn
+	B6p+HOzJTE06Y1ayqlUcMlqbB/rUzsTKI2AffP7G92bdIyYsVlP+MYeSXfZ7hfWken05E5tJbTj2P
+	bronOdTVniE7SNHGiCLQjV7XIVezlG5PNbjeWLDLZ3p1SJjt8DgvefiolCXvYXVBxqJjsi/V/yk6i
+	3QSD5ANTVxYRmqA0OFav3OnSoPHRYIttZfJD5pi9qoiZjXo4eg0O3UOlZaw3D7lZylF/Wnk2Um2D9
+	xyXdOt9Q==;
+Received: from authenticated-user
+	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.96)
+	(envelope-from <leitao@debian.org>)
+	id 1wVTc6-005HwE-1G;
+	Fri, 05 Jun 2026 12:25:26 +0000
+Date: Fri, 5 Jun 2026 05:25:21 -0700
+From: Breno Leitao <leitao@debian.org>
+To: "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Kuniyuki Iwashima <kuniyu@google.com>, Willem de Bruijn <willemb@google.com>, metze@samba.org, 
+	axboe@kernel.dk, Stanislav Fomichev <sdf@fomichev.me>
+Cc: io-uring@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
+	Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH net-next v3 0/4] net: move .getsockopt away from __user
+ buffers (update 1)
+Message-ID: <aiK94g9vphHls3x_@gmail.com>
+References: <20260408-getsockopt-v3-0-061bb9cb355d@debian.org>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260408-getsockopt-v3-0-061bb9cb355d@debian.org>
+X-Debian-User: leitao
 X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-1.16 / 15.00];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
-	R_DKIM_ALLOW(-0.20)[kernel-dk.20251104.gappssmtp.com:s=20251104];
+	DMARC_POLICY_ALLOW(-0.50)[debian.org,none];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	R_DKIM_ALLOW(-0.20)[debian.org:s=smtpauto.stravinsky];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCPT_COUNT_TWO(0.00)[2];
-	RECEIVED_HELO_LOCALHOST(0.00)[];
-	FORGED_RECIPIENTS(0.00)[m:io-uring@vger.kernel.org,m:cleger@meta.com,s:lists@lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	DMARC_NA(0.00)[kernel.dk];
-	MIME_TRACE(0.00)[0:+];
 	RCVD_TLS_LAST(0.00)[];
-	FORWARDED(0.00)[lists@lfdr.de];
-	FORGED_SENDER(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
+	FORGED_RECIPIENTS(0.00)[m:davem@davemloft.net,m:edumazet@google.com,m:kuba@kernel.org,m:pabeni@redhat.com,m:horms@kernel.org,m:kuniyu@google.com,m:willemb@google.com,m:metze@samba.org,m:axboe@kernel.dk,m:sdf@fomichev.me,m:io-uring@vger.kernel.org,m:bpf@vger.kernel.org,m:netdev@vger.kernel.org,m:torvalds@linux-foundation.org,m:linux-kernel@vger.kernel.org,m:kernel-team@meta.com,s:lists@lfdr.de];
+	RCVD_COUNT_THREE(0.00)[4];
+	FORGED_SENDER(0.00)[leitao@debian.org,io-uring@vger.kernel.org];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13612-lists,io-uring=lfdr.de];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	TAGGED_FROM(0.00)[bounces-13613-lists,io-uring=lfdr.de];
+	MIME_TRACE(0.00)[0:+];
+	FORWARDED(0.00)[lists@lfdr.de];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
 	FORGED_SENDER_FORWARDING(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel-dk.20251104.gappssmtp.com:+];
 	ALIAS_RESOLVED(0.00)[];
-	TAGGED_RCPT(0.00)[io-uring];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[leitao@debian.org,io-uring@vger.kernel.org];
+	DKIM_TRACE(0.00)[debian.org:+];
 	FORGED_RECIPIENTS_FORWARDING(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,vger.kernel.org:from_smtp]
+	TAGGED_RCPT(0.00)[io-uring];
+	TO_DN_SOME(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[vger.kernel.org:from_smtp,sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
 X-Rspamd-Server: lfdr
-X-Rspamd-Queue-Id: ED818647AE5
+X-Rspamd-Queue-Id: 626ED64836A
 
-
-On Thu, 04 Jun 2026 09:07:13 -0700, Clément Léger wrote:
-> When a bundle recv retries inside io_recv_finish(), the merge logic
-> OR the saved cflags from the previous iteration with the cflags
-> returned by the new iteration:
->   cflags = req->cqe.flags | (cflags & CQE_F_MASK);
+On Wed, Apr 08, 2026 at 03:30:28AM -0700, Breno Leitao wrote:
+> Currently, the .getsockopt callback requires __user pointers:
 > 
-> Bits listed in CQE_F_MASK are inherited from the new iteration, and
-> all other bits (notably IORING_CQE_F_BUFFER and the buffer ID) come
-> from the saved cflags. Before this change CQE_F_MASK covered only
-> IORING_CQE_F_SOCK_NONEMPTY and IORING_CQE_F_MORE.
+>   int (*getsockopt)(struct socket *sock, int level,
+>                     int optname, char __user *optval, int __user *optlen);
 > 
-> [...]
+> This prevents kernel callers (io_uring, BPF) from using getsockopt on
+> levels other than SOL_SOCKET, since they pass kernel pointers.
+> 
+> Following Linus' suggestion [0], this series introduces sockopt_t, a
+> type-safe wrapper around iov_iter, and a getsockopt_iter callback that
+> works with both user and kernel buffers. AF_PACKET and CAN raw are
+> converted as initial users, with selftests covering the trickiest
+> conversion patterns.
 
-Applied, thanks!
+Quick update on this effort.
 
-[1/1] io_uring/net: inherit IORING_CQE_F_BUF_MORE across bundle recv retries
-      commit: ed46f39c47eb5530a9c161481a2080d3a869cfaf
+All proto_ops users have been converted to getsockopt_iter and submitted.
 
-Best regards,
--- 
-Jens Axboe
+Most conversions are already in linux-next. Three remain:
 
+1) rds: Under review
+   https://lore.kernel.org/all/20260605-getsock_more-v2-3-80f38cdb8706@debian.org/
 
+2) smc: Submitted today. This is only limited to UBUF right now
+   https://lore.kernel.org/all/20260605-getsockopt_smc-v1-1-65da62fa44c4@debian.org/
 
+3) CAN drivers: Reviewed and acked, pending Marc's merge
+   https://lore.kernel.org/all/f83e25e1-b9f5-4810-bbd6-fdb8d2a10c8e@hartkopp.net/
+
+Once these are merged, I'll rename getsockopt_iter to getsockopt and
+remove the legacy path.
+
+Next, I'll convert struct proto the same way to eliminate the remaining
+userspace optlen/optval pointers.
+
+After that, io_uring getsockopt operations will be unblocked.
 

@@ -1,120 +1,128 @@
-Return-Path: <io-uring+bounces-13617-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13618-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by mail.lfdr.de with LMTP
-	id yyfSMWZKI2oJoAEAu9opvQ
-	(envelope-from <io-uring+bounces-13617-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Sat, 06 Jun 2026 00:15:02 +0200
+	id Z3HMIgGBJGpG7QEAu9opvQ
+	(envelope-from <io-uring+bounces-13618-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Sat, 06 Jun 2026 22:20:17 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 162E864B95A
-	for <lists+io-uring@lfdr.de>; Sat, 06 Jun 2026 00:15:02 +0200 (CEST)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25DA064E394
+	for <lists+io-uring@lfdr.de>; Sat, 06 Jun 2026 22:20:17 +0200 (CEST)
 Authentication-Results: mail.lfdr.de;
-	dkim=pass header.d=kernel.org header.s=k20260515 header.b="S5B/Ni28";
-	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13617-lists+io-uring=lfdr.de@vger.kernel.org" designates 172.234.253.10 as permitted sender) smtp.mailfrom="io-uring+bounces-13617-lists+io-uring=lfdr.de@vger.kernel.org";
-	dmarc=pass (policy=quarantine) header.from=kernel.org;
+	dkim=none;
+	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13618-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c09:e001:a7::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-13618-lists+io-uring=lfdr.de@vger.kernel.org";
+	dmarc=none;
 	arc=pass ("subspace.kernel.org:s=arc-20240116:i=1")
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id BBFE1301829C
-	for <lists+io-uring@lfdr.de>; Fri,  5 Jun 2026 22:15:00 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 69956300D742
+	for <lists+io-uring@lfdr.de>; Sat,  6 Jun 2026 20:20:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 572B43A873B;
-	Fri,  5 Jun 2026 22:15:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C886305660;
+	Sat,  6 Jun 2026 20:20:14 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from cae.in-ulm.de (cae.in-ulm.de [217.10.14.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47DB33CBE6B
-	for <io-uring@vger.kernel.org>; Fri,  5 Jun 2026 22:14:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC36B24A05D;
+	Sat,  6 Jun 2026 20:20:11 +0000 (UTC)
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780697700; cv=none; b=aa3jNrI0UK7tyhA/bx3Q2IXODlJruqKU2cvYpeVJ4MybL5pVhEXsS/0mSFF2POkYMUZRzSlaVrx95yCRPsw6J1yxfJsoH0ig5g9I8pK2BPRPCbg4NFGj/LbcH1NhBfX8YceenwF1NyAJlaYzefMPTKhzOnj6OJYC5lVf4qSHR3c=
+	t=1780777213; cv=none; b=sEjqQJbaxiEgprkfm0y2o8/TU7zH5p1/h0MHrhgEXc0cYGPSrm+7logjIDDOG/eSorbWZ8M9yqPN1UIiVdaHrA4zLVIefHwaL1cSTSVfUoyyUM3pBJ7BGwUnNqh44NfpgNxQP+dBcGPU4DcxZTyVArslmUECiMZnDmNBzSCpfGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780697700; c=relaxed/simple;
-	bh=owIGJzutine+z63NXkBU00TVEy+7LhtdbWnJDbt/GcI=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=sOhi2jsy3YCmW4LPFX9xHpJEc4TQld4A/o2Swb64xkz6IFTclAdAolH0HgVgzSIOMupHPld5NbEDsZHxY+T8uHw6ijsN5zosaUSvacTyjlDmgZszMU08dzFY39Y52+1yiCXCBlnJDbqFCi98LdGZua8QpshIwr/fxhmLxOmeA4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S5B/Ni28; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 255C21F00893;
-	Fri,  5 Jun 2026 22:14:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780697699;
-	bh=9uDan0MZvGDiLqmItSHSAXcAoNpSgOuMj24z67v8NiM=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc;
-	b=S5B/Ni282a4U2lX86LPZUCFQ1113qByhaB/BFg+RWVBtnUEQeRTsYN8r6XA8F958f
-	 deTakMJ3w8vZT11ZF1t/X8iIzMdWnruVY3cMQpxmB+WEDS8AuZvhN8TrNQyRrNz1OE
-	 bFUI2J1OfQKBBfBEDV4BiDBZCelTyx0le3Dt0l+nqM6JH65UhB7OtXWp6GA4GL7x1z
-	 3jTTyBRCQ61/smqaonM5crqBvAe4uUDZ2yfuWQJBsAgj6ReYgVTV/sntRlclD33Bhj
-	 hRMv8EQ5qOya1KXMUy49Qll8YPCB7+SQQtbo5KGvHy5ZPyAD11/mjEH0tyrOh1pxOH
-	 3pwtGZJNJQXmA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 93CFB3930C04;
-	Fri,  5 Jun 2026 22:15:00 +0000 (UTC)
-Subject: Re: [GIT PULL] io_uring fix for 7.1-rc7
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <956f675b-1106-4e26-86ec-8592bafd99ad@kernel.dk>
-References: <956f675b-1106-4e26-86ec-8592bafd99ad@kernel.dk>
-X-PR-Tracked-List-Id: <io-uring.vger.kernel.org>
-X-PR-Tracked-Message-Id: <956f675b-1106-4e26-86ec-8592bafd99ad@kernel.dk>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git tags/io_uring-7.1-20260605
-X-PR-Tracked-Commit-Id: ed46f39c47eb5530a9c161481a2080d3a869cfaf
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: c10130c234c81f4a7a143edbf413080235f8d8ce
-Message-Id: <178069769924.3938369.7693869478519494336.pr-tracker-bot@kernel.org>
-Date: Fri, 05 Jun 2026 22:14:59 +0000
+	s=arc-20240116; t=1780777213; c=relaxed/simple;
+	bh=PCAeVasGht5Svyz2Hi9WKxt4deJ9zATjbaBdSwnu/UU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aBTkpnRhT7HcFK+xCEz8wVLoA3RTAeD1fjIukSHcRGpO5bz3hHPiRonhmWOtAlVRb6DSm3iECcNUprnAO1TjGeIx8t99yrHo7ovxDon0hSiMG77HLnLIRRBZgTgwWcjbRO/NkeR3nltKq+dXQHuw1nAsl+l9PEq0BLXJ5aTapJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=c--e.de; spf=pass smtp.mailfrom=c--e.de; arc=none smtp.client-ip=217.10.14.231
+Received: by cae.in-ulm.de (Postfix, from userid 1000)
+	id A4750140033; Sat,  6 Jun 2026 22:11:48 +0200 (CEST)
+From: "Christian A. Ehrhardt" <lk@c--e.de>
 To: Jens Axboe <axboe@kernel.dk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, io-uring <io-uring@vger.kernel.org>
+Cc: "Christian A. Ehrhardt" <lk@c--e.de>,
+	Tip ten Brink <tip@tenbrinkmeijs.com>,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] iouring: Fix min_timeout behaviour
+Date: Sat,  6 Jun 2026 22:11:20 +0200
+Message-Id: <20260606201120.1441447-1-lk@c--e.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+X-Spamd-Result: default: False [0.04 / 15.00];
 	MID_CONTAINS_FROM(1.00)[];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	R_MISSING_CHARSET(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20260515];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FORWARDED(0.00)[lists@lfdr.de];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13617-lists,io-uring=lfdr.de];
-	TO_DN_ALL(0.00)[];
-	FORGED_SENDER(0.00)[pr-tracker-bot@kernel.org,io-uring@vger.kernel.org];
-	FORGED_RECIPIENTS(0.00)[m:axboe@kernel.dk,m:torvalds@linux-foundation.org,m:io-uring@vger.kernel.org,s:lists@lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	FROM_NO_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FORGED_SENDER_FORWARDING(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[pr-tracker-bot@kernel.org,io-uring@vger.kernel.org];
-	RCPT_COUNT_THREE(0.00)[3];
-	ALIAS_RESOLVED(0.00)[];
-	TAGGED_RCPT(0.00)[io-uring];
+	TO_DN_SOME(0.00)[];
+	DMARC_NA(0.00)[c--e.de];
+	FORGED_RECIPIENTS(0.00)[m:axboe@kernel.dk,m:lk@c--e.de,m:tip@tenbrinkmeijs.com,m:io-uring@vger.kernel.org,m:linux-kernel@vger.kernel.org,s:lists@lfdr.de];
+	FORWARDED(0.00)[lists@lfdr.de];
+	TAGGED_FROM(0.00)[bounces-13618-lists,io-uring=lfdr.de];
 	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FORGED_SENDER(0.00)[lk@c--e.de,io-uring@vger.kernel.org];
+	RCVD_COUNT_THREE(0.00)[4];
 	FORGED_RECIPIENTS_FORWARDING(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[vger.kernel.org:from_smtp,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+	RCPT_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[lk@c--e.de,io-uring@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FORGED_SENDER_FORWARDING(0.00)[];
+	R_DKIM_NA(0.00)[];
+	ALIAS_RESOLVED(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	TAGGED_RCPT(0.00)[io-uring];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[vger.kernel.org:from_smtp,c--e.de:mid,c--e.de:from_mime,c--e.de:email,sto.lore.kernel.org:helo,sto.lore.kernel.org:rdns]
 X-Rspamd-Server: lfdr
-X-Rspamd-Queue-Id: 162E864B95A
+X-Rspamd-Queue-Id: 25DA064E394
 
-The pull request you sent on Fri, 5 Jun 2026 13:37:03 -0600:
+The wakeup condition if a min timeout is present and has
+expired is that at least _one_ CQE was posted. Thus set
+the cq_tail target to ->cq_min_tail + 1. Without this
+commit a spurious wakeup can result in a premature wakeup
+because io_should_wake() will return true even if _no_ CQE
+was posted at all.
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git tags/io_uring-7.1-20260605
+Tested by running the liburing testsuite with no regressions.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/c10130c234c81f4a7a143edbf413080235f8d8ce
+Additionally, tested by turning all calls to schedule() in
+io_uring/wait.c into calls to schedule_timeout(1) to force
+the spurious wakeups. With these spurious wakeups the
+min-timeout.t test fails before and passes after this commit.
 
-Thank you!
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Tip ten Brink <tip@tenbrinkmeijs.com>
+Fixes: e15cb2200b93 ("io_uring: fix min_wait wakeups for SQPOLL")
+Cc: stable@vger.kernel.org
+Signed-off-by: Christian A. Ehrhardt <lk@c--e.de>
+---
+ io_uring/wait.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/io_uring/wait.c b/io_uring/wait.c
+index ec01e78a216d..d005ea17b35f 100644
+--- a/io_uring/wait.c
++++ b/io_uring/wait.c
+@@ -103,7 +103,7 @@ static enum hrtimer_restart io_cqring_min_timer_wakeup(struct hrtimer *timer)
+ 	}
+ 
+ 	/* any generated CQE posted past this time should wake us up */
+-	iowq->cq_tail = iowq->cq_min_tail;
++	iowq->cq_tail = iowq->cq_min_tail + 1;
+ 
+ 	hrtimer_update_function(&iowq->t, io_cqring_timer_wakeup);
+ 	hrtimer_set_expires(timer, iowq->timeout);
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.43.0
+
 

@@ -1,171 +1,173 @@
-Return-Path: <io-uring+bounces-13627-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13628-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by mail.lfdr.de with LMTP
-	id 34JRL3PhJWpXNAIAu9opvQ
-	(envelope-from <io-uring+bounces-13627-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Sun, 07 Jun 2026 23:24:03 +0200
+	id GW0wDCjlJWo5NQIAu9opvQ
+	(envelope-from <io-uring+bounces-13628-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Sun, 07 Jun 2026 23:39:52 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CF5D6519F7
-	for <lists+io-uring@lfdr.de>; Sun, 07 Jun 2026 23:24:03 +0200 (CEST)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89A2F651B8D
+	for <lists+io-uring@lfdr.de>; Sun, 07 Jun 2026 23:39:51 +0200 (CEST)
 Authentication-Results: mail.lfdr.de;
-	dkim=pass header.d=gmail.com header.s=20251104 header.b=gTrZ9dNw;
-	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13627-lists+io-uring=lfdr.de@vger.kernel.org" designates 172.234.253.10 as permitted sender) smtp.mailfrom="io-uring+bounces-13627-lists+io-uring=lfdr.de@vger.kernel.org";
-	dmarc=pass (policy=none) header.from=gmail.com;
+	dkim=pass header.d=kernel-dk.20251104.gappssmtp.com header.s=20251104 header.b=BoRmB7qH;
+	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13628-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c0a:e001:db::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-13628-lists+io-uring=lfdr.de@vger.kernel.org";
+	dmarc=none;
 	arc=pass ("subspace.kernel.org:s=arc-20240116:i=1")
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 8CEE6300D86A
-	for <lists+io-uring@lfdr.de>; Sun,  7 Jun 2026 21:23:06 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 1FAAF301E209
+	for <lists+io-uring@lfdr.de>; Sun,  7 Jun 2026 21:38:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A09D314A8D;
-	Sun,  7 Jun 2026 21:23:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82FEB64A8C;
+	Sun,  7 Jun 2026 21:38:58 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0CE2E7362
-	for <io-uring@vger.kernel.org>; Sun,  7 Jun 2026 21:23:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72BED283FE5
+	for <io-uring@vger.kernel.org>; Sun,  7 Jun 2026 21:38:56 +0000 (UTC)
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780867385; cv=none; b=GXjFgSY+Z/tgSLJMOGVJHPHkgG1L7iDhLic4iaPJpUHJrUCb3lvzlxE5VVg2cKmtr9O8YD+o1vL8sR4nfcY0FAtx0INVvicIGONOWk29+fIC1+t+S510XuWyy0kRQlWh24yQXXag6Y9JHDwauGDlSyBjcTee66srTgTEpj8fVSs=
+	t=1780868338; cv=none; b=Xj6Cn89EY7r4LTiwZKtyq/020PKV4c+1rpIyTuBMFpKfL5AzJUL9Bg7YFrrudKbaqb9+3x5TB0gjA8iaYPYDRGlFU0MNF2KfMfMar8aH0f7gyuJ+VW0epM5VPaAsqT3JujALHDjHNwX6d1YwuWzTRc2S7qXGhDwn+OQlSvu2mLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780867385; c=relaxed/simple;
-	bh=EEq5qvhA49r12mr+gMOEoD/0WfBAlttJQu44IQmu5X8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HsxeK8k7skqQ/7a0JN7mVm2GeP7XMfh0qqpRhsr+y+PCWSrqNGmAwePvZYoeJnjPRuDSRzlYFYjF+9o9vIULx2OPbvwAlgV7eQNzYyV+svxtTrFKFqWjYmrfkOZULr7Zs3E+beM1xB3RzR3xzOrNPER4Rwg/+N+jd8z2yqi9wKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gTrZ9dNw; arc=none smtp.client-ip=209.85.221.43
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-45fd461e4a5so2540443f8f.0
-        for <io-uring@vger.kernel.org>; Sun, 07 Jun 2026 14:23:04 -0700 (PDT)
+	s=arc-20240116; t=1780868338; c=relaxed/simple;
+	bh=RSilU2t/ZER4YCl5+tSWK0ZW203lZyAlex34mPOIeMA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F+zdtHE9wqX8Nm9zMzmuwt/p+WGwI2LdRnJpC/BvNS2bRUDNgcFPWEABI9gSnEEfSu2/AcPzOvcNbTP++5K0a8nVgKdXZBHO7M2euaw2QVwvRz1zw/O7ZoJwnb83vXDB7qwepzWnnMGpQlKybO5iDwQgiUNUhQYTw19gcatAUPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=BoRmB7qH; arc=none smtp.client-ip=209.85.210.53
+Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-7e6e21c47e6so1590155a34.1
+        for <io-uring@vger.kernel.org>; Sun, 07 Jun 2026 14:38:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780867383; x=1781472183; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xDTJqgjzotVu57/W16f4O0oCW/R4B2iNnJZk0eAPd8o=;
-        b=gTrZ9dNwk//ZhNeEyj8uaIZDMk/dkN7yNzzEynzrKNRj2v38I4A+faBa1KeHpOQK9k
-         KbnHgaRQPsAp1rTb3B30+AxAoPASxPk9Kvgy/YhZnDejRJDLG1kRJQ9sx7p8/7vrR0G0
-         TeZF500x95jYczIoK64fNqIhRCKrYkYjrSkPrxJC2ZqZAKEBeLa+dx3lxZrBHb+yT9Ik
-         OH1i5ZGtOf0fixtYs0uaoAjhL4OnJJ7RWynkte5KR4zBANhLhEfsJmDAOWGFikjZ6ev6
-         JUKcV00JsKHxt2wftpJwASeZvl9+ut1HJZEwMN0nN1H2/56Z/QfajiwOzFFKy9rQPjs/
-         u4JQ==
+        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1780868335; x=1781473135; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZJ2+eSNrZVDWt0D+Gk83Gowj8MGt1KeKbFMXJpG6Hlk=;
+        b=BoRmB7qHGs694fdS68DcXsWEsglUx7QnP3fi7EUrEUVTlESrbGsC9dFT+4s08nJDxf
+         zrRE02FCDB6CkCoruHo5UU5BX9ZCTqpUU3shceL+MLhVYor2z0LgDCQwQ/xGO/zcuu1a
+         A0ob3G5WDfSHyyjWCtkwMxd2pigfyZBsDMUGKYasAXgOvA0KSLvcdZ2zo9Zz/fdqQ66R
+         YJVmQcLGsAI2jZUDwpRPJhKlVk0nvFagVmt9L4OJVmC+aFBSrET/TbmHKxca7eNa6Yfx
+         VLnX1L6OgeuAthgGBqakj9oK3WwlUQGjlVhVkmeLXryhLykKUsvcjNpHCVLD3vELPKcy
+         Khog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780867383; x=1781472183;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=xDTJqgjzotVu57/W16f4O0oCW/R4B2iNnJZk0eAPd8o=;
-        b=TO79CXmUy/gt/uqxD0P4PARDtI9qbevk707Fq7Zd4SYs1MG3heC4HM8sGlVQjvkb8h
-         EwxJA1/v8bWBF/wvMWLxO1fbCyR5L7DFxlkS1ll6fHfjtRuIofDQM1IMd8vup7Vgy0Eo
-         Y+2PUjQg9Pin7QkrLnB8rY6rMW7ugH9hXaviLRevIKzWwyKj7PKQ2fs1PMc4LJce6D+f
-         kQzEHa3eOMRowGfOB+TSA6+obg8+rnDmSpE1zvDvfS16deSwUeTJsir4XREp/9h2uZj7
-         /M68bULCrzyVwuTNuU87Wi4fhD4RyroD7PZM6X1w54X8TzmwT3xbz1q+NYSnas7jZQZy
-         g5KA==
-X-Forwarded-Encrypted: i=1; AFNElJ8N6cTRRswcSxxTJlU0oa3qkyISdIII+74iEZIYQSgN+0R2d7jmGgAHLsKVkfbCNt0lWVPv9po3oQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxodpPUxw7Oorr/iyPPOafrbB9qF7qGoHNIWqW8KPgK5J6mwo6b
-	AQZZ5FpdL0oJPmN5xd+kfoYVquT7uzWmWgddFy0qUMun4Is9nUuqP7bK
-X-Gm-Gg: Acq92OHyN3IxJVeWvTQqAhZbGHPTWucmZw+KnMqmAw7kD0r03NpJyGbz3d1j1m8b7ww
-	6kO4rgKJkEopNgNNk6NJI/K2etJXDAEQL51XIlNBd1QKwP6YnvReis9i9ySmLn6xWm2AKYCpo9N
-	wPZuMOW18kLg+nhIQNcOvYxqpG+ku+7iy7Uf3UYksxxVJrYDYz88twiUGoDfSz7Hp8IS2fKGDIy
-	RdimBL1905P2WewFUooVRIYUU0YIbTxk/F8hX7GiFMcAhI9G6e+4dbWY5NG0/yWeNjPthVswbiA
-	e37Z/sFgMonrm44tC+SKWntdxZIfmLG2tIqm0RmVnXP6ydLemWnj+5e8C1d1+OUPnwt0H99NG8U
-	jol43Da7lOvyZUphxvABdXs/rmAyGbYon23vcsO3zPS51ChsOW7eICs8jief+ahISHYb670F459
-	0bIjz8w3UiF9P3O61vpjuCn2XMyP7DMx0hU9+o7sw7
-X-Received: by 2002:a5d:6190:0:b0:45e:ec18:f20a with SMTP id ffacd0b85a97d-46030759730mr13984648f8f.32.1780867382776;
-        Sun, 07 Jun 2026 14:23:02 -0700 (PDT)
-Received: from localhost ([217.199.144.50])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4601f35fb24sm48890167f8f.34.2026.06.07.14.23.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Jun 2026 14:23:02 -0700 (PDT)
-From: Nyakundi Emmanuel <nyariboemmanuel8@gmail.com>
-To: federico.brasili@gmail.com
-Cc: axboe@kernel.dk,
-	io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Nyakundi Emmanuel <nyariboemmanuel8@gmail.com>
-Subject: Re: [BUG io_uring] Failed RECVSEND_BUNDLE can persistently shrink non-INC pbuf ring len and affect later READ operations
-Date: Mon,  8 Jun 2026 00:22:18 +0300
-Message-ID: <nyakundi-confirm-recvsend-bundle-20260607@gmail.com>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <CAAEr8jZDdiYB2vp9VJzSqq2J-GssH8GhrLYYn_2W2KAjYwDzSQ@mail.gmail.com>
-References: <CAAEr8jZDdiYB2vp9VJzSqq2J-GssH8GhrLYYn_2W2KAjYwDzSQ@mail.gmail.com>
+        d=1e100.net; s=20251104; t=1780868335; x=1781473135;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZJ2+eSNrZVDWt0D+Gk83Gowj8MGt1KeKbFMXJpG6Hlk=;
+        b=flZLr8jZjHMOyVDAT0tLmKAk1HDKqEaSXuiB1Y5tGilGFS623sa3VveuHNUyD1/6PP
+         IL7Yv1DJxfHgdoD+TpsDKZsFemquLdaQtte9PIfsmVa7CWycHXkI0Bto0eWZpi55jqMp
+         blpDqjPGT2I+ugCzRKLpTvO9XyISIC48nTf921reKso91WdS65AdiTiM/RTB2dCr9yyr
+         gWY3ECIkxmlwrdU7N3dIwYcfEeMWURpN1QBmRGnorZiB003peHXeHoh68uuPe4LjZcUO
+         OxbleGs9xH/4Q2QyItNo834tV/yztrP3pn5p5K6PNcPua5iRIXFgQnhMTTg25Kmnk0PD
+         9DmQ==
+X-Gm-Message-State: AOJu0YxH6SkwPeiQAsuOPnKsB/qqBIcxBawLdJK14jZI0XmpCh0zkgbM
+	ZA7cM70l8Rk9YbbZS1PAKwhZUF64WBBUQgwYzChztadsnPn7g8gdSjMRVx0vKfK0jWo=
+X-Gm-Gg: Acq92OH7XRQBRpTBc0eEWXYFEJY0Po9iOlrWQ6OuBTsxk295ZkFJ2HWPEoi4bIRApXC
+	/TO+EdAsSLneuP8yo6YCPN+5KpBOvr1CYDY2nB7KdlXPgiNBVsC+d6idFgAkbWdyd4cO+EgUevt
+	dkmEluM/jC85nUw27K3owtdowx8oq/wOXcYlEwnB4btDtluZCS2EgppkNXzpn1DTkwua1nMe7yd
+	BF+X+UXkezJyE2mnY+t9Yjkumrif8IzQM23dbJPx75E1HMtpZkEXsPMGBIMHG/ChPUTIDC3XpyM
+	6beLuJVuxR2Qxuu7wuU25n43PXvCprYeYTu3JkUSrU8lMRh5FN9YJTLaNgZkyGBMZhecYtB1xyb
+	6XCUu1ourCklJ4tYLIGsItN7OfujqvhhMXRjj37hSDJEvQDVPsBLkL38PYO2DI51/zyXah/quu2
+	976a2xzGdUHxadHjhyoyOvotO8eA4v1hfNMN4TPYMrhOf6F2icqYvaA5tEVK4KamIWBWbn2OzwE
+	OdhHVSlRfG9ehuNS+y+
+X-Received: by 2002:a05:6830:6d28:b0:7e3:d7d6:a4b7 with SMTP id 46e09a7af769-7e70c6884e7mr7674159a34.3.1780868335552;
+        Sun, 07 Jun 2026 14:38:55 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7e6e746a50bsm10658361a34.2.2026.06.07.14.38.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 07 Jun 2026 14:38:54 -0700 (PDT)
+Message-ID: <36351bf5-fb6a-4712-ae27-5b907452bdab@kernel.dk>
+Date: Sun, 7 Jun 2026 15:38:53 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [BUG io_uring] Failed RECVSEND_BUNDLE can persistently shrink
+ non-INC pbuf ring len and affect later READ operations
+To: Federico Brasili <federico.brasili@gmail.com>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <CAAEr8jbY60noGj1fw_k91UJRBkyiRVoS6=nLhZ7Svwidjn4CAA@mail.gmail.com>
+ <71417fb0-4060-4823-8e4f-f216ce0235d4@kernel.dk>
+ <CAAEr8jZDdiYB2vp9VJzSqq2J-GssH8GhrLYYn_2W2KAjYwDzSQ@mail.gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <CAAEr8jZDdiYB2vp9VJzSqq2J-GssH8GhrLYYn_2W2KAjYwDzSQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Rspamd-Action: no action
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20251104];
+	R_DKIM_ALLOW(-0.20)[kernel-dk.20251104.gappssmtp.com:s=20251104];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	TAGGED_FROM(0.00)[bounces-13628-lists,io-uring=lfdr.de];
+	FORGED_RECIPIENTS(0.00)[m:federico.brasili@gmail.com,m:io-uring@vger.kernel.org,m:linux-kernel@vger.kernel.org,m:federicobrasili@gmail.com,s:lists@lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13627-lists,io-uring=lfdr.de];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	RECEIVED_HELO_LOCALHOST(0.00)[];
-	FORGED_RECIPIENTS(0.00)[m:federico.brasili@gmail.com,m:axboe@kernel.dk,m:io-uring@vger.kernel.org,m:linux-kernel@vger.kernel.org,m:nyariboemmanuel8@gmail.com,m:federicobrasili@gmail.com,s:lists@lfdr.de];
+	DMARC_NA(0.00)[kernel.dk];
+	FROM_HAS_DN(0.00)[];
 	FREEMAIL_TO(0.00)[gmail.com];
-	FORWARDED(0.00)[lists@lfdr.de];
-	TO_DN_SOME(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.dk,vger.kernel.org,gmail.com];
-	FORGED_SENDER(0.00)[nyariboemmanuel8@gmail.com,io-uring@vger.kernel.org];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
+	FORWARDED(0.00)[lists@lfdr.de];
+	FORGED_SENDER(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[kernel-dk.20251104.gappssmtp.com:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	TO_DN_SOME(0.00)[];
 	FORGED_SENDER_FORWARDING(0.00)[];
 	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[nyariboemmanuel8@gmail.com,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[gmail.com:+];
+	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
+	RCPT_COUNT_THREE(0.00)[3];
 	ALIAS_RESOLVED(0.00)[];
 	FORGED_RECIPIENTS_FORWARDING(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[vger.kernel.org:from_smtp,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[kernel.dk:from_mime,kernel.dk:mid,vger.kernel.org:from_smtp,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
 X-Rspamd-Server: lfdr
-X-Rspamd-Queue-Id: 4CF5D6519F7
+X-Rspamd-Queue-Id: 89A2F651B8D
 
-On Sun, 7 Jun 2026, Federico Brasili wrote:
-> I found a reproducible io_uring provided-buffer ring issue on Ubuntu
-> kernel 7.0.0-22-generic.
->
-> A failed IORING_RECVSEND_BUNDLE receive on a non-INC provided-buffer
-> ring can persistently shrink the user-visible buffer descriptor length.
+On 6/7/26 2:08 PM, Federico Brasili wrote:
+> Hi Jens,
+> 
+> Sure, attaching the minimal reproducer and the output from my Ubuntu
+> 7.0.0-22-generic test system.
 
-Confirmed reproducible on:
+Great thanks, I'll take a look. For the record, please don't top post
+reply. It makes a mess of conversations on the mailing list.
 
-  Linux archlinux 7.0.11-arch1-1 #1 SMP PREEMPT_DYNAMIC
-  Tue, 02 Jun 2026 18:26:58 +0000 x86_64
-  Arch Linux (rolling)
+> The reproducer runs unprivileged and demonstrates:
+> 
+> 1. non-INC provided-buffer ring with entry0.len = 4096 and entry1.len = 4096
+> 2. IORING_OP_RECV + IOSQE_BUFFER_SELECT + IORING_RECVSEND_BUNDLE on an
+> empty SOCK_DGRAM socket
+> 3. CQE returns -EAGAIN, but entry0.len is changed from 4096 to 1
+> 4. a later unrelated IORING_OP_READ from a pipe using the same buffer
+> group returns 1 byte instead of 4096
+> 5. a second READ uses entry1 and returns 4096, so head/bid accounting
+> appears coherent in this repro
+> 
+> I am not claiming privilege escalation from this. The demonstrated
+> issue is persistent provided-buffer descriptor length corruption after
+> a failed/no-data RECV_BUNDLE, affecting a later READ operation.
 
-Output from your reproducer, run unprivileged:
+Right, I believe you already mentioned in the first email. It's just
+a bug that can cause the app to (rightfully) get confused about the
+state of a buffer.
 
-  [INIT] entry0 len=4096 bid=0 entry1 len=4096 bid=1 tail=2
-  [STEP1] poison empty socket: BUNDLE len=1 expect -EAGAIN but entry0 len may truncate
-  [CQE1] res=-11 flags=0x0 user=0x1111
-  [AFTER1] entry0 len=1 entry1 len=4096 tail=2 changed_buf0=0 changed_buf1=0 guard_before=0 guard_after=0
-  [STEP2] wrote pipe bytes=4096, now IORING_OP_READ len=4096 after recv-BUNDLE poisoning
-  [CQE_READ] res=1 flags=0x1 user=0x6666
-  [AFTER_READ] entry0 len=1 entry1 len=4096 tail=2 changed_buf0=1 changed_buf1=0 guard_before=0 guard_after=0
-  [STEP3] wrote second pipe chunk bytes=4096, second IORING_OP_READ len=4096 without republish
-  [CQE_READ2] res=4096 flags=0x10001 user=0x7777
-  [AFTER_READ2] entry0 len=1 entry1 len=4096 tail=2 changed_buf0=1 changed_buf1=4096 guard_before=0 guard_after=0
+And it's not a corruption in the sense that something else writes
+to this buffer length field, the kernel is deliberately writing
+to that valid piece of memory. It just misses restoring it when
+the operation fails.
 
-entry0.len persistently corrupted 4096 -> 1 after -EAGAIN RECV_BUNDLE.
-Subsequent IORING_OP_READ consumed the poisoned length as reported.
+-- 
+Jens Axboe
 
-This confirms the issue is not Ubuntu-specific and reproduces on a
-stock upstream-tracking kernel.
-
-Nyakundi Emmanuel
 

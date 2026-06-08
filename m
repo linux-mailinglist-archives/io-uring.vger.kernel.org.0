@@ -1,225 +1,169 @@
-Return-Path: <io-uring+bounces-13638-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13639-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by mail.lfdr.de with LMTP
-	id EGOBC7LEJmoYkQIAu9opvQ
-	(envelope-from <io-uring+bounces-13638-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Mon, 08 Jun 2026 15:33:38 +0200
+	id JqgNFp/WJmrjlQIAu9opvQ
+	(envelope-from <io-uring+bounces-13639-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Mon, 08 Jun 2026 16:50:07 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id B82A7656AD1
-	for <lists+io-uring@lfdr.de>; Mon, 08 Jun 2026 15:33:37 +0200 (CEST)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBDAC65782C
+	for <lists+io-uring@lfdr.de>; Mon, 08 Jun 2026 16:50:06 +0200 (CEST)
 Authentication-Results: mail.lfdr.de;
-	dkim=pass header.d=gmail.com header.s=20251104 header.b=XroM7rti;
-	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13638-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c09:e001:a7::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-13638-lists+io-uring=lfdr.de@vger.kernel.org";
+	dkim=pass header.d=gmail.com header.s=20251104 header.b=ZpsPEESK;
+	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13639-lists+io-uring=lfdr.de@vger.kernel.org" designates 172.105.105.114 as permitted sender) smtp.mailfrom="io-uring+bounces-13639-lists+io-uring=lfdr.de@vger.kernel.org";
 	dmarc=pass (policy=none) header.from=gmail.com;
 	arc=pass ("subspace.kernel.org:s=arc-20240116:i=1")
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id CAA36300D4D9
-	for <lists+io-uring@lfdr.de>; Mon,  8 Jun 2026 13:33:36 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 94F75317BA53
+	for <lists+io-uring@lfdr.de>; Mon,  8 Jun 2026 14:28:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5575936CE19;
-	Mon,  8 Jun 2026 13:33:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF4BE3D9699;
+	Mon,  8 Jun 2026 14:25:23 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+Received: from mail-yx1-f51.google.com (mail-yx1-f51.google.com [74.125.224.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0571A2F39B4
-	for <io-uring@vger.kernel.org>; Mon,  8 Jun 2026 13:33:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 461CF3D9040
+	for <io-uring@vger.kernel.org>; Mon,  8 Jun 2026 14:25:22 +0000 (UTC)
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780925614; cv=none; b=T0bxc16VAA7n+owylzjPUWC8bBlMKXdYSVDApoq2ul6qThQ83a7E7NaobdlMTWOBZg9+zaugQWzXIUKxyVVtgt8FHNSo1PT9jwMp4B7v+Pdc/qdbeZmhGnEz9NQFOds65MnBtbdphA0WIEg5pPGo17MISd9OaZMus1+C2H4rSl4=
+	t=1780928723; cv=none; b=lOJZVCc6SDp905/qkYbMkpC8xnWs1rgbvOuqJ8wC1/q5rzREiJQirvUh/gn3BuIkVRZIORX7Lo8+EO0bJtRbYQn20r4AMu55UTjXRjzxqLTFdReUt0CpAaT4QBYXDng1FCQZw7zp1x9jSqRldvCYcf1sbKp32gyPZWD4TUU6P/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780925614; c=relaxed/simple;
-	bh=Xmn251nvSpJo0undebzXVap0KXqK+G3jWZlPawuj8fg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RzOSTL0/qTs/lw8mB5R2SmE6NsZiLJdTlcJQesIVjojKSKXJpI7iQmAi/nDjLvip5KSJZQEB0ENAIpDRI/VbvgIgJ31bmzmOw5y8AgfwBRnrQSxhyGkH9y9/obtgWt5ViDZIKTOj6SnTk+PKRarfsJr+jzfGFmKDqg5oVDlXn/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XroM7rti; arc=none smtp.client-ip=209.85.216.54
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-36d5fd50d20so2735480a91.1
-        for <io-uring@vger.kernel.org>; Mon, 08 Jun 2026 06:33:32 -0700 (PDT)
+	s=arc-20240116; t=1780928723; c=relaxed/simple;
+	bh=nC/BIOCahSpxyfrAd9ICxSQeec7Mdys4GMubm5XO4fk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MSFDGY/IpBIRcbe+SphXBYfnfIg0d4O4OMogLQKUOzJFyno4/3s7a4GF6fbCxLO7WOM9Z9xnG3UUW0ZYLxmOx0fOeGxbiOQvZAOcN8J/f4bxqjVmHg3qzUE/6DNiEYiP87vrLy0n02Hph/2QZLlfFAShDZbtSGnHnNJWd82XWRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZpsPEESK; arc=none smtp.client-ip=74.125.224.51
+Received: by mail-yx1-f51.google.com with SMTP id 956f58d0204a3-66049669d78so3700774d50.0
+        for <io-uring@vger.kernel.org>; Mon, 08 Jun 2026 07:25:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780925612; x=1781530412; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1780928721; x=1781533521; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jE4e+Ch7YZ/ecmySo10mEfolKNwDMzJHte9df/q8qqk=;
-        b=XroM7rti2XYztFPW+x69RSxj0QdNYcr/b+VDMJWn0L+PQk1r5tkx6R63urg3Nb562/
-         D5J9P2OPUwbO0Ov9fjXUoOGUI5bmrz/Rnh+Bhji/kBA1qcGTFFXm5evaglLzIXB6+v2V
-         gC9Fctxi+NxQ5ePSplUhCITBPIwAmbG9sOOEnOBaTPELf6185uKRwciT7/YxNHOBB6go
-         o1PKVvCJ1gRrBDqThZGUtfraw+Dp9wshRWMv9Hf0QKhnrmZtqbdvOUdqmgTgG5YGyn3u
-         ZflBfBCTzHvxdq30j+2aHyFdQbdeYHAS2tpFonEdxhYDxJlBtPy24+cFdCf16wpzks6E
-         HafA==
+        bh=qjFJ6f4nVXUXcJ7ItoX9ERLnHKS1EUmGqynEHbOX2+4=;
+        b=ZpsPEESKMWzc9gNcLrGNGdmHokq9uoJxjy4z1X1Q7NEsk6G2tTzQ6lfPKA0WZXDn/b
+         J8MrMWvDhFDDEEH/63ipFSbixnBXp04q8yUcJK3oZnKphsGwHY6HP+/zM7B1PlK4ydNn
+         hXynj8pz66cVnKbMxeZj5umG7E7ccDYn1YZNmLLOmhZKySXRt+c6WgiwxwoynxC5EC6H
+         lQcLKgQPKzNgbbr1MfcOlA4oIpVcF2UUr0F5TxXyzzfR/xh7xxDI2lS78iAd+syVLrj7
+         6FEHY9Dk/3M0xNL2LlhymNZycKirv7KjPkF46HI77c1GRH3uUVx9ZmEyDJ0pbedXjsf6
+         bSww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780925612; x=1781530412;
+        d=1e100.net; s=20251104; t=1780928721; x=1781533521;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jE4e+Ch7YZ/ecmySo10mEfolKNwDMzJHte9df/q8qqk=;
-        b=DMWJ+yKxdAZK+tZ0gisrmaEsZzTl36M91d+tbOXGmFhP0qRoqtWKdHA8St/JLb6r8Y
-         5QQdd4GclD0FOsAB8Rc+OmAKI8DvpFvtF//sVDYLv0WDLmM/TjtJ4rio5yZAcGTXMfFg
-         l4t+hiGU5jD8/h+7ZXAshiai1rp857nGcH8kwLxr09XB4+XjwJvrsIg4ALI4ODDtsASH
-         Szbtl/TIPPVNQJgDwIqnY/ot9QJwCVM+ofcTdoFSo4tXqhziyXoGfcasVMnuNfdHD3pq
-         OFLb3IrHwaqwREyIycr37hIXPR5g8qGKF795Vcfow+4FXV++R0Vs2rq7Oh4IHp0k72UJ
-         0yWw==
-X-Gm-Message-State: AOJu0YzWZO8H92/govZbZB9Vk7ps8wikywnwXKWKcekAXEoBC1HPB5d9
-	Qz7SAGpi06KeXy64heOZxnUP3q0ANnFtGMyJkxpRzrKepZtY30GNgd65
-X-Gm-Gg: Acq92OHkx8dN34SGM42KNkn/wVjTH6WvES5bpUf6tRuad8WMlNfD4mEw239Lx8bmHMp
-	F4zvi2R3OBdPar9Dn2ulcdBFVYY2JjbAPL60fFAZKDrEk5xsNMdx+QRYPzqS4q2KyTVJOk6CI6o
-	d9DE3URlRVZT1gvj51YWVUmHbYdEheCaTtOnJS0NZeRFMgUY0au7w2XHCzDPilS9shKgWY61fyG
-	RhQ7wmLZ6PoSslVg2+khMffN3k320UERSWYmIS/+2VgkDFYXrfXhJO6da5WXZbB2oaYmOTQwpc1
-	tPxAwgifMmSQtqcDN9qca4t8+icZoRPkbaflcfDgoSmjz53n+vJVQK9NZucdv7pTEoFi1v6Bf6M
-	/iVvqOFdOMOdI9hXy5aYA3geP3N005yA4TmN1S5RtiMRX1YtWkItlCL5PVDzV5l0lyhh//N9Ce+
-	hnNn8Cx0e3aicydVlLWEFNYlv1mEXVrxuxK7JALg4l1uu8cmZuyTo+
-X-Received: by 2002:a17:90b:2d4e:b0:369:7421:75c3 with SMTP id 98e67ed59e1d1-370f096ab5emr14716407a91.16.1780925612269;
-        Mon, 08 Jun 2026 06:33:32 -0700 (PDT)
-Received: from n232-175-066.byted.org ([36.110.163.106])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84282379db0sm17284571b3a.24.2026.06.08.06.33.29
+        bh=qjFJ6f4nVXUXcJ7ItoX9ERLnHKS1EUmGqynEHbOX2+4=;
+        b=ctzv9wZB3+oSzCGeaLbIHsUdC2Q619TSP+kuq9vvPYLDTKa63xRHmjOqYf5BfHl7u5
+         Gjj8oCNvTck3BPqszpJhdHWPpBU5uP51ERtGBbUgjnNmKXlb97GfwDl3idGvtQpS8TdU
+         ic631KqxKNr0FdTfcLfCddIwSpsQdHzeJjVwGMzE5xvdsoO5aKiy++6sdlzXH/U6e3mN
+         h3ZYGcnw0TQ9yF5QELi0riXc74E9mmLzC4y0wVwFI7K1P2WfIshiIP/RaLKeD2OpVJt9
+         EpH9CiwIAAlDX2RAWtT3qbR6dp0n6spb0LFMQo8/WMMOrZ8Ytb7QvJjaQVa1lD62E00w
+         35NA==
+X-Forwarded-Encrypted: i=1; AFNElJ9ZiX4MY3IHWrzAf9Ep3/8WGJy88P27KUOtwFgfPSmc+BgfHSqVQ4TDzv+EjptzX9ZkzQtB0ZOeoQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxi3dN+p1WgqBIU594d950VV11iM2xDra13k1ipButKtwUYyXDK
+	EuM2c46O/ELApcP/A875SiWZl242E7+AF4kRRIxeKFVrtoDoOXLku0X2
+X-Gm-Gg: Acq92OGgiqWjMt75AmFYHkFw+uYYTpYzm3sXv8u0Mks1QQkUOo+H7VSO3L4JKjIzTfV
+	1zuXInFBGblV8pXnQvJx8jHRel1XfcU77VtV4MJtX70QQcV4BOdxuCsEtRR5z5V2k3OxCjH24n4
+	7rPkmGi8Qk+zVhDdcVYyQMyyk2TUadOK59M0dXldfV4vjSLeXDk++aG6s871bbOPztDbOLIKweQ
+	ZLVjIVHFXSER909rK77YTxcKKDkg84DzQUmlYL/IbR/oym6r3MTdD2D8RaQ+LJ+vAd4Ygf9IT60
+	Y3Z/E2j8T2SpLsN7GUt7dVfQAgeaHFzpcDWa0Ut1vXFz6H7FYLdOl+mEPbk0jNmxWp1hyoR36Gc
+	ma6gl5xsO6yIeZDm8SxLUoa4mUbxwD/CMHExrny5DQi14DCS92R2zdk6mOyMsbgZlbPRw8HxEJ7
+	QsKcYefd7Uugq6xVtJdVLwqnZNMxBUaWl1ezgrBx5AAjSuQJBAjgS1lNgwBYhsm8tC/YmggA+1z
+	I+eeNfdQGxQxSZOlIRGDgYjOXrkpYusnpTe7RtbnOWNnOZxx80+8m7VXeoyB9Df
+X-Received: by 2002:a05:690e:d59:b0:660:e35e:abfe with SMTP id 956f58d0204a3-661070710eamr13902017d50.46.1780928721197;
+        Mon, 08 Jun 2026 07:25:21 -0700 (PDT)
+Received: from fedora.tail348456.ts.net ([172.245.82.59])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-661473db74asm239368d50.7.2026.06.08.07.25.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jun 2026 06:33:31 -0700 (PDT)
-From: guzebing <guzebing1612@gmail.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	guzebing <guzebing1612@gmail.com>
-Subject: [PATCH] io_uring/register: preserve SQ array entries on resize
-Date: Mon,  8 Jun 2026 21:33:16 +0800
-Message-Id: <20260608133316.3656440-1-guzebing1612@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        Mon, 08 Jun 2026 07:25:20 -0700 (PDT)
+From: Ming Lei <tom.leiming@gmail.com>
+X-Google-Original-From: Ming Lei <ming.lei@redhat.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	io-uring@vger.kernel.org
+Cc: Ming Lei <tom.leiming@gmail.com>
+Subject: [PATCH v2 0/2] io_uring/net: support registered buffer for plain send and recv
+Date: Mon,  8 Jun 2026 09:25:09 -0500
+Message-ID: <20260608142511.659240-1-ming.lei@redhat.com>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	MID_CONTAINS_FROM(1.00)[];
+X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_MISSING_CHARSET(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	R_DKIM_ALLOW(-0.20)[gmail.com:s=20251104];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,gmail.com];
 	TO_DN_SOME(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13638-lists,io-uring=lfdr.de];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FORWARDED(0.00)[lists@lfdr.de];
-	FORGED_SENDER(0.00)[guzebing1612@gmail.com,io-uring@vger.kernel.org];
-	FORGED_RECIPIENTS(0.00)[m:axboe@kernel.dk,m:io-uring@vger.kernel.org,m:linux-kernel@vger.kernel.org,m:guzebing1612@gmail.com,s:lists@lfdr.de];
+	TAGGED_FROM(0.00)[bounces-13639-lists,io-uring=lfdr.de];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	PRECEDENCE_BULK(0.00)[];
-	FORGED_SENDER_FORWARDING(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[guzebing1612@gmail.com,io-uring@vger.kernel.org];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_RECIPIENTS(0.00)[m:axboe@kernel.dk,m:io-uring@vger.kernel.org,m:tom.leiming@gmail.com,m:tomleiming@gmail.com,s:lists@lfdr.de];
+	FORWARDED(0.00)[lists@lfdr.de];
+	FORGED_SENDER(0.00)[tomleiming@gmail.com,io-uring@vger.kernel.org];
+	FREEMAIL_CC(0.00)[gmail.com];
 	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[gmail.com:+];
+	RCPT_COUNT_THREE(0.00)[3];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	FORGED_SENDER_FORWARDING(0.00)[];
 	RCVD_COUNT_FIVE(0.00)[5];
-	FORGED_RECIPIENTS_FORWARDING(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[tomleiming@gmail.com,io-uring@vger.kernel.org];
+	DKIM_TRACE(0.00)[gmail.com:+];
 	ALIAS_RESOLVED(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[vger.kernel.org:from_smtp,sto.lore.kernel.org:rdns,sto.lore.kernel.org:helo]
+	FORGED_RECIPIENTS_FORWARDING(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo,vger.kernel.org:from_smtp]
 X-Rspamd-Server: lfdr
-X-Rspamd-Queue-Id: B82A7656AD1
+X-Rspamd-Queue-Id: CBDAC65782C
 
-Ring resizing copies pending SQEs from the old SQE array into the new
-one so submissions queued before the resize can still be consumed
-afterwards.
+From: Ming Lei <tom.leiming@gmail.com>
 
-That copy currently walks the SQ head/tail range directly. This is only
-correct when there is no SQ array indirection. With a regular SQ array,
-each pending SQ entry contains an index into the SQE array. After resize,
-ctx->sq_array is repointed at the newly allocated array, so pending
-entries lose their old logical-to-physical mapping and may submit the
-wrong SQE.
+Hi,
 
-Remember the old and new SQ arrays while migrating pending SQ entries. For
-each pending entry, copy the SQE selected by the old array into the new
-destination slot and rebuild the new array entry to point at the copied
-SQE. Keep invalid user-provided entries invalid so the normal submission
-path still drops them after resize.
+This series wires IORING_RECVSEND_FIXED_BUF into the plain IORING_OP_SEND
+and IORING_OP_RECV paths; so far the flag has only been honoured on the
+SEND_ZC path.
 
-Fixes: 79cfe9e59c2a1 ("io_uring/register: add IORING_REGISTER_RESIZE_RINGS")
-Signed-off-by: guzebing <guzebing1612@gmail.com>
----
- io_uring/register.c | 31 +++++++++++++++++++++----------
- 1 file changed, 21 insertions(+), 10 deletions(-)
+Motivation: targets such as ublk's NBD backend want to push/pull I/O data
+directly to/from an io_uring registered buffer over a plain send/recv on a
+TCP socket, avoiding the per-I/O import and page pinning while keeping
+single-CQE completion. The SEND_ZC path is left untouched.
 
-diff --git a/io_uring/register.c b/io_uring/register.c
-index dce5e2f9cf770..02bc103bcc9d5 100644
---- a/io_uring/register.c
-+++ b/io_uring/register.c
-@@ -503,6 +503,7 @@ static int io_register_resize_rings(struct io_ring_ctx *ctx, void __user *arg)
- 	unsigned i, tail, old_head;
- 	struct io_uring_params *p = &config.p;
- 	struct io_rings_layout *rl = &config.layout;
-+	u32 *o_sq_array, *n_sq_array = NULL;
- 	int ret;
- 
- 	memset(&config, 0, sizeof(config));
-@@ -589,6 +590,9 @@ static int io_register_resize_rings(struct io_ring_ctx *ctx, void __user *arg)
- 	ctx->rings = NULL;
- 	o.sq_sqes = ctx->sq_sqes;
- 	ctx->sq_sqes = NULL;
-+	o_sq_array = ctx->sq_array;
-+	if (!(ctx->flags & IORING_SETUP_NO_SQARRAY))
-+		n_sq_array = (u32 *)((char *)n.rings + rl->sq_array_offset);
- 
- 	/*
- 	 * Now copy SQ and CQ entries, if any. If either of the destination
-@@ -599,20 +603,27 @@ static int io_register_resize_rings(struct io_ring_ctx *ctx, void __user *arg)
- 	if (tail - old_head > p->sq_entries)
- 		goto overflow;
- 	for (i = old_head; i < tail; i++) {
--		unsigned index, dst_mask, src_mask;
-+		unsigned int dst, src;
- 		size_t sq_size;
- 
--		index = i;
-+		dst = i & (p->sq_entries - 1);
-+		src = i & (ctx->sq_entries - 1);
-+		if (n_sq_array) {
-+			src = READ_ONCE(o_sq_array[src]);
-+			if (unlikely(src >= ctx->sq_entries)) {
-+				WRITE_ONCE(n_sq_array[dst], UINT_MAX);
-+				continue;
-+			}
-+			WRITE_ONCE(n_sq_array[dst], dst);
-+		}
-+
- 		sq_size = sizeof(struct io_uring_sqe);
--		src_mask = ctx->sq_entries - 1;
--		dst_mask = p->sq_entries - 1;
- 		if (ctx->flags & IORING_SETUP_SQE128) {
--			index <<= 1;
-+			dst <<= 1;
-+			src <<= 1;
- 			sq_size <<= 1;
--			src_mask = (ctx->sq_entries << 1) - 1;
--			dst_mask = (p->sq_entries << 1) - 1;
- 		}
--		memcpy(&n.sq_sqes[index & dst_mask], &o.sq_sqes[index & src_mask], sq_size);
-+		memcpy(&n.sq_sqes[dst], &o.sq_sqes[src], sq_size);
- 	}
- 	WRITE_ONCE(n.rings->sq.head, old_head);
- 	WRITE_ONCE(n.rings->sq.tail, tail);
-@@ -655,8 +666,8 @@ static int io_register_resize_rings(struct io_ring_ctx *ctx, void __user *arg)
- 	WRITE_ONCE(n.rings->cq_overflow, READ_ONCE(o.rings->cq_overflow));
- 
- 	/* all done, store old pointers and assign new ones */
--	if (!(ctx->flags & IORING_SETUP_NO_SQARRAY))
--		ctx->sq_array = (u32 *)((char *)n.rings + rl->sq_array_offset);
-+	if (n_sq_array)
-+		ctx->sq_array = n_sq_array;
- 
- 	ctx->sq_entries = p->sq_entries;
- 	ctx->cq_entries = p->cq_entries;
--- 
-2.20.1
+Patch 1 is the kernel change. Patch 2 adds a liburing test and is meant for
+the liburing tree.
+
+Changes since v1:
+ - Reject IORING_SEND_VECTORIZED on the plain IORING_OP_SEND fixed-buffer
+   path: the plain io_send() issue path imports a single registered buffer
+   and has no vectorized-regbuf import step, so the combination silently
+   did nothing before. (Jens Axboe)
+ - Add the matching send-vectorized negative case to the liburing test.
+ - Clarify in the commit log that SEND_ZC is unaffected.
+
+v1: https://lore.kernel.org/io-uring/20260601095853.3670199-1-ming.lei@redhat.com/
+
+Ming Lei (2):
+  io_uring/net: support registered buffer for plain send and recv
+  test: add fixed-buf-send-recv for registered buffer send/recv
+
+ io_uring/net.c             |  47 ++++++-
+ test/Makefile              |   1 +
+ test/fixed-buf-send-recv.c | 311 +++++++++++++++++++++++++++++++++++++
+ 3 files changed, 357 insertions(+), 2 deletions(-)
+
+--
+2.54.0
 
 

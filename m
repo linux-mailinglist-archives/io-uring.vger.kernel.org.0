@@ -1,90 +1,90 @@
-Return-Path: <io-uring+bounces-13640-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13641-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by mail.lfdr.de with LMTP
-	id F+CyBKzTJmrYlAIAu9opvQ
-	(envelope-from <io-uring+bounces-13640-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Mon, 08 Jun 2026 16:37:32 +0200
+	id AWUOAa/TJmrclAIAu9opvQ
+	(envelope-from <io-uring+bounces-13641-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Mon, 08 Jun 2026 16:37:35 +0200
 X-Original-To: lists+io-uring@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F4676574A8
-	for <lists+io-uring@lfdr.de>; Mon, 08 Jun 2026 16:37:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 87B986574B1
+	for <lists+io-uring@lfdr.de>; Mon, 08 Jun 2026 16:37:34 +0200 (CEST)
 Authentication-Results: mail.lfdr.de;
-	dkim=pass header.d=gmail.com header.s=20251104 header.b=SXpdVVKK;
-	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13640-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c0a:e001:db::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-13640-lists+io-uring=lfdr.de@vger.kernel.org";
+	dkim=pass header.d=gmail.com header.s=20251104 header.b=cvYXaqxn;
+	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13641-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c0a:e001:db::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-13641-lists+io-uring=lfdr.de@vger.kernel.org";
 	dmarc=pass (policy=none) header.from=gmail.com;
 	arc=pass ("subspace.kernel.org:s=arc-20240116:i=1")
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 4450F31261B8
-	for <lists+io-uring@lfdr.de>; Mon,  8 Jun 2026 14:28:13 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 50F7E30AA433
+	for <lists+io-uring@lfdr.de>; Mon,  8 Jun 2026 14:28:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D87B93D3012;
-	Mon,  8 Jun 2026 14:25:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2825E3D4103;
+	Mon,  8 Jun 2026 14:25:30 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
 Received: from mail-yx1-f54.google.com (mail-yx1-f54.google.com [74.125.224.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 615293D3D1D
-	for <io-uring@vger.kernel.org>; Mon,  8 Jun 2026 14:25:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887963CB8F4
+	for <io-uring@vger.kernel.org>; Mon,  8 Jun 2026 14:25:28 +0000 (UTC)
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780928726; cv=none; b=AuXuB+1CvA4IXzZyzFIdKPtqSV8l/YOsdDie8Go+yJfKgyYBBwKVDsr1X84lJnOt0qnXK00GGGjF0iMzKG/yZSUdm9UjbMMEDANqYlTWgkyX/Ay+8rId3qs/fuSJ0Aaq9V4IS9pJtXzo3MnDMQPs/4BkgVqshy94DzKxe5EuMG4=
+	t=1780928730; cv=none; b=t7KtUfM08Kaut9+Lrvo4Jlb3sZ5pAHgbJLacunYlKDMfsYsJnAy4C4tcE9Oxxm+aEYuZzvOGAgFx5Ww6tVus5Ng7Yw31Za9URJX+rcVj25YiZBv8KdWwcg731B74q91hCVmwrnovLkoJ9hjXMJa//zJn2M0QRsDiAJLvTN6f3S4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780928726; c=relaxed/simple;
-	bh=9lPwQATNqZ6D4yPGkbuAGF0YzI6rmk8NPcxNmCqUi9k=;
+	s=arc-20240116; t=1780928730; c=relaxed/simple;
+	bh=gntQQ0MttVZBb6eByMrrxPx9FcqtEae3/MjSnV462IE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UGDN+LPCPmfJv8M0hlJ0UQ2tqIbXGIVM3IgqrBc/eZBqeO1/4nzLDoOEb4QLbOiYmDpZZnlUFoxIPtS9b1ETX3G2c4OOEMSm3806FgUlEiy7+jfmZ4dxMSmh2AoF2MsFwS/Fpr5qKOmC7Z/U/gw9Smjrv8LcVZOjTqg1lQvbteQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SXpdVVKK; arc=none smtp.client-ip=74.125.224.54
-Received: by mail-yx1-f54.google.com with SMTP id 956f58d0204a3-6605c3453f2so4349909d50.1
-        for <io-uring@vger.kernel.org>; Mon, 08 Jun 2026 07:25:25 -0700 (PDT)
+	 MIME-Version; b=apSS1MRrUOjsxCTc0WL16pxsVCObc9jCItIwqPBpqGWSS2EROGMH8vkHiAjuUKqKo2PloBPeLnGirmh8k6Fb4fJ4uAlJXgIcDrZt+gVhfQmzuoHOMcFbc1AFYIDQjpRwFGjeom+8S0s/ZGeN6qB0JyVsjA8Z5FxXCUOhGidVyrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cvYXaqxn; arc=none smtp.client-ip=74.125.224.54
+Received: by mail-yx1-f54.google.com with SMTP id 956f58d0204a3-66067da0638so2081013d50.0
+        for <io-uring@vger.kernel.org>; Mon, 08 Jun 2026 07:25:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780928724; x=1781533524; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1780928728; x=1781533528; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6Is8hfKUQHQVLHZ3Yk0+vkLWxClkHP91zk86rXxghJA=;
-        b=SXpdVVKKv+NZmCX8hFEtxJBXOXCIGl9ZWmPB7rMvAIbvQvJiI5e2ePCo8AkNAsqZXA
-         MjPGrpwhY0jF94BF8vTCSsCeEzn7f8h9Wpsc2aRUyJSylZGHRNiHrL7HIcWazvQPY92U
-         z5pPJ8IycYjtHPTU0voB0iihAKR32PGJJHdEhAg2DZKUPJvDru4MvzJ+1oOlPbVsmsj0
-         C/qIZo2JaZh771BfQjOnEj6tLQBOu00L4fSA7bWMfACG+JAEpJQC7bBzpcZtvEpmDyXN
-         wqaVA/R3uvVurOR3vyDQhmcndYzAl3M/ThW4hSNUMMB7gzRh1h35baewTmGHrPtFLgNP
-         hyIg==
+        bh=6IBUN9g3UpeaN7UBpYXd5evjevnbt17VcQr5ryjzFoE=;
+        b=cvYXaqxn+kb0q+XqEqJgkPaG4J6l+9E5vN9ccTrego154rx23x2jJwgioM57Wf513q
+         5zngMvfuaLxU2deHb/vXcPq5jT2h3IoJTzv/TPGuA1D1HXLckRpDAkjQlzdKmPy40Ojv
+         cgZ1xG6W+DcrUPlO3+JXFjVrn35zdkfEvqRdkHTtaKonqnW+YTGOGxjINfxsuwIYvrWM
+         V1KHPWwaps3xkukaqtmfMqox6pwYpZMzKYodmhXD8u75saBMz4ZOsPbBRt3FsLVPjfAu
+         /Kp4ExVCLkZkcFkQwB04bcUo/sSziOwKBIRxd1szTSJURU7F80YWw4tRMpMYr4DXxIjC
+         BT+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780928724; x=1781533524;
+        d=1e100.net; s=20251104; t=1780928728; x=1781533528;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=6Is8hfKUQHQVLHZ3Yk0+vkLWxClkHP91zk86rXxghJA=;
-        b=spWl0dgfSeAJtoJRWNcqHJXHvVmlaPkPWHB1XZW7y9p7dB0wEkzmwHhsZE8ycl+MJG
-         gnCL6d8hFMsBSjR1CavgmeK5ljqYi3v1hPIlQeL3lbQfvD1AScXPa9JDlZfEiNIFkma9
-         RC8v5sxlPNsMV5/VH5qmDVhzPYHlKlSpHupwqPHLklrbahf3qw01F5kpZSTaWiwLpRiW
-         Ebudn3e5llg6be0Cwq9GCWhPyW3T18bwbmE2EV3CYTU0ltY6AgHu1CUxetYfWLdh1i5d
-         +uamY+zto8O0QvikIYRZYZ1vY4Yw3ZsuJ/zr2y+GGHrf6vDCIJU+k6CAUFxImn2TWiZu
-         OURQ==
-X-Forwarded-Encrypted: i=1; AFNElJ/7GZyET3ROBtIKD93hSPIcULBiRdqKODY862ohDT8dzo9ohds05aFUfrsAXone5n1mPyKjM/jCzQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyO7cxxRWpDbghTlUc80UOybP/2laa+mKtzfauSuMhmG4EYqxO4
-	SpsSXFEhfr7K/YKXHQZ0ncZCc+bMJxWN+NfyGABVvWJr3uiYbqYimQMS
-X-Gm-Gg: Acq92OFQVDF7cS04Tqu0QrMrS8CX5oywm+mhAGt/yUC7rwq1qaPQUZzsqGCwn7k00qh
-	5S/WcgMkEziFo3wrsI7HD0MKmao3b4ykBoLGjl380a83bySSQuhAtqd4zdGNoDBv4z0Iay1litv
-	UM/SoVvw7qcVsDaVTOlRP/nDTA1FJ4saMFD89C6LbY1lMJTx0CpxOFVnXkEvL+PHXaj96l8JLG6
-	1ifwfxtxybnB2AnByTGgqk2c2KFep0qD+lteXdSiFOa8xVNdmDFf8IXzW/S4ilv7cGt03OOKpin
-	88PGYVe0Ti/I+SXtd/Xc+AGYmo/qWWFfIxOM+UghIrSLnGcgUZLNT2aIJsQiGd+3CZHyI5yYaAk
-	RZTlLTz8lqDkCX3FVC7lpamBDKSoIDUaxzNIQ1M/paJiSwCvZzPKZ+PjFZ3g81HKxJ75q6HNCQ7
-	rHWZlwZrVTJoQRfEe8seDyCN5S6ZFiFU3IfkUXdVaAJ6JZy0vRitbpDyNz/uVSG/VnTj12FiV6i
-	/bHceFwdLDQJvCUAyZFj5weiOTjJZYEFcMF2xO94xeZeKdmLnqs5A==
-X-Received: by 2002:a05:690e:1206:b0:660:689b:1542 with SMTP id 956f58d0204a3-66106f3b26fmr13697278d50.42.1780928724122;
-        Mon, 08 Jun 2026 07:25:24 -0700 (PDT)
+        bh=6IBUN9g3UpeaN7UBpYXd5evjevnbt17VcQr5ryjzFoE=;
+        b=Xw07qbcFLjgOl5QDYP3bUNdYSVyT0DhVJMAYL/c5KDFeJ00Tt5yZfrwfrKajAd9m1C
+         sY9bPwWSRQ6JILrUKmGNhgoUrY6N3NnTAgg8NxDF+kIYiwak7Sb7MNBovULZZ2V1LJ7M
+         pZIah+whnpkFr6TAvobfjma3aJ5Jy21JfwNfZNTAz0t70/ERgr/5H3gNtZwxtw4WzvrM
+         Lnx6xIeXxhHOo6XdVMoJktP/BzntLfgRUKsd/DeHSOqFKj1HnflcFVklj8PzOrUtLNxQ
+         HyADSuYn5TkOLp+KIWDXc546i0dwvCbHT8EkbZ1DSqKnPpK8Udep5ZZ+TcZsqXIJi7oA
+         o51A==
+X-Forwarded-Encrypted: i=1; AFNElJ/h3chHxM9EBiKENvtu/uHj15VcDG78fOPX0OwQS+QngpPY1Xtu3OKknoe4COk53JuLJpcLPR4XRg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCb5UauZVLXTQjowm5i2Q1MWFirXig8RDXnWMVCXCxCkQg+BEz
+	NWScgrrzYePb1U0g/YaNyyf7FuySs2SB7DzkJxAFeaiBh4T9+Z4sVRxy
+X-Gm-Gg: Acq92OGzY5pjuKq7ttuzDTPAAWYSTzQcFfQO3BPbHBCIZLHrbTRGnxKJXs8Rp03Y7N9
+	M/iRf3lbSGppQuavZD81qFxwnG/b1n4SACkrPIOQBcjJMqzKnedfh2FR3ZtoLsdGz/p+r+0/MXW
+	Bj1/XfuLUFhf4VXEVItplrIF6Pubufl/yN68tWDC4n5Eex2Odm1iIWnWGNfzqyhsbizJOlRtMwD
+	wgFFkiXzO/KDQF+svkYYuBVv/lsm7gvTJyuoKr2C1dzrPCt//KHK18VmfVjtxVVDjvSYY/OUrHT
+	gOrUxKqkUG4vVCEFBvoyPnYXvjse/JpxE2vxpvKEqEg3poQbutK0ezTKLO3HHQPYjjRc8ONHoyH
+	DZh+JA6Voj6TuLUMGMsSIU8kjRuKAUG9nS0GiSQ+BtGl7Zx2Tt4WVUt6rvs7+y5DKZlYfomD7Sc
+	Rnl7HinkK3F9rvh5zXcCQYHRssAZr00DSkc3Z+D8Pt+dCN3a/JXRcxqrlh1L0V5gCSoVENPs0SF
+	FgszzIn8Shb47mnju79/RJnrxZGe4peqsbUKJG5kclLdVqeReJVDQ==
+X-Received: by 2002:a05:690e:4185:b0:65e:37bc:c759 with SMTP id 956f58d0204a3-661070ccc17mr13301646d50.62.1780928727418;
+        Mon, 08 Jun 2026 07:25:27 -0700 (PDT)
 Received: from fedora.tail348456.ts.net ([172.245.82.59])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-661473db74asm239368d50.7.2026.06.08.07.25.21
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-661473db74asm239368d50.7.2026.06.08.07.25.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jun 2026 07:25:23 -0700 (PDT)
+        Mon, 08 Jun 2026 07:25:26 -0700 (PDT)
 From: Ming Lei <tom.leiming@gmail.com>
 X-Google-Original-From: Ming Lei <ming.lei@redhat.com>
 To: Jens Axboe <axboe@kernel.dk>,
 	io-uring@vger.kernel.org
 Cc: Ming Lei <tom.leiming@gmail.com>
-Subject: [PATCH v2 1/2] io_uring/net: support registered buffer for plain send and recv
-Date: Mon,  8 Jun 2026 09:25:10 -0500
-Message-ID: <20260608142511.659240-2-ming.lei@redhat.com>
+Subject: [PATCH v2 2/2] test: add fixed-buf-send-recv for registered buffer send/recv
+Date: Mon,  8 Jun 2026 09:25:11 -0500
+Message-ID: <20260608142511.659240-3-ming.lei@redhat.com>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260608142511.659240-1-ming.lei@redhat.com>
 References: <20260608142511.659240-1-ming.lei@redhat.com>
@@ -107,7 +107,7 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	HAS_LIST_UNSUB(-0.01)[];
 	TO_DN_SOME(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13640-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-13641-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	FORWARDED(0.00)[lists@lfdr.de];
 	FREEMAIL_CC(0.00)[gmail.com];
@@ -130,138 +130,353 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	TAGGED_RCPT(0.00)[io-uring];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[vger.kernel.org:from_smtp,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
 X-Rspamd-Server: lfdr
-X-Rspamd-Queue-Id: 8F4676574A8
+X-Rspamd-Queue-Id: 87B986574B1
 
 From: Ming Lei <tom.leiming@gmail.com>
 
-So far IORING_RECVSEND_FIXED_BUF is only honoured on the SEND_ZC path,
-even though the import wiring is already present for plain send and
-completely absent for recv. Targets such as ublk's NBD backend want to
-push/pull I/O data directly to/from an io_uring registered buffer over a
-plain send/recv on a TCP socket.
-
-Wire IORING_RECVSEND_FIXED_BUF into the plain IORING_OP_SEND and
-IORING_OP_RECV paths:
-
- - Accept the flag in SENDMSG_FLAGS / RECVMSG_FLAGS and, at prep time,
-   restrict it to the non-vectorized IORING_OP_SEND / IORING_OP_RECV
-   opcodes. It is mutually exclusive with buffer select, bundles and
-   (for recv) multishot, and records sqe->buf_index.
-
- - For recv, set REQ_F_IMPORT_BUFFER in setup so the registered buffer
-   is imported lazily at issue time, mirroring the send path.
-
- - In io_send()/io_recv(), import the registered buffer via
-   io_import_reg_buf() (ITER_SOURCE for send, ITER_DEST for recv) and
-   clear REQ_F_IMPORT_BUFFER. The resulting bvec iter persists in
-   async_data, so MSG_WAITALL partial send/recv retries resume at the
-   right offset.
+Exercise IORING_RECVSEND_FIXED_BUF on plain IORING_OP_SEND and
+IORING_OP_RECV: send-fixed, recv-fixed and both-fixed roundtrips with
+non-zero offsets into distinct registered buffers, a large MSG_WAITALL
+transfer to cover the persisted bvec iter across partial retries, plus
+negative cases (sendmsg/bundle/recv-multishot rejected with -EINVAL and
+a bad buf_index returning -EFAULT).
 
 Signed-off-by: Ming Lei <tom.leiming@gmail.com>
 ---
- io_uring/net.c | 47 +++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 45 insertions(+), 2 deletions(-)
+ test/Makefile              |   1 +
+ test/fixed-buf-send-recv.c | 311 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 312 insertions(+)
+ create mode 100644 test/fixed-buf-send-recv.c
 
-diff --git a/io_uring/net.c b/io_uring/net.c
-index f01f1d25e930..c2bbf9dd2790 100644
---- a/io_uring/net.c
-+++ b/io_uring/net.c
-@@ -418,7 +418,8 @@ static int io_sendmsg_setup(struct io_kiocb *req, const struct io_uring_sqe *sqe
- 	return io_net_import_vec(req, kmsg, msg.msg_iov, msg.msg_iovlen, ITER_SOURCE);
- }
- 
--#define SENDMSG_FLAGS (IORING_RECVSEND_POLL_FIRST | IORING_RECVSEND_BUNDLE | IORING_SEND_VECTORIZED)
-+#define SENDMSG_FLAGS (IORING_RECVSEND_POLL_FIRST | IORING_RECVSEND_BUNDLE | \
-+			IORING_SEND_VECTORIZED | IORING_RECVSEND_FIXED_BUF)
- 
- int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
-@@ -431,6 +432,15 @@ int io_sendmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	sr->flags = READ_ONCE(sqe->ioprio);
- 	if (sr->flags & ~SENDMSG_FLAGS)
- 		return -EINVAL;
-+	if (sr->flags & IORING_RECVSEND_FIXED_BUF) {
-+		/* registered buffer send only supported for plain IORING_OP_SEND */
-+		if (req->opcode != IORING_OP_SEND ||
-+		    (sr->flags & IORING_RECVSEND_BUNDLE) ||
-+		    (sr->flags & IORING_SEND_VECTORIZED) ||
-+		    (req->flags & REQ_F_BUFFER_SELECT))
-+			return -EINVAL;
-+		req->buf_index = READ_ONCE(sqe->buf_index);
-+	}
- 	sr->msg_flags = READ_ONCE(sqe->msg_flags) | MSG_NOSIGNAL;
- 	if (sr->msg_flags & MSG_DONTWAIT)
- 		req->flags |= REQ_F_NOWAIT;
-@@ -662,6 +672,15 @@ int io_send(struct io_kiocb *req, unsigned int issue_flags)
- 	    (sr->flags & IORING_RECVSEND_POLL_FIRST))
- 		return -EAGAIN;
- 
-+	if (req->flags & REQ_F_IMPORT_BUFFER) {
-+		ret = io_import_reg_buf(req, &kmsg->msg.msg_iter,
-+					(u64)(uintptr_t)sr->buf, sr->len,
-+					ITER_SOURCE, issue_flags);
-+		if (unlikely(ret))
-+			return ret;
-+		req->flags &= ~REQ_F_IMPORT_BUFFER;
+diff --git a/test/Makefile b/test/Makefile
+index d1cd2470..effb3bae 100644
+--- a/test/Makefile
++++ b/test/Makefile
+@@ -132,6 +132,7 @@ test_srcs := \
+ 	file-verify.c \
+ 	fixed-buf-iter.c \
+ 	fixed-buf-merge.c \
++	fixed-buf-send-recv.c \
+ 	fixed-hugepage.c \
+ 	fixed-link.c \
+ 	fixed-reuse.c \
+diff --git a/test/fixed-buf-send-recv.c b/test/fixed-buf-send-recv.c
+new file mode 100644
+index 00000000..d51bcf3f
+--- /dev/null
++++ b/test/fixed-buf-send-recv.c
+@@ -0,0 +1,311 @@
++/* SPDX-License-Identifier: MIT */
++/*
++ * Test IORING_RECVSEND_FIXED_BUF on plain IORING_OP_SEND / IORING_OP_RECV.
++ *
++ * A registered (fixed) buffer can be used as the send source and/or the recv
++ * destination over a TCP socket via IORING_RECVSEND_FIXED_BUF. Covers:
++ *  - send fixed  -> recv normal
++ *  - send normal -> recv fixed
++ *  - send fixed  -> recv fixed   (both ends registered, non-zero offsets)
++ *  - large MSG_WAITALL transfer (exercises the persisted bvec iter across
++ *    partial send/recv retries)
++ *  - negative cases: FIXED_BUF rejected on sendmsg, on bundle, on send
++ *    vectorized, on recv multishot, and a bad buf_index -> -EFAULT.
++ */
++#include <errno.h>
++#include <limits.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <unistd.h>
++#include <sys/socket.h>
++
++#include "liburing.h"
++#include "helpers.h"
++
++#define BUF_SIZE	(128 * 1024)
++#define OFF		4096
++
++/* registered buffer indices */
++#define SBUF_IDX	0
++#define RBUF_IDX	1
++
++static int no_fixed_buf;
++
++static void fill_pattern(unsigned char *buf, size_t len, unsigned seed)
++{
++	size_t i;
++
++	for (i = 0; i < len; i++)
++		buf[i] = (unsigned char)((i + seed) & 0xff);
++}
++
++/*
++ * Submit a paired send (user_data 1) + recv (user_data 2) and wait for both.
++ * Either side may use a registered buffer. Returns 0 on success with the
++ * received data verified against the sent pattern, -EINVAL if the kernel
++ * doesn't support the flag, or 1 on hard failure.
++ */
++static int do_roundtrip(struct io_uring *ring, int sfd, int rfd,
++			unsigned char *sptr, unsigned char *rptr, size_t len,
++			int s_fixed, int r_fixed, int waitall)
++{
++	struct io_uring_sqe *sqe;
++	struct io_uring_cqe *cqe;
++	int ret, i, sflags = 0, rflags = 0;
++	int s_res = INT_MIN, r_res = INT_MIN;
++	static unsigned seed;
++
++	seed++;
++	if (waitall) {
++		sflags |= MSG_WAITALL;
++		rflags |= MSG_WAITALL;
 +	}
 +
- 	flags = sr->msg_flags;
- 	if (issue_flags & IO_URING_F_NONBLOCK)
- 		flags |= MSG_DONTWAIT;
-@@ -777,6 +796,10 @@ static int io_recvmsg_prep_setup(struct io_kiocb *req)
- 
- 		if (req->flags & REQ_F_BUFFER_SELECT)
- 			return 0;
-+		if (sr->flags & IORING_RECVSEND_FIXED_BUF) {
-+			req->flags |= REQ_F_IMPORT_BUFFER;
-+			return 0;
-+		}
- 		return import_ubuf(ITER_DEST, sr->buf, sr->len,
- 				   &kmsg->msg.msg_iter);
- 	}
-@@ -785,7 +808,7 @@ static int io_recvmsg_prep_setup(struct io_kiocb *req)
- }
- 
- #define RECVMSG_FLAGS (IORING_RECVSEND_POLL_FIRST | IORING_RECV_MULTISHOT | \
--			IORING_RECVSEND_BUNDLE)
-+			IORING_RECVSEND_BUNDLE | IORING_RECVSEND_FIXED_BUF)
- 
- int io_recvmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
-@@ -803,6 +826,14 @@ int io_recvmsg_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	sr->flags = READ_ONCE(sqe->ioprio);
- 	if (sr->flags & ~RECVMSG_FLAGS)
- 		return -EINVAL;
-+	if (sr->flags & IORING_RECVSEND_FIXED_BUF) {
-+		/* registered buffer recv only for plain IORING_OP_RECV */
-+		if (req->opcode != IORING_OP_RECV ||
-+		    (sr->flags & (IORING_RECV_MULTISHOT | IORING_RECVSEND_BUNDLE)) ||
-+		    (req->flags & REQ_F_BUFFER_SELECT))
-+			return -EINVAL;
-+		req->buf_index = READ_ONCE(sqe->buf_index);
++	fill_pattern(sptr, len, seed);
++	memset(rptr, 0, len);
++
++	sqe = io_uring_get_sqe(ring);
++	io_uring_prep_send(sqe, sfd, sptr, len, sflags);
++	if (s_fixed) {
++		sqe->ioprio |= IORING_RECVSEND_FIXED_BUF;
++		sqe->buf_index = SBUF_IDX;
 +	}
- 	sr->msg_flags = READ_ONCE(sqe->msg_flags);
- 	if (sr->msg_flags & MSG_DONTWAIT)
- 		req->flags |= REQ_F_NOWAIT;
-@@ -1199,6 +1230,18 @@ int io_recv(struct io_kiocb *req, unsigned int issue_flags)
- 	if (force_nonblock)
- 		flags |= MSG_DONTWAIT;
- 
-+	if (req->flags & REQ_F_IMPORT_BUFFER) {
-+		ret = io_import_reg_buf(req, &kmsg->msg.msg_iter,
-+					(u64)(uintptr_t)sr->buf, sr->len,
-+					ITER_DEST, issue_flags);
-+		if (unlikely(ret)) {
-+			kmsg->msg.msg_inq = -1;
-+			sel.buf_list = NULL;
-+			goto out_free;
-+		}
-+		req->flags &= ~REQ_F_IMPORT_BUFFER;
++	sqe->user_data = 1;
++
++	sqe = io_uring_get_sqe(ring);
++	io_uring_prep_recv(sqe, rfd, rptr, len, rflags);
++	if (r_fixed) {
++		sqe->ioprio |= IORING_RECVSEND_FIXED_BUF;
++		sqe->buf_index = RBUF_IDX;
++	}
++	sqe->user_data = 2;
++
++	ret = io_uring_submit_and_wait(ring, 2);
++	if (ret != 2) {
++		fprintf(stderr, "submit_and_wait: %d\n", ret);
++		return 1;
 +	}
 +
- retry_multishot:
- 	sel.buf_list = NULL;
- 	if (io_do_buffer_select(req)) {
++	for (i = 0; i < 2; i++) {
++		ret = io_uring_peek_cqe(ring, &cqe);
++		if (ret) {
++			fprintf(stderr, "peek_cqe: %d\n", ret);
++			return 1;
++		}
++		if (cqe->user_data == 1)
++			s_res = cqe->res;
++		else
++			r_res = cqe->res;
++		io_uring_cqe_seen(ring, cqe);
++	}
++
++	if (s_res == -EINVAL || r_res == -EINVAL) {
++		no_fixed_buf = 1;
++		return -EINVAL;
++	}
++	if (s_res != (int)len) {
++		fprintf(stderr, "send res %d, want %zu (s_fixed=%d)\n",
++			s_res, len, s_fixed);
++		return 1;
++	}
++	if (r_res != (int)len) {
++		fprintf(stderr, "recv res %d, want %zu (r_fixed=%d)\n",
++			r_res, len, r_fixed);
++		return 1;
++	}
++	if (memcmp(sptr, rptr, len)) {
++		fprintf(stderr, "data mismatch (s_fixed=%d r_fixed=%d len=%zu)\n",
++			s_fixed, r_fixed, len);
++		return 1;
++	}
++	return 0;
++}
++
++/* Submit one sqe (already prepared by caller) and expect a specific res. */
++static int expect_res(struct io_uring *ring, int expect)
++{
++	struct io_uring_cqe *cqe;
++	int ret, res;
++
++	ret = io_uring_submit(ring);
++	if (ret != 1) {
++		fprintf(stderr, "submit: %d\n", ret);
++		return 1;
++	}
++	ret = io_uring_wait_cqe(ring, &cqe);
++	if (ret) {
++		fprintf(stderr, "wait_cqe: %d\n", ret);
++		return 1;
++	}
++	res = cqe->res;
++	io_uring_cqe_seen(ring, cqe);
++	if (res != expect) {
++		fprintf(stderr, "got res %d, expected %d\n", res, expect);
++		return 1;
++	}
++	return 0;
++}
++
++static int test_negative(struct io_uring *ring, int sfd)
++{
++	struct io_uring_sqe *sqe;
++	struct msghdr msg = { };
++	struct iovec iov;
++	static char nbuf[64];
++
++	/* sendmsg + FIXED_BUF is only allowed for plain send -> -EINVAL */
++	iov.iov_base = nbuf;
++	iov.iov_len = sizeof(nbuf);
++	msg.msg_iov = &iov;
++	msg.msg_iovlen = 1;
++	sqe = io_uring_get_sqe(ring);
++	io_uring_prep_sendmsg(sqe, sfd, &msg, 0);
++	sqe->ioprio |= IORING_RECVSEND_FIXED_BUF;
++	sqe->buf_index = SBUF_IDX;
++	sqe->user_data = 10;
++	if (expect_res(ring, -EINVAL)) {
++		fprintf(stderr, "sendmsg+fixed_buf not rejected\n");
++		return 1;
++	}
++
++	/* send + bundle + FIXED_BUF -> -EINVAL */
++	sqe = io_uring_get_sqe(ring);
++	io_uring_prep_send(sqe, sfd, nbuf, sizeof(nbuf), 0);
++	sqe->ioprio |= IORING_RECVSEND_FIXED_BUF | IORING_RECVSEND_BUNDLE;
++	sqe->buf_index = SBUF_IDX;
++	sqe->user_data = 11;
++	if (expect_res(ring, -EINVAL)) {
++		fprintf(stderr, "send bundle+fixed_buf not rejected\n");
++		return 1;
++	}
++
++	/* send + vectorized + FIXED_BUF -> -EINVAL */
++	sqe = io_uring_get_sqe(ring);
++	io_uring_prep_send(sqe, sfd, nbuf, sizeof(nbuf), 0);
++	sqe->ioprio |= IORING_RECVSEND_FIXED_BUF | IORING_SEND_VECTORIZED;
++	sqe->buf_index = SBUF_IDX;
++	sqe->user_data = 14;
++	if (expect_res(ring, -EINVAL)) {
++		fprintf(stderr, "send vectorized+fixed_buf not rejected\n");
++		return 1;
++	}
++
++	/* recv multishot + FIXED_BUF -> -EINVAL */
++	sqe = io_uring_get_sqe(ring);
++	io_uring_prep_recv_multishot(sqe, sfd, nbuf, sizeof(nbuf), 0);
++	sqe->ioprio |= IORING_RECVSEND_FIXED_BUF;
++	sqe->buf_index = RBUF_IDX;
++	sqe->user_data = 12;
++	if (expect_res(ring, -EINVAL)) {
++		fprintf(stderr, "recv multishot+fixed_buf not rejected\n");
++		return 1;
++	}
++
++	/* send fixed with an unregistered buf_index -> -EFAULT at issue */
++	sqe = io_uring_get_sqe(ring);
++	io_uring_prep_send(sqe, sfd, nbuf, sizeof(nbuf), 0);
++	sqe->ioprio |= IORING_RECVSEND_FIXED_BUF;
++	sqe->buf_index = 42;
++	sqe->user_data = 13;
++	if (expect_res(ring, -EFAULT)) {
++		fprintf(stderr, "send fixed bad index not -EFAULT\n");
++		return 1;
++	}
++
++	return 0;
++}
++
++int main(int argc, char *argv[])
++{
++	struct io_uring ring;
++	struct iovec regvec[2];
++	unsigned char *sbuf, *rbuf, *hbuf;
++	int ret, fds[2];
++
++	if (argc > 1)
++		return T_EXIT_SKIP;
++
++	if (posix_memalign((void **)&sbuf, 4096, BUF_SIZE) ||
++	    posix_memalign((void **)&rbuf, 4096, BUF_SIZE)) {
++		fprintf(stderr, "posix_memalign failed\n");
++		return T_EXIT_FAIL;
++	}
++	hbuf = malloc(BUF_SIZE);
++	if (!hbuf)
++		return T_EXIT_FAIL;
++
++	ret = io_uring_queue_init(8, &ring, 0);
++	if (ret) {
++		fprintf(stderr, "queue_init: %d\n", ret);
++		return T_EXIT_FAIL;
++	}
++
++	regvec[SBUF_IDX].iov_base = sbuf;
++	regvec[SBUF_IDX].iov_len = BUF_SIZE;
++	regvec[RBUF_IDX].iov_base = rbuf;
++	regvec[RBUF_IDX].iov_len = BUF_SIZE;
++	ret = io_uring_register_buffers(&ring, regvec, 2);
++	if (ret) {
++		fprintf(stderr, "register_buffers: %d\n", ret);
++		return T_EXIT_FAIL;
++	}
++
++	ret = t_create_socket_pair(fds, true);
++	if (ret) {
++		fprintf(stderr, "socket pair: %d\n", ret);
++		return T_EXIT_FAIL;
++	}
++
++	/* send fixed -> recv normal (also doubles as feature detection) */
++	ret = do_roundtrip(&ring, fds[1], fds[0], sbuf + OFF, hbuf, 4096,
++			   1, 0, 0);
++	if (ret == -EINVAL) {
++		fprintf(stderr, "IORING_RECVSEND_FIXED_BUF send unsupported, skip\n");
++		return T_EXIT_SKIP;
++	}
++	if (ret)
++		goto fail;
++
++	/* send normal -> recv fixed */
++	ret = do_roundtrip(&ring, fds[1], fds[0], hbuf, rbuf + OFF, 4096,
++			   0, 1, 0);
++	if (ret == -EINVAL) {
++		fprintf(stderr, "IORING_RECVSEND_FIXED_BUF recv unsupported, skip\n");
++		return T_EXIT_SKIP;
++	}
++	if (ret)
++		goto fail;
++
++	/* send fixed -> recv fixed, non-zero offsets on both ends */
++	ret = do_roundtrip(&ring, fds[1], fds[0], sbuf + OFF, rbuf + 2 * OFF,
++			   8192, 1, 1, 0);
++	if (ret)
++		goto fail;
++
++	/* large transfer with MSG_WAITALL: persisted bvec iter across retries */
++	ret = do_roundtrip(&ring, fds[1], fds[0], sbuf, rbuf, BUF_SIZE,
++			   1, 1, 1);
++	if (ret)
++		goto fail;
++
++	/* and the other direction */
++	ret = do_roundtrip(&ring, fds[0], fds[1], sbuf, rbuf, BUF_SIZE,
++			   1, 1, 1);
++	if (ret)
++		goto fail;
++
++	if (test_negative(&ring, fds[1]))
++		goto fail;
++
++	io_uring_queue_exit(&ring);
++	close(fds[0]);
++	close(fds[1]);
++	free(hbuf);
++	free(sbuf);
++	free(rbuf);
++	return T_EXIT_PASS;
++fail:
++	fprintf(stderr, "test failed\n");
++	return T_EXIT_FAIL;
++}
 -- 
 2.54.0
 

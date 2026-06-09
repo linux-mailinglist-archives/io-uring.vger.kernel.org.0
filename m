@@ -1,68 +1,68 @@
-Return-Path: <io-uring+bounces-13651-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13652-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by mail.lfdr.de with LMTP
-	id pezfBJXYJ2oK3QIAu9opvQ
-	(envelope-from <io-uring+bounces-13651-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 09 Jun 2026 11:10:45 +0200
+	id LTxSFZPYJ2oH3QIAu9opvQ
+	(envelope-from <io-uring+bounces-13652-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 09 Jun 2026 11:10:43 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id A681F65E222
-	for <lists+io-uring@lfdr.de>; Tue, 09 Jun 2026 11:10:44 +0200 (CEST)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id E62D865E21D
+	for <lists+io-uring@lfdr.de>; Tue, 09 Jun 2026 11:10:42 +0200 (CEST)
 Authentication-Results: mail.lfdr.de;
-	dkim=pass header.d=meta.com header.s=s2048-2025-q2 header.b=in6Eb2cY;
-	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13651-lists+io-uring=lfdr.de@vger.kernel.org" designates 172.105.105.114 as permitted sender) smtp.mailfrom="io-uring+bounces-13651-lists+io-uring=lfdr.de@vger.kernel.org";
+	dkim=pass header.d=meta.com header.s=s2048-2025-q2 header.b=SjYB7fu3;
+	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13652-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c04:e001:36c::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-13652-lists+io-uring=lfdr.de@vger.kernel.org";
 	dmarc=pass (policy=reject) header.from=meta.com;
 	arc=pass ("subspace.kernel.org:s=arc-20240116:i=1")
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id CF9003129FC0
-	for <lists+io-uring@lfdr.de>; Tue,  9 Jun 2026 09:02:28 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 33388313CD7A
+	for <lists+io-uring@lfdr.de>; Tue,  9 Jun 2026 09:02:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871FC2FDC57;
-	Tue,  9 Jun 2026 09:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F29BA2E091E;
+	Tue,  9 Jun 2026 09:02:29 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
 Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB562E091E
-	for <io-uring@vger.kernel.org>; Tue,  9 Jun 2026 09:02:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6BE38AC88
+	for <io-uring@vger.kernel.org>; Tue,  9 Jun 2026 09:02:28 +0000 (UTC)
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780995746; cv=none; b=rMiOGA9lPkWHmuyKqLQ3qXpZ2UtM/ITWDJw4/DHoZkZTVpLRd+l/CkDqXps4etA83dK8G9I6QUPSW2xJC8f4cLFaLvOtOt8YfrPReNTqsjeGs1K2+PNrGIynzsJ4NiJIpl6+KjsgZzukdTIPbMV/UNM2SstekjnSHj05IVBt+yE=
+	t=1780995749; cv=none; b=jK4CVaQMx9DJgWk4obK0rdjZnuj3BE4tQukxL1Khvm4uo5HHee31H2BN+ppbAFlsRnbrrXaE4X/qoCq77rz3wdbaI6s459T2nb4cAMsbh0EtRb1xrFjsch0kExiX3FneHRvP06lBnRUs5/QUedRNsV8l7ecO1lnmIU21IHmkf5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780995746; c=relaxed/simple;
-	bh=Jmva6wru9mwcCUxfzZTwLh+de90895g9dEx6tYkMbUU=;
+	s=arc-20240116; t=1780995749; c=relaxed/simple;
+	bh=GYjCvdXei/QTqpSO9+gf+Ejy+VvJ9jkj+JbdnKrdoEI=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DwRkketxT8U3bwrMOgpJPlnyG/eyJIKKN3MmFZ+u9ychXnm39WADAUh/W90x+cPkpZfKACFKsxDrdS1ZN9Z93E7FrCQrMGs6FhP6Uj18GTDCeID7YC6QlrrsTms4IJk504Rr36SQc+J5BVSjO2iHp1XWwUhZ/KfUrGM9PLD5FhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=in6Eb2cY; arc=none smtp.client-ip=67.231.145.42
-Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6595pFmR3364224;
-	Tue, 9 Jun 2026 02:02:23 -0700
+	 MIME-Version:Content-Type; b=h7gNxuFHk4LSn/vkUViYmuMQ/GxRAK7KN44DTdu3UrPHlxAJkT3Hzre3lIDQsTY0vTGpVX4tFYdnLMYAJhd6PRQGVWdD4W4s1HYhGdhUOxqAPm5CVHgMJ9zYmjb+hlgM3X+DAhFNHtC6k0+G0f3yPCNhAkQ/fXTQeEiWra0DH94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=SjYB7fu3; arc=none smtp.client-ip=67.231.145.42
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 658LTQJU1423954;
+	Tue, 9 Jun 2026 02:02:27 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
-	 bh=34IpXJ3ojRV3f2GN/Jw0q0F3aoHbUJ9bC5BMDVMIczo=; b=in6Eb2cYfbqO
-	SUmz1qGNGot8NhP1IgO3XVNHfVf1u0z5sYoXoPhK+CozZfuAbkt59cBUOai3sBou
-	QCqn10UvWY9TWu+6TlW7luFaN18scZMlpG/K5H/UGdCENfeDSRS5y7s7x0PEI3lt
-	OBmJRaiaWxAIxSfaJgyf+Omft2luSLaH71nb4yxNajo9WrBCAzU6UtNydVx/QFiu
-	1WCrG4wSx2jh2r5QC0DheJZPe8Dg3zS0r6z6hVyMa4jGqtXYGfcF6bi+yvptmsUX
-	u/oP36cK4p3Lq+x8o1zOVbkwRU6YNvPumyzBJQwqPQdaEJMZYcyvTUiqU+lROpLT
-	Wca76vDuOQ==
+	 bh=7vzda1og3XnH/0V2CYLPaAlVALiJ0oCuPG0qN2E4Wy0=; b=SjYB7fu3Yoph
+	0d77mRZ+X1PUBLQNohc8/CVU247a14xlGL5gk5uo3HmwVwzjv6iKe4A8IoqE9fgM
+	BDK2IPkBSaZeid0Tsrr8EEzt0sajjkHQO19BYy3r0ijlAgBV+8RgEPih3r90TEuW
+	tsHCI4U2bleGyzgZQAm4LkCmwmls0CrVlaFKkvDdVnAlOrDazBv+b2JJ2GWzywCq
+	wksjzbb8dXEcDWUvUURegYvFrHnKQpnrxQGnaBk0O/9s9OEtE8k8RsB4HsIONOKt
+	FDSHeSKbcyqoQOtsl+kPOLuvzZuchAC44WpyDg9S5Xt73tCPIeU9zS4WH0AsM+SU
+	yAPty5DyNg==
 Received: from maileast.thefacebook.com ([163.114.135.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4emh81eykp-2
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4emjum6s2v-2
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Tue, 09 Jun 2026 02:02:23 -0700 (PDT)
-Received: from localhost (2620:10d:c0a8:1b::30) by mail.thefacebook.com
- (2620:10d:c0a9:6f::8fd4) with Microsoft SMTP Server (version=TLS1_2,
+	Tue, 09 Jun 2026 02:02:26 -0700 (PDT)
+Received: from localhost (2620:10d:c0a8:1c::11) by mail.thefacebook.com
+ (2620:10d:c0a9:6f::237c) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.41; Tue, 9 Jun
- 2026 09:02:21 +0000
+ 2026 09:02:25 +0000
 From: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@meta.com>
 To: <io-uring@vger.kernel.org>
 CC: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@meta.com>,
         Jens Axboe
 	<axboe@kernel.dk>
-Subject: [PATCH liburing v2 2/3] test/zcrx: add ZCRX notification/stats tests
-Date: Tue, 9 Jun 2026 02:01:49 -0700
-Message-ID: <20260609090156.3862920-3-cleger@meta.com>
+Subject: [PATCH liburing v2 3/3] examples/zcrx: add notification support
+Date: Tue, 9 Jun 2026 02:01:50 -0700
+Message-ID: <20260609090156.3862920-4-cleger@meta.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260609090156.3862920-1-cleger@meta.com>
 References: <20260609090156.3862920-1-cleger@meta.com>
@@ -74,39 +74,39 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: p5L13NJ76_dGrWZvc3na5qEj_hCAwSvf
-X-Authority-Analysis: v=2.4 cv=PJI/P/qC c=1 sm=1 tr=0 ts=6a27d69f cx=c_pps
+X-Authority-Analysis: v=2.4 cv=Fvk1OWrq c=1 sm=1 tr=0 ts=6a27d6a2 cx=c_pps
  a=MfjaFnPeirRr97d5FC5oHw==:117 a=MfjaFnPeirRr97d5FC5oHw==:17
- a=IkcTkHD0fZMA:10 a=FelO9ux0wxsA:10 a=M51BFTxLslgA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=7x6HtfJdh03M6CCDgxCd:22 a=PAz_-FQ8hEVmOPYdF0yf:22
- a=VabnemYjAAAA:8 a=i-tqJ75dfQDP0daudQQA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=IkcTkHD0fZMA:10 a=FelO9ux0wxsA:10 a=M51BFTxLslgA:10 a=sWKEhP36mHoA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=7x6HtfJdh03M6CCDgxCd:22 a=crHB47gyY4rKiduisYu9:22
+ a=VabnemYjAAAA:8 a=QvjoEvHx9T2nUATbkMQA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
  a=gKebqoRLp9LExxC7YDUY:22
-X-Proofpoint-ORIG-GUID: p5L13NJ76_dGrWZvc3na5qEj_hCAwSvf
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjA5MDA4MyBTYWx0ZWRfX+HTRDXFCxaZv
- Cv3NIDUgIq+ZU3pqr1+/UbbCiJV6inoTZ5i0qUM0Sv4aiJKe7UUc8Ha1Ox+5Q5uFME60s5nJSBU
- gDNUOV58QBG6xEi/udLeOJXzKqwaIM31neMXJqZXtUCwLUIVMODNJlYSeq25W5NkYHV7NrExaqs
- tUaO3nR5an/HpQqFCS05v6w3BpJW5KH194dKzvsciEZeHpHlAmf0hQD+J2WXl02Htx7zoVhZ9ps
- bvdv0T/kNLkhh4CNIGg1ZO0mi0Y/BexEmzOH9obQyZS9RwFoBgDSPuB9E4WLMwqff8StvjL2Lts
- o3uzpmVny2f9i9pbuxaeCPc6BhzYFt90gmPQHaYsSsFkoEIUuHmqrhiE0S0wiliTCuKlBQ4QcDy
- cloKfiv9vjEtZQsKnssGsrJvQDFmCuKCQQKxeF20SwJryt6dLrTXCiWrqRPRWhezLVZKXwWVIeK
- 5siVz+0XYpeR+mpX3ZA==
+X-Proofpoint-GUID: j2COY10HaeSAq4uhqL_rK_5lvpLduQN2
+X-Proofpoint-ORIG-GUID: j2COY10HaeSAq4uhqL_rK_5lvpLduQN2
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjA5MDA4MyBTYWx0ZWRfXy0b6gxC3PJFy
+ Lkqd0xeLoRptgLBTy+ZkZsytq6jnHz19eUbXGyLZMxY4i8VLbBy6mMcQ5wQOkaUZYw0FAyvYMtK
+ RqD060lmk7mFOPp5qExFQYEHynjzPAHfN9IS3pCWlKvt+/uuDfA/3D/JhBs5UK06KCxDO1+wUdz
+ jeIjQyyYG1XdtkgJ+p7H2hvcEiChq46azC7YEtSjq3ZdYZ5G/WmDrQQleY/L932HMiHGsfKs3xa
+ 2V3iiPVa2ykf4Vii11U/yPshyXH7nIRxWU6lR+EU+tNLKhizFbT9PpDWtd9xnaXvwMLFXCAl2ur
+ v1zWB07N4y2llfMZGLoH2yXV3XnT0oC9o6MY4VDLVwd1/VU0VPxOFIrn8oU5e8Qrrn0e0pOooUE
+ 73m4IiG26xtXEVoKcrFuieNH+HclahaaDlAjzA21xh5BlmiIzxI/VL9h0nizvipLqG5AMGw6hBD
+ JjcxOFA98hia/9+EVgA==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
  definitions=2026-06-09_02,2026-06-09_01,2025-10-01_01
 X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-0.49 / 15.00];
+X-Spamd-Result: default: False [-0.39 / 15.00];
 	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_MIXED_CHARSET(0.67)[subject];
+	R_MIXED_CHARSET(0.77)[subject];
 	DMARC_POLICY_ALLOW(-0.50)[meta.com,reject];
 	R_DKIM_ALLOW(-0.20)[meta.com:s=s2048-2025-q2];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13651-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-13652-lists,io-uring=lfdr.de];
 	MIME_TRACE(0.00)[0:+];
 	FORWARDED(0.00)[lists@lfdr.de];
 	FORGED_SENDER_MAILLIST(0.00)[];
@@ -123,414 +123,208 @@ X-Spamd-Result: default: False [-0.49 / 15.00];
 	PRECEDENCE_BULK(0.00)[];
 	FORGED_RECIPIENTS_FORWARDING(0.00)[];
 	ALIAS_RESOLVED(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	TAGGED_RCPT(0.00)[io-uring];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[meta.com:dkim,meta.com:email,meta.com:mid,meta.com:from_mime,vger.kernel.org:from_smtp,tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo]
 X-Rspamd-Server: lfdr
-X-Rspamd-Queue-Id: A681F65E222
+X-Rspamd-Queue-Id: E62D865E21D
 
-Enhance zcrx testsutie so that it covers notification registration
-validation, stats region placement, and arm operation error paths.
+Add support to register notifications and display stats when
+notifications are received. This allows to provide an example of how to
+register and configure notifications and stats support. If an error is
+encountered while running, then the notification type will be displayed
+along the stat counter if associated to the notification (ie copy fallback).
+
+Notification support is probe before zcrx setup and enabled by default
+if detected.
 
 Signed-off-by: Clément Léger <cleger@meta.com>
 ---
- test/zcrx.c | 376 ++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 376 insertions(+)
+ examples/zcrx.c | 110 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 110 insertions(+)
 
-diff --git a/test/zcrx.c b/test/zcrx.c
-index 27ddaac4..ab5d7c80 100644
---- a/test/zcrx.c
-+++ b/test/zcrx.c
-@@ -835,6 +835,364 @@ static int test_zcrx_clone(void)
- 	return 0;
+diff --git a/examples/zcrx.c b/examples/zcrx.c
+index b55b07ce..f2cb5c1d 100644
+--- a/examples/zcrx.c
++++ b/examples/zcrx.c
+@@ -91,8 +91,11 @@ static size_t cfg_size = 0;
+ static unsigned cfg_affinity_mode = AFFINITY_MODE_NONE;
+ static unsigned cfg_rq_alloc_mode = RQ_ALLOC_USER;
+ static unsigned cfg_area_type = AREA_TYPE_NORMAL;
++static bool cfg_notif = false;
+ static struct sockaddr_in6 cfg_addr;
+ 
++#define NOTIF_USER_DATA		UINT64_MAX
++
+ static long page_size;
+ 
+ static void *area_ptr;
+@@ -102,6 +105,10 @@ static struct io_uring_zcrx_rq rq_ring;
+ static unsigned long area_token;
+ static bool stop;
+ static __u32 zcrx_id;
++static __u32 notif_stats_size;
++static __u32 notif_stats_alignment;
++static __u32 notif_stats_offset;
++static struct io_uring_zcrx_notif_stats *notif_stats;
+ 
+ static int dmabuf_fd;
+ static int memfd;
+@@ -164,6 +171,13 @@ static inline size_t get_refill_ring_size(unsigned int rq_entries)
+ 	ring_size = rq_entries * sizeof(struct io_uring_zcrx_rqe);
+ 	/* add space for the header (head/tail/etc.) */
+ 	ring_size += page_size;
++
++	if (cfg_notif && notif_stats_size) {
++		notif_stats_offset = T_ALIGN_UP(ring_size,
++						notif_stats_alignment);
++		ring_size = notif_stats_offset + notif_stats_size;
++	}
++
+ 	return T_ALIGN_UP(ring_size, page_size);
  }
  
-+static int try_register_ifq_with_notif(struct zcrx_notification_desc *notif,
-+				       void *area)
+@@ -236,9 +250,48 @@ static void zcrx_populate_area(struct io_uring_zcrx_area_reg *area_reg)
+ 	area_reg->flags = 0;
+ }
+ 
++static void zcrx_probe_notif(void)
 +{
-+	struct io_uring_region_desc rq_region = {
-+		.size = get_rq_size(RQ_ENTRIES),
-+		.user_addr = uring_ptr_to_u64(def_rq_mem),
-+		.flags = IORING_MEM_REGION_TYPE_USER,
-+	};
-+	struct io_uring_zcrx_area_reg area_reg = {
-+		.addr = uring_ptr_to_u64(area),
-+		.len = AREA_SZ,
-+		.flags = 0,
-+	};
-+	struct io_uring_zcrx_ifq_reg reg = {
-+		.flags = ZCRX_REG_NODEV,
-+		.rq_entries = RQ_ENTRIES,
-+		.area_ptr = uring_ptr_to_u64(&area_reg),
-+		.region_ptr = uring_ptr_to_u64(&rq_region),
-+		.notif_desc = uring_ptr_to_u64(notif),
-+	};
-+
-+	return try_register_zcrx(&reg);
-+}
-+
-+static int test_notif_registration(void *area)
-+{
-+	struct zcrx_notification_desc notif;
-+	int ret;
-+
-+	/* Valid registration with no-buffers notification */
-+	memset(&notif, 0, sizeof(notif));
-+	notif.user_data = 42;
-+	notif.type_mask = (1 << ZCRX_NOTIF_NO_BUFFERS);
-+
-+	ret = try_register_ifq_with_notif(&notif, area);
-+	if (ret) {
-+		fprintf(stderr, "valid notif registration failed: %d\n", ret);
-+		return T_EXIT_FAIL;
-+	}
-+
-+	/* Valid registration with both notification types */
-+	memset(&notif, 0, sizeof(notif));
-+	notif.user_data = 42;
-+	notif.type_mask = (1 << ZCRX_NOTIF_NO_BUFFERS) |
-+			  (1 << ZCRX_NOTIF_COPY);
-+
-+	ret = try_register_ifq_with_notif(&notif, area);
-+	if (ret) {
-+		fprintf(stderr, "valid notif both-types registration failed: %d\n", ret);
-+		return T_EXIT_FAIL;
-+	}
-+
-+	/* Invalid type_mask (bit beyond valid range) */
-+	memset(&notif, 0, sizeof(notif));
-+	notif.user_data = 42;
-+	notif.type_mask = (1 << 31);
-+
-+	ret = try_register_ifq_with_notif(&notif, area);
-+	if (ret != -EINVAL) {
-+		fprintf(stderr, "invalid notif type_mask should fail with -EINVAL, got %d\n", ret);
-+		return T_EXIT_FAIL;
-+	}
-+
-+	/* Non-zero reserved field should fail */
-+	memset(&notif, 0, sizeof(notif));
-+	notif.user_data = 42;
-+	notif.type_mask = (1 << ZCRX_NOTIF_NO_BUFFERS);
-+	notif.__resv2[0] = 1;
-+
-+	ret = try_register_ifq_with_notif(&notif, area);
-+	if (ret != -EINVAL) {
-+		fprintf(stderr, "non-zero resv2 should fail with -EINVAL, got %d\n", ret);
-+		return T_EXIT_FAIL;
-+	}
-+
-+	/* Invalid notif flags */
-+	memset(&notif, 0, sizeof(notif));
-+	notif.user_data = 42;
-+	notif.type_mask = (1 << ZCRX_NOTIF_NO_BUFFERS);
-+	notif.flags = ~ZCRX_NOTIF_DESC_FLAG_STATS;
-+
-+	ret = try_register_ifq_with_notif(&notif, area);
-+	if (ret != -EINVAL) {
-+		fprintf(stderr, "invalid notif flags should fail with -EINVAL, got %d\n", ret);
-+		return T_EXIT_FAIL;
-+	}
-+
-+	return T_EXIT_PASS;
-+}
-+
-+static int test_notif_stats(void *area)
-+{
-+	struct io_uring_query_zcrx zcrx_query = {};
++	struct io_uring_query_zcrx zcrx_query;
 +	struct io_uring_query_hdr zcrx_hdr = {
 +		.size = sizeof(zcrx_query),
 +		.query_data = uring_ptr_to_u64(&zcrx_query),
 +		.query_op = IO_URING_QUERY_ZCRX,
 +	};
-+	struct io_uring_query_zcrx_notif notif_query = {};
++	struct io_uring_query_zcrx_notif notif_query;
 +	struct io_uring_query_hdr notif_hdr = {
 +		.size = sizeof(notif_query),
 +		.query_data = uring_ptr_to_u64(&notif_query),
 +		.query_op = IO_URING_QUERY_ZCRX_NOTIF,
 +	};
-+	struct zcrx_notification_desc notif;
-+	size_t ring_size, rqes_end, stats_off, hdr_size;
 +	int ret;
-+	int tret = T_EXIT_FAIL;
-+	void *ring_mem;
 +
-+	/*
-+	 * Query the kernel for the actual refill ring header size and stats
-+	 * struct layout so we can build a correctly-sized user region.
-+	 */
 +	ret = io_uring_register(-1, IORING_REGISTER_QUERY, &zcrx_hdr, 0);
 +	if (ret < 0 || zcrx_hdr.result < 0) {
-+		fprintf(stderr, "zcrx query not supported: %d\n", ret);
-+		return T_EXIT_FAIL;
++		printf("Failed to query ZCRX\n");
++		return;
++	}
++
++	if (!(zcrx_query.features & ZCRX_FEATURE_NOTIFICATION)) {
++		printf("Kernel doesn't support ZCRX notifications\n");
++		return;
 +	}
 +
 +	ret = io_uring_register(-1, IORING_REGISTER_QUERY, &notif_hdr, 0);
 +	if (ret < 0 || notif_hdr.result < 0) {
-+		fprintf(stderr, "zcrx notif query not supported: %d\n", ret);
-+		return T_EXIT_FAIL;
++		printf("Failed to query ZCRX stats parameters\n");
++		return;
 +	}
 +
-+	if (!notif_query.notif_stats_size) {
-+		fprintf(stderr, "notif stats not supported\n");
-+		return T_EXIT_FAIL;
-+	}
-+
-+	hdr_size = T_ALIGN_UP((__u64)zcrx_query.rq_hdr_size,
-+			     zcrx_query.rq_hdr_alignment);
-+	rqes_end = hdr_size + sizeof(struct io_uring_zcrx_rqe) * RQ_ENTRIES;
-+	stats_off = T_ALIGN_UP(rqes_end, notif_query.notif_stats_off_alignment);
-+	ring_size = stats_off + notif_query.notif_stats_size;
-+	ring_size = T_ALIGN_UP(ring_size, page_size);
-+
-+	ring_mem = mmap(NULL, ring_size, PROT_READ | PROT_WRITE,
-+			MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
-+	if (ring_mem == MAP_FAILED) {
-+		perror("mmap ring_mem");
-+		return T_EXIT_FAIL;
-+	}
-+
-+	struct io_uring_region_desc region = {
-+		.user_addr = uring_ptr_to_u64(ring_mem),
-+		.size = ring_size,
-+		.flags = IORING_MEM_REGION_TYPE_USER,
-+	};
-+	struct io_uring_zcrx_area_reg area_reg = {
-+		.addr = uring_ptr_to_u64(area),
-+		.len = AREA_SZ,
-+		.flags = 0,
-+	};
-+
-+	/* Valid stats offset */
-+	memset(&notif, 0, sizeof(notif));
-+	notif.user_data = 42;
-+	notif.type_mask = (1 << ZCRX_NOTIF_NO_BUFFERS);
-+	notif.flags = ZCRX_NOTIF_DESC_FLAG_STATS;
-+	notif.stats_offset = stats_off;
-+
-+	struct io_uring_zcrx_ifq_reg reg = {
-+		.flags = ZCRX_REG_NODEV,
-+		.rq_entries = RQ_ENTRIES,
-+		.area_ptr = uring_ptr_to_u64(&area_reg),
-+		.region_ptr = uring_ptr_to_u64(&region),
-+		.notif_desc = uring_ptr_to_u64(&notif),
-+	};
-+
-+	/*
-+	 * Pre-fill the stats area with non-zero values to verify the kernel
-+	 * zeroes it on registration.
-+	 */
-+	memset((char *)ring_mem + stats_off, 0xff,
-+	       sizeof(struct io_uring_zcrx_notif_stats));
-+
-+	ret = try_register_zcrx(&reg);
-+	if (ret) {
-+		fprintf(stderr, "notif stats registration failed: %d\n", ret);
-+		goto unmap;
-+	}
-+
-+	/* Verify the stats area was zeroed by the kernel */
-+	struct io_uring_zcrx_notif_stats *stats =
-+		(struct io_uring_zcrx_notif_stats *)((char *)ring_mem + stats_off);
-+	if (stats->copy_count || stats->copy_bytes) {
-+		fprintf(stderr, "stats not zeroed after registration\n");
-+		goto unmap;
-+	}
-+
-+	/* Misaligned stats offset should fail */
-+	memset(&notif, 0, sizeof(notif));
-+	notif.user_data = 42;
-+	notif.type_mask = (1 << ZCRX_NOTIF_NO_BUFFERS);
-+	notif.flags = ZCRX_NOTIF_DESC_FLAG_STATS;
-+	notif.stats_offset = stats_off + 1;
-+
-+	region.user_addr = uring_ptr_to_u64(ring_mem);
-+	reg.region_ptr = uring_ptr_to_u64(&region);
-+	reg.notif_desc = uring_ptr_to_u64(&notif);
-+
-+	ret = try_register_zcrx(&reg);
-+	if (ret != -EINVAL) {
-+		fprintf(stderr, "misaligned stats_offset should fail, got %d\n", ret);
-+		goto unmap;
-+	}
-+
-+	/* Stats offset overlapping with rqes should fail */
-+	notif.stats_offset = sizeof(struct io_uring_zcrx_rqe);
-+
-+	ret = try_register_zcrx(&reg);
-+	if (ret != -ERANGE) {
-+		fprintf(stderr, "overlapping stats_offset should fail, got %d\n", ret);
-+		goto unmap;
-+	}
-+
-+	/* Stats offset beyond region should fail */
-+	notif.stats_offset = ring_size;
-+
-+	ret = try_register_zcrx(&reg);
-+	if (ret != -ERANGE) {
-+		fprintf(stderr, "out-of-bounds stats_offset should fail, got %d\n", ret);
-+		goto unmap;
-+	}
-+
-+	tret = T_EXIT_PASS;
-+unmap:
-+	munmap(ring_mem, ring_size);
-+	return tret;
++	notif_stats_size = notif_query.notif_stats_size;
++	notif_stats_alignment = notif_query.notif_stats_off_alignment;
++	cfg_notif = true;
 +}
 +
-+static int test_arm_notification(void *area)
-+{
+ static void setup_zcrx(struct io_uring *ring)
+ {
+ 	struct io_uring_zcrx_area_reg area_reg;
 +	struct zcrx_notification_desc notif;
-+	struct io_uring ring;
-+	struct zcrx_ctrl ctrl;
-+	__u32 zcrx_id;
+ 	unsigned int ifindex;
+ 	unsigned int rq_entries = cfg_rq_entries;
+ 	unsigned rq_flags = 0;
+@@ -276,6 +329,18 @@ static void setup_zcrx(struct io_uring *ring)
+ 		.region_ptr = uring_ptr_to_u64(&region_reg),
+ 	};
+ 
++	if (cfg_notif) {
++		memset(&notif, 0, sizeof(notif));
++		notif.user_data = NOTIF_USER_DATA;
++		notif.type_mask = (1 << ZCRX_NOTIF_NO_BUFFERS) |
++				  (1 << ZCRX_NOTIF_COPY);
++		if (notif_stats_size) {
++			notif.flags = ZCRX_NOTIF_DESC_FLAG_STATS;
++			notif.stats_offset = notif_stats_offset;
++		}
++		reg.notif_desc = uring_ptr_to_u64(&notif);
++	}
++
+ 	ret = io_uring_register_ifq(ring, &reg);
+ 	if (ret)
+ 		t_error(1, 0, "io_uring_register_ifq(): %d", ret);
+@@ -297,6 +362,10 @@ static void setup_zcrx(struct io_uring *ring)
+ 
+ 	zcrx_id = reg.zcrx_id;
+ 	area_token = area_reg.rq_area_token;
++
++	if (cfg_notif && notif_stats_size)
++		notif_stats = (struct io_uring_zcrx_notif_stats *)
++				((char *)ring_ptr + notif_stats_offset);
+ }
+ 
+ static void add_accept(struct io_uring *ring, int sockfd)
+@@ -473,6 +542,41 @@ static void process_recvzc(struct io_uring *ring,
+ 	return_buffer(&rq_ring, cqe);
+ }
+ 
++static void rearm_notification(struct io_uring *ring, __u32 notif_type)
++{
++	struct zcrx_ctrl ctrl = {
++		.zcrx_id = zcrx_id,
++		.op = ZCRX_CTRL_ARM_NOTIFICATION,
++	};
 +	int ret;
 +
-+	struct io_uring_zcrx_area_reg area_reg = {
-+		.addr = uring_ptr_to_u64(area),
-+		.len = AREA_SZ,
-+		.flags = 0,
-+	};
-+	struct io_uring_region_desc rq_region = {
-+		.size = get_rq_size(RQ_ENTRIES),
-+		.user_addr = uring_ptr_to_u64(def_rq_mem),
-+		.flags = IORING_MEM_REGION_TYPE_USER,
-+	};
-+	struct io_uring_zcrx_ifq_reg reg = {
-+		.flags = ZCRX_REG_NODEV,
-+		.rq_entries = RQ_ENTRIES,
-+		.area_ptr = uring_ptr_to_u64(&area_reg),
-+		.region_ptr = uring_ptr_to_u64(&rq_region),
-+	};
-+
-+	/* First, register without notifications and check arm fails */
-+	ret = t_create_ring(128, &ring, RING_FLAGS);
-+	if (ret != T_SETUP_OK) {
-+		fprintf(stderr, "ring create failed: %d\n", ret);
-+		return T_EXIT_FAIL;
-+	}
-+
-+	ret = io_uring_register_ifq(&ring, &reg);
-+	if (ret) {
-+		fprintf(stderr, "ifq register failed: %d\n", ret);
-+		io_uring_queue_exit(&ring);
-+		return T_EXIT_FAIL;
-+	}
-+	zcrx_id = reg.zcrx_id;
-+
-+	memset(&ctrl, 0, sizeof(ctrl));
-+	ctrl.zcrx_id = zcrx_id;
-+	ctrl.op = ZCRX_CTRL_ARM_NOTIFICATION;
-+	ctrl.zc_arm_notif.notif_type = ZCRX_NOTIF_NO_BUFFERS;
-+
-+	ret = io_uring_register(ring.ring_fd, IORING_REGISTER_ZCRX_CTRL,
++	ctrl.zc_arm_notif.notif_type = notif_type;
++	ret = io_uring_register(ring->ring_fd, IORING_REGISTER_ZCRX_CTRL,
 +				&ctrl, 0);
-+	if (ret != -EINVAL) {
-+		fprintf(stderr, "arm without prior notif should fail, got %d\n", ret);
-+		io_uring_queue_exit(&ring);
-+		return T_EXIT_FAIL;
-+	}
-+	io_uring_queue_exit(&ring);
-+
-+	/* Now register with notifications and try arm with invalid type */
-+	memset(&notif, 0, sizeof(notif));
-+	notif.user_data = 42;
-+	notif.type_mask = (1 << ZCRX_NOTIF_NO_BUFFERS);
-+
-+	reg.notif_desc = uring_ptr_to_u64(&notif);
-+
-+	ret = t_create_ring(128, &ring, RING_FLAGS);
-+	if (ret != T_SETUP_OK) {
-+		fprintf(stderr, "ring create failed: %d\n", ret);
-+		return T_EXIT_FAIL;
-+	}
-+
-+	ret = io_uring_register_ifq(&ring, &reg);
-+	if (ret) {
-+		fprintf(stderr, "notif ifq register failed: %d\n", ret);
-+		io_uring_queue_exit(&ring);
-+		return T_EXIT_FAIL;
-+	}
-+	zcrx_id = reg.zcrx_id;
-+
-+	/* Arm with invalid type should fail */
-+	memset(&ctrl, 0, sizeof(ctrl));
-+	ctrl.zcrx_id = zcrx_id;
-+	ctrl.op = ZCRX_CTRL_ARM_NOTIFICATION;
-+	ctrl.zc_arm_notif.notif_type = __ZCRX_NOTIF_TYPE_LAST;
-+
-+	ret = io_uring_register(ring.ring_fd, IORING_REGISTER_ZCRX_CTRL,
-+				&ctrl, 0);
-+	if (ret != -EINVAL) {
-+		fprintf(stderr, "arm with invalid type should fail, got %d\n", ret);
-+		io_uring_queue_exit(&ring);
-+		return T_EXIT_FAIL;
-+	}
-+
-+	/*
-+	 * Arm for a type that hasn't fired yet should fail because the kernel
-+	 * only allows rearming notifications that have already been delivered.
-+	 */
-+	memset(&ctrl, 0, sizeof(ctrl));
-+	ctrl.zcrx_id = zcrx_id;
-+	ctrl.op = ZCRX_CTRL_ARM_NOTIFICATION;
-+	ctrl.zc_arm_notif.notif_type = ZCRX_NOTIF_NO_BUFFERS;
-+
-+	ret = io_uring_register(ring.ring_fd, IORING_REGISTER_ZCRX_CTRL,
-+				&ctrl, 0);
-+	if (ret != -EINVAL) {
-+		fprintf(stderr, "arm for unfired notif should fail, got %d\n", ret);
-+		io_uring_queue_exit(&ring);
-+		return T_EXIT_FAIL;
-+	}
-+
-+	/* Non-zero reserved in arm_notif should fail */
-+	memset(&ctrl, 0, sizeof(ctrl));
-+	ctrl.zcrx_id = zcrx_id;
-+	ctrl.op = ZCRX_CTRL_ARM_NOTIFICATION;
-+	ctrl.zc_arm_notif.notif_type = ZCRX_NOTIF_NO_BUFFERS;
-+	ctrl.zc_arm_notif.__resv[0] = 1;
-+
-+	ret = io_uring_register(ring.ring_fd, IORING_REGISTER_ZCRX_CTRL,
-+				&ctrl, 0);
-+	if (ret != -EINVAL) {
-+		fprintf(stderr, "arm with non-zero resv should fail, got %d\n", ret);
-+		io_uring_queue_exit(&ring);
-+		return T_EXIT_FAIL;
-+	}
-+
-+	io_uring_queue_exit(&ring);
-+	return T_EXIT_PASS;
++	if (ret < 0)
++		fprintf(stderr, "arm notification failed: %d\n", ret);
 +}
 +
- static int test_rq_flush(void)
++static void process_notification(struct io_uring *ring,
++				 struct io_uring_cqe *cqe)
++{
++	__u32 notif_type = cqe->res;
++
++	if (notif_type == ZCRX_NOTIF_NO_BUFFERS) {
++		printf("Notification: no buffers available\n");
++	} else {
++		printf("Notification: unknown notification %u\n", notif_type);
++	}
++
++	if (notif_stats && notif_type == ZCRX_NOTIF_COPY) {
++		printf("Notification: copy fallback\nStats: copy_count=%llu copy_bytes=%llu\n",
++			IO_URING_READ_ONCE(notif_stats->copy_count),
++			IO_URING_READ_ONCE(notif_stats->copy_bytes));
++	}
++
++	rearm_notification(ring, notif_type);
++}
++
+ static void server_loop(struct io_uring *ring)
  {
- 	struct t_executor ctx;
-@@ -1219,6 +1577,24 @@ static int run_tests(void)
- 		return T_EXIT_FAIL;
- 	}
+ 	struct io_uring_cqe *cqe;
+@@ -484,6 +588,11 @@ static void server_loop(struct io_uring *ring)
+ 		t_error(1, ret, "io_uring_submit_and_wait failed\n");
  
-+	ret = test_notif_registration(def_area_mem);
-+	if (ret) {
-+		fprintf(stderr, "test_notif_registration failed\n");
-+		return ret;
-+	}
-+
-+	ret = test_notif_stats(def_area_mem);
-+	if (ret) {
-+		fprintf(stderr, "test_notif_stats failed\n");
-+		return ret;
-+	}
-+
-+	ret = test_arm_notification(def_area_mem);
-+	if (ret) {
-+		fprintf(stderr, "test_arm_notification failed\n");
-+		return ret;
-+	}
-+
- 	ret = test_recv();
- 	if (ret) {
- 		fprintf(stderr, "test_recv() failed %i\n", ret);
+ 	io_uring_for_each_cqe(ring, head, cqe) {
++		if (cqe->user_data == NOTIF_USER_DATA) {
++			process_notification(ring, cqe);
++			count++;
++			continue;
++		}
+ 		switch (cqe->user_data & REQ_TYPE_MASK) {
+ 		case REQ_TYPE_ACCEPT:
+ 			process_accept(ring, cqe);
+@@ -534,6 +643,7 @@ static void run_server(void)
+ 	if (ret)
+ 		t_error(1, ret, "ring init failed");
+ 
++	zcrx_probe_notif();
+ 	setup_zcrx(&ring);
+ 	add_accept(&ring, listen_fd);
+ 
 -- 
 2.52.0
 

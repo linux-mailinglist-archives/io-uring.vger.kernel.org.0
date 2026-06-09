@@ -1,243 +1,189 @@
-Return-Path: <io-uring+bounces-13654-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13655-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by mail.lfdr.de with LMTP
-	id 9skEMrxNKGqQBwMAu9opvQ
-	(envelope-from <io-uring+bounces-13654-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 09 Jun 2026 19:30:36 +0200
+	id vMScM15dKGoQCwMAu9opvQ
+	(envelope-from <io-uring+bounces-13655-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 09 Jun 2026 20:37:18 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11FA4662F7D
-	for <lists+io-uring@lfdr.de>; Tue, 09 Jun 2026 19:30:36 +0200 (CEST)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EAC86635D5
+	for <lists+io-uring@lfdr.de>; Tue, 09 Jun 2026 20:37:18 +0200 (CEST)
 Authentication-Results: mail.lfdr.de;
-	dkim=pass header.d=janestreet.com header.s=google header.b=14GHb+ju;
-	dkim=pass header.d=janestreet.com header.s=waixah header.b=OsAttRF9;
-	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13654-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c0a:e001:db::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-13654-lists+io-uring=lfdr.de@vger.kernel.org";
-	dmarc=pass (policy=quarantine) header.from=janestreet.com;
-	arc=reject ("cv is fail on i=2")
+	dkim=pass header.d=kernel.org header.s=k20260515 header.b=GIqD195d;
+	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13655-lists+io-uring=lfdr.de@vger.kernel.org" designates 172.234.253.10 as permitted sender) smtp.mailfrom="io-uring+bounces-13655-lists+io-uring=lfdr.de@vger.kernel.org";
+	dmarc=pass (policy=quarantine) header.from=kernel.org;
+	arc=pass ("subspace.kernel.org:s=arc-20240116:i=1")
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 61A753167771
-	for <lists+io-uring@lfdr.de>; Tue,  9 Jun 2026 17:15:22 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 820EA301BC3C
+	for <lists+io-uring@lfdr.de>; Tue,  9 Jun 2026 18:36:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2FAF4C041E;
-	Tue,  9 Jun 2026 17:15:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01E847ECC9;
+	Tue,  9 Jun 2026 18:36:49 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mxout5.mail.janestreet.com (mxout5.mail.janestreet.com [64.215.233.18])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C16E4BCADB
-	for <io-uring@vger.kernel.org>; Tue,  9 Jun 2026 17:15:19 +0000 (UTC)
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781025320; cv=fail; b=jtL8jhcr/DFeans+yhT/W2eDOp+3QKtRrerCGNtRg1OxNMFRLJGkqCznd2lQph6oz5gJTWqthHvv7AflbaN/HhoTWEksIL+gLWcjqOU/gsok2VK7j0AI86nYluEWDKHxf9NCEZAo/AsldCPR+7mP3wIJpr81f/moha1pDZe7xao=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781025320; c=relaxed/simple;
-	bh=2inTUhdt8YIA2l57282yKhLtyF6GdP0EAnIKVqphNjY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TOu04JlHClz+iN1f7WE32643wE5dpDF63ryKAm4qCtjaGb1FBIsL3jMFkGwkQ3hIchKRDN6Wh6D3+zLuqVObQEPbFT4U7J4P+qSEESwxPYznLBNr5LFyi6wWAGjBPzO1vKMPIHWh74kKnzi+HwjIv8D38AjpcpiFBNvqHbglqJo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=janestreet.com; spf=pass smtp.mailfrom=janestreet.com; dkim=pass (1024-bit key) header.d=janestreet.com header.i=@janestreet.com header.b=14GHb+ju; dkim=pass (2048-bit key) header.d=janestreet.com header.i=@janestreet.com header.b=OsAttRF9; arc=fail smtp.client-ip=64.215.233.18
-Received: from mail-ed1-f72.google.com ([209.85.208.72])
- 	by mxgoog2.mail.janestreet.com with esmtps (TLS1.3:TLS_AES_128_GCM_SHA256:128)
- 	(Exim 4.99.4)
- 	id 1wX02p-00000008bJd-0Ymb
- 	for io-uring@vger.kernel.org;
- 	Tue, 09 Jun 2026 13:15:19 -0400
-Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-68fa01a8b02so768789a12.1
-         for <io-uring@vger.kernel.org>; Tue, 09 Jun 2026 10:15:19 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1781025318; cv=none;
-         d=google.com; s=arc-20240605;
-         b=ET3+8yafv9z8iOhlmRe2SVX2CGsKNmWHyO1n8EP/YCyo7YZxNpCSRgWyJL+ppbBmAD
-          57UxQu7Z2dCEdA2qrx7GfHntiPQXL6yOjZQgoi/WfpjIQyrrVuffYlFmG2HvNSpCa3lH
-          EliXxL2hYAoRMh/Vac/Es0AzqBVP9z7ACuSpnoZ9U3PlKaY4eUaKSmaAtcpV1GnRMxHX
-          IwXthTKvtklREvv8zbFyWY+jgz4ehyIF1qg6Chx5XCabLLZhX+2utz6cMe6nmryzM61Y
-          erdfRIagVXoTLoCj/jDVJRe/vpMd76+QRi50GroKMTxkVSgwuqI3eEo8H08mVSjb/ZLQ
-          cKQg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-         h=content-transfer-encoding:cc:to:subject:message-id:date:from
-          :in-reply-to:references:mime-version:dkim-signature;
-         bh=G+/6fdbcggFvGkAF9hirx6Oyq2sHXWyVk+eenuvWMpU=;
-         fh=eObh+s0nZk1KJwxisye/9JOUxD8xACieyXB52tibkSk=;
-         b=NZ/l1o0hHPBR4/SK8+b477MRPfY6k6FCo7FtP+N7yFL+YZzbJLg8ZlErvYGcKW8bH0
-          dOkDGQrV61LHTXF6WPNHJsA+BaEtOIpGmjh089dXqtNj6FhyqElyBjAxfHWBo658DtBq
-          xZzIUBxMng6eMm481uMBjJc1dUO7WjP5Oa9fizj4ZU22XIHNYhgQrSJ7jhX62vjmA247
-          39agWH9moL1+JMR7RYpRW6Ph/XDukPcoUhADbnZ7hIyw8zU9eqDZupXoclpJrOKeKFSe
-          TeB/IRnFCEl+8rmdUsntMucrpz9Ny3k+ldchnCkcWD6GrJEdSexb1by8lHj6tvGhWbvY
-          b28A==;
-         darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-         d=janestreet.com; s=google; t=1781025318; x=1781630118; darn=vger.kernel.org;
-         h=content-transfer-encoding:cc:to:subject:message-id:date:from
-          :in-reply-to:references:mime-version:from:to:cc:subject:date
-          :message-id:reply-to;
-         bh=G+/6fdbcggFvGkAF9hirx6Oyq2sHXWyVk+eenuvWMpU=;
-         b=14GHb+ju2esx3Wgg5mmRt5GlrxqrjzQSjDzjgES+bcWzonX1Le6Wjr34/Y9S0yFT+m
-          NHwejsCJoUWIia+KzYYZFkDup3N+2hO+uLUSGtGKAytHhT8bIr2/nAUGDi9kdgFNPtSJ
-          n8siNmQHrCaZFjEJiaNMulUYVPCnZCGoNuXGE=
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=janestreet.com;
-  s=waixah; t=1781025319;
-  bh=G+/6fdbcggFvGkAF9hirx6Oyq2sHXWyVk+eenuvWMpU=;
-  h=References:In-Reply-To:From:Date:Subject:To:Cc;
-  b=OsAttRF9A4gQ2eRBDcfe43o5nODESb7KmJT8LACsb13IbhagJp9DD8ZE5HdTJxM+f
-  4uSdWtM0rfhdgXD1CR2nipSPQfRkoGiWbSdMQIJYQGCChr8fojcPdfU+x8lcICuPHY
-  lUZxKdToTDngPfmQqNx5YrQXypz9p5eyFqt3hvY6RNUgPXTZS9KLAaxfdwu5qQnf5M
-  T8B5Jwp7UwFzlXKS9Wbzhmw2odCgOw5u5D2sUsW7C/72t5aJuRuA92bto9Sohbxb6n
-  0fueYHomh8LAWQ9RqviM+wHraTq+JingrKtdekDUKoYKyNxvvbFcTXujG7LCWvgcEb
-  CyvKWjIWm/8KA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-         d=1e100.net; s=20251104; t=1781025318; x=1781630118;
-         h=content-transfer-encoding:cc:to:subject:message-id:date:from
-          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-          :to:cc:subject:date:message-id:reply-to;
-         bh=G+/6fdbcggFvGkAF9hirx6Oyq2sHXWyVk+eenuvWMpU=;
-         b=Da68N7NKH7ja9oL1AQ07byNuXYDSwjNkegnOyfVB5v9FcMSD2nWY873Z/xJ2W7zllD
-          LG+DfbC7cjRf8toICAZGjA/ccmMpiiiX1ozYUcsDtsHjjSbTsUY4y+p8NQNSkTx0sjYo
-          URN4rlzAlYaoVFzpgPO1FwVpGG5O5TnJadHkXk1ty/2zk0Msi9/VBAm71uDp5lCthxw2
-          MoC1uC2YTrpKSfBz0haZrSQ82NiN5gyb1aX5QyNtEVvOr+BvLvWoYdqiKFNwiT4XcwAI
-          xpw+5iOcnwZVTGAhb1r+xwGkEjABZ1/1DdBYQChew5OdHEqrjW4Y4NHWpOIVOlrOmrtW
-          bIrg==
-X-Forwarded-Encrypted: i=1; AFNElJ8x0wYuG3nmwIh2GX6+Vmi7QuyBslxvb+9HIk0znq98ERQc6WTxzbzPhlYoLCdIKukCT/xCRw1Szg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9mh06VJ9N05fcZpK5mFFXrZUXo3WxiOL0xBTsCSBzEIYD/CtQ
- 	AUI0cclSNQgAWNQALlcdbSLQZ83NBbcMJPq8tU3RyqSyW9uYo+cUF4oVH23hHoi/1wHgSUEY10A
- 	t8AEJvBIoRrkjdtPRm45tzUHGpFadgHcViSvYNjiCfQEqIgi7UkJcdqa4gK9CswnzhDoxeqQgDy
- 	rapuRZmTNUeiauKXX5xHjvVjjkZ13siGb03w==
-X-Gm-Gg: Acq92OE99XjTfBxW2EfUklNkW63sgQh4hVw50phTo5td6tBfprAsgUQ/qUdmahZR5dv
- 	tBut7K2TdHSZc8e8CXhqgbNo44UHhY3yDC1CWw+f+TxLPfQ9ozSmFCYs8uWB7UnVht3pcOlQVOb
- 	xIrcHRrjHkfMB9wCFdLMTXlyzAcENwvm56Ozx08cx9u/m1tK/c3Yj1WbdZJ9etkL2y1ZGW7FPpN
- 	oAE6u1yEyji6jpI
-X-Received: by 2002:a05:6402:524f:b0:68d:b17a:543c with SMTP id 4fb4d7f45d1cf-68ff2186061mr8591386a12.12.1781025317822;
-         Tue, 09 Jun 2026 10:15:17 -0700 (PDT)
-X-Received: by 2002:a05:6402:524f:b0:68d:b17a:543c with SMTP id
-  4fb4d7f45d1cf-68ff2186061mr8591366a12.12.1781025317308; Tue, 09 Jun 2026
-  10:15:17 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049493655C2;
+	Tue,  9 Jun 2026 18:36:48 +0000 (UTC)
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781030209; cv=none; b=AcahJkAADWq8R4J09OtpPJu4gB7PMXMPFivMXjValzqXjMppM7XCrEEwGJLWA4Z3u8G3aaVJlhZ1y4fds0v/0JbpTAHPJzT2X9rbb3sMyAEj1sCk2Jjhus0SCfqaD5t/hwjUMbHYIFz9/+HhNCHdTrT8RKdz4dzPyAeO+h+ExXU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781030209; c=relaxed/simple;
+	bh=UuGVMFKt24Z+7x/2/EDQO/7+VuycnQMRj2g+1nhL1gc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OAbwU/mOrIa+pYU77S1nfcrfklR0/tazdBPPcpNAcjlB+66qnkPtdT8XGXcgcV74jziu2+/IKx25wXLaSY0Osr25g1DPO98EJlbLibFQJ+ePfL+JKki1IwksoG/s8ERucJ5Ez4ZqbpKK3Uo5LDI6EquSXz4qksVZbBt+l29cYB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GIqD195d; arc=none smtp.client-ip=100.103.45.18
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 811DF1F00893;
+	Tue,  9 Jun 2026 18:36:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1781030208;
+	bh=S+yABG6aAFn/rSklaxejprqMRgxHOVspIlbYLiY1F/M=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=GIqD195d5nOUKwHfn3u0Ct79ehZaNGzN9OSwhAaoyLiKtWFMWe6nvoXXS1DMWfu1U
+	 tECuB+PENx1tEwo5eco9VwwLugKkwOvLmxioEznPoIRJ5zGSW060q4tDx+Z9RJHkpF
+	 JBYQL/t0jHRJUKrNTq0zeDdOlIKgcFu2in8a20XZqN/ejRLsxO94UJJev+/onj9y4T
+	 P1gnk641cnn7M9+HSznMvSMW2/CSenDey33zSrG/k8DJBSNLGfGexxvzxn5D4MJjMw
+	 F8i1+33Zj/zQxkqM2nlWAjWuEfp3QfNhfhYQ/ow7ITia8RUVtj8kGJulZbsCsnPC5s
+	 gDfdtd1TSHzHA==
+Message-ID: <c924fb59-be47-4fa5-adbf-a50a831ccd7b@kernel.org>
+Date: Tue, 9 Jun 2026 20:36:43 +0200
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAFN_u7FrgM4Dzie2jjkLwWV8P0dvUG_Wwy3Q9B3-2HnnWiDu8w@mail.gmail.com>
-  <aiLxe-9Sub8cI3Py@bfoster> <aibns0xP6IVVNWh3@bfoster> <CAAH4uRB+Bh9UEVEW8Sb2yM4YhB-Q5UJ6KJJXari3DDF3n3S+-g@mail.gmail.com>
-  <aig9Vm2a_13bPc5G@bfoster>
-In-Reply-To: <aig9Vm2a_13bPc5G@bfoster>
-From: Gregg Leventhal <gleventhal@janestreet.com>
-Date: Tue, 9 Jun 2026 13:14:40 -0400
-X-Gm-Features: AVVi8CccMZBf_W2neiPGuRO8YpErMCyF7o_iyXweU0WZ58K3osa4MMBejEkzuNY
-Message-ID: <CAFN_u7ELBj3YKncm6HA4-QUNyi-a3qPDEYxuLP+skVhm-r87uw@mail.gmail.com>
-Subject: Re: [BUG] iomap/io_uring: O_APPEND async buffered write silently
-  re-appends a data chunk (corruption) on XFS, 6.1.y/6.12.y
-To: Brian Foster <bfoster@redhat.com>
-Cc: Eric Hagberg <ehagberg@janestreet.com>, hch@infradead.org, djwong@kernel.org, 
- 	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- 	io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC v1] io_uring/rsrc: add fast path huge page handling in
+ buffer registration
+To: sw.prabhu6@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, dave@stgolabs.net,
+ dongjoo.seo1@samsung.com, Swarna Prabhu <s.prabhu@samsung.com>
+References: <20260608062937.804758-1-sw.prabhu6@gmail.com>
+From: "David Hildenbrand (Arm)" <david@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=david@kernel.org; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20260608062937.804758-1-sw.prabhu6@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-0.16 / 15.00];
-	ARC_REJECT(1.00)[cv is fail on i=2];
-	DMARC_POLICY_ALLOW(-0.50)[janestreet.com,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[janestreet.com:s=google,janestreet.com:s=waixah];
+X-Spamd-Result: default: False [-3.66 / 15.00];
+	WHITELIST_SPF_DKIM(-3.00)[kernel.org:d:+,kernel.org:s:+];
+	SUSPICIOUS_RECIPS(1.50)[];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20260515];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
+	TAGGED_FROM(0.00)[bounces-13655-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13654-lists,io-uring=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	FORGED_RECIPIENTS(0.00)[m:bfoster@redhat.com,m:ehagberg@janestreet.com,m:hch@infradead.org,m:djwong@kernel.org,m:linux-xfs@vger.kernel.org,m:linux-fsdevel@vger.kernel.org,m:io-uring@vger.kernel.org,m:axboe@kernel.dk,m:stable@vger.kernel.org,s:lists@lfdr.de];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FORGED_SENDER(0.00)[gleventhal@janestreet.com,io-uring@vger.kernel.org];
+	FORGED_RECIPIENTS(0.00)[m:sw.prabhu6@gmail.com,m:axboe@kernel.dk,m:io-uring@vger.kernel.org,m:linux-kernel@vger.kernel.org,m:dave@stgolabs.net,m:dongjoo.seo1@samsung.com,m:s.prabhu@samsung.com,m:swprabhu6@gmail.com,s:lists@lfdr.de];
+	FREEMAIL_TO(0.00)[gmail.com,kernel.dk,vger.kernel.org];
+	FORGED_SENDER(0.00)[david@kernel.org,io-uring@vger.kernel.org];
 	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[4];
 	FORWARDED(0.00)[lists@lfdr.de];
-	DKIM_TRACE(0.00)[janestreet.com:+];
-	MISSING_XM_UA(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	TO_DN_SOME(0.00)[];
 	FORGED_SENDER_FORWARDING(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[gleventhal@janestreet.com,io-uring@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	ALIAS_RESOLVED(0.00)[];
-	FORGED_RECIPIENTS_FORWARDING(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[david@kernel.org,io-uring@vger.kernel.org];
+	DKIM_TRACE(0.00)[kernel.org:+];
+	RCPT_COUNT_SEVEN(0.00)[7];
 	TAGGED_RCPT(0.00)[io-uring];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,vger.kernel.org:from_smtp,mail.gmail.com:mid,janestreet.com:dkim,janestreet.com:from_mime]
+	FORGED_RECIPIENTS_FORWARDING(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,vger.kernel.org:from_smtp]
 X-Rspamd-Server: lfdr
-X-Rspamd-Queue-Id: 11FA4662F7D
+X-Rspamd-Queue-Id: 1EAC86635D5
 
-I reproduce it by running 25 ~ concurrent instances of the attached reprodu=
-cer,
-each writing its own file, on an otherwise-idle 15 GB VM:
+> +struct page **io_pin_pages_fast_path(unsigned long uaddr, unsigned long len, int *npages)
+> +{
+> +	unsigned long nr_pages;
+> +	struct page **pages;
+> +	int ret;
+> +
+> +	pages = io_pin_pages_alloc(uaddr, len, &nr_pages);
+> +	if (IS_ERR(pages))
+> +		return pages;
+> +
+> +	ret = pin_user_pages_fast(uaddr, nr_pages, FOLL_WRITE | FOLL_LONGTERM,
+> +					pages);
+> +	/* success, mapped all pages */
+> +	if (ret == nr_pages) {
+> +		struct folio *folio = page_folio(pages[0]);
+> +
+> +		if (nr_pages > 1 && folio_test_hugetlb(folio) &&
+> +		    page_folio(pages[nr_pages - 1]) == folio) {
 
-  DIR=3D$(mktemp -d /tmp/uring.XXXXXX)
-  for i in {1..25}; do
-      ./repro_uring_dup "$DIR/file_$i" 120 48 &
-  done
-...
-*** CORRUPTION DETECTED in /tmp/UmgK/file_17.1 ***
-  bytes kernel said it wrote (sum of CQE results): 53621960
-  actual file size:                                56218824
-  extra (duplicated) bytes:                        2596864
-  first mismatching offset: 6791168 (0x67a000)  page_aligned=3DYES
-    expected u64 848896 but found 524288 (content from byte offset
-4194304 reappeared here)
-  (file kept for inspection)
+I really don't like arbitrary GUP users to starting to special case hugetlb
+folios, and making assumptions of how other pages they pinned look like (IOW,
+how the page table mappings actually looked like).
 
+Ideally, we'd have a pin_user_pages_fast() variant that would give you a list of
+folio ranges instead of individual pages.
 
+Seeing GUP users open-coded that (and special-casing on hugetlb) is a warning sign.
 
-  wait
+Assume we have a PMD-mapped (or even pte-mapped) THP, we would want the exact
+same performance speedup. GUP knows that stuff belongs to the same folio, just
+needs to communicate that information back in a better way.
 
-*** CORRUPTION DETECTED in /tmp/Gznx/file_18.2 ***
-  bytes kernel said it wrote (sum of CQE results): 58112616
-  actual file size:                                60303976
-  extra (duplicated) bytes:                        2191360
-  first mismatching offset: 2191360 (0x217000)  page_aligned=3DYES
-    expected u64 273920 but found 0 (content from byte offset 0 reappeared =
-here)
-  (file kept for inspection)
+So a no from my side.
 
+-- 
+Cheers,
 
-On Tue, Jun 9, 2026 at 12:20=E2=80=AFPM Brian Foster <bfoster@redhat.com> w=
-rote:
->
-> On Mon, Jun 08, 2026 at 01:17:10PM -0400, Eric Hagberg wrote:
-> > On Mon, Jun 8, 2026 at 12:03=E2=80=AFPM Brian Foster <bfoster@redhat.co=
-m> wrote:
-> > > Another idea that came to mind is to try and just replace the -EAGAIN
-> > > return sequence from the low level iterator with a flag that triggers
-> > > -EAGAIN from the next iter advance. The idea here is to allow the wri=
-te
-> > > to return partial completion (i.e. so no iov_iter revert) without hav=
-ing
-> > > to return an error from the lowest level in the stack. I had claude c=
-ome
-> > > up with a quick patch [1] for reference/experimentation.
-> > >
-> > > This is based on v6.12 stable and compile tested only. It needs more
-> > > review and testing in general but might be worth throwing your
-> > > reproducer at if you can..?
-> >
-> > With that patch applied, the reproducer runs clean - no errors - and
-> > gets roughly the same performance (maybe slightly better) as when run
-> > against a 6.18 kernel on the same VM.
-> >
->
-> Thanks for testing. I'll look into some more regression testing of this
-> patch and try to clean it up and post it for proper review for stable.
->
-> Are you using the reproducer program in your original mail to test? If
-> so, does it require some concurrent memory pressure to reproduce, and
-> are you using anything in particular for that?
->
-> That test seems small enough that we could potentially include it in
-> fstests, though I'm still not so sure about the mem pressure part..
-> Since you guys wrote the test, any interest in porting into fstests? If
-> not I can look into it.
->
-> Brian
->
-> > Thanks,
-> > -Eric
-> >
->
+David
 

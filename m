@@ -1,199 +1,150 @@
-Return-Path: <io-uring+bounces-13648-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13649-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by mail.lfdr.de with LMTP
-	id drE8Dut3J2r0xgIAu9opvQ
-	(envelope-from <io-uring+bounces-13648-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 09 Jun 2026 04:18:19 +0200
+	id HUJMEg7ZJ2oh3QIAu9opvQ
+	(envelope-from <io-uring+bounces-13649-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 09 Jun 2026 11:12:46 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB1A265BD4E
-	for <lists+io-uring@lfdr.de>; Tue, 09 Jun 2026 04:18:18 +0200 (CEST)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACD5B65E26A
+	for <lists+io-uring@lfdr.de>; Tue, 09 Jun 2026 11:12:45 +0200 (CEST)
 Authentication-Results: mail.lfdr.de;
-	dkim=pass header.d=gmail.com header.s=20251104 header.b=R3xyBKCC;
-	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13648-lists+io-uring=lfdr.de@vger.kernel.org" designates 172.232.135.74 as permitted sender) smtp.mailfrom="io-uring+bounces-13648-lists+io-uring=lfdr.de@vger.kernel.org";
-	dmarc=pass (policy=none) header.from=gmail.com;
+	dkim=pass header.d=meta.com header.s=s2048-2025-q2 header.b=YNdasmrI;
+	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13649-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c0a:e001:db::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-13649-lists+io-uring=lfdr.de@vger.kernel.org";
+	dmarc=pass (policy=reject) header.from=meta.com;
 	arc=pass ("subspace.kernel.org:s=arc-20240116:i=1")
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 39853302FA59
-	for <lists+io-uring@lfdr.de>; Tue,  9 Jun 2026 02:18:18 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id A1C2B3088D15
+	for <lists+io-uring@lfdr.de>; Tue,  9 Jun 2026 09:02:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A043E2C11C6;
-	Tue,  9 Jun 2026 02:18:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D5D36EA8B;
+	Tue,  9 Jun 2026 09:02:17 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-yx1-f53.google.com (mail-yx1-f53.google.com [74.125.224.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4941C1A9F83
-	for <io-uring@vger.kernel.org>; Tue,  9 Jun 2026 02:18:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 421243101BC
+	for <io-uring@vger.kernel.org>; Tue,  9 Jun 2026 09:02:15 +0000 (UTC)
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780971495; cv=none; b=E/UVwYsBvKtqTwhOxTPZR6xsNPrma3FyUHbyfUz0xUY4NpchYwj+ldn4nt9Gu2D4+azmjMYO7nfRWc4BejdksBbvNgjN7MX4vCmmALMNMQ9TzKN8C1pP+zAEKsKIAb7XD5T8XmUC06fbkRPTpPk/AxnnrqfnEI0DE444Tnir968=
+	t=1780995737; cv=none; b=WZ1tJYwqcE05ol/S04y4sz7/Jx+SWFadr0WbyCrVK9T1CmdmuKxdpbA2UJlwzPxQgQvyTzNrni4pQ+6+2whL4BNGY320p95e9JpFp6UIs1sTLAO3ClzYq1UcRZPVvT/rEK/erwrX2rI5oOtxPqaQVipkRPiqASOTcZVKImRZwho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780971495; c=relaxed/simple;
-	bh=Mkviq+qggEudIoPYzqDzbvZSr5qiT7nOEwvXHPgabOc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uhe+v0O9+GM1nPQUD/VFxoFohG8gtAawhPJuxHA6A84FLPWJ/e+hQQd9E9fpvW+ZIgnRBa2QUkAdI1GSrdhm6qQqYAizezIlI9Mw0oH/g1NhW6pu9ySFRiXEIuDj93hw7VH8hxwwiPtb9OlmddinjoYQvjvzKPpl0w1t2l3KrAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R3xyBKCC; arc=none smtp.client-ip=74.125.224.53
-Received: by mail-yx1-f53.google.com with SMTP id 956f58d0204a3-66061993121so4758183d50.0
-        for <io-uring@vger.kernel.org>; Mon, 08 Jun 2026 19:18:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780971493; x=1781576293; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dy/z932Zn93LzHK/EBT1LPsSBdnELKH772opW/v2goE=;
-        b=R3xyBKCC33lL/y2/BEx1xBc+Ap+ocuvKFUFi41cHnlG8Axby8pLxUjZPKwU6ZShzcP
-         2D0wxKXcrhS3QAilSIJLf2G3wlTPTNLPsqQATGAWEhJsHiz51I41jC9DY+Y/N5Ti0wVn
-         9QXhNFTnbZjF+jXyEiGMbAAzE4P8RJIzBfIai/2jdEDBXJs+YTo2/lL94TsOsDNGCgxd
-         L0p08eOKNE9WmRzMSQoUS5p9HitrEG54ctZ8Xb8FMq0o3pQh7I9T9TWSKpQ64WNYmYls
-         3FfzHdAXaIcChNvS4zxpmKhOv2xegxFhPwsethrlBU5xtMGeu5fHLWcwU05uZRUOizo0
-         iqVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780971493; x=1781576293;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dy/z932Zn93LzHK/EBT1LPsSBdnELKH772opW/v2goE=;
-        b=G82wAQ/4YBGwLt5IWYGWPwcdLv5SIijXAl44vALt2sESANSO4rl8nhYYO7S2TQH4a6
-         yuWvAxtYykmyZZBUQD04lZK5Tnvb5lvOAXnMBJOJkSDqs/lUhyl2BQ6fIV9dKrmllb/Y
-         1wySPs13Gb90z8UXD/1yAoLYc2jT/uYLVcGulatuOMGXTUIZ3qurgD09OQ4QzNeDH5oW
-         1JKYVHtGGxgGDzXpcuRqYeCLUwkJB4vu/rqGZy4I8a7Z4WpwlIFr8BvHNmDhEBUCGcUT
-         +Hi8TAxJrUGBM+sIEXzptXGJLjWH4Ca9OiFV8jfj0ziEq0z+S7Mxx/+O92v1rXJF8FqE
-         FKSw==
-X-Gm-Message-State: AOJu0YwlHSb+GJWJrbPCYSKCNDQY/dk9YUbpoDiNniX42CovtkCN3tJl
-	Du/mkOgyxVvOCw6ZMIVJ8XitPletq3KJx6qpKlHToRdPfX2jK9hnHTgA
-X-Gm-Gg: Acq92OFQ9woSJW9CIPVnScKouBds6n72E3W9C0A6aRqqglYdbnRgvtjlRrBEDYfztzZ
-	QZQIO8MhpQbC8AN9/hlbSzU7GAltYL8USGZ96P5PtRRt1LmpQv3GNs4kujqLlCNg6kzDjqcUUtT
-	MS4O/WP1/LC9X4Zgo1nA5+lmzk5PBS96ZCaAROwE2O+1gVzBrqQOfrlnFYybxxbNqhwvCsQU5p6
-	RpLu7LDqDyhVVGO1OXJeYOnuJp1NuO/PSwV1QqRz0F9kb5AgZyOcjP5h8AWzGmrvGxUItwPFe9k
-	zUgCfDsSPpZfDJPIsaA24j9ITZI54Sb4SlucD91QxkNxjBvrjC5HOkC9CBAubCEXb8VW/fGUvT1
-	Yr6GQUK7olEedwJq9Fp3PX7r8Y5JT8jUm9WVRxeeelS8YBIqw9/SHEVVk274wdKZUED0zuC/smc
-	7bw+BuI5Y4pvj53kxLXWpZXv0cR3Ly0pWIntu7wiXOImm9z/YAUHHTLxkRgA==
-X-Received: by 2002:a05:690e:bc2:b0:660:8508:5c15 with SMTP id 956f58d0204a3-6610779e086mr14176111d50.49.1780971493233;
-        Mon, 08 Jun 2026 19:18:13 -0700 (PDT)
-Received: from 5163NRD-SPRABHU.ssi.samsung.com ([50.205.20.42])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-7ea20ea819esm91777437b3.10.2026.06.08.19.18.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jun 2026 19:18:12 -0700 (PDT)
-Date: Mon, 8 Jun 2026 19:18:10 -0700
-From: Swarna Prabhu <sw.prabhu6@gmail.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dave@stgolabs.net, dongjoo.seo1@samsung.com,
-	Swarna Prabhu <s.prabhu@samsung.com>
-Subject: Re: [RFC v1] io_uring/rsrc: add fast path huge page handling in
- buffer registration
-Message-ID: <aid34r6sAVBkjID9@5163NRD-SPRABHU.ssi.samsung.com>
-References: <20260608062937.804758-1-sw.prabhu6@gmail.com>
- <bdd63eb8-e8f8-4640-b769-24ceb619779e@kernel.dk>
+	s=arc-20240116; t=1780995737; c=relaxed/simple;
+	bh=MO9DdEmFREMzWNKtPRgTBi5xY/IEdgm6hE08Lwh8L14=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FHNxfE9EEoUXAekQo3hb/5VHAMVj0oBj4tncImCpmP7IXmHk9/Evf70qc9ahi9LxSBju9EpTUmkTvq0rFtLhqXzOa48M0v1NYlEva20IXUN/Q8jYDTzlHyWEFqDTGKe008ojGRQOwG7XhUMzuk1oQgSMbohtly5r0WX8nEeYsHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=YNdasmrI; arc=none smtp.client-ip=67.231.145.42
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 658JWUNm1173470;
+	Tue, 9 Jun 2026 02:02:15 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=s2048-2025-q2; bh=3zJHtjWRnCeKAy/ACh
+	TSm4naja1fsl8aEe+5cWGZq2I=; b=YNdasmrIcbc+jSbbM1vPDGyHvtjBVcf1tJ
+	zPm5M/cNKKLwmm/owg5PXNi9ksEI5ZCkTvN3ZmAK5wWQtozgk8UAhFZD9mZP4yoF
+	XVXxJO1kO+O3sGPgxmJwXKzMwvT8/UGOYEgGtInT0ApPcJ9YlojneOt0tVVQQ3sU
+	5+8l1Wd+U23SOgxxnWcEJnkK5iONbC4fqZBjohDtM/UsM3ChPIhwKJJVfvqypnnE
+	0ZhaxxaVOkal8chryhzKuXmEKWJtS484qxDdWFiYLUTS5JVgVzWC9qDabSuyMKaZ
+	hE7VVFbYq9MmOAFKpgvsjHdHVPcaWLJr1eR1Ebk5atGNoC4UVGvg==
+Received: from maileast.thefacebook.com ([163.114.135.16])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4emjum6s1t-3
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Tue, 09 Jun 2026 02:02:14 -0700 (PDT)
+Received: from localhost (2620:10d:c0a8:1b::30) by mail.thefacebook.com
+ (2620:10d:c0a9:6f::237c) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.41; Tue, 9 Jun
+ 2026 09:02:13 +0000
+From: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@meta.com>
+To: <io-uring@vger.kernel.org>
+CC: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@meta.com>,
+        Jens Axboe
+	<axboe@kernel.dk>
+Subject: [PATCH liburing v2 0/3] zcrx: add support for notifications and statistic
+Date: Tue, 9 Jun 2026 02:01:47 -0700
+Message-ID: <20260609090156.3862920-1-cleger@meta.com>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bdd63eb8-e8f8-4640-b769-24ceb619779e@kernel.dk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=Fvk1OWrq c=1 sm=1 tr=0 ts=6a27d696 cx=c_pps
+ a=MfjaFnPeirRr97d5FC5oHw==:117 a=MfjaFnPeirRr97d5FC5oHw==:17
+ a=IkcTkHD0fZMA:10 a=FelO9ux0wxsA:10 a=M51BFTxLslgA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=7x6HtfJdh03M6CCDgxCd:22 a=crHB47gyY4rKiduisYu9:22
+ a=Lcr2TwkPRyfvNUoJwZQA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: lmwOt6fNyEykeHEG4SM0XZIYeYxShunH
+X-Proofpoint-ORIG-GUID: lmwOt6fNyEykeHEG4SM0XZIYeYxShunH
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjA5MDA4MyBTYWx0ZWRfX0mWvDhrMDIqQ
+ tg1+m3gVuDJVcYGN8g2e7XT9cTfdQYCScPt5bYvzihtjSjYllpobPUr7vgPp5EN/GzkbIcIFgQs
+ I56teetvJo9DzMI9oIyngvAA6YXcr9dA0eseOFYZnpkLxt0m+sCmWxIhkjO0py2HTUNzFfWILE6
+ vcOykg7kHBtsU3I9w7DFLUKmBat76A2c1ICWBSU51fkKtUAzS6KFlW+xEzLuxGoNkfZB7xsHyjh
+ R8CGti7wkl7eVb7GHKENlpZOW8No3gwXNP5YcafRD1JPZYPBkKMvQqIYLxcNr0AlpZcvmRCeT+U
+ 9ed13CUiFnhBRzuOC6O+iMXFHiwENMY8cLZJzrBL09oIsi9SnpwBt4DiNuLbuohLVTnIqJr83Xy
+ ZJUGBXuWzNoXynQDXMrt/0WzraZt/71itYhc/jTYx/wNZQSyud/QrqKDQca//k8uMQVpKTENz6R
+ ANu62MKSuGfSgcKgfPw==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-06-09_02,2026-06-09_01,2025-10-01_01
 X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-2.16 / 15.00];
+X-Spamd-Result: default: False [-0.49 / 15.00];
+	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20251104];
-	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
+	R_MIXED_CHARSET(0.67)[subject];
+	DMARC_POLICY_ALLOW(-0.50)[meta.com,reject];
+	R_DKIM_ALLOW(-0.20)[meta.com:s=s2048-2025-q2];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13648-lists,io-uring=lfdr.de];
-	FORGED_RECIPIENTS(0.00)[m:axboe@kernel.dk,m:io-uring@vger.kernel.org,m:linux-kernel@vger.kernel.org,m:dave@stgolabs.net,m:dongjoo.seo1@samsung.com,m:s.prabhu@samsung.com,s:lists@lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FORGED_SENDER(0.00)[swprabhu6@gmail.com,io-uring@vger.kernel.org];
-	MIME_TRACE(0.00)[0:+];
-	FORWARDED(0.00)[lists@lfdr.de];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
-	MISSING_XM_UA(0.00)[];
-	FORGED_SENDER_FORWARDING(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[swprabhu6@gmail.com,io-uring@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	ALIAS_RESOLVED(0.00)[];
-	TAGGED_RCPT(0.00)[io-uring];
+	TAGGED_FROM(0.00)[bounces-13649-lists,io-uring=lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
+	FORGED_SENDER(0.00)[cleger@meta.com,io-uring@vger.kernel.org];
+	FORGED_RECIPIENTS(0.00)[m:io-uring@vger.kernel.org,m:cleger@meta.com,m:axboe@kernel.dk,s:lists@lfdr.de];
+	FORWARDED(0.00)[lists@lfdr.de];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	RCPT_COUNT_THREE(0.00)[3];
+	RCVD_COUNT_FIVE(0.00)[6];
+	FORGED_SENDER_FORWARDING(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[cleger@meta.com,io-uring@vger.kernel.org];
+	DKIM_TRACE(0.00)[meta.com:+];
+	PRECEDENCE_BULK(0.00)[];
 	FORGED_RECIPIENTS_FORWARDING(0.00)[];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6]
+	ALIAS_RESOLVED(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_RCPT(0.00)[io-uring];
+	TO_DN_SOME(0.00)[]
 X-Rspamd-Server: lfdr
-X-Rspamd-Queue-Id: CB1A265BD4E
+X-Rspamd-Queue-Id: ACD5B65E26A
 
-On Mon, Jun 08, 2026 at 09:57:03AM -0600, Jens Axboe wrote:
-> On 6/8/26 12:29 AM, sw.prabhu6@gmail.com wrote:
-> > From: Swarna Prabhu <sw.prabhu6@gmail.com>
-> > 
-> > io_uring sqe buffer registration path returns pinned user pages in 4k
-> > granularity. If the first pinned page is in a hugetlb folio and
-> > pages[nr_pages - 1] is also in the same folio then store a single page
-> > entry and report *npages = 1 while dropping nr_pages - 1 of the pin
-> > references it took earlier.
-> > 
-> > io_uring has support to identify and coalesce multi-hugepage-backed
-> > fixed buffers from the function 'io_check_coalesce_buffer()'. However
-> > we need to iterate over the entire page array and this patch bypasses
-> > the additional checks for this case. The fast path reduces the overall
-> > sqe buffer registration time that are backed by huge pages.
-> > 
-> > Measured with fio on bare metal backed by 1024 boot-allocated 2MB hugetlb
-> > pages and setting the cpu cores to governor for max performance.
-> > (hugepages=1024,hugepage_size=2M):
-> >   fio --ioengine=io_uring --rw=randwrite --bs=1M --size=2G --iodepth=256
-> >   --direct=1 --numjobs=5 --fixedbufs=1 --registerfiles=1 --iomem=mmaphuge
-> >   --hugepage-size=2M.
-> > 
-> > Avg across 3 runs:
-> > Metric                          Upstream(7.1-rc1)  Patched    Delta
-> > Reg time(io_sqe_buffer_register): 3797ns            2970ns   -21.8%
-> > Total reg for workload:           14.35ms           11.34ms  -21.9%
-> > fio write bandwidth:              1416MiB/s   1416MiB/s    No regression
-> 
-> This looks pretty reasonable. Curious what inspired this change though?
-> Workloads that register and unregister huge page backed buffers at
-> a rapid pace? The registration path should obviously not be slower than
-> it needs to on purpose, but it should also not be part of the application
-> fast path in general. I'd expect most users to register their IO memory
-> pool upfront and then never really touch it.
-> 
-> Can you expand on the background that led to this?
+Add support for io_uring notifications and statistics. This allows to
+receive CQE notifications upon out of buffers or when copy fallback is
+used to copy packets. An associated stat structure is also supported and
+allows to track copy fallback statistics without requiring the user to
+handle notifications CQEs.
 
-We started out looking at whether io_uring could get a bandwidth 
-improvement from hugetlb/THP-backed fixed buffers ie having the kernel 
-take better advantage of huge-page backing for the registered IO memory.
-This attempt was encouraged by an RFC on the VFIO side [1], which 
-introduces optimization while pinning pages backed by huge pages to 
-avoid the latencies of pinning at 4k granularity.
+Changes in v2:
+ - Update kernel structure after padding/reserved changes
+ - Update test/example to use interface with a single event type rather
+   than a mask.
 
-io_uring has already implemented the post processing of pinned pages 
-from the coalesce check. So bandwidth angle didn't pan out. 
-However we found registration-time savings from short circuiting 
-the page array walks in 'io_check_coalesce_buffer' when whole buffer 
-lives in a single hugetlb folio. 
+Clément Léger (3):
+  Update uapi headers to add ZCRX notification
+  test/zcrx: add ZCRX notification/stats tests
+  examples/zcrx: add notification support
 
-We don't have a workload that register and unregister huge page backed 
-buffers at a rapid pace. Hence it is a one-time registration cost saving 
-that seemed worth sending for feedback.
+ examples/zcrx.c                       | 110 ++++++++
+ src/include/liburing/io_uring.h       |  36 ++-
+ src/include/liburing/io_uring/query.h |  12 +
+ test/zcrx.c                           | 376 ++++++++++++++++++++++++++
+ 4 files changed, 533 insertions(+), 1 deletion(-)
 
-[1] https://lore.kernel.org/all/20251223230044.2617028-2-aaronlewis@google.com/> 
-
-> > Signed-off-by: Swarna Prabhu <s.prabhu@samsung.com>
-> 
-> This doesn't match your From: in the patch, that would need to be
-> corrected.
-
-Noted. 
-
-
-Thank you
-Swarna
+-- 
+Clément Léger
 

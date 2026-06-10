@@ -1,211 +1,170 @@
-Return-Path: <io-uring+bounces-13659-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13660-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by mail.lfdr.de with LMTP
-	id J75MGgNlKWqoWAMAu9opvQ
-	(envelope-from <io-uring+bounces-13659-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Wed, 10 Jun 2026 15:22:11 +0200
+	id E+1DChagKWpyawMAu9opvQ
+	(envelope-from <io-uring+bounces-13660-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Wed, 10 Jun 2026 19:34:14 +0200
 X-Original-To: lists+io-uring@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFBCE669A9C
-	for <lists+io-uring@lfdr.de>; Wed, 10 Jun 2026 15:22:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 65A6566BF97
+	for <lists+io-uring@lfdr.de>; Wed, 10 Jun 2026 19:34:13 +0200 (CEST)
 Authentication-Results: mail.lfdr.de;
-	dkim=pass header.d=kernel.org header.s=k20260515 header.b=OMEHcZsk;
-	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13659-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c0a:e001:db::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-13659-lists+io-uring=lfdr.de@vger.kernel.org";
-	dmarc=pass (policy=quarantine) header.from=kernel.org;
+	dkim=pass header.d=astralinux.ru header.s=mail header.b=nwQq8tAf;
+	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13660-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c0a:e001:db::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-13660-lists+io-uring=lfdr.de@vger.kernel.org";
+	dmarc=pass (policy=quarantine) header.from=astralinux.ru;
 	arc=pass ("subspace.kernel.org:s=arc-20240116:i=1")
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 5B1EA30A6E11
-	for <lists+io-uring@lfdr.de>; Wed, 10 Jun 2026 13:18:59 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id EA5F5313206F
+	for <lists+io-uring@lfdr.de>; Wed, 10 Jun 2026 17:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDB9A40683C;
-	Wed, 10 Jun 2026 13:18:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A72EC33F8C3;
+	Wed, 10 Jun 2026 17:22:30 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail-gw02.astralinux.ru (mail-gw02.astralinux.ru [93.188.205.243])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D546040682C;
-	Wed, 10 Jun 2026 13:18:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F672277C88;
+	Wed, 10 Jun 2026 17:22:25 +0000 (UTC)
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781097538; cv=none; b=UsHs6Q5m45pnpzaZ9BNP7NI0qrvq93Mm5wixp2r8LEIS3QpLuOsr+yZGQlyDeTbkaeSPCujVqnk79Tu5YawdbRUqV9Zqr5EIW9PAySlIhlZ8m8/NWFfaWJuBo/NeStwWESNvih45fC7vXKWuc/8Emiwcuc9SUnjjxUQDGAr3VRk=
+	t=1781112150; cv=none; b=MBv1wsKfuqgEPcxSM7mP873HdDARvscws3D5bon+TmGSVCSHegBKJgwG0E1AqCVaxj5ZVu7z9R4wr0SwwpNv9T01A/I735Vc0k9nIV9A/s9ErFbZr7vPQIhC9XnO+UG2adPFbqdCJ3BPz889mLSHKzPCs3SlbDuE8wkS8M+0FAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781097538; c=relaxed/simple;
-	bh=zbuH4UR3dnlhjbnJa2jGeabSZvijhj8ctrmpmF8Vf/Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H1L3HfGbhHXV7rc0JtStXyya22XkFpCVuR7H2cIEpPbzJvGDtqegzDicAJ0L73s7wZHuxUe24fdgpjnOmjrasLhfQwMRRMjmW3/xLPe/kEC+m9IFxIVy7ZYk1rbZD+3D/V37G1E7ie1pfkZuVDWo3n0j290G5RPVwejE8HoD/QM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OMEHcZsk; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E19C01F00893;
-	Wed, 10 Jun 2026 13:18:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781097537;
-	bh=zkNtDF+TnhAfuRsb9S+buKNiDb7dsGMnYzfKywwEPBo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=OMEHcZskZbsd9sNyePcfeVaP4LOngwAbTIC83XAxZ0tD9OLeeABRkDku2fuk0g+y1
-	 vstwxk+/WhMNWC4TKaJKBgVr2tlhJXr8haGlDj+OOWbpwHcqLVLpM2JSWcocgfM36d
-	 HLmybkPMy9ZN7sn4pjH3nT3ZPU7em7QOZfiDKF4RONrF1zS36XPL5OKSnUO/ssNOeC
-	 pS+ILw0MfO9dd3fEWa2rCS0SnBmB2tQspRAuCzajsGzLB4XsyHpeL5xuk7z/UfLkn2
-	 7SuletPW9yxvfC/foN7weNDFmUfGCQLHJqaM3/IweckoYiTFcZQvuwWN4OMOOGd+bN
-	 Hfz2vMMkXxzaA==
-Message-ID: <d80bb796-3cac-4de2-8bc2-cc799e5bbeb1@kernel.org>
-Date: Wed, 10 Jun 2026 15:18:52 +0200
+	s=arc-20240116; t=1781112150; c=relaxed/simple;
+	bh=1YcX7DSqHTLYJFlMsJlIfEb7XFfyA/j7T8KckpKzE1Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PYR09plR08l3eoTrKWCwpeEkjJcMFYrXhuc1GVi6R053euwyhK1iqYrxsBpGREM4HBgHo0TObp1AZwOatChxN5cT9yiAE/4jsCaLpuCepVa8Aa9aq27Ip9VD3gV1dcvF07ERn+LlaPjlPdkklva5FRdSUKggBupbjGBLKxo4M6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; dkim=pass (2048-bit key) header.d=astralinux.ru header.i=@astralinux.ru header.b=nwQq8tAf; arc=none smtp.client-ip=93.188.205.243
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=astralinux.ru;
+	s=mail; t=1781112137;
+	bh=1YcX7DSqHTLYJFlMsJlIfEb7XFfyA/j7T8KckpKzE1Y=;
+	h=From:To:Cc:Subject:Date:From;
+	b=nwQq8tAfY0uKDGmhAe9Eq/5y4v2rD3KSSymfd6sV9AsBwox2CoCV+6GZvsMdfzEz/
+	 HWUUiIu9D5oMJi+ZWgpoulZzOf1fc35Xw3FdXwZ7JKwVkdk9RSP/S2tOj1XK+aYWNp
+	 1E3XBDQiwMRx3XVEpm79pmdHv4fIVGYhuYoHYIaXVLoTOH+asmAS1opni6eeEXOHT6
+	 2HmB4W421dhK6NuFql/ZhTdo36uL4CGn+ZHZN6PyteecC8CGUFV/T7NRi31zl0yuYp
+	 uHKUpI0MI/aTsLFINg9wuf41B1/XAKrbDhy/eGy8Scpx4nx30Yez8pXvhHdm86GGQe
+	 5bz4+FUsi99vA==
+Received: from gca-msk-a-srv-ksmg01.astralinux.ru (localhost [127.0.0.1])
+	by mail-gw02.astralinux.ru (Postfix) with ESMTP id 3CADA1FA08;
+	Wed, 10 Jun 2026 20:22:17 +0300 (MSK)
+Received: from new-mail.astralinux.ru (unknown [10.205.207.10])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail-gw02.astralinux.ru (Postfix) with ESMTPS;
+	Wed, 10 Jun 2026 20:22:15 +0300 (MSK)
+Received: from rbta-msk-lt-156703.astralinux.ru (unknown [10.198.54.246])
+	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4gbCJR23djzShcf;
+	Wed, 10 Jun 2026 20:22:15 +0300 (MSK)
+From: Alexey Panov <apanov@astralinux.ru>
+To: stable@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Alexey Panov <apanov@astralinux.ru>,
+	Jens Axboe <axboe@kernel.dk>,
+	Sasha Levin <sashal@kernel.org>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	Prithvi Tambewagh <activprithvi@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	io-uring@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	Li Zetao <lizetao1@huawei.com>
+Subject: [PATCH 5.10] io_uring: prevent opcode speculation
+Date: Wed, 10 Jun 2026 20:22:03 +0300
+Message-Id: <20260610172203.27999-1-apanov@astralinux.ru>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v1] io_uring/rsrc: add fast path huge page handling in
- buffer registration
-To: Christoph Hellwig <hch@infradead.org>
-Cc: sw.prabhu6@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org, dave@stgolabs.net, dongjoo.seo1@samsung.com,
- Swarna Prabhu <s.prabhu@samsung.com>, "linux-mm@kvack.org"
- <linux-mm@kvack.org>, Matthew Wilcox <willy@infradead.org>,
- Zi Yan <ziy@nvidia.com>
-References: <20260608062937.804758-1-sw.prabhu6@gmail.com>
- <c924fb59-be47-4fa5-adbf-a50a831ccd7b@kernel.org>
- <aikBIESiJftxBdfL@infradead.org>
- <f2b5189f-10de-4685-97f3-6ee08d159743@kernel.org>
- <ailLu70plC9WK2dB@infradead.org>
-From: "David Hildenbrand (Arm)" <david@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=david@kernel.org; keydata=
- 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
- qIws/H2t
-In-Reply-To: <ailLu70plC9WK2dB@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-KSMG-AntiPhishing: NotDetected, bases: 2026/06/10 17:02:00
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Envelope-From: apanov@astralinux.ru
+X-KSMG-AntiSpam-Info: LuaCore: 107 0.3.107 575e75fe8e3b9d45c142d144823c5de38605099e, {Tracking_uf_ne_domains}, {Tracking_internal2}, {Tracking_from_domain_doesnt_match_to}, new-mail.astralinux.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;astralinux.ru:7.1.1;127.0.0.199:7.1.2;lore.kernel.org:7.1.1, FromAlignment: s
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiSpam-Lua-Profiles: 203793 [Jun 10 2026]
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Version: 6.1.1.22
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.0.7854, bases: 2026/06/10 13:12:00 #28226830
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected, bases: 2026/06/10 17:03:00
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 1
 X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.66 / 15.00];
-	WHITELIST_SPF_DKIM(-3.00)[kernel.org:d:+,kernel.org:s:+];
+X-Spamd-Result: default: False [0.84 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20260515];
+	DMARC_POLICY_ALLOW(-0.50)[astralinux.ru,quarantine];
+	R_MISSING_CHARSET(0.50)[];
 	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[astralinux.ru:s=mail];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-13659-lists,io-uring=lfdr.de];
-	RCVD_COUNT_THREE(0.00)[4];
-	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FORGED_RECIPIENTS(0.00)[m:hch@infradead.org,m:sw.prabhu6@gmail.com,m:axboe@kernel.dk,m:io-uring@vger.kernel.org,m:linux-kernel@vger.kernel.org,m:dave@stgolabs.net,m:dongjoo.seo1@samsung.com,m:s.prabhu@samsung.com,m:linux-mm@kvack.org,m:willy@infradead.org,m:ziy@nvidia.com,m:swprabhu6@gmail.com,s:lists@lfdr.de];
+	FREEMAIL_CC(0.00)[astralinux.ru,kernel.dk,kernel.org,gmail.com,vger.kernel.org,linuxtesting.org,huawei.com];
 	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER(0.00)[david@kernel.org,io-uring@vger.kernel.org];
 	FORWARDED(0.00)[lists@lfdr.de];
-	FREEMAIL_CC(0.00)[gmail.com,kernel.dk,vger.kernel.org,stgolabs.net,samsung.com,kvack.org,infradead.org,nvidia.com];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FORGED_SENDER_FORWARDING(0.00)[];
-	ALIAS_RESOLVED(0.00)[];
+	TAGGED_FROM(0.00)[bounces-13660-lists,io-uring=lfdr.de];
+	FORGED_SENDER(0.00)[apanov@astralinux.ru,io-uring@vger.kernel.org];
+	FORGED_RECIPIENTS(0.00)[m:stable@vger.kernel.org,m:gregkh@linuxfoundation.org,m:apanov@astralinux.ru,m:axboe@kernel.dk,m:sashal@kernel.org,m:asml.silence@gmail.com,m:activprithvi@gmail.com,m:linux-kernel@vger.kernel.org,m:io-uring@vger.kernel.org,m:lvc-project@linuxtesting.org,m:lizetao1@huawei.com,m:asmlsilence@gmail.com,s:lists@lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[astralinux.ru:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[david@kernel.org,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
+	FORGED_SENDER_FORWARDING(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[apanov@astralinux.ru,io-uring@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[6];
 	RCPT_COUNT_SEVEN(0.00)[11];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ALIAS_RESOLVED(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
 	FORGED_RECIPIENTS_FORWARDING(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[vger.kernel.org:from_smtp,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[vger.kernel.org:from_smtp,huawei.com:email,kernel.dk:email,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,astralinux.ru:dkim,astralinux.ru:email,astralinux.ru:mid,astralinux.ru:from_mime]
 X-Rspamd-Server: lfdr
-X-Rspamd-Queue-Id: DFBCE669A9C
+X-Rspamd-Queue-Id: 65A6566BF97
 
-On 6/10/26 13:34, Christoph Hellwig wrote:
-> On Wed, Jun 10, 2026 at 11:54:01AM +0200, David Hildenbrand (Arm) wrote:
->>> Yes.  iov_iter_extract_bvecs and thus the block direct I/O fast path
->>> would instantly benefit from that.
->> The tricky bit for such an interface is that, soon, some pages won't be folios,
->> but we could still end up with non-folio pages in the address space (e.g.,
->> vm_insert_page()) and have to pin+return them. So using folios is not future-proof.
-> 
-> I'm still doubtful on the "soon" beause of all the issues like this
-> in the I/O path.
+From: Pavel Begunkov <asml.silence@gmail.com>
 
-Yeah, there are a bunch of very hairy things.
+commit 1e988c3fe1264708f4f92109203ac5b1d65de50b upstream.
 
-> 
->> There are some long-term plans on providing an interface that would abstract how
->> you refcount something you GUP'ed. (because, some pages we GUP in the future
->> might not even have a dedicated refcount, all still fairly unclear). But it's
->> all not really finalized I think.
->>
->> For now, we could expose a folio+page/offset+nr_pages interface, where we,
->> long-term, would not be able to return non-folio pages (e.g., vm_insert_page())
->> and would instead, in the future, fail the request if we stumble over a
->> non-folio thing in the page tables. That sounds reasonable for now.
-> 
-> I think whatever we're going to use for direct I/O has to also support
-> non-folio pages, especially PCI P2P memory.  So coming up with an
-> interface that support this ASAP would be helpful.
+sqe->opcode is used for different tables, make sure we santitise it
+against speculations.
 
-Yes.
+Cc: stable@vger.kernel.org
+Fixes: d3656344fea03 ("io_uring: add lookup table for various opcode needs")
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+Reviewed-by: Li Zetao <lizetao1@huawei.com>
+Link: https://lore.kernel.org/r/7eddbf31c8ca0a3947f8ed98271acc2b4349c016.1739568408.git.asml.silence@gmail.com
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+[ Alexey: Sanitize req->opcode directly because io_init_req() in
+  linux-5.10.y has no local opcode variable and subsequent lookups use it. ]
+Signed-off-by: Alexey Panov <apanov@astralinux.ru>
+---
+Backport fix for CVE-2025-21863
+ io_uring/io_uring.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-I think we can keep returning pages as long a the unpin interface knows the
-right thing to do to unpin them.
-
-> 
->> Another solution would be, exposing page-ranges (e.g., page + nr_pages), whereby
->> we'd say, that all pages in a range belong to the same compound page, and that
->> we took a single reference for all pages in the range. IOW, page_folio() would
->> for now be the same for all pages in a range.
-> 
-> This does sound like a reasonable short-term improvement.
-Right, and as long as callers don't cast the returned thing to a folio, it would
-be future proof. But I guess quite some GUP users cast to folios.
-
-Would there be users for a new interface that returns page ranges as described
-above, that would want to still unpin stuff partially? E.g., we give them a page
-range that belongs to the same folio with only a single pin/reference, but they
-would want to logically split that range and unpin pages individually?
-
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 2ca09e2dbd3d..51262d48a4a1 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -7193,6 +7193,8 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
+ 		return -EINVAL;
+ 	if (unlikely(req->opcode >= IORING_OP_LAST))
+ 		return -EINVAL;
++	req->opcode = array_index_nospec(req->opcode, IORING_OP_LAST);
++
+ 	if (!io_check_restriction(ctx, req, sqe_flags))
+ 		return -EACCES;
+ 
 -- 
-Cheers,
-
-David
+2.47.3
 

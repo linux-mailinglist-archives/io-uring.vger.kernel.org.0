@@ -1,83 +1,85 @@
-Return-Path: <io-uring+bounces-13676-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13677-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by mail.lfdr.de with LMTP
-	id K0r4CWv+Kmo60wMAu9opvQ
-	(envelope-from <io-uring+bounces-13676-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Thu, 11 Jun 2026 20:28:59 +0200
+	id PKjhJUMAK2r50wMAu9opvQ
+	(envelope-from <io-uring+bounces-13677-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Thu, 11 Jun 2026 20:36:51 +0200
 X-Original-To: lists+io-uring@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 870036746D7
-	for <lists+io-uring@lfdr.de>; Thu, 11 Jun 2026 20:28:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F6DE674780
+	for <lists+io-uring@lfdr.de>; Thu, 11 Jun 2026 20:36:51 +0200 (CEST)
 Authentication-Results: mail.lfdr.de;
-	dkim=pass header.d=kernel-dk.20251104.gappssmtp.com header.s=20251104 header.b=G6wxcgi5;
-	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13676-lists+io-uring=lfdr.de@vger.kernel.org" designates 172.105.105.114 as permitted sender) smtp.mailfrom="io-uring+bounces-13676-lists+io-uring=lfdr.de@vger.kernel.org";
+	dkim=pass header.d=kernel-dk.20251104.gappssmtp.com header.s=20251104 header.b=dsRfERR5;
+	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13677-lists+io-uring=lfdr.de@vger.kernel.org" designates 172.105.105.114 as permitted sender) smtp.mailfrom="io-uring+bounces-13677-lists+io-uring=lfdr.de@vger.kernel.org";
 	dmarc=none;
 	arc=pass ("subspace.kernel.org:s=arc-20240116:i=1")
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 8F74330D7EBB
-	for <lists+io-uring@lfdr.de>; Thu, 11 Jun 2026 18:28:57 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 32EE530FF46E
+	for <lists+io-uring@lfdr.de>; Thu, 11 Jun 2026 18:36:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E126348033E;
-	Thu, 11 Jun 2026 18:28:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2BAB48B37F;
+	Thu, 11 Jun 2026 18:36:26 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
+Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11E5440B6E2
-	for <io-uring@vger.kernel.org>; Thu, 11 Jun 2026 18:28:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E0144D2ECB
+	for <io-uring@vger.kernel.org>; Thu, 11 Jun 2026 18:36:24 +0000 (UTC)
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781202534; cv=none; b=fOYl+T+r3zubeDSikC2d15WYNojJ52qnBM4TVjaUAazWPbpTBGC2LhrvoNbTYpfPoKJ+FU3F2UttdvsgYUG3mp75TD16CuFfIqfVuPk+5hwA6kS1nvINnHYu74yydZHQpOdqISrJl0CErkQ/zM/tKHr/QIoB1CmMlDkz/VMu3aA=
+	t=1781202986; cv=none; b=ZNGiqhmt56+XRXYUeR4DHVzMm0gyqD+jkuOENbH3XlUcmgd8lzqUXwTDldT152iXmErk3So2eSPyIL4lxEWL2zR4Se0Qyw7hJbxv6EcHZvWC80vpkQhtybXn25Ce3ubWCNQyyivKfRDDCoxb4p0mQNy/z/CcrA3R1iEffnRxUhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781202534; c=relaxed/simple;
-	bh=11EploZr1Ts5GGTP+efShLuMtW+SJAfFVf/uB5OEJgQ=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Cc:Content-Type; b=r3L1tGItVykSd2qWRqQa2tZ7J9C4zND2v2NpK0C+fiaPEV6x10w7qdLcRN1S+ZC4ISuviOgNpljC/X6jBHDY/4XHZEE5ILTc0h0HRiyRytFX+MmYjIyr2ir5OK7d3YeEtRzHNUxxNluhDSLxr6VveGQESobGtVLIh6HA0WEe3ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=G6wxcgi5; arc=none smtp.client-ip=209.85.167.180
-Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-4864a5c83f1so177967b6e.0
-        for <io-uring@vger.kernel.org>; Thu, 11 Jun 2026 11:28:50 -0700 (PDT)
+	s=arc-20240116; t=1781202986; c=relaxed/simple;
+	bh=DVyDRdHfurjhiZzXkqIiYsJ8e/4Qe844Uj12+BMsIJ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qhkLHYtGO7XfX3hG0zS5n7k3BIm0Iy8WZTVlGUganpkoHdJo5F4h8YurEpVuMCimKlItRQxv95QZyr3BhQt5vcEbNPJ7YbwtPZrHXQBho8O6Mx9fDwYELHoP2bviwloS+KlT3RfREml/JLkdYbKh+9xfJAei7tfaJq1HhCANfSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=dsRfERR5; arc=none smtp.client-ip=209.85.160.51
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-43cce8288c7so108855fac.3
+        for <io-uring@vger.kernel.org>; Thu, 11 Jun 2026 11:36:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1781202530; x=1781807330; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JiNxR1LQccy0VO3MqleyAEqAALy/LDrOj/Ae0Q5E/YE=;
-        b=G6wxcgi5KSlCnAFVgVeA8RLBfz1EEIaRgI2obMbo0nlgRrOlPi+luvpCD2AXAPkdg2
-         kLxi5+6aK+1mjCHMu9YBX75jNRjgGe8LdkTn6bmxZ4ERzMwA3SVbEXTWDhJVtc3kHnOD
-         Hzy2DqJ9EnlP7Crq7Pq2a1oYLB9MMdKg/8hWHlwHFlTUcip8sPokq2hUs/uK3ZLiejLW
-         odbtL8DQ8lcz1hRSyYeZFikiXwEPoiXs8Ds+OlTdHYK5GCJQjs2FlCRr1ovw7AHZ0jop
-         y7S69FkE6nDL5XhWPa7Qv2yKZo/ZcOnA/61F6Vo8sBDyZT4bAfmeAP5D5/D8my/69M48
-         WMtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781202530; x=1781807330;
-        h=content-transfer-encoding:cc:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
+        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1781202984; x=1781807784; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=JiNxR1LQccy0VO3MqleyAEqAALy/LDrOj/Ae0Q5E/YE=;
-        b=dIJ/1dBssvhCS4kxeuy7zZU3nyskkZ5XhjaMzdJe8E47jK93ZjfOqhJI8Qj2iIP8e2
-         PhNod2YwXVLudDFdYu3Awxnw9l8tdw479APqblTFRNFixQ2apb2kO7+RL3dNT1SfpU6o
-         2xZiNrn3udfv2W80DH1swtWJUjf20HjOZfGr/QXZTAv1bVuyJV/b0IK8jLqLkSC8pZ1j
-         4+RLiCjFjrFu180VJIvU5YhsMRpIXjEZtZRcQwgLuDC9/DixnJEe1wvIxIT4jdCpW+6k
-         /2kknAmkYnmzA49mE1dB39xfNSXKNtrX/qr35dNgmNn48jrojJe1H61e1R8h3vN3oMra
-         hqvw==
-X-Gm-Message-State: AOJu0Yz1DU3KGS+iMr5Zq9q7JnO8hqy/AXyJdpWKTDlHhOzifb9YJEbn
-	hFF2kMQfBKvV6OMdMJyzyowtXkDiA5FATfi3D0Msfx8hoTekFC+7qqPpdXOrJhZ4ldQlQy9YYrE
-	HbXoCzHc=
-X-Gm-Gg: Acq92OHCLyR7f8AKpxM3EEOxj/Mu2uasGsKKfuQNUVVOLvDVjAshuXSkMvnyy5+1ka5
-	lYkewZm27Fggp4dUESgghxrfIfErue+98is0GzOrciDQI0H7HDV9E13DvgQALL7nnE1gcsPETnP
-	mGcMaRYC9f7vcQcX46+OdDsFqwiwWP8pdOxgIJR1CyGyNCr8aM/XwhS04SGjOH2rEAUSe1HqX99
-	e7Kay+ujZjRFq3skSL4gIgh80fzHcYJWJaMDUYJgbnn17aHXfw+gOwD/BfcsE6xxg0r2zaSs2Ce
-	fSv4PVUtjFAEyut4BsH4qtaIMQU5C+fWstdkmpEOyprEUFHm2T12qf2m4bO80RT4sbrT2nLthWm
-	x+FDyvO27HqLVxf7HKLGE2atJM1J2Vez4vkpmXwO37cl52X0/SMx2g8nVU4Yg+aH7PaR7qTrrfx
-	1q3ooEE8bN2EZYRqtia+dcWUYp+PR5FJ//rOgBezRyXqdaQ77w7eZVGnaovZwVU43dHJHaGVOS4
-	gL80IIG
-X-Received: by 2002:a05:6808:13c1:b0:46e:df55:2403 with SMTP id 5614622812f47-4871a092d28mr2835364b6e.18.1781202529888;
-        Thu, 11 Jun 2026 11:28:49 -0700 (PDT)
+        bh=jErdoPozY6XvPSRjRYAzCEz9KJzlAoJoY/0XbKzlQEU=;
+        b=dsRfERR5LPK6rULHpJLK6m0F3kSLlNTmCyCmqfdG5CJYtieMRsIHb0NkuquOl0GQOm
+         nrGQyugyapXcIJhfFE2rQtL0pDL/Prnp8CpsgHz+POu4sBU7v2HyFr3kj23D2Q3+Lxf7
+         OjnfE1KO8ntEVzsVhEtYLJY51sj/ERmqCMbenMBeLxmDNe6QUYnHeyXSUc9NE0cgVXNG
+         CiWtyX6KE0gW2hUIR6YXApTKqNjWFzg5O/ykoxI9Ul0sg02uKNhCWyt4gVqW1nfsrvQ+
+         5MLymBl36lBOVE2Udgue9unKYxT7U5Br9nRmQAzEEpjY6rwldt10EzoeMu00ZCLaEx5N
+         ghCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781202984; x=1781807784;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jErdoPozY6XvPSRjRYAzCEz9KJzlAoJoY/0XbKzlQEU=;
+        b=KWvM44kgA66A8wmXiXq3BaEI5KpnVpaRv4DxmbU72ghSbKaXmBlCQquMnd5sIcF7xh
+         m8MgEA5L23RNuqkTgPK5JgNr+b82xNuVl1vARMi3BcBC2SAOGiYFPxtNVXPNrWFgf1Je
+         jkqG70oPLrepnPU57FKQ0TBwfO1hfn4n3sl5rF9U5aXyRhm4lmA/CWa61GjU0NRONC0m
+         xcMymzwncZgz87F6yxA+L6lZSTFD0zT61Jvif+0LukVpk1W1KrpMTTPvbnS7/+uLnD58
+         PoCa0sn/NA1P7KPDxngX2cuw2mJL9A7S2Qqd0n7AKZT2KY/O+xzMxH/DbZsQEeke/XKX
+         hI2w==
+X-Gm-Message-State: AOJu0YwxPgk9/2FVgrxVniQbfbZpVVbZMvcrGU+29SpkLfdEZQ1GR64G
+	jF68RoPR8dZn0Qh0rjIJ4hpiRhZAj4bl4mCerMiIwXZRIQ9bER2IqHOi1kBvKV7gJzW3r6tZ4cm
+	rOfxR8oo=
+X-Gm-Gg: Acq92OEns88rxu6p7OiNItTTTn013PpcU/j4yEpyryI6QhYDpBKKpu/j7Iqyz1vOoVI
+	a77EdYZId/hkhveXrW0xOeKRhAi3LYCZ3QCCBFVMfK66bf3x4OVNVy4PrcC/66Ohl//alk2U7SD
+	HQuY7Jtfm3NO516f9tcl6eqV/C3EcZ1TCHbNg/t1GznMxfIjqSVwohVyt2CVT+wJs1zaQjvbGof
+	9Bqg3SDyhhHmHDro5XvQrVn3gzs6DjyubnRAqZlRTPKVR+Zs3S0v9Qe2YcVGRXouhuga6PksPLC
+	4V4OpfYcVuHTdoJ/+UZgn9r0N2Txcb/LpT1T4vEMZIaVud3Ins93mLvdUYXc0hE1oLpoCNmkTPF
+	cMvNiAHUsCCFpeGNVaf0ANSHuDAAbPqDP5jojmnTa4wN56KHGv2/u5KyDurtl6wNBs+1IaaJoNP
+	jDfD8hmsy8Ip7RsEfpZ+7Ugqn+efj0NXr3mwiUndQWQbZK6feUFm8HDxibSq6sydf8MQuH77Mbq
+	L3XzD2u
+X-Received: by 2002:a05:6870:450:b0:417:435c:b9ef with SMTP id 586e51a60fabf-442416d1a47mr2891440fac.11.1781202983847;
+        Thu, 11 Jun 2026 11:36:23 -0700 (PDT)
 Received: from [192.168.1.102] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-4865ba20b68sm21491805b6e.18.2026.06.11.11.28.49
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-442446babc9sm1658805fac.8.2026.06.11.11.36.23
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Jun 2026 11:28:49 -0700 (PDT)
-Message-ID: <6c374ba9-7c73-4e1b-9285-447e985c9ef6@kernel.dk>
-Date: Thu, 11 Jun 2026 12:28:48 -0600
+        Thu, 11 Jun 2026 11:36:23 -0700 (PDT)
+Message-ID: <d75fe34f-dc14-455c-8d80-04d341a9744d@kernel.dk>
+Date: Thu, 11 Jun 2026 12:36:22 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -85,77 +87,66 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] io_uring/rw: fix link failure on successful pipe
+ short reads
+To: Yang Xiuwei <yangxiuwei@kylinos.cn>
+Cc: io-uring@vger.kernel.org
+References: <20260611012236.3020181-1-yangxiuwei@kylinos.cn>
+ <20260611012236.3020181-2-yangxiuwei@kylinos.cn>
 Content-Language: en-US
-To: io-uring <io-uring@vger.kernel.org>
 From: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] io_uring/zcrx: kill dead 'sock' member in struct io_zcrx_args
-Cc: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20260611012236.3020181-2-yangxiuwei@kylinos.cn>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Rspamd-Action: no action
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_DKIM_ALLOW(-0.20)[kernel-dk.20251104.gappssmtp.com:s=20251104];
 	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_DKIM_ALLOW(-0.20)[kernel-dk.20251104.gappssmtp.com:s=20251104];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13676-lists,io-uring=lfdr.de];
-	TO_DN_ALL(0.00)[];
-	FORGED_RECIPIENTS(0.00)[m:io-uring@vger.kernel.org,m:asml.silence@gmail.com,m:asmlsilence@gmail.com,s:lists@lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_TWO(0.00)[2];
-	FORWARDED(0.00)[lists@lfdr.de];
-	FREEMAIL_CC(0.00)[gmail.com];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	DMARC_NA(0.00)[kernel.dk];
 	FORGED_SENDER(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel-dk.20251104.gappssmtp.com:+];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	RCVD_TLS_LAST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-13677-lists,io-uring=lfdr.de];
 	MIME_TRACE(0.00)[0:+];
+	FORWARDED(0.00)[lists@lfdr.de];
+	DMARC_NA(0.00)[kernel.dk];
+	FORGED_RECIPIENTS(0.00)[m:yangxiuwei@kylinos.cn,m:io-uring@vger.kernel.org,s:lists@lfdr.de];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCPT_COUNT_TWO(0.00)[2];
+	DKIM_TRACE(0.00)[kernel-dk.20251104.gappssmtp.com:+];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
 	FORGED_SENDER_FORWARDING(0.00)[];
 	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
 	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
 	ALIAS_RESOLVED(0.00)[];
 	FORGED_RECIPIENTS_FORWARDING(0.00)[];
 	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[vger.kernel.org:from_smtp,tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo,kernel-dk.20251104.gappssmtp.com:dkim,vger.kernel.org:from_smtp]
 X-Rspamd-Server: lfdr
-X-Rspamd-Queue-Id: 870036746D7
+X-Rspamd-Queue-Id: 0F6DE674780
 
-This member is only ever assigned, never read. Kill it.
+On 6/10/26 7:22 PM, Yang Xiuwei wrote:
+> __io_read() treats a short read on pipes and sockets as success and
+> returns without filling the iov. However, __io_complete_rw_common()
+> compared the transfer length against the original iov size and set
+> REQ_F_FAIL when they did not match. That incorrectly failed linked
+> requests behind a successful head request, for example a nop after a
+> naturally disarmed link timeout.
+> 
+> Treat short reads and writes on non-regular files as success in
+> __io_complete_rw_common(), matching the issue path.
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-
----
-
-diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
-index 6bd71435e475..49163f9c39df 100644
---- a/io_uring/zcrx.c
-+++ b/io_uring/zcrx.c
-@@ -339,7 +339,6 @@ static void zcrx_sync_for_device(struct page_pool *pp, struct io_zcrx_ifq *zcrx,
- struct io_zcrx_args {
- 	struct io_kiocb		*req;
- 	struct io_zcrx_ifq	*ifq;
--	struct socket		*sock;
- 	unsigned		nr_skbs;
- };
- 
-@@ -1733,7 +1732,6 @@ static int io_zcrx_tcp_recvmsg(struct io_kiocb *req, struct io_zcrx_ifq *ifq,
- 	struct io_zcrx_args args = {
- 		.req = req,
- 		.ifq = ifq,
--		.sock = sk->sk_socket,
- 	};
- 	read_descriptor_t rd_desc = {
- 		.count = len ? len : UINT_MAX,
+Not sure I follow - the "short read/write is an IOSQE_IO_LINK failure"
+is widely documented. So not sure I agree with this approach.
 
 -- 
 Jens Axboe
-
 

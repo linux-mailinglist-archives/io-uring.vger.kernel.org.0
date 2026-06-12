@@ -1,174 +1,159 @@
-Return-Path: <io-uring+bounces-13698-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13699-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by mail.lfdr.de with LMTP
-	id bKKKHsw0LGquNgQAu9opvQ
-	(envelope-from <io-uring+bounces-13698-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Fri, 12 Jun 2026 18:33:16 +0200
+	id OS8rOwBELGpiOgQAu9opvQ
+	(envelope-from <io-uring+bounces-13699-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Fri, 12 Jun 2026 19:38:08 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EFB767AF5E
-	for <lists+io-uring@lfdr.de>; Fri, 12 Jun 2026 18:33:15 +0200 (CEST)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A16067B65D
+	for <lists+io-uring@lfdr.de>; Fri, 12 Jun 2026 19:38:08 +0200 (CEST)
 Authentication-Results: mail.lfdr.de;
-	dkim=pass header.d=kernel-dk.20251104.gappssmtp.com header.s=20251104 header.b=veZzV8KG;
-	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13698-lists+io-uring=lfdr.de@vger.kernel.org" designates 104.64.211.4 as permitted sender) smtp.mailfrom="io-uring+bounces-13698-lists+io-uring=lfdr.de@vger.kernel.org";
-	dmarc=none;
+	dkim=pass header.d=gmail.com header.s=20251104 header.b=CUtfoqQm;
+	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13699-lists+io-uring=lfdr.de@vger.kernel.org" designates 172.234.253.10 as permitted sender) smtp.mailfrom="io-uring+bounces-13699-lists+io-uring=lfdr.de@vger.kernel.org";
+	dmarc=pass (policy=none) header.from=gmail.com;
 	arc=pass ("subspace.kernel.org:s=arc-20240116:i=1")
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 03E133005175
-	for <lists+io-uring@lfdr.de>; Fri, 12 Jun 2026 16:27:10 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 070A63216724
+	for <lists+io-uring@lfdr.de>; Fri, 12 Jun 2026 17:36:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB1043368B8;
-	Fri, 12 Jun 2026 16:27:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F467406291;
+	Fri, 12 Jun 2026 17:36:31 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C261A33985
-	for <io-uring@vger.kernel.org>; Fri, 12 Jun 2026 16:27:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3015406829
+	for <io-uring@vger.kernel.org>; Fri, 12 Jun 2026 17:36:29 +0000 (UTC)
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781281628; cv=none; b=YGsEao57xbwAeOXTSp5TDC4RoHeQZuF1VJi8T7RSxx/WUBgzrBh1j7Ch72lLAvldTzMLFfc66IWxinkgkOc+uAIzC75VySx3ppXVp9uS0K11yk+lXjDqzv7bQmi9tWjgOECr23FpiduX0y4uw3D+4JupUw41u5J5leoK0iBKyfI=
+	t=1781285791; cv=none; b=Z7ttS7TRlL+ApP22S6eHmh51yNsyy9QxLrjLnjCM4cp2tKr6xrrPMaa7qSFiPGNO2/SzM6BDUwcCnA4X6Y559ZIn6RtFGhPUv7jlftbArveUxchTGLpL01GPyoo/7fX7aZnNmXvh03qCnn9pLdc0myC+VgPjn2XkWgBHsjH1l1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781281628; c=relaxed/simple;
-	bh=q85fA0z8ZRnH+iKGZjgnPQ6WELKNUoE0mAq68NGwH2M=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=XURzhuSlzWaPBuIKhh09BfzgJbWhspXQ/hZ8Kmj7+ZoYuWMUa9SFxhHmr+ktM6Z9PfzE4O8hqD34ORRtwhj7MARo9Hmp1L+n44QSECOqAWBX1MBxAcOmGQESpj4PYCkhoyzcwX/nyZ0lwlN4fenEl782TFAyerGX1AGTg3PlUP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=veZzV8KG; arc=none smtp.client-ip=209.85.167.178
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-4864a8e80bbso704117b6e.0
-        for <io-uring@vger.kernel.org>; Fri, 12 Jun 2026 09:27:06 -0700 (PDT)
+	s=arc-20240116; t=1781285791; c=relaxed/simple;
+	bh=X+LINLrUcTEkZm8M66oHNbJqsKf+dL7XFF5mz5gIdUk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B2pWtPxNfLibYCEUx7nVKlp3Cd2JIpVan/gCtzNUYMb89cOpqM/f7+nycL9hFPyxzCLjUtRw3tF5MWzTtTjVEku7oblTfWdpT0Nt8qNvQk3KQLEG/j9Nyb3Kz+SfvWinGZPZcoQ0IdzFA2BN8JjwcNbm77/FVZy2TIz5FETovbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CUtfoqQm; arc=none smtp.client-ip=209.85.221.48
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-45eec22fab7so560722f8f.3
+        for <io-uring@vger.kernel.org>; Fri, 12 Jun 2026 10:36:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1781281626; x=1781886426; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C2MDdSziVv1nFaimA2o7z7Te+TZ8eVtdz4atBPWXgG0=;
-        b=veZzV8KGaAK/dqEVhvl0mjljw7J31C6aSloWqPha+xN2l5GPZ5/c7OmNZhZHTb6NOk
-         t13sFjKsZcR533DxgiH6Y+nCEEd0WfgvEm7A21Z4L8mMplPgwaKVQ9W47PjBA3zR2XGx
-         p7c3PN4xjbK+d6qY5x8xxz4Xkb18FMjJFwQCD9TaDzklJ/y6NbLx3/XpgJtzNjzGcLOK
-         mCl1H69GmNpjIl77bi+YJsTLo6cuW+UsslGGfifwNaexqREo/J7f/02mSUJ46KYaoeHy
-         ciFbzZ5X3iG7BOTdl3g2+5hjMbci5IKqsXQYxJu8OR8r2S5D+xmvufUYlYTBrFCZW8Cx
-         1R1Q==
+        d=gmail.com; s=20251104; t=1781285788; x=1781890588; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2CryNWlqXd8hetg1mVjUAbuv3LZZLIUiwsOD6iYq0Jk=;
+        b=CUtfoqQmBHvRxE9OExbsy7csxj/KGMKnu63yV+StFo6KzL5I0rJX7+CTXK6cCnTkuA
+         tzfGVCcfrSCB2zsxpzAyrJHz/1ofQn0A+qm8ezNFUWdRpz3+11FbllNZH27Gw4KmpezL
+         r4Tiwua8VHcuf9jG/ayXHZGmVAJiLFFccC3HX4vu5ylFSbji20UwQn6h+hBbU9DN5u5U
+         h7AuftyQ042YANN8Ra1HxXMPyc8RoCSLzXjB5dnwXqOgxphxQR2GCW0CSWmf+XDpqnbu
+         y5PzmJ6nDmBLvwrf5Y9ifJiavGoK1iGcgkbGW1OtTyZtVu8SDn2WWP97+FZd80DcH1Tm
+         l1pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781281626; x=1781886426;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=C2MDdSziVv1nFaimA2o7z7Te+TZ8eVtdz4atBPWXgG0=;
-        b=SV2D42isFxLV6yMBkQM1Ev/kf/Gt0jkrkKEFqZEfcox1G3p7XNMnznYZI9h/66rSa6
-         EO/PVk7a3UNycZwGKnYRW86d0pN4JRupEa1ZkkZxsklGg6g1YLcmdmnVCqxwgcK/VF4z
-         r4g/05mOMDSz/M51ZN5zmO3aRvUQQbhjWE3hJaSmSJOoeOTX2tug96+cJ5DbRPIzJZtR
-         VmDWAQMdjXbB4fYZWDRfMnzzZqFOA8Soq8M/9Jun1u0Hno7GtxkyHlaeEkCKFWsmvKfQ
-         s1KShvbB962c25DKAq0m4qRq0ZiS6iXkPz6DUf9LEfMconQ10JmWVoGxi1R3WhZlosVq
-         vY5A==
-X-Gm-Message-State: AOJu0Yy2A1DTFJwgnpr4N7EXkgYWsaRw+nXQQXD1dCsZt6cZdEaRWO95
-	v1ZZ0Y924JdZL3hN4M9h3Z3RZpwRD3fTWLyHNgsDm2sg3DRBRtzwZ6JOcC6Uat0a53xTEAFzUpG
-	4vrKf9Os=
-X-Gm-Gg: Acq92OGqdtzZ4yraZDSZUC0E3QVWz9GaE2MATNSE0asjkE5vFBdmiTRc/NVAIP3S+Q7
-	8AeN/9YRvKQbFI7jR7Vw6RRWQ42DeSwkxAiIv1hwVaojT4laVjyS/nqMjPHdXzbD8f+QuSQLUQY
-	iD4Z7aC+zw+y/72MXH3MexG7vTbWVMF+rP7L0lHm4meuUUVeGitRK2tPrCC5p2JTnlQJR4f0gCp
-	YMHzQEwiKoa08JJQ/dm+NDMZiMlTwgzQsce+uEmZ/aKrhq5ikFARdE+ffRcwTAb3p9PvOMWcxrg
-	COA3AuPXDCGh/2HeK9raAPBJH5Q4fBa6etRW+9dDfqh798wrTTu++UTMa8l/cmwW+zbtzD4wiyU
-	LVTo00JzwN/xByR3ad+hluRmjjD0+nLirbtFflMXJ0CLJ+ka9G4+xkFpqiaMfMknK4VYI1K5xE/
-	uRvEkmK5HxYr103oQlMvjFxwEILdWBgfrLz8r2BkNI5vOfpiaUfrLY64fDOmwIqLbAjpNEs9YiN
-	q+MSr/lEQ==
-X-Received: by 2002:a05:6808:5147:b0:47c:be93:9212 with SMTP id 5614622812f47-4872f426d86mr2482043b6e.18.1781281625698;
-        Fri, 12 Jun 2026 09:27:05 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-4873157dc2asm1193880b6e.13.2026.06.12.09.27.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Jun 2026 09:27:04 -0700 (PDT)
-Message-ID: <98373ad8-4777-489c-9cef-1ff9227c63a4@kernel.dk>
-Date: Fri, 12 Jun 2026 10:27:03 -0600
+        d=1e100.net; s=20251104; t=1781285788; x=1781890588;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2CryNWlqXd8hetg1mVjUAbuv3LZZLIUiwsOD6iYq0Jk=;
+        b=FHWzLGQgzTb38BO6g983vqE8ObZJLqjZDZ1mjgp0BzBV/+DRzK7PjtmMymkLwpNO72
+         rqBDwbw6IfSzCX0neDHDAZnBgj+BVCbZn2zluZfA2wlSb2NX5ms25GLSxk0cKD1j046l
+         4WMm/NF2+59cuDNtVFNIRYji0+RZROTaarEKTKGMiMoCgvqMk24PF/TKZwTAtX87HvdA
+         SJH/XxohbqEllyRBWMZ6BJYzrfBa04s6MPFBC5mPin/IjaGPYXleekkX+S4ucuy1W7qz
+         OLS7iTnx7nFyAf8qSasr2Asnf1G3VNIk9Mwc5bgdDt9dQH6TGXD2FwV6jNe+vo1QIzvA
+         VSHA==
+X-Gm-Message-State: AOJu0YwhfGVhMj65CFgiThxqP4e/8D5ZBJhbiUh8Jy8at+W/vOasvSBe
+	4Q/6L5u6x8aU9q8G4eufFjYnupA1/RPpFYbdnqHlv9/5CWBiDs6BT7F8eJT/OQ==
+X-Gm-Gg: Acq92OH3ZgnYHw2yDFYnSm8VE7UtutlIc1qMMIrByM4x6/sDnkW6YqY0kq9jpOIaI9/
+	mGetpMhwr87WWUH9u2KCMz0mt4kmbG8RlwcxhBAaHqALfGhjIeFUhSkpWWhf8q+oP9w56zo+lnx
+	6QQgq3ZUaEEQYCs6rQwGJCq7ID8w3Nrsi/vtA4ZxfPdSAE77mlaX90Wp5B77lrNb0at2SzQgurQ
+	RSqT7rSbz6tqMF8OYO9NVO02zL1XSK/3bUOsZcBfAUAUG9WdoZmS0dbpkwKYCDt65Ap3Vv6Uz9o
+	rOfohsh19jmWDMr8qorIO702UnAXEObyQlS4I2nW1dQux/0Nhjy6AccV+pQ2LDxxshxB8bUThGQ
+	+Xzxu94DLZApNw76GPEH7yVZwZ3DO4GcO1dU7+hKUswRQ2RLl+VS1kj2WMPCJqJ0Fxe6sXgMGeS
+	6Qqil3tcrGbKhg5WuxRnjj8SdkrL7pUKUN2UsjozGq5SJRhBfJAiArZivRvRp7srA9vIiPda7+x
+	bqLmOkX9eSrlKUHgyE/Mb1OyqOUrg==
+X-Received: by 2002:a5d:59ac:0:b0:460:3234:4474 with SMTP id ffacd0b85a97d-4606dbe4f1fmr5786536f8f.42.1781285788071;
+        Fri, 12 Jun 2026 10:36:28 -0700 (PDT)
+Received: from 127.mynet ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4606f2b0c35sm7741896f8f.22.2026.06.12.10.36.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jun 2026 10:36:27 -0700 (PDT)
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: io-uring@vger.kernel.org
+Cc: asml.silence@gmail.com,
+	axboe@kernel.dk
+Subject: [PATCH 1/1] io_uring/bpf-ops: add a separate maintainer entry
+Date: Fri, 12 Jun 2026 18:36:22 +0100
+Message-ID: <d89f3b89e77b09a18daa45476fd1a40f2ee253cd.1780930463.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: io-uring <io-uring@vger.kernel.org>
-From: Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring fixes for 7.1-final
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Rspamd-Action: no action
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
-	R_DKIM_ALLOW(-0.20)[kernel-dk.20251104.gappssmtp.com:s=20251104];
+	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[gmail.com:s=20251104];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	DMARC_NA(0.00)[kernel.dk];
-	TO_DN_ALL(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13698-lists,io-uring=lfdr.de];
-	FORWARDED(0.00)[lists@lfdr.de];
+	TAGGED_FROM(0.00)[bounces-13699-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FORGED_RECIPIENTS(0.00)[m:torvalds@linux-foundation.org,m:io-uring@vger.kernel.org,s:lists@lfdr.de];
-	FORGED_SENDER(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	RCPT_COUNT_TWO(0.00)[2];
-	DKIM_TRACE(0.00)[kernel-dk.20251104.gappssmtp.com:+];
+	FREEMAIL_CC(0.00)[gmail.com,kernel.dk];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER_FORWARDING(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	FORGED_RECIPIENTS(0.00)[m:io-uring@vger.kernel.org,m:asml.silence@gmail.com,m:axboe@kernel.dk,m:asmlsilence@gmail.com,s:lists@lfdr.de];
+	FORGED_SENDER(0.00)[asmlsilence@gmail.com,io-uring@vger.kernel.org];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	FORWARDED(0.00)[lists@lfdr.de];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[gmail.com:+];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	FROM_NEQ_ENVFROM(0.00)[asmlsilence@gmail.com,io-uring@vger.kernel.org];
+	TO_DN_NONE(0.00)[];
 	ALIAS_RESOLVED(0.00)[];
-	FORGED_RECIPIENTS_FORWARDING(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
+	FORGED_SENDER_FORWARDING(0.00)[];
+	RCPT_COUNT_THREE(0.00)[3];
 	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:rdns,sin.lore.kernel.org:helo,vger.kernel.org:from_smtp,kernel.dk:mid,kernel.dk:from_mime]
+	FORGED_RECIPIENTS_FORWARDING(0.00)[];
+	FREEMAIL_FROM(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,vger.kernel.org:from_smtp]
 X-Rspamd-Server: lfdr
-X-Rspamd-Queue-Id: 6EFB767AF5E
+X-Rspamd-Queue-Id: 5A16067B65D
 
-Hi Linus,
+Add a maintainer entry for io_uring bpf struct_ops related files.
 
-Two small fixes for io_uring, that should go into the final 7.1 release,
-both heading to stable. This pull request contains:
+Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+---
+ MAINTAINERS | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-- Tweak for an off-by-one in the CQ ring accounting for the min wait
-  support.
-
-- Don't truncate end buffer length for a bundle, as the transfer might
-  not happen. It's not required in the first place, as the completion
-  side handles this condition already.
-
-Please pull!
-
-
-The following changes since commit ed46f39c47eb5530a9c161481a2080d3a869cfaf:
-
-  io_uring/net: inherit IORING_CQE_F_BUF_MORE across bundle recv retries (2026-06-05 05:20:25 -0600)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git tags/io_uring-7.1-20260611
-
-for you to fetch changes up to 29fe1bd01b99714f3136f922230a643c2742cda9:
-
-  io_uring/wait: fix min_timeout behavior (2026-06-07 16:12:32 -0600)
-
-----------------------------------------------------------------
-io_uring-7.1-20260611
-
-----------------------------------------------------------------
-Christian A. Ehrhardt (1):
-      io_uring/wait: fix min_timeout behavior
-
-Jens Axboe (1):
-      io_uring/kbuf: don't truncate end buffer for bundles
-
- io_uring/kbuf.c | 1 -
- io_uring/wait.c | 2 +-
- 2 files changed, 1 insertion(+), 2 deletions(-)
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 2fb1c75afd16..fc3be0ba1462 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13527,6 +13527,14 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git
+ S:	Maintained
+ F:	io_uring/zcrx.*
+ 
++IO_URING BPF-OPS
++M:	Pavel Begunkov <asml.silence@gmail.com>
++L:	io-uring@vger.kernel.org
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git
++S:	Maintained
++F:	io_uring/bpf-ops.*
++F:	io_uring/loop.*
++
+ IPMI SUBSYSTEM
+ M:	Corey Minyard <corey@minyard.net>
+ L:	openipmi-developer@lists.sourceforge.net (moderated for non-subscribers)
 -- 
-Jens Axboe
+2.54.0
 
 

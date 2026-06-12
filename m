@@ -1,90 +1,90 @@
-Return-Path: <io-uring+bounces-13702-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13703-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by mail.lfdr.de with LMTP
-	id 53sCMpZVLGpHPgQAu9opvQ
-	(envelope-from <io-uring+bounces-13702-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Fri, 12 Jun 2026 20:53:10 +0200
+	id ElTzFZpVLGpKPgQAu9opvQ
+	(envelope-from <io-uring+bounces-13703-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Fri, 12 Jun 2026 20:53:14 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D4E467BDD8
-	for <lists+io-uring@lfdr.de>; Fri, 12 Jun 2026 20:53:10 +0200 (CEST)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0A0867BDDD
+	for <lists+io-uring@lfdr.de>; Fri, 12 Jun 2026 20:53:13 +0200 (CEST)
 Authentication-Results: mail.lfdr.de;
-	dkim=pass header.d=gmail.com header.s=20251104 header.b=mQ5HuGX9;
-	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13702-lists+io-uring=lfdr.de@vger.kernel.org" designates 172.232.135.74 as permitted sender) smtp.mailfrom="io-uring+bounces-13702-lists+io-uring=lfdr.de@vger.kernel.org";
+	dkim=pass header.d=gmail.com header.s=20251104 header.b=anoCdeOC;
+	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13703-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c04:e001:36c::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-13703-lists+io-uring=lfdr.de@vger.kernel.org";
 	dmarc=pass (policy=none) header.from=gmail.com;
 	arc=pass ("subspace.kernel.org:s=arc-20240116:i=1")
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id E06F13016D38
-	for <lists+io-uring@lfdr.de>; Fri, 12 Jun 2026 18:53:09 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 93D2E309D0B4
+	for <lists+io-uring@lfdr.de>; Fri, 12 Jun 2026 18:53:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E7335F191;
-	Fri, 12 Jun 2026 18:53:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 406EC36CE10;
+	Fri, 12 Jun 2026 18:53:10 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
 Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 131473093CB
-	for <io-uring@vger.kernel.org>; Fri, 12 Jun 2026 18:53:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE3DD3093CB
+	for <io-uring@vger.kernel.org>; Fri, 12 Jun 2026 18:53:08 +0000 (UTC)
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781290388; cv=none; b=NkrZZZMVUigr57j5a/xwDFaMFjrAHVL9GnaGs1rru02BIcjtHh1ntlG3UNE4oqlYZdTvgTU69CaRPyRnFs8aHUn0YSrJU7VbKLoZ1YP7hrvDkgL7eq5mtIzoIVtW7YYRH3IubGZQgwIjSYGV5yu8eWSVQ0BxrDQCajArNgkQ8UM=
+	t=1781290390; cv=none; b=llRYAiqT3uQ7OVAd64SSRtKOUbSgOTjO8hJAnwzZ6I1jxXW5mKfHUdTSSkD4wSAKnhyyXpJpJdTYhw5raw8DgL042x2o9JUwfGmFnUDrTwnSpFP6r7g6VUPNoF6f3BIIt0A5YUVaXTQFGlpsYVtrArNmOsc+SOJstIOsbtIwUDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781290388; c=relaxed/simple;
-	bh=6AX+7SJvw8Mz8lTu8VN4llPUj4q331TSpGswNpgsaM8=;
+	s=arc-20240116; t=1781290390; c=relaxed/simple;
+	bh=hwjAwtnFADFhJB0BzzluvFZTi4YpI0E86+UvrOE/6xE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kS5SEpEB8OpHNGnYq8BnzyHoM5THP9QXlM9I0JtpNRO+FKSYNJ6ugoRw0YSb20o5svBLszaykGJ7bANJxM5hmvc+flIQ8/8M8Cl3qZzZ45zb8X8PQN9eoaMlNN8q8P0ypLA9Z+xlJ9HAt+oJXbi16JSIZTLgX1GKJAXR9g6rEZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mQ5HuGX9; arc=none smtp.client-ip=209.85.210.178
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-842848fd613so1368730b3a.3
-        for <io-uring@vger.kernel.org>; Fri, 12 Jun 2026 11:53:06 -0700 (PDT)
+	 MIME-Version; b=S2G/SUc63YPZpIjinnf26/59A9zHml6KqpzBm8iokBLnGmTeKLQHlEDUF6YpgyTHI4VvEPUdR8h2RhM5zQv4E068/HqEnYRAwbtubTzbzwmPe27Rxomd6PahFfxp7s5IU/YqV0sAaTWV1tYd57arX3toEnXzR5BVrXXnJM214Uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=anoCdeOC; arc=none smtp.client-ip=209.85.210.178
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-842307473b5so1046143b3a.2
+        for <io-uring@vger.kernel.org>; Fri, 12 Jun 2026 11:53:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1781290386; x=1781895186; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1781290388; x=1781895188; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9XHOgdNDd0H22/o7i/iYi5Osc/YEgHzALFo/YgfpKc4=;
-        b=mQ5HuGX9yeeJp0hXMGh0EdRlIj4tK+iHddzTyryBh69GztjMGtsyqL7Pk2/E9EGGIH
-         0ekr0L/QYHMwS1lvDKuR6NEABG3oDJH87cPo9DUpIweIR1LthNkBw5F0x7KSSFshlRIl
-         3epTMYyybUQCTjxsm5Kc7lCPNyT0aMGk5Me4bakeHUPlziyp7XNnKKX5RluVuE+DH7+M
-         UKyqppD3wmrHhDdsspszo8NGt/sXzg4RCHrX+7eFV3bPBA9VVRfKcSaH7SM2GPeHf3dF
-         Ya+jbOt0nIlqL1MKInW6YzqAKiN6xspEQO3JOsmIbbb6eRCNVfajFYCbNQxaxdQTr1ol
-         ZMgg==
+        bh=mSxigFkssNDkBz+59vflKp74eZ6To77kDr64l56OQvE=;
+        b=anoCdeOCov/yqq3O/Lrul93sbQmxA7V83+yY9Ht4vC2OPOyQAVp4jX4QTxuUHBceC9
+         nGc4wgBfyCpjm2xdqOOzWXkyyfLiZ/Y8a1rVj9Gv0zADNzsHYqRUpl5s7X83ZDUJ3GgI
+         MQxN7ngY9SukLfh9+ioURcZ1FRjePy54w/f6fecevn0Rgg7oSMbh0Ig/fO/kMsWxZ7r0
+         T0/cjN4AJLdMSOEoT3jT2vscOpoo3jNPnFwhiSb4+e7+clsNG+iwEnXdjwJ6/paQt1hZ
+         wjHHAUtsVyPXeJAEAFvIZrXNUDnHlluUYnjSAKE97jaiL30LIgYgQ0e+5cJH0/jh8VJi
+         aQ1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781290386; x=1781895186;
+        d=1e100.net; s=20251104; t=1781290388; x=1781895188;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=9XHOgdNDd0H22/o7i/iYi5Osc/YEgHzALFo/YgfpKc4=;
-        b=NZ7n/Nf/6tsJPkBC8w0ZVt/1cpemqD3WB5Uzk5AxtjxrG+wzSLwKqb/PFCeNp1sgJd
-         2Hn+VQtzIcGDCuLvLMSpOI0kWayUU8bjJ5Yq0kdPM60V+bfisOaVgotAAHUtL6Q16UhK
-         hLWtPVNN7B4WspEdFzJBlhuAHk0L2I8crCzy8Dfz/MnLIR7EgikIKo0u8N1MH2mx3xsG
-         mRGww1eR+IIpe/86xA3WwbuUSyMew1CQnq2UlW9gVrYBpHILleHWUnS3F6GwfaUg2j/H
-         ZZUnjtbI1vtpphq1Uoh74PbbAIkg0xCtjQAIQAsmzeIDHcVNP39q3eoNFhve3AZSarT/
-         6dMQ==
-X-Forwarded-Encrypted: i=1; AFNElJ/hVq5iX14MxbW9OeHR+Lx2vN2xe59NY8+C/q94p4mUOv995JfpUaCOwodqpYmr/cVovI0VhIHsLQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNVl3F9/jrbsN4t4jQPRa5W1iZuEjttzBUlRVMdA23UAIGQRw9
-	wAp/B4H1zN66PdD7wH97Ekmj4cmu66eMHib3Ntcnc4WiNnNq+68TRZXt
-X-Gm-Gg: Acq92OE2oOl2KAJyv2r3oDgTFR1L1JNjCXvPMVngHlD+IzKY5KRgMfZbCMjm+aptAhY
-	yAOaaAYE278ButexHE75WCXPddB45RHvjuHB8i2z+MSqEoXYFkI8olDcGOsoyHDcvunMvQ4kM85
-	eEc1VBPYy6mttguP6b3W6ukhllu/FtxOROhIrLbaTnQpovrEEr25GBk+sPuFNMWIDFBEWRnq5uI
-	VmvlVviV+TOogbSVjUBDcEAGIsWy+Q6Fn2bQYcdK9vRlgRGk+qhEU4hIl60WL4v4ZKKcjlNO6Pn
-	L6u38kCwb0ZVD0LvIAwruMY3/cxVyRB7xN/lHxgo9qJyL69pmbscWeWbHpgjFSulOXEbuP3wBuW
-	FOoEiD8H8LBM5BvIcdzQXa9zYTW9BloGqO+5b8omDHfi5tH3mRPv6pQcOUjSMAKsmjm1dAjNLP7
-	IH3d7G0zu1+9hUXId5SecXDMolsDS+xxYctSmtO26wjbR6Rc4V/PUsdmkSh3KPys3kBkvA5wCk8
-	Fo=
-X-Received: by 2002:a05:6a00:398d:b0:842:6e1f:c8fc with SMTP id d2e1a72fcca58-8434d0afeeemr4524614b3a.32.1781290386387;
-        Fri, 12 Jun 2026 11:53:06 -0700 (PDT)
-Received: from localhost ([2a03:2880:ff:4b::])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8434ac9cfebsm2677096b3a.9.2026.06.12.11.53.05
+        bh=mSxigFkssNDkBz+59vflKp74eZ6To77kDr64l56OQvE=;
+        b=mGYd9HzNQC3UWuHvyztkKtBfPxz1bZpdZEJXnGMdS/DHfHAyBlAMRyxVG9qHo/ER3Z
+         ruzz91MQR2Y+ih9RsjW56bd9tdLzjvkVKqGLbv2iPYe1vhZB6kPE35cNFae2FEeG0aUY
+         pYTqbPeQgeeTKy/fiZxq1NflWSft/2HQzNxuU3OIEoqRGK0IqQhjrqxKftlCxuvdysCl
+         a7lUt3IsPCB++P62oWVmRA5rlUyh/vJjfJGL6/XVbaUsaky2kI4X96wDelPm04twmDd1
+         2ZKMPmPRgYyFVQ6oxfkHejSL8K/IqJHmpnNDS/butm/YV09S40NM2fFfQ3ZEb7o/sGNf
+         u8jQ==
+X-Forwarded-Encrypted: i=1; AFNElJ8GQ6f+fQtYa1BSS1CdDzyexk+iU1vNq7QYitxhIymgTieNvYOJxGHEd5AdzAKMlW9TvvNngOuc+Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVLmkUP3Y1oybyKaqAudzAa7Mhp8b4Sn8Lpc1rSZFJrwNrcIH1
+	xkQFidvRC45OLyo+HSOGOisbQzT+q6soPa9V3S9IhoRmNhArg+QTSaYM50C1Qw==
+X-Gm-Gg: Acq92OFMAd8dIwJ1qr1ZI4+vEJ11BHFbwjWUTo7OsZhZBAXGc7FSNOXqN3gHVNKKSiH
+	aBpS6Nt5rmVbo2vYlTKmeeDstglRSZmPOnQUrgx6zdRe9M7NFn8tb0cObSF5Ha+TqvqtSPB4RbN
+	PZ1lY078NpkCnBs01WbkiQaenkjEbQzzPqFijzpCFCj4tFdpkE8aId6Yp7zrLOcLqVstb1lkmOM
+	QKKoFugcbpBblNWX6XR8aw9VyrNDOWVr4ovgO6hBGEkyj6aeVGtFYYT8TmtVVqt4htHLi/agfsR
+	5emGww68hBlHhgMFKWkuETX2qeTMQxhFIrlQ9wxYYXeYpIWKzVZRYrh9VFnVRS32JBxvN1NeLSY
+	xGnxR/UuxLucLLp2v+nna6+4A0g29BajUGG6gRhmK5BSL9LwkaFKdqGwO9xp8UeTrEy/0BZqjdt
+	j5RE+2pyCHbu+YIg11BC3G8XeIAbm8rMQmnqwjr7ieWz8lSNb3YIR1CMZp3ZzULPsfi+j1rTeFg
+	Q==
+X-Received: by 2002:a05:6a00:1d99:b0:83f:a040:a3d3 with SMTP id d2e1a72fcca58-8434cec7839mr4045735b3a.43.1781290388375;
+        Fri, 12 Jun 2026 11:53:08 -0700 (PDT)
+Received: from localhost ([2a03:2880:ff:6::])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8434afc8a84sm3498444b3a.38.2026.06.12.11.53.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jun 2026 11:53:05 -0700 (PDT)
+        Fri, 12 Jun 2026 11:53:07 -0700 (PDT)
 From: Joanne Koong <joannelkoong@gmail.com>
 To: axboe@kernel.dk
 Cc: miklos@szeredi.hu,
 	csander@purestorage.com,
 	io-uring@vger.kernel.org
-Subject: [PATCH v7 1/4] io_uring/rsrc: rename io_buffer_register_bvec()/io_buffer_unregister_bvec()
-Date: Fri, 12 Jun 2026 11:48:37 -0700
-Message-ID: <20260612184840.4058966-2-joannelkoong@gmail.com>
+Subject: [PATCH v7 2/4] io_uring/rsrc: split io_buffer_register_request() logic
+Date: Fri, 12 Jun 2026 11:48:38 -0700
+Message-ID: <20260612184840.4058966-3-joannelkoong@gmail.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260612184840.4058966-1-joannelkoong@gmail.com>
 References: <20260612184840.4058966-1-joannelkoong@gmail.com>
@@ -101,7 +101,7 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MID_CONTAINS_FROM(1.00)[];
 	R_MISSING_CHARSET(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	R_DKIM_ALLOW(-0.20)[gmail.com:s=20251104];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
@@ -111,12 +111,12 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	MIME_TRACE(0.00)[0:+];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13702-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-13703-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	FORGED_RECIPIENTS(0.00)[m:axboe@kernel.dk,m:miklos@szeredi.hu,m:csander@purestorage.com,m:io-uring@vger.kernel.org,s:lists@lfdr.de];
 	FORGED_SENDER(0.00)[joannelkoong@gmail.com,io-uring@vger.kernel.org];
 	DKIM_TRACE(0.00)[gmail.com:+];
-	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
 	FREEMAIL_FROM(0.00)[gmail.com];
 	PRECEDENCE_BULK(0.00)[];
 	FORGED_SENDER_FORWARDING(0.00)[];
@@ -129,230 +129,141 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	TO_DN_NONE(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
 	FORGED_RECIPIENTS_FORWARDING(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[vger.kernel.org:from_smtp,purestorage.com:email,sto.lore.kernel.org:rdns,sto.lore.kernel.org:helo]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo,vger.kernel.org:from_smtp,purestorage.com:email]
 X-Rspamd-Server: lfdr
-X-Rspamd-Queue-Id: 6D4E467BDD8
+X-Rspamd-Queue-Id: C0A0867BDDD
 
-Currently, io_buffer_register_bvec() takes in a request. In preparation
-for supporting kernel-populated buffers in fuse io-uring (which will
-need to register bvecs directly, not through a struct request), rename
-this to io_buffer_register_request().
+Split the main initialization logic in io_buffer_register_request() into
+a helper function.
 
-A subsequent patch will commandeer the "io_buffer_register_bvec()"
-function name to support registering bvecs directly.
-
-Rename io_buffer_unregister_bvec() to a more generic name,
-io_buffer_unregister(), as both io_buffer_register_request() and
-io_buffer_register_bvec() callers will use it for unregistration.
+This is a preparatory patch for supporting kernel-populated buffers in
+fuse io-uring, which will be reusing this logic.
 
 Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 Reviewed-by: Caleb Sander Mateos <csander@purestorage.com>
 ---
- Documentation/block/ublk.rst | 14 +++++++-------
- drivers/block/ublk_drv.c     | 22 +++++++++++-----------
- include/linux/io_uring/cmd.h | 25 +++++++++++++++++++------
- io_uring/rsrc.c              | 14 +++++++-------
- 4 files changed, 44 insertions(+), 31 deletions(-)
+ io_uring/rsrc.c | 84 ++++++++++++++++++++++++++++++-------------------
+ 1 file changed, 51 insertions(+), 33 deletions(-)
 
-diff --git a/Documentation/block/ublk.rst b/Documentation/block/ublk.rst
-index 0413dcd9ef69..28300fee22bf 100644
---- a/Documentation/block/ublk.rst
-+++ b/Documentation/block/ublk.rst
-@@ -382,17 +382,17 @@ Zero copy
- ---------
- 
- ublk zero copy relies on io_uring's fixed kernel buffer, which provides
--two APIs: `io_buffer_register_bvec()` and `io_buffer_unregister_bvec`.
-+two APIs: `io_buffer_register_request()` and `io_buffer_unregister`.
- 
- ublk adds IO command of `UBLK_IO_REGISTER_IO_BUF` to call
--`io_buffer_register_bvec()` for ublk server to register client request
-+`io_buffer_register_request()` for ublk server to register client request
- buffer into io_uring buffer table, then ublk server can submit io_uring
- IOs with the registered buffer index. IO command of `UBLK_IO_UNREGISTER_IO_BUF`
--calls `io_buffer_unregister_bvec()` to unregister the buffer, which is
--guaranteed to be live between calling `io_buffer_register_bvec()` and
--`io_buffer_unregister_bvec()`. Any io_uring operation which supports this
--kind of kernel buffer will grab one reference of the buffer until the
--operation is completed.
-+calls `io_buffer_unregister()` to unregister the buffer, which is guaranteed
-+to be live between calling `io_buffer_register_request()` and
-+`io_buffer_unregister()`. Any io_uring operation which supports this kind of
-+kernel buffer will grab one reference of the buffer until the operation is
-+completed.
- 
- ublk server implementing zero copy or user copy has to be CAP_SYS_ADMIN and
- be trusted, because it is ublk server's responsibility to make sure IO buffer
-diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
-index 4f6d9e652187..4036eb6be056 100644
---- a/drivers/block/ublk_drv.c
-+++ b/drivers/block/ublk_drv.c
-@@ -1699,8 +1699,8 @@ ublk_auto_buf_register(const struct ublk_queue *ubq, struct request *req,
- {
- 	int ret;
- 
--	ret = io_buffer_register_bvec(cmd, req, ublk_io_release,
--				      io->buf.auto_reg.index, issue_flags);
-+	ret = io_buffer_register_request(cmd, req, ublk_io_release,
-+					 io->buf.auto_reg.index, issue_flags);
- 	if (ret) {
- 		if (io->buf.auto_reg.flags & UBLK_AUTO_BUF_REG_FALLBACK) {
- 			ublk_auto_buf_reg_fallback(ubq, req->tag);
-@@ -1906,7 +1906,7 @@ static noinline void ublk_batch_dispatch_fail(struct ublk_queue *ubq,
- 		ublk_io_unlock(io);
- 
- 		if (index != -1)
--			io_buffer_unregister_bvec(data->cmd, index,
-+			io_buffer_unregister(data->cmd, index,
- 					data->issue_flags);
- 	}
- 
-@@ -3194,8 +3194,8 @@ static int ublk_register_io_buf(struct io_uring_cmd *cmd,
- 	if (!req)
- 		return -EINVAL;
- 
--	ret = io_buffer_register_bvec(cmd, req, ublk_io_release, index,
--				      issue_flags);
-+	ret = io_buffer_register_request(cmd, req, ublk_io_release, index,
-+					 issue_flags);
- 	if (ret) {
- 		ublk_put_req_ref(io, req);
- 		return ret;
-@@ -3226,8 +3226,8 @@ ublk_daemon_register_io_buf(struct io_uring_cmd *cmd,
- 	if (!ublk_dev_support_zero_copy(ub) || !blk_rq_has_data(req))
- 		return -EINVAL;
- 
--	ret = io_buffer_register_bvec(cmd, req, ublk_io_release, index,
--				      issue_flags);
-+	ret = io_buffer_register_request(cmd, req, ublk_io_release, index,
-+					 issue_flags);
- 	if (ret)
- 		return ret;
- 
-@@ -3242,7 +3242,7 @@ static int ublk_unregister_io_buf(struct io_uring_cmd *cmd,
- 	if (!(ub->dev_info.flags & UBLK_F_SUPPORT_ZERO_COPY))
- 		return -EINVAL;
- 
--	return io_buffer_unregister_bvec(cmd, index, issue_flags);
-+	return io_buffer_unregister(cmd, index, issue_flags);
- }
- 
- static int ublk_check_fetch_buf(const struct ublk_device *ub, __u64 buf_addr)
-@@ -3383,7 +3383,7 @@ static int ublk_ch_uring_cmd_local(struct io_uring_cmd *cmd,
- 		goto out;
- 
- 	/*
--	 * io_buffer_unregister_bvec() doesn't access the ubq or io,
-+	 * io_buffer_unregister() doesn't access the ubq or io,
- 	 * so no need to validate the q_id, tag, or task
- 	 */
- 	if (_IOC_NR(cmd_op) == UBLK_IO_UNREGISTER_IO_BUF)
-@@ -3450,7 +3450,7 @@ static int ublk_ch_uring_cmd_local(struct io_uring_cmd *cmd,
- 		req = ublk_fill_io_cmd(io, cmd);
- 		ret = ublk_config_io_buf(ub, io, cmd, addr, &buf_idx);
- 		if (buf_idx != UBLK_INVALID_BUF_IDX)
--			io_buffer_unregister_bvec(cmd, buf_idx, issue_flags);
-+			io_buffer_unregister(cmd, buf_idx, issue_flags);
- 		compl = ublk_need_complete_req(ub, io);
- 
- 		if (req_op(req) == REQ_OP_ZONE_APPEND)
-@@ -3787,7 +3787,7 @@ static int ublk_batch_commit_io(struct ublk_queue *ubq,
- 	}
- 
- 	if (buf_idx != UBLK_INVALID_BUF_IDX)
--		io_buffer_unregister_bvec(data->cmd, buf_idx, data->issue_flags);
-+		io_buffer_unregister(data->cmd, buf_idx, data->issue_flags);
- 	if (req_op(req) == REQ_OP_ZONE_APPEND)
- 		req->__sector = ublk_batch_zone_lba(uc, elem);
- 	if (compl)
-diff --git a/include/linux/io_uring/cmd.h b/include/linux/io_uring/cmd.h
-index 331dcbefe72f..bbf57da1e4c8 100644
---- a/include/linux/io_uring/cmd.h
-+++ b/include/linux/io_uring/cmd.h
-@@ -91,6 +91,11 @@ struct io_br_sel io_uring_cmd_buffer_select(struct io_uring_cmd *ioucmd,
- bool io_uring_mshot_cmd_post_cqe(struct io_uring_cmd *ioucmd,
- 				 struct io_br_sel *sel, unsigned int issue_flags);
- 
-+int io_buffer_register_request(struct io_uring_cmd *cmd, struct request *rq,
-+			       void (*release)(void *), unsigned int index,
-+			       unsigned int issue_flags);
-+int io_buffer_unregister(struct io_uring_cmd *cmd, unsigned int index,
-+			 unsigned int issue_flags);
- #else
- static inline int
- io_uring_cmd_import_fixed(u64 ubuf, unsigned long len, int rw,
-@@ -133,6 +138,20 @@ static inline bool io_uring_mshot_cmd_post_cqe(struct io_uring_cmd *ioucmd,
- {
- 	return true;
- }
-+static inline int io_buffer_register_request(struct io_uring_cmd *cmd,
-+					     struct request *rq,
-+					     void (*release)(void *),
-+					     unsigned int index,
-+					     unsigned int issue_flags)
-+{
-+	return -EOPNOTSUPP;
-+}
-+static inline int io_buffer_unregister(struct io_uring_cmd *cmd,
-+				       unsigned int index,
-+				       unsigned int issue_flags)
-+{
-+	return -EOPNOTSUPP;
-+}
- #endif
- 
- static inline struct io_uring_cmd *io_uring_cmd_from_tw(struct io_tw_req tw_req)
-@@ -182,10 +201,4 @@ static inline void io_uring_cmd_done32(struct io_uring_cmd *ioucmd, s32 ret,
- 	return __io_uring_cmd_done(ioucmd, ret, res2, issue_flags, true);
- }
- 
--int io_buffer_register_bvec(struct io_uring_cmd *cmd, struct request *rq,
--			    void (*release)(void *), unsigned int index,
--			    unsigned int issue_flags);
--int io_buffer_unregister_bvec(struct io_uring_cmd *cmd, unsigned int index,
--			      unsigned int issue_flags);
--
- #endif /* _LINUX_IO_URING_CMD_H */
 diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index 8d0f2ee24e0c..40807994a8f4 100644
+index 40807994a8f4..5d50b967645b 100644
 --- a/io_uring/rsrc.c
 +++ b/io_uring/rsrc.c
-@@ -1015,9 +1015,9 @@ int io_sqe_buffers_register(struct io_ring_ctx *ctx, void __user *arg,
+@@ -1015,63 +1015,81 @@ int io_sqe_buffers_register(struct io_ring_ctx *ctx, void __user *arg,
  	return ret;
  }
  
--int io_buffer_register_bvec(struct io_uring_cmd *cmd, struct request *rq,
--			    void (*release)(void *), unsigned int index,
--			    unsigned int issue_flags)
+-int io_buffer_register_request(struct io_uring_cmd *cmd, struct request *rq,
+-			       void (*release)(void *), unsigned int index,
+-			       unsigned int issue_flags)
++static struct io_mapped_ubuf *io_kernel_buffer_init(struct io_ring_ctx *ctx,
++						    unsigned int nr_bvecs,
++						    unsigned int total_bytes,
++						    u8 dir,
++						    void (*release)(void *),
++						    void *priv,
++						    unsigned int index)
+ {
+-	struct io_ring_ctx *ctx = cmd_to_io_kiocb(cmd)->ctx;
+ 	struct io_rsrc_data *data = &ctx->buf_table;
+-	struct req_iterator rq_iter;
+ 	struct io_mapped_ubuf *imu;
+ 	struct io_rsrc_node *node;
+-	struct bio_vec bv;
+-	unsigned int nr_bvecs = 0;
+-	int ret = 0;
+ 
+-	io_ring_submit_lock(ctx, issue_flags);
+-	if (index >= data->nr) {
+-		ret = -EINVAL;
+-		goto unlock;
+-	}
++	if (index >= data->nr)
++		return ERR_PTR(-EINVAL);
+ 	index = array_index_nospec(index, data->nr);
+ 
+-	if (data->nodes[index]) {
+-		ret = -EBUSY;
+-		goto unlock;
+-	}
++	if (data->nodes[index])
++		return ERR_PTR(-EBUSY);
+ 
+ 	node = io_rsrc_node_alloc(ctx, IORING_RSRC_BUFFER);
+-	if (!node) {
+-		ret = -ENOMEM;
+-		goto unlock;
+-	}
++	if (!node)
++		return ERR_PTR(-ENOMEM);
+ 
+-	/*
+-	 * blk_rq_nr_phys_segments() may overestimate the number of bvecs
+-	 * but avoids needing to iterate over the bvecs
+-	 */
+-	imu = io_alloc_imu(ctx, blk_rq_nr_phys_segments(rq));
++	imu = io_alloc_imu(ctx, nr_bvecs);
+ 	if (!imu) {
+ 		io_cache_free(&ctx->node_cache, node);
+-		ret = -ENOMEM;
+-		goto unlock;
++		return ERR_PTR(-ENOMEM);
+ 	}
+ 
+ 	imu->ubuf = 0;
+-	imu->len = blk_rq_bytes(rq);
++	imu->len = total_bytes;
+ 	imu->folio_shift = PAGE_SHIFT;
++	imu->nr_bvecs = nr_bvecs;
+ 	refcount_set(&imu->refs, 1);
+ 	imu->release = release;
+-	imu->priv = rq;
++	imu->priv = priv;
++	imu->dir = dir;
+ 	imu->flags = IO_REGBUF_F_KBUF;
+-	imu->dir = 1 << rq_data_dir(rq);
+ 
++	node->buf = imu;
++	data->nodes[index] = node;
++
++	return imu;
++}
++
 +int io_buffer_register_request(struct io_uring_cmd *cmd, struct request *rq,
 +			       void (*release)(void *), unsigned int index,
 +			       unsigned int issue_flags)
- {
- 	struct io_ring_ctx *ctx = cmd_to_io_kiocb(cmd)->ctx;
- 	struct io_rsrc_data *data = &ctx->buf_table;
-@@ -1076,10 +1076,10 @@ int io_buffer_register_bvec(struct io_uring_cmd *cmd, struct request *rq,
++{
++	struct io_ring_ctx *ctx = cmd_to_io_kiocb(cmd)->ctx;
++	struct req_iterator rq_iter;
++	struct io_mapped_ubuf *imu;
++	struct bio_vec bv;
++	/*
++	 * blk_rq_nr_phys_segments() may overestimate the number of bvecs
++	 * but avoids needing to iterate over the bvecs
++	 */
++	unsigned int nr_bvecs = blk_rq_nr_phys_segments(rq);
++	unsigned int total_bytes = blk_rq_bytes(rq);
++	int ret = 0;
++
++	io_ring_submit_lock(ctx, issue_flags);
++
++	imu = io_kernel_buffer_init(ctx, nr_bvecs, total_bytes,
++				    1 << rq_data_dir(rq), release, rq, index);
++	if (IS_ERR(imu)) {
++		ret = PTR_ERR(imu);
++		goto unlock;
++	}
++
++	nr_bvecs = 0;
+ 	rq_for_each_bvec(bv, rq, rq_iter)
+ 		imu->bvec[nr_bvecs++] = bv;
+ 	imu->nr_bvecs = nr_bvecs;
+ 
+-	node->buf = imu;
+-	data->nodes[index] = node;
+ unlock:
  	io_ring_submit_unlock(ctx, issue_flags);
  	return ret;
- }
--EXPORT_SYMBOL_GPL(io_buffer_register_bvec);
-+EXPORT_SYMBOL_GPL(io_buffer_register_request);
- 
--int io_buffer_unregister_bvec(struct io_uring_cmd *cmd, unsigned int index,
--			      unsigned int issue_flags)
-+int io_buffer_unregister(struct io_uring_cmd *cmd, unsigned int index,
-+			 unsigned int issue_flags)
- {
- 	struct io_ring_ctx *ctx = cmd_to_io_kiocb(cmd)->ctx;
- 	struct io_rsrc_data *data = &ctx->buf_table;
-@@ -1109,7 +1109,7 @@ int io_buffer_unregister_bvec(struct io_uring_cmd *cmd, unsigned int index,
- 	io_ring_submit_unlock(ctx, issue_flags);
- 	return ret;
- }
--EXPORT_SYMBOL_GPL(io_buffer_unregister_bvec);
-+EXPORT_SYMBOL_GPL(io_buffer_unregister);
- 
- static int validate_fixed_range(u64 buf_addr, size_t len,
- 				const struct io_mapped_ubuf *imu)
 -- 
 2.52.0
 

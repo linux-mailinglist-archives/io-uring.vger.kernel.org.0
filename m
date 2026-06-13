@@ -1,69 +1,67 @@
-Return-Path: <io-uring+bounces-13721-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13722-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by mail.lfdr.de with LMTP
-	id ueAMBPxuLWomgQQAu9opvQ
-	(envelope-from <io-uring+bounces-13721-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Sat, 13 Jun 2026 16:53:48 +0200
+	id Dt3zJJrlLWphmQQAu9opvQ
+	(envelope-from <io-uring+bounces-13722-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Sun, 14 Jun 2026 01:19:54 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5E0A67ED66
-	for <lists+io-uring@lfdr.de>; Sat, 13 Jun 2026 16:53:47 +0200 (CEST)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90186680066
+	for <lists+io-uring@lfdr.de>; Sun, 14 Jun 2026 01:19:53 +0200 (CEST)
 Authentication-Results: mail.lfdr.de;
-	dkim=pass header.d=kernel.org header.s=k20260515 header.b=R7CHHJqe;
-	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13721-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c0a:e001:db::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-13721-lists+io-uring=lfdr.de@vger.kernel.org";
-	dmarc=pass (policy=quarantine) header.from=kernel.org;
+	dkim=fail ("headers rsa verify failed") header.d=wigham.net header.s=default header.b=gAlkdTSB;
+	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13722-lists+io-uring=lfdr.de@vger.kernel.org" designates 104.64.211.4 as permitted sender) smtp.mailfrom="io-uring+bounces-13722-lists+io-uring=lfdr.de@vger.kernel.org";
+	dmarc=none;
 	arc=pass ("subspace.kernel.org:s=arc-20240116:i=1")
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 4A336306B7EF
-	for <lists+io-uring@lfdr.de>; Sat, 13 Jun 2026 14:51:58 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id C6DB830028E0
+	for <lists+io-uring@lfdr.de>; Sat, 13 Jun 2026 23:19:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2204E33F368;
-	Sat, 13 Jun 2026 14:51:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33CB5375F82;
+	Sat, 13 Jun 2026 23:19:47 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from cp14.uk.netnerd.com (cp14.uk.netnerd.com [185.229.21.114])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2D2F33C183;
-	Sat, 13 Jun 2026 14:51:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C89E3C06;
+	Sat, 13 Jun 2026 23:19:43 +0000 (UTC)
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781362308; cv=none; b=DZIiftHYtQysRUU5dAj/GECmTzyfDPw9kYvkfSwMbWCXKRv5wXvCGlk+2r04vr+IgljZrapL/OharKkSVJHraTxeUmkFjw2DSPXs4dElWYVWbfkResrh7/EVnHJ3BVw3oeGFiTTe2+jXGDhHtt3Q8yQYCNzgiRDT8CHOgnBqCgQ=
+	t=1781392787; cv=none; b=Lz/9+h4PE9Ch2NfZ+kZzLGqgqEnys16RW9s/qwwswTKUbrZfvuuInyqSrl9n8GRSlG4RcV1Gr2Kgft9i+q1Z/6pl/I8sTOaQxE4Lo4hyaMNZc18Fqi5aL+GdoU3eVqaAsueJ6Wwn5c5JXIWajccJEIL2hSPSVMNknO/sHJ99Aag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781362308; c=relaxed/simple;
-	bh=7VIFNRgQTmLyNLFghQPD7RUIQFlqTNO/3ABuxf+WAk4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QD+6NhneFY1rqPRFf2ov6eJznmqJDltb/sgczfe36+YbfDaDDrl06nq4LIc/+EGiQcHmXiPoRF5sZvn7mTTIxe3W9BbPv5Znp4M/mu59BbAZLmJpin9pLlG1WT3mXa5lDijwOtrNe1PXxl65A7bAnSKCMouLHFeuyqa7MrEILAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R7CHHJqe; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D3C61F00A3E;
-	Sat, 13 Jun 2026 14:51:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781362303;
-	bh=mwtemniNSvRmeuyRdk01RGvMOavihgD5ot1mMgpEysY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=R7CHHJqeA+n83imcawNSiA2P68SqicleF9o3hL0T85hbBADmCd4BnjYHGEisVk8ZW
-	 jxILh7RFy5QJ8ZhYQAOlIh/CW8zotIbDMKm2DzQIop3lJFd/VEvOWxRUrR4LpmbvZm
-	 m9COcRV3+XDCMe4L42AhvJeEESSqDgTkcD8oc38cuI5Le2El8OFa4QUXIoTOLQWAqG
-	 JBPfGVcmjg3p9dc1QEoppZ/xeSH9caZ12pVI48vlTdT/9rtfRBPhex95FYW0QrXyhB
-	 yue/l1zRXcgfpCBMs2KEwCYz4f1hF2rV4pOrAQenWzGb9+S4J2q2abvHvdaiPNqgQX
-	 px7v3vIVMozGA==
-From: Sasha Levin <sashal@kernel.org>
-To: Alexey Panov <apanov@astralinux.ru>
-Cc: Sasha Levin <sashal@kernel.org>,
-	stable@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Prithvi Tambewagh <activprithvi@gmail.com>,
-	linux-kernel@vger.kernel.org,
+	s=arc-20240116; t=1781392787; c=relaxed/simple;
+	bh=nybDCkCRGqY1B/+QzPNe34BsrRh/wYncRO+q28jgA8U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gj1jpNaa32CJMkC6B31PdyfjCslVUa4DTf5qxu1WV/KMN2OOYj2Jr9YnvAYcHYX9RP949idTkfKM4Gg64qCfFxWgmI1MrsF21tVoJmxiysu4F9knHcqnTLg12hTvX8Rcmny4WIV/zj6+6Q+qOgBb043pZsaiYo9pkMNSUBU1S2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wigham.net; spf=pass smtp.mailfrom=wigham.net; dkim=pass (2048-bit key) header.d=wigham.net header.i=@wigham.net header.b=gAlkdTSB; arc=none smtp.client-ip=185.229.21.114
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=wigham.net;
+	s=default; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=29HMGrm89TsI6WDdYLYtAeNCdSFS+KB3EBoiicU8hNM=; b=gAlkdTSBm4HURUdasJwp3/t1n8
+	Y04ce2/ZsqO82M4Ij48j4j/eCHeF4hUsg58I1m5ST/Uo1mI6cOOveu7aJmcoSKiWlEVgHhvqk6BLh
+	gT2JykSlkqh635uZBZmVUEonoqq6AU2hQxBxb/M+VhcOlSOItD3rdXZFZbb7bdfUNiHKvFAbIOf3+
+	FlJjts0Ucd0VJ3cFmJpBxPt9WFR4CVHxXCzsNKc4FiWAAVp3OnrH3SOB/wKStcxGXd2GmeHzyZW8u
+	EGMiSR+S3aTtNrDQW7DkF+PlsNVa30VeDR1JJS5KG2UlqYymkT7ohfHp42gd+0903XVRhGQIDoaiQ
+	IcC2hHBQ==;
+Received: from grth-13-b2-v4wan-177038-cust580.vm6.cable.virginm.net ([94.174.226.69]:53378 helo=archwig.local)
+	by cp14.uk.netnerd.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.99.4)
+	(envelope-from <michael@wigham.net>)
+	id 1wYXEH-00000003m1m-2DR7;
+	Sat, 13 Jun 2026 23:53:26 +0100
+From: Michael Wigham <michael@wigham.net>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Pavel Begunkov <asml.silence@gmail.com>,
 	io-uring@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	Li Zetao <lizetao1@huawei.com>
-Subject: Re: [PATCH 5.10] io_uring: prevent opcode speculation
-Date: Sat, 13 Jun 2026 10:51:32 -0400
-Message-ID: <20260613143006.0007-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260612081720.3632-1-apanov@astralinux.ru>
-References: <20260610172203.27999-1-apanov@astralinux.ru> <20260611-stable-reply-0106@kernel.org> <20260612081720.3632-1-apanov@astralinux.ru>
+	linux-kernel@vger.kernel.org,
+	Michael Wigham <michael@wigham.net>,
+	stable@vger.kernel.org
+Subject: [PATCH] io_uring/rw: preserve partial result for iopoll
+Date: Sat, 13 Jun 2026 23:52:16 +0100
+Message-ID: <20260613225240.34032-1-michael@wigham.net>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -71,54 +69,115 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cp14.uk.netnerd.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - wigham.net
+X-Get-Message-Sender-Via: cp14.uk.netnerd.com: authenticated_id: michael@wigham.net
+X-Authenticated-Sender: cp14.uk.netnerd.com: michael@wigham.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-2.16 / 15.00];
-	WHITELIST_SPF_DKIM(-3.00)[kernel.org:d:+,kernel.org:s:+];
+X-Spamd-Result: default: False [2.54 / 15.00];
 	SUSPICIOUS_RECIPS(1.50)[];
 	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_REJECT(1.00)[wigham.net:s=default];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20260515];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-13721-lists,io-uring=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	FORGED_RECIPIENTS(0.00)[m:apanov@astralinux.ru,m:sashal@kernel.org,m:stable@vger.kernel.org,m:gregkh@linuxfoundation.org,m:axboe@kernel.dk,m:asml.silence@gmail.com,m:activprithvi@gmail.com,m:linux-kernel@vger.kernel.org,m:io-uring@vger.kernel.org,m:lvc-project@linuxtesting.org,m:lizetao1@huawei.com,m:asmlsilence@gmail.com,s:lists@lfdr.de];
-	FORGED_SENDER(0.00)[sashal@kernel.org,io-uring@vger.kernel.org];
-	MIME_TRACE(0.00)[0:+];
+	HAS_X_AS(0.00)[michael@wigham.net];
+	FORGED_RECIPIENTS(0.00)[m:axboe@kernel.dk,m:asml.silence@gmail.com,m:io-uring@vger.kernel.org,m:linux-kernel@vger.kernel.org,m:michael@wigham.net,m:stable@vger.kernel.org,m:asmlsilence@gmail.com,s:lists@lfdr.de];
 	RCVD_COUNT_THREE(0.00)[4];
-	FORWARDED(0.00)[lists@lfdr.de];
+	DMARC_NA(0.00)[wigham.net];
+	HAS_X_GMSV(0.00)[michael@wigham.net];
+	FORGED_SENDER(0.00)[michael@wigham.net,io-uring@vger.kernel.org];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,vger.kernel.org,linuxfoundation.org,kernel.dk,gmail.com,linuxtesting.org,huawei.com];
-	DKIM_TRACE(0.00)[kernel.org:+];
+	FORWARDED(0.00)[lists@lfdr.de];
+	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,wigham.net];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FORGED_SENDER_FORWARDING(0.00)[];
-	ALIAS_RESOLVED(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[sashal@kernel.org,io-uring@vger.kernel.org];
 	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	TAGGED_RCPT(0.00)[io-uring];
-	FORGED_RECIPIENTS_FORWARDING(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_LAST(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FORGED_SENDER_FORWARDING(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_HAS_DN(0.00)[]
+	PRECEDENCE_BULK(0.00)[];
+	TAGGED_RCPT(0.00)[io-uring];
+	ALIAS_RESOLVED(0.00)[];
+	FORGED_RECIPIENTS_FORWARDING(0.00)[];
+	TAGGED_FROM(0.00)[bounces-13722-lists,io-uring=lfdr.de];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	DKIM_TRACE(0.00)[wigham.net:-];
+	HAS_X_SOURCE(0.00)[];
+	HAS_X_ANTIABUSE(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_NEQ_ENVFROM(0.00)[michael@wigham.net,io-uring@vger.kernel.org];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[wigham.net:email,wigham.net:mid,wigham.net:from_mime,vger.kernel.org:from_smtp,sin.lore.kernel.org:rdns,sin.lore.kernel.org:helo]
 X-Rspamd-Server: lfdr
-X-Rspamd-Queue-Id: C5E0A67ED66
+X-Rspamd-Queue-Id: 90186680066
 
-On Fri, Jun 12, 2026 at 11:17:20AM +0300, Alexey Panov wrote:
-> Unless I am missing something, the fix is already present in both trees:
->
->   6.6.y:  b9826e3b26ec ("io_uring: prevent opcode speculation")
->   6.12.y: 506b9b5e8c2d ("io_uring: prevent opcode speculation")
+A partial read will store the completed byte count in io->bytes_done.
+The regular completion path applies io_fixup_rw_res() so that, when the
+following operation reaches EOF, the number of bytes already read is
+returned.
 
-You're right, thanks for checking. Both newer trees carry it now, so the
-prerequisite is satisfied. Queued for 5.10.y.
+The iopoll completion path does not apply this fixup to the return value
+and can return zero instead.
 
---
-Thanks,
-Sasha
+Use the fixup result when updating the CQE, and the raw result for the
+reissue check.
+
+Cc: stable@vger.kernel.org
+Fixes: 4d9cb92ca41d ("io_uring/rw: fix short rw error handling")
+Signed-off-by: Michael Wigham <michael@wigham.net>
+---
+pread(), normal io_uring, and io_uring iopoll should return the same
+result for a read that extends past EOF. Before this fix, the io_uring
+iopoll path returned zero.
+
+To test the fix, a standalone test prepared an 8704 byte file opened
+with O_DIRECT and issued a read of 1024 bytes from offset 8192. Before
+this change, the IOPOLL path transferred 512 bytes into the buffer but
+reported a result of zero. With this change, pread(), normal io_uring,
+and io_uring IOPOLL all report 512 bytes read.
+
+All liburing tests passed.
+
+ io_uring/rw.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/io_uring/rw.c b/io_uring/rw.c
+index 0c4834645279..63b6519e498c 100644
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@ -601,15 +601,15 @@ static void io_complete_rw_iopoll(struct kiocb *kiocb, long res)
+ {
+ 	struct io_rw *rw = container_of(kiocb, struct io_rw, kiocb);
+ 	struct io_kiocb *req = cmd_to_io_kiocb(rw);
++	int final_res = io_fixup_rw_res(req, res);
+ 
+ 	if (kiocb->ki_flags & IOCB_WRITE)
+ 		io_req_end_write(req);
+-	if (unlikely(res != req->cqe.res)) {
+-		if (res == -EAGAIN && io_rw_should_reissue(req))
+-			req->flags |= REQ_F_REISSUE | REQ_F_BL_NO_RECYCLE;
+-		else
+-			req->cqe.res = res;
+-	}
++
++	if (res == -EAGAIN && io_rw_should_reissue(req))
++		req->flags |= REQ_F_REISSUE | REQ_F_BL_NO_RECYCLE;
++	else if (unlikely(final_res != req->cqe.res))
++		req->cqe.res = final_res;
+ 
+ 	/* order with io_iopoll_complete() checking ->iopoll_completed */
+ 	smp_store_release(&req->iopoll_completed, 1);
+-- 
+2.54.0
+
 

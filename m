@@ -1,151 +1,190 @@
-Return-Path: <io-uring+bounces-13751-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13752-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by mail.lfdr.de with LMTP
-	id KKUEOVdyMWozjgUAu9opvQ
-	(envelope-from <io-uring+bounces-13751-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 16 Jun 2026 17:57:11 +0200
+	id mLHXAlhxMWq6jQUAu9opvQ
+	(envelope-from <io-uring+bounces-13752-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 16 Jun 2026 17:52:56 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
-	by mail.lfdr.de (Postfix) with ESMTPS id 758916918C7
-	for <lists+io-uring@lfdr.de>; Tue, 16 Jun 2026 17:57:11 +0200 (CEST)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BC37691767
+	for <lists+io-uring@lfdr.de>; Tue, 16 Jun 2026 17:52:55 +0200 (CEST)
 Authentication-Results: mail.lfdr.de;
-	dkim=pass header.d=kernel-dk.20251104.gappssmtp.com header.s=20251104 header.b=kJB7E0dc;
-	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13751-lists+io-uring=lfdr.de@vger.kernel.org" designates 172.232.135.74 as permitted sender) smtp.mailfrom="io-uring+bounces-13751-lists+io-uring=lfdr.de@vger.kernel.org";
-	dmarc=none;
-	arc=pass ("subspace.kernel.org:s=arc-20240116:i=1")
+	dkim=pass header.d=redhat.com header.s=mimecast20190719 header.b=Fdh7qqML;
+	dkim=pass header.d=redhat.com header.s=google header.b=TiWSElTY;
+	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13752-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c0a:e001:db::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-13752-lists+io-uring=lfdr.de@vger.kernel.org";
+	dmarc=pass (policy=quarantine) header.from=redhat.com;
+	arc=pass ("subspace.kernel.org:s=arc-20240116:i=2")
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sto.lore.kernel.org (Postfix) with ESMTP id 32F153043F0D
-	for <lists+io-uring@lfdr.de>; Tue, 16 Jun 2026 15:49:16 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 9142630097DD
+	for <lists+io-uring@lfdr.de>; Tue, 16 Jun 2026 15:52:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E612E364024;
-	Tue, 16 Jun 2026 15:49:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3238A44CF2C;
+	Tue, 16 Jun 2026 15:52:06 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF9244104F
-	for <io-uring@vger.kernel.org>; Tue, 16 Jun 2026 15:49:11 +0000 (UTC)
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781624953; cv=none; b=H6pU0A9C4nhhF+Y1Wl2lQcy1QUIBzVTxLb58mrn2gHccARJD58V2cc4ckj6NOUbnloniloT3TyqQne4UT+27v+ksSdZIAgwgABbfZAS/qdA6uSlrRs17yATVOPxrjjEgxb7tNz9Z1RdTPf5jUKEMLke9OG0/4jNg+8AdLy1rCa8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781624953; c=relaxed/simple;
-	bh=r0AK/4YrcKFxY2xUAkAtfMJTmxeEB48SGQppjaj6/us=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=dSPpn2dS/7+E3qHtJK4AnRmGZmV3my9rzZap385MTTjekMm6tDdbrtk33vDjDM09mnw2/cdcCLsh4VanMqmz6uqEVyBFXyJcuCVuQyjbJjQ8CUBgD9yfDm/XNblXVrJNTbhGamFiDuo7jJduqZrIbqhgDHQVKWEyTTWaNHfVokI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=kJB7E0dc; arc=none smtp.client-ip=209.85.161.51
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-6a0a0b46cd9so659317eaf.1
-        for <io-uring@vger.kernel.org>; Tue, 16 Jun 2026 08:49:11 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F341344B69C
+	for <io-uring@vger.kernel.org>; Tue, 16 Jun 2026 15:52:04 +0000 (UTC)
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781625126; cv=pass; b=AV/rddxuDV8V5MQuT5HGXA7Cbh+AiSeEtZ2IW87SRcVcKu1HsvyjVEoQJgWQxYhxQeTpmcBsoQs1lKvSrQHUjefPHPLK9+9tV5bWu5AcmPzX0I1p6DNBFjchHWYgAsFcDuBYNIAUoiE4BlmInjRuFBFF/+Y2AEASJ1wMeDqcTvo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781625126; c=relaxed/simple;
+	bh=t/v2XhOciaXaxeARA93JJntMTjj2WKs4mmt/RhlNnag=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Gs443/rpAK2qWnjZFrN6p8RaFlDCwhQwa4926IbFDShf7stiID0MhuUKgfT2Zg6EyhFgLBeOMI9HpOs5AIliw7XAantTXGhqx0QZdmqsapKCJIpkiJqhKs10z4LwbU2Mr9ENkTApa2lTlOYBde/gezJQtl17fu187ZkuW6KheFw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Fdh7qqML; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=TiWSElTY; arc=pass smtp.client-ip=170.10.129.124
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1781625123;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/XDaE+NkQ9oDdXyWd6TBG0fklVtRq6errziGa0gYxt0=;
+	b=Fdh7qqMLMnHxAQ8Bgc2VSd9vPsRgrTRtKc0IsoJE2jK3+csDzt9szAHP/bmcFP8EYpjKnB
+	bbyFChYmCJJYUqzqt23XkyBdwDtI/nBnVK+3Q+mQ2fq3RoBRgyNAflHcpJmTzMbIcyjK0/
+	z2icmU0jlMIOXN7Gzzw6rpjI+oVS2FY=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-439-ozl5W2QyON2BYkDjiB7YMQ-1; Tue, 16 Jun 2026 11:52:02 -0400
+X-MC-Unique: ozl5W2QyON2BYkDjiB7YMQ-1
+X-Mimecast-MFC-AGG-ID: ozl5W2QyON2BYkDjiB7YMQ_1781625121
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-bfea278c439so28851266b.2
+        for <io-uring@vger.kernel.org>; Tue, 16 Jun 2026 08:52:02 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1781625121; cv=none;
+        d=google.com; s=arc-20240605;
+        b=GccmtfcWzI3/EYapzQREw8EzM4KKC33kTyhY41Z+VqwlvPnjvEVpcWOlGKTcOwWkvw
+         Wm5uIdQKW7RD0bxiQYXMUeApIVmVGSzzerwzWCXx92AYuMiQkWs+44PR1cB7j4ox7I0b
+         yz9gSsDcYFeiayE6kCGIDbl6LUA1aLFiHYRaSrypTv6ZlHOHm/C/X3DXcrZ7a++ci1Zx
+         C98aXGfV8fqYxbFsuGElcmIZFknLe/r6aZsHFaV2pCg+4N90Iucg2sbxsd3cpnRvFK5u
+         d8BjKlqW/R5/xotAcHxKMfmNLjlSGsdex66Le7DDTZaqekGJD9HdHf9Ru50p5i21s+0H
+         x/Zg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=/XDaE+NkQ9oDdXyWd6TBG0fklVtRq6errziGa0gYxt0=;
+        fh=yvxwayb0pPL6aPTUT5KIoQMcpCHqjEwyiEPRz4z3wWU=;
+        b=AszyfVsH3/4wZbaoaj20yNxLJzTlO6mct9NoXmhIeoeZ4TzPmpLXaMh43iwY9FuwSd
+         w7zb/0p4T4YRxS3MxVSVJZZeD+VL443TcnFTQ30H623SmSCmcoHfKbzttxDiNk4vmDPr
+         tFwbXVbSz8OdC4D0XMS3Izr0A2/Q/NCJjZE6FNQA5o02AnD5qyR+yLUmBHyujtYjsZlz
+         ejSpWQWj5snOzOB/f2xWVKkIhQwrDBqKuxuh/UES/b1ejOHk5jMSfdRTd2ux10AA3g0J
+         gJnDy9Y9QR4Kh+/IzmhrrvnwYlyqLvRv4NS9q0t5fCFLoSVAVLzKCkcHbyvgwptzLhwZ
+         BYSQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1781624950; x=1782229750; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+        d=redhat.com; s=google; t=1781625121; x=1782229921; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=70fqFEm947VbkU6gs3LBTyckLcbn4fupq4AOOEXmMRM=;
-        b=kJB7E0dc43ZhOXC3ooDYQd1bS8D1bb6Of/VjD/il2evUK32UpRR/o123gufljiArKN
-         +LP9Z5Nflx1MVbke+wyNHi3WVRErs6+iVDqRBj193wZuioRXdDYZxo47rfDU03flNvQp
-         GDcw1WQtZzzPTR/ndS1pjZnEB4LBWEuPTTyX7tWNBSXuqo2i8VesksyMmJnxBHxRjxkT
-         HArsqRjL9kHz+6AbP229a1/afgWdGDxx2wcFOLItpow/rh7NpBP0eKVCngmaV0VYs+/K
-         E0CKn4CZGpgwlplK4LR7RsSDiAnK8Uz56MaYMvEV1kikmEKYFIXN3Z4nEhNc84y55utv
-         gSBg==
+        bh=/XDaE+NkQ9oDdXyWd6TBG0fklVtRq6errziGa0gYxt0=;
+        b=TiWSElTYlbXBINUSJwZe/TXGJePC+coSkf9R96qxgGiQ72eGAXH8sNQ3AVic6s8V+g
+         FoKPHB/1jVCt7XLKb4oKzbPj76wRkULVNlYv11IbYgsGwk34gAiRZmGLTcsbiYAKXKg/
+         FVVQ4D541jtxA/bBiAcvLxNH1lLmNiWNx0mD4vj765LKp4mEdW/6Sm+osBkfqai9UyhC
+         ghd9CKhtZWMZSD5elBifeHI8cLjHNoQNnVuNZ+cNW5RChcp70NTnoShgI5HW01m+G2Yp
+         0U5aXfhOjjQjRMadNPHGaMwOmJd+W4IkAoomg51eal+BAanx6V2l9QYF+7TKLKKi2jUM
+         /IKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781624950; x=1782229750;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20251104; t=1781625121; x=1782229921;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=70fqFEm947VbkU6gs3LBTyckLcbn4fupq4AOOEXmMRM=;
-        b=Bfy+YXjmq6vl5SaXtWzCdVOGTyTCCLNE5UnWFtA3pk2A0bqJgX9P/L6PNlpUzwoA5n
-         Acm1ayxuzqJjlruoKoyvNMjosN/pl8UNvkmj3lZGzo53vBMdKU/SM5QALTX/eCsqez13
-         sOk2TqkylMQRfAl0WqKqdUmVP2WLHefnjC/TMxz4i220fuobf113UjxUSHXxl8D09B6L
-         6dOqJ957WR9kV2vGPSPYoIeWE3mBrd9V2uCFRm6FdrOtXQKIIHPBMk67M+ajFMhM1eq+
-         NtnPh7DbzvFAVvsZUHpSFTZ1r5z5UNcUsfX+YjDLD1/Fijo5HjuDHOX9oQOdZiLIj6CE
-         JSlw==
-X-Gm-Message-State: AOJu0YxTRJp2zQq6iiBrLP+st0/1Jqtb7SZOeXVBWjVxOpYX2I3SKldw
-	fZZ0ADVG8r7EQgH0By34Q3nZ3+wI4tlMmTHKMcOgI1YgWWjYhlzpfF9EDjW7jNrDstUH0ao2xZU
-	ogbHFLi0=
-X-Gm-Gg: Acq92OFiXDcTOpQHCJnDWKttUX99l3K3vdZUV7MRPYybnr/g/ZNCCnMfSFSpH4P793z
-	96hCBAxTiWNlqGTEZO8rXynCkJB8FNI58DFlYNbjRemayE2VSFWVhTq+hqyPPeMXBj7YcajNGKw
-	y3+nlESPTp0W06N+F+Hm1Fjn2tyq0OabEfb9p9DUR6r6L/f5mV06RIw9vJX5aVwxMzd4xX4VdzK
-	CyADADeCYK5z4eKIUbLK+8zzE1Vz5/qRNhxQHIwhwDaMQva4Ssox1gj1EFmg5fP8UW8vX9HTx/F
-	/H1+NXZtkDg1ZGystcYlCibuwR0XDhWZa+aiLTzdcmVUlRwvm5ML237+8J/IF+LTeyjHgbrjuOY
-	xMDXrXT18ViDFTlbIde7s0b7rD1iwYwZPjm2/Fg1ERuEkN+/2Q0kO/7x3mzKqpk/5/EDbIqBHrg
-	RTelxB0xkEs7XcgOHx2yVh/9LDHgGHVTBtNd357EjWLZ8kTARo7q4cLDP42i0t+FYBkBYxUlgRD
-	ULqOVTXfnd5z4A=
-X-Received: by 2002:a05:6820:806:b0:69e:89dd:175a with SMTP id 006d021491bc7-69edc622308mr11504270eaf.20.1781624950391;
-        Tue, 16 Jun 2026 08:49:10 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-69f00edacdasm5054586eaf.11.2026.06.16.08.49.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jun 2026 08:49:09 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Ricardo Robaina <rrobaina@redhat.com>
-Cc: paul@paul-moore.com, sgrubb@redhat.com
-In-Reply-To: <20260616123632.3209545-1-rrobaina@redhat.com>
-References: <20260616123632.3209545-1-rrobaina@redhat.com>
-Subject: Re: [PATCH] io_uring, audit: don't log IORING_OP_RECV_ZC
-Message-Id: <178162494946.2184109.3179193650867699448.b4-ty@b4>
-Date: Tue, 16 Jun 2026 09:49:09 -0600
+        bh=/XDaE+NkQ9oDdXyWd6TBG0fklVtRq6errziGa0gYxt0=;
+        b=nPNEdFJwwXgWaxqhyhEbJJoMAWZtlskq0kkj1vMiqdqn9a6cWKiVsA5P74t4TPztH2
+         acL8S6WEyWR3IBEyyOcoCYzbV14HYgHE8GQKa2LriggntDbhP85nFcc5uxdPnXvLvNji
+         Wedf2a9oi4NHBIWvZVp2TZdkQlWvyUzkVZZrgnNSRpenz2cfzRxF1ReRgADxyNrvZy1+
+         D57NgTviKKU8I+V+pzAyGQwod4mX6aDoIfQPJHPesYYTWUb81vYllG4T/t6lh1CJxwd9
+         GaApObx3aAdY8S2RqWzonkQ8fb3/K57RPPUjWjyx48fc9MlOTwp184zGZlmGNJRSZd0/
+         5zZA==
+X-Gm-Message-State: AOJu0YxyVkfg+/GC/4SXTSwpSX0oBff/TRZ6T/iS2L1C2oYUm+1PZ4c0
+	f4ULDR/Lxl7RX/O4w4yjR7SEaLT8k9EIxdFJsMv06Rzp0pjObsr7gV2c0YfMEA6MhPrNyIxWtNh
+	T6VP5Jmh5uDTQL79GWkJZ7k4MSVSEt6FHhcBtjklShGYvK08CYSQfrGEldvGYFSKHtLy7Eg6+zE
+	OC21Xa3RCgKI8mJGNXYi4pUB0jVNpFRjwf3S0=
+X-Gm-Gg: Acq92OF1Amj5f8hziuLxhqCxtXr/Z5gQAZzZWUp9fkFDTr/mVCtr5PyZGhky4hR4o4d
+	sGnoRznFVxtSh4zT+fn8eXPEspEEtrh87+QQ8iPuqT6pT9YeQFvvcea/ojzZL3lR6z6iMtPWj2R
+	2ZzxZCoxN3NVj6eGf7qYZKPE5+yph6ft5KEcmxYyB3ZQ3xXnXaGOjN3zlH1o83YhWvhmtjymvi9
+	JDJEfYsx+QyP5YPsZ2TMtKPMkSfXIl90oklqnkl+ADnwSADpR0yHfbog3dF3SQhQ1HTzYvzAsgg
+	4ft0mtJ/3ujn7cI7tNLQTQwp
+X-Received: by 2002:a17:906:4796:b0:bec:4906:44d6 with SMTP id a640c23a62f3a-c05a1e4b7demr21088966b.11.1781625121352;
+        Tue, 16 Jun 2026 08:52:01 -0700 (PDT)
+X-Received: by 2002:a17:906:4796:b0:bec:4906:44d6 with SMTP id
+ a640c23a62f3a-c05a1e4b7demr21087166b.11.1781625120926; Tue, 16 Jun 2026
+ 08:52:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15.2
+References: <20260616123632.3209545-1-rrobaina@redhat.com> <178162494946.2184109.3179193650867699448.b4-ty@b4>
+In-Reply-To: <178162494946.2184109.3179193650867699448.b4-ty@b4>
+From: Ricardo Robaina <rrobaina@redhat.com>
+Date: Tue, 16 Jun 2026 12:51:49 -0300
+X-Gm-Features: AVVi8CdJCpFzaMNb7I4yd76uoqe603V8jRZNiI1lwAgWmlO9jMwGizwDIya1tQs
+Message-ID: <CAABTaaD9QnHihQpVtXpROHgxYEx353iKFHDZRY3oxxtF59mJ7g@mail.gmail.com>
+Subject: Re: [PATCH] io_uring, audit: don't log IORING_OP_RECV_ZC
+To: Jens Axboe <axboe@kernel.dk>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	paul@paul-moore.com, sgrubb@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-1.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
-	R_DKIM_ALLOW(-0.20)[kernel-dk.20251104.gappssmtp.com:s=20251104];
+X-Spamd-Result: default: False [-2.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
+	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719,redhat.com:s=google];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_RECIPIENTS(0.00)[m:io-uring@vger.kernel.org,m:linux-kernel@vger.kernel.org,m:rrobaina@redhat.com,m:paul@paul-moore.com,m:sgrubb@redhat.com,s:lists@lfdr.de];
-	RECEIVED_HELO_LOCALHOST(0.00)[];
-	DMARC_NA(0.00)[kernel.dk];
-	FROM_HAS_DN(0.00)[];
-	FORGED_SENDER(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	TO_DN_SOME(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-13752-lists,io-uring=lfdr.de];
+	FORGED_RECIPIENTS(0.00)[m:axboe@kernel.dk,m:io-uring@vger.kernel.org,m:linux-kernel@vger.kernel.org,m:paul@paul-moore.com,m:sgrubb@redhat.com,s:lists@lfdr.de];
+	FROM_HAS_DN(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FORGED_SENDER(0.00)[rrobaina@redhat.com,io-uring@vger.kernel.org];
+	MIME_TRACE(0.00)[0:+];
 	FORWARDED(0.00)[lists@lfdr.de];
-	TAGGED_FROM(0.00)[bounces-13751-lists,io-uring=lfdr.de];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[redhat.com:+];
+	MISSING_XM_UA(0.00)[];
 	RCPT_COUNT_FIVE(0.00)[5];
 	FORGED_SENDER_FORWARDING(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel-dk.20251104.gappssmtp.com:+];
-	ALIAS_RESOLVED(0.00)[];
-	TAGGED_RCPT(0.00)[io-uring];
+	FROM_NEQ_ENVFROM(0.00)[rrobaina@redhat.com,io-uring@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
 	FORGED_RECIPIENTS_FORWARDING(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[vger.kernel.org:from_smtp,sto.lore.kernel.org:rdns,sto.lore.kernel.org:helo,kernel.dk:from_mime]
+	ALIAS_RESOLVED(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	TAGGED_RCPT(0.00)[io-uring];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[vger.kernel.org:from_smtp,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,mail.gmail.com:mid,kernel.dk:email]
 X-Rspamd-Server: lfdr
-X-Rspamd-Queue-Id: 758916918C7
+X-Rspamd-Queue-Id: 6BC37691767
 
+On Tue, Jun 16, 2026 at 12:49=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote=
+:
+>
+>
+> On Tue, 16 Jun 2026 09:36:32 -0300, Ricardo Robaina wrote:
+> > IORING_OP_RECV_ZC is a read operation. Audit only tracks file/socket
+> > creation, not subsequent reads. Set audit_skip to align with
+> > audit-userspace uringop_table.h.
+>
+> Applied, thanks!
+>
+> [1/1] io_uring, audit: don't log IORING_OP_RECV_ZC
+>       commit: bdc2fc388c348ee14b4f984ff75f2ea440cefd44
+>
+> Best regards,
+> --
+> Jens Axboe
+>
+>
+>
 
-On Tue, 16 Jun 2026 09:36:32 -0300, Ricardo Robaina wrote:
-> IORING_OP_RECV_ZC is a read operation. Audit only tracks file/socket
-> creation, not subsequent reads. Set audit_skip to align with
-> audit-userspace uringop_table.h.
-
-Applied, thanks!
-
-[1/1] io_uring, audit: don't log IORING_OP_RECV_ZC
-      commit: bdc2fc388c348ee14b4f984ff75f2ea440cefd44
-
-Best regards,
--- 
-Jens Axboe
-
-
+Thanks, Jens!
 
 

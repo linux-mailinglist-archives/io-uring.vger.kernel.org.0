@@ -1,262 +1,247 @@
-Return-Path: <io-uring+bounces-13754-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13755-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by mail.lfdr.de with LMTP
-	id JAEjJnuwMWq6pAUAu9opvQ
-	(envelope-from <io-uring+bounces-13754-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 16 Jun 2026 22:22:19 +0200
+	id etrlJFuwMWqzpAUAu9opvQ
+	(envelope-from <io-uring+bounces-13755-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 16 Jun 2026 22:21:47 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DBE06952CE
-	for <lists+io-uring@lfdr.de>; Tue, 16 Jun 2026 22:22:19 +0200 (CEST)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
+	by mail.lfdr.de (Postfix) with ESMTPS id 074846952C2
+	for <lists+io-uring@lfdr.de>; Tue, 16 Jun 2026 22:21:47 +0200 (CEST)
 Authentication-Results: mail.lfdr.de;
-	dkim=pass header.d=proton.me header.s=protonmail header.b=ZSqXwoP1;
-	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13754-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c0a:e001:db::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-13754-lists+io-uring=lfdr.de@vger.kernel.org";
-	dmarc=pass (policy=quarantine) header.from=proton.me;
-	arc=pass ("subspace.kernel.org:s=arc-20240116:i=1")
+	dkim=pass header.d=purestorage.com header.s=google2022 header.b=Y04OWCq4;
+	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13755-lists+io-uring=lfdr.de@vger.kernel.org" designates 172.105.105.114 as permitted sender) smtp.mailfrom="io-uring+bounces-13755-lists+io-uring=lfdr.de@vger.kernel.org";
+	dmarc=pass (policy=quarantine) header.from=purestorage.com;
+	arc=pass ("subspace.kernel.org:s=arc-20240116:i=2")
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id D5639320A1BE
-	for <lists+io-uring@lfdr.de>; Tue, 16 Jun 2026 20:16:56 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id AE461303E6F7
+	for <lists+io-uring@lfdr.de>; Tue, 16 Jun 2026 20:21:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3C0389104;
-	Tue, 16 Jun 2026 20:16:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7C1E309DDF;
+	Tue, 16 Jun 2026 20:21:44 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B7938D011;
-	Tue, 16 Jun 2026 20:16:52 +0000 (UTC)
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781641016; cv=none; b=KRL7g/WwS9Swj4HbY6JZ+OGBLzqfFQdGV5RKkcWsdOzC1SF+yApEht/auartrgK6JAFWj4LmO7FgWakQj0VWSYQVnryle7I1MOir3EPRF8+XcaGIbr8qNChfqqSW/0rVarRehnH3jRhdNOQFOYMkGORqaNitHIL1anSXzDGGQmU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781641016; c=relaxed/simple;
-	bh=V1NLVnV77x1FwzmeepuZ5M0qTAvv7JRkHF4W5JsQSXo=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=TwKIT+96Cb5zbZT47bFmxFP1bpf9iqLMjVLLJmKolj1lMBGNTqcyQkxTYBLW7SV+LMUlbd3jjdn04wFQuMyRDDnPBeeHqSR5wzZjbiu1RPDDU6GjJx1RlZM1M6t9HHLeuUC1P5XZ6jfnnA/JrvSoP+vd3VzyeGY3tEe5e1oPcuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=ZSqXwoP1; arc=none smtp.client-ip=185.70.43.16
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1781641008; x=1781900208;
-	bh=H3Goi+Y+UYTPjsaFMxwCKhXsIsypsit8EhU2bFsQTZ8=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=ZSqXwoP18j95VEpeIPuJrId4YQp29HTTpm39pM4v+fM4XP33kyZUmEu2wzTuoDYLu
-	 vFSNW4xOrw0N24Afqk6Fo3+Vkl18qSjujUAiK1/hNYIOS889a9itxmVlcnrm8TF4Af
-	 7giJ3PN9MxzKPnw4TfXrhbEgCqDdPA12VfvyZlug20gYFsXH8CjkBAtHH0MduT6G6q
-	 6fEzS5XFR6q7Ujq3uOZOcYJ6mZwcBs8gVNFDa5KegSVOhmtC5LGUkpA/iwKXGNfMaP
-	 VgcZxB3NfyA/SC5L8hVen29zPm6czIiC99C3o6Oy7Bp0P9iP/Kh+M0GUFy1sfd1xWK
-	 Gl+tpnYLLcf+Q==
-Date: Tue, 16 Jun 2026 20:16:41 +0000
-To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-From: Bryam Vargas <hexlabsecurity@proton.me>
-Cc: =?utf-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, Paul Moore <paul@paul-moore.com>, Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, linux-security-module@vger.kernel.org, io-uring@vger.kernel.org, linux-block@vger.kernel.org, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Landlock: LANDLOCK_ACCESS_FS_IOCTL_DEV bypass via io_uring IORING_OP_URING_CMD
-Message-ID: <20260616201633.275067-1-hexlabsecurity@proton.me>
-Feedback-ID: 199661219:user:proton
-X-Pm-Message-ID: 3e618764aa8d1c1ba3df37c48f031a42fe7e9e1c
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84DE4345725
+	for <io-uring@vger.kernel.org>; Tue, 16 Jun 2026 20:21:42 +0000 (UTC)
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781641304; cv=pass; b=QF1dtf4Jbg38D1SwoBqkq07v64n0xux6m14xB6BAciKv7OYmN6uty4NHH8m0AWEqSruEpUO4fqf+sDK309HtcOB0Soggsnm6Irnv0AedDVhSSph53y5194JGC/+kmy9Ddtpk1294mBEPaIC+kZtlhW/h50TTomIVI+t02CjQLQA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781641304; c=relaxed/simple;
+	bh=owjXumvORgrsB3f+fp9qURXInHby4GglnzbmDUyPIWc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N+w8EIhj73+9B8DOF5cbVUJn3mEZXr4K6Q980yn9ka8Pe2Wpps71JzhYpb5iITjeEwbcwLKOjnPmOsJrUilccoyysBNxr1lpU+2XtG1cD6ddVvPozpEO9LlQ0yB9t7RVZo5QfWCHSOuyzcbx9iRanWQAI+azvAaleXBJfh8zFgw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=purestorage.com; spf=pass smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Y04OWCq4; arc=pass smtp.client-ip=209.85.161.46
+Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-69e82adae3fso123177eaf.0
+        for <io-uring@vger.kernel.org>; Tue, 16 Jun 2026 13:21:42 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1781641301; cv=none;
+        d=google.com; s=arc-20240605;
+        b=WzePiK8Ljm4fa33qSxayrnzqXQEMjsmKcK+vV5PJcfpzfkkzuBynxMW46Dj3MXIn4R
+         BrY8458vU4LKByL2Xn8SvPCrz2tBRo5KPSHE3FtWlZ2porJeK9Nod5EY9ENrhmzTvMIT
+         JX+HxMLl4lLtUFte8meogk5uqpmT+apvW0Yzs5USG3sMh5UC9UOAX+hrflqiOOZbuI5l
+         U7U5ekpc/syx4+sHybpi/tS3jCISYlOF5vTFHBlLO/69r/wo6T1LpOCnWuI/phQoXIwU
+         1COaPrXSNQlptiitcVeMj7n++ZojeafkkvC2xEe1JKtJ/LaDTuf93QqcU1B7YtfibSgN
+         5CpA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=owjXumvORgrsB3f+fp9qURXInHby4GglnzbmDUyPIWc=;
+        fh=8SanVj4MV0LZcXSROTGCY35wrAI3fk+fJGDl/3jrlWo=;
+        b=KZH4PdGlT+rrjnqKPE2cTW2yaO2DimhFk7h/tdq3yikgUHJmxdAWWzYoEEIV0NA74A
+         UISmpnZVmz1rTWKBYgWLTq7lV3kEVtzhhJ7KsUbp/MFmBOz9Rpu2EXaAviji21A+6kun
+         2Hs5LhC61p1ccqnsIT8a5cDiVq8cMKlQvbHO967fFDPNpl0os4GSmbVBfBAF+PDdwd/X
+         BnHGWJl/YLqJ1U0fR7KGV7VhxFRDBFkahuXHHWti7MaLUGn3z0d5MKqDWsJX7wb9UDFY
+         XXTp0rKwC4WDl+fYJhvmbHtl+qSCgAQBMmYLYzl6qdsRz5i1SUXz6Wq0r8FgnDrY6DKt
+         8Q/g==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1781641301; x=1782246101; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=owjXumvORgrsB3f+fp9qURXInHby4GglnzbmDUyPIWc=;
+        b=Y04OWCq4KACMq/xoW+XZ3rKbmmYuy63Ne745wxDRtsqDthekRPHuR3BEhWuussxCc0
+         dA7W5jBi1M+Oz/7v/+I0likn3v+k12N/CXROaEOblAIpcxGReRSowdZ+uK7xZeVaYPab
+         L29HrQcJrB+VYDO7yBMjzwxDseNHB+8lk3UhGZ2MKCXRrc7gRm4UBdTI2WHjH/9KtyxM
+         H/jK3OSvY8WbCXK5Gi2FoYf42bgKeNY8M7wZdwyF0dhlAdZas1q0qrJhK932w1E+6ugP
+         zJLYaNVa89M+K09iez+oj4Xlcxe1PTLTXNhuwc9A8r/At+PrZRC4IfGzfhNrcmlxN2HN
+         om5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781641301; x=1782246101;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=owjXumvORgrsB3f+fp9qURXInHby4GglnzbmDUyPIWc=;
+        b=dH5RVgIMxGQTbd00TfPQTPCmMvufoZ6pRdVrniUEKTzJvLOQkUxdSV4+Ct2bHkUTH4
+         rEMalGExS0c1o2uENRtgCZkovfhTkdHBJS5yWOIrec7i7lVQF1oxWUxOOCd6mzcYLsdC
+         1pumOg9c8kHZuDv43xniAynXdOWDPPHt0OYajEI7eBl7iknn5O+0Q2dyvKSh+yFH4SbG
+         MhJ4QVPStRmc9cJcLfB3cwOtX5LTJmkQWWVoobpoqg7Km2jNLDrlmRgyg9eTbM6YpOeL
+         0L/YyWG2qj4ctKjtEUFRO+PrCHVB7v5FSWqw3+mTO1agIXv6jSdx20y2Si88vFpFlJNk
+         3/Aw==
+X-Gm-Message-State: AOJu0YxVYqRjUkVeZMfUjkOTYNNQ3nWvdMhjBL+U2LGfdA8LAfND5X89
+	PvaGWdH7kuhiVF9lIqztlU0YRkLKm07YNB1eZkLX8a7ABtWEwud19tHjSblxOZN+DNjraing/5+
+	0cT45+ZdsgR0WEvrYjqVzipw/bS0kVvpSqRAhetxApA==
+X-Gm-Gg: Acq92OEGKBao3pI2DlweeqmGz3pd8yAwTVYNMe8XWoVI6dlcV2+ZVpWQvRcO9GnkypW
+	IWvNdWTKinKWI3DAnqcHup3nVFWqtKsp5X/Hn1tTuHPwdFYf63XX6kjK/+l/UMP6ozZcdsFokc6
+	esbe2XsoHAGL75f8DkkL5Y4uTIIz3bRB2bJ7eHYfo0QJjTTYAh1bQzCyHUyqCGt2qgeMQdeKVs0
+	JDrj2FV90MEZR+Y8M1E0nCSBu7i935UjsrdJUFW3OsgRCI0aRIKr2bG3a5qij+eMlaDN0+VfyoP
+	vpWHLuo=
+X-Received: by 2002:a05:6820:83da:20b0:69d:513e:1a69 with SMTP id
+ 006d021491bc7-6a0b5fe0ec1mr200556eaf.2.1781641301287; Tue, 16 Jun 2026
+ 13:21:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20260611160553.1486640-1-axboe@kernel.dk> <20260611160553.1486640-3-axboe@kernel.dk>
+ <CADUfDZrzwvY6UpBBhLj1JynuNf5bo140+LbMYDOvU13=od+nkQ@mail.gmail.com>
+ <4be7a6db-44bc-4125-867e-9d22c2809f1c@kernel.dk> <CADUfDZr-MMYBaP-e+y9+xuRhuiunO2sBTUCmwZyd7AgT8sVtiQ@mail.gmail.com>
+ <1af6602f-590e-4ca5-b034-b09b3f40a8d1@kernel.dk> <9232ba9e-2ea5-4ed2-9043-15190e0f5d0e@kernel.dk>
+ <CADUfDZoEhdom7cqRfKhMkhhRc0vmRpzRR-AZXndMhLnLa9KqYg@mail.gmail.com> <e0e6a5da-054e-494b-aad8-be08f040750f@kernel.dk>
+In-Reply-To: <e0e6a5da-054e-494b-aad8-be08f040750f@kernel.dk>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Tue, 16 Jun 2026 13:21:30 -0700
+X-Gm-Features: AVVi8CdV5ZldM_jR82uuGz590ZfzfN2qndQllX-pdSSxM9NoYPLh_4yN9HH3g7w
+Message-ID: <CADUfDZpkED1apEGoPk_8V8x_JQB8ogBD9E6KjaQ7SEybGnLrCw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] io_uring: switch local task_work to a mpscq
+To: Jens Axboe <axboe@kernel.dk>
+Cc: io-uring@vger.kernel.org, dvyukov@google.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-1.16 / 15.00];
-	MID_CONTAINS_FROM(1.00)[];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[proton.me,quarantine];
-	R_DKIM_ALLOW(-0.20)[proton.me:s=protonmail];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+X-Spamd-Result: default: False [-2.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
+	DMARC_POLICY_ALLOW(-0.50)[purestorage.com,quarantine];
+	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_DKIM_ALLOW(-0.20)[purestorage.com:s=google2022];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_RECIPIENTS(0.00)[m:mic@digikod.net,m:gnoack@google.com,m:paul@paul-moore.com,m:axboe@kernel.dk,m:kbusch@kernel.org,m:hch@lst.de,m:sagi@grimberg.me,m:linux-security-module@vger.kernel.org,m:io-uring@vger.kernel.org,m:linux-block@vger.kernel.org,m:linux-nvme@lists.infradead.org,m:linux-kernel@vger.kernel.org,s:lists@lfdr.de];
-	TAGGED_FROM(0.00)[bounces-13754-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-13755-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	FORGED_SENDER(0.00)[hexlabsecurity@proton.me,io-uring@vger.kernel.org];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	RCVD_COUNT_THREE(0.00)[3];
+	FORGED_RECIPIENTS(0.00)[m:axboe@kernel.dk,m:io-uring@vger.kernel.org,m:dvyukov@google.com,s:lists@lfdr.de];
+	RCVD_COUNT_THREE(0.00)[4];
+	FORGED_SENDER(0.00)[csander@purestorage.com,io-uring@vger.kernel.org];
 	MIME_TRACE(0.00)[0:+];
-	FORWARDED(0.00)[lists@lfdr.de];
-	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FORWARDED(0.00)[lists@lfdr.de];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_THREE(0.00)[3];
 	TO_DN_SOME(0.00)[];
 	FORGED_SENDER_FORWARDING(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[hexlabsecurity@proton.me,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[proton.me:+];
+	FROM_NEQ_ENVFROM(0.00)[csander@purestorage.com,io-uring@vger.kernel.org];
+	DKIM_TRACE(0.00)[purestorage.com:+];
 	ALIAS_RESOLVED(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
 	FORGED_RECIPIENTS_FORWARDING(0.00)[];
 	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[proton.me:dkim,proton.me:email,proton.me:mid,proton.me:from_mime,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,vger.kernel.org:from_smtp]
+	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo,mail.gmail.com:mid,vger.kernel.org:from_smtp,kernel.dk:email,purestorage.com:dkim,purestorage.com:from_mime]
 X-Rspamd-Server: lfdr
-X-Rspamd-Queue-Id: 3DBE06952CE
+X-Rspamd-Queue-Id: 074846952C2
 
-Hello Micka=C3=ABl, and Landlock / io_uring folks,
-
-A task confined by a Landlock ruleset that grants READ_FILE/WRITE_FILE on a=
- block
-or NVMe character device but withholds LANDLOCK_ACCESS_FS_IOCTL_DEV can sti=
-ll
-reach the device-command surface through io_uring IORING_OP_URING_CMD with =
-the
-IOCTL_DEV check bypassed: the request enters the device-command handler (bl=
-ock
-discard, or the NVMe char-device passthrough) where the equivalent ioctl(2)=
- is
-denied. The destructive completion and the NVMe-admin surface follow from t=
+On Mon, Jun 15, 2026 at 11:00=E2=80=AFAM Jens Axboe <axboe@kernel.dk> wrote=
+:
+>
+> On 6/15/26 11:55 AM, Caleb Sander Mateos wrote:
+> > On Fri, Jun 12, 2026 at 8:11?AM Jens Axboe <axboe@kernel.dk> wrote:
+> >>
+> >> On 6/12/26 6:21 AM, Jens Axboe wrote:
+> >>> On 6/11/26 11:24 PM, Caleb Sander Mateos wrote:
+> >>>> On Thu, Jun 11, 2026 at 7:23?PM Jens Axboe <axboe@kernel.dk> wrote:
+> >>>>>
+> >>>>> On 6/11/26 7:14 PM, Caleb Sander Mateos wrote:
+> >>>>>> This is great stuff! I had also observed these hotspots on a ublk
+> >>>>>> workload. Since incoming ublk requests post task work to the ublk
+> >>>>>> server's io_urings and completed ublk requests post task work to t=
 he
-code -- see Impact.
-
-Affected
---------
-Any kernel with CONFIG_SECURITY_LANDLOCK=3Dy and Landlock enabled that supp=
-orts
-LANDLOCK_ACCESS_FS_IOCTL_DEV (Landlock ABI >=3D 5, since Linux 6.8) and io_=
-uring
-uring_cmd for the device class (block BLOCK_URING_CMD_DISCARD; NVMe passthr=
-ough).
-Confirmed by source inspection on mainline (v7.1-rc7) and reproduced on Lin=
-ux
-7.0.11 (Landlock ABI 8). The confined task needs a writable fd to a device =
-it is
-legitimately allowed to use (e.g. a partition/loop device or an NVMe namesp=
-ace
-passed into a container or granted by the ruleset); no CAP is required to r=
-each
-the io_uring path. The gap is structural -- Landlock has never registered a
-uring_cmd hook -- so it is present from ABI 5 (Linux 6.8) through current
-mainline (v7.1-rc7) and is not a regression tied to a single Fixes: commit.
-
-Root cause
-----------
-On the ioctl(2) path, the syscall handler in fs/ioctl.c calls
-security_file_ioctl() (its only call site on the ioctl(2) path) before
-dispatching to do_vfs_ioctl(); that reaches Landlock hook_file_ioctl_common=
-(),
-which denies a device ioctl unless the file's
-allowed_access holds LANDLOCK_ACCESS_FS_IOCTL_DEV (BLKDISCARD/BLKSECDISCARD=
-/
-BLKZEROOUT and NVMe passthrough are not in the is_masked_device_ioctl()
-allow-list, so they require the right).
-
-io_uring reaches the same device-command surface by a different producer:
-
-  IORING_OP_URING_CMD -> io_uring_cmd()   io_uring/uring_cmd.c
-   -> security_uring_cmd(ioucmd)          (the ONLY LSM gate on this path)
-   -> file->f_op->uring_cmd()             e.g. blkdev_uring_cmd() / nvme_ns=
-_chr_uring_cmd()
-
-Landlock's LSM_HOOK_INIT list (security/landlock/fs.c, net.c, task.c) regis=
-ters
-file_ioctl/file_ioctl_compat but no uring_cmd hook -- only SELinux
-(selinux_uring_cmd) and Smack (smack_uring_cmd) gate this surface -- so
-security_uring_cmd() returns 0 for a Landlocked task and hook_file_ioctl /
-IOCTL_DEV is never consulted. For block, blkdev_cmd_discard() is then gated=
- only
-by BLK_OPEN_WRITE; for NVMe, nvme_ns_chr_uring_cmd() reaches the admin/IO
-passthrough with no security_file_ioctl on the path. There is no shared hel=
-per
-that re-applies the IOCTL_DEV check.
-
-SELinux and Smack hooking uring_cmd while Landlock does not is the coverage
-asymmetry; the Landlock documentation describes IOCTL_DEV as gating ioctl(2=
-) but
-does not mention io_uring.
-
-Reproducer
-----------
-A self-contained PoC is available on request (it needs root only to set up =
-a loop
-block device and open it; Landlock enforcement is uid-independent, so the
-confined child demonstrates the gap regardless of the setup uid). The child
-applies a Landlock ruleset handling READ_FILE|WRITE_FILE|IOCTL_DEV with a r=
-ule
-granting only READ_FILE|WRITE_FILE on the device, then:
-
-  (1) ioctl(fd, BLKDISCARD, range)        -> -EACCES  (Landlock enforces IO=
-CTL_DEV)
-  (2) IORING_OP_URING_CMD,
-      cmd_op =3D BLOCK_URING_CMD_DISCARD     -> reaches the block command h=
-andler
-
-Observed on Linux 7.0.11 (Landlock ABI 8):
-
-  [1] ioctl(BLKDISCARD)   -> ret=3D-1 errno=3D13 (Permission denied)
-  [2] uring_cmd(DISCARD)  -> cqe.res=3D-22 (Invalid argument)
-
-A Landlock denial is always -EACCES; the io_uring path returned -EINVAL, wh=
-ich
-originates in a post-authorization check inside the block command handler
-(blk_validate_byte_range() in blkdev_cmd_discard()), reached only after
-security_uring_cmd() returned 0. So this run demonstrates the authorization
-bypass -- the request traversed the LSM gate into the block device-command
-handler with no IOCTL_DEV check -- and then failed a parameter check, not a=
-n
-authorization check. The destructive completion (an authorized discard with=
- a
-granularity-aligned range) is the expected behaviour but was not exercised =
-in
-this run.
-
-Impact
-------
-Demonstrated: the LANDLOCK_ACCESS_FS_IOCTL_DEV authorization is bypassed. T=
+> >>>>>> client's io_urings, there is significant cross-CPU contention on t=
 he
-device-command request reaches the block command handler with no Landlock c=
-heck;
-the only remaining gate is BLK_OPEN_WRITE (held, since the policy granted w=
-rite).
-Inferred from the code, not exercised here: an authorized DISCARD with a va=
-lid
-range completes (DISCARD/secure-erase semantics, destroying on-device data)=
-, and
-the same missing hook leaves the NVMe char-device uring_cmd surface ungated=
- --
-nvme_ns_chr_uring_cmd (namespace device /dev/nvmeXnY) -> nvme_ns_uring_cmd =
-for
-NVME_URING_CMD_IO/IO_VEC passthrough, and nvme_dev_uring_cmd (controller de=
-vice
-/dev/nvmeX) for NVME_URING_CMD_ADMIN (format, sanitize, firmware download,
-security send) -- both reach f_op->uring_cmd with no Landlock/IOCTL_DEV gat=
-e.
-
-So the confirmed finding is a missing authorization (the confined task esca=
-pes
-its own IOCTL_DEV restriction); the destructive data effect and the NVMe-ad=
-min
-high-water-mark follow from the code but are not shown in the run above. Th=
-e
-proven authorization bypass alone scores CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C=
-:N/I:H/A:N
-(6.5 Medium) -- S:C because the confined task crosses the Landlock policy
-boundary it was placed under, I:H because the bypassed path reaches a handl=
-er
-whose authorized completion modifies device data. With the device command
-completing destructively the projected ceiling is
-CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:N/I:H/A:H (8.4 High), the A:H component
-reasoned from the source rather than executed. No memory safety is involved=
+> >>>>>> task work queues.
+> >>>>>
+> >>>>> Glad you like it! Once I post v2 tomorrow, perhaps you can try and =
+run
+> >>>>> some tests with and without and see how it does for you?
+> >>>>
+> >>>> Haven't tested v2 yet, but v1 shows a 4% IOPS improvement on a ublk
+> >>>> 4-KB read workload. The workload has 8 CPUs (unpaired hypertwins)
+> >>>> running fio with io_uring submitting I/O to the ublk devices and 32
+> >>>> ublk server CPUs (paired hypertwins) servicing the requests, achievi=
+ng
+> >>>> around 4M IOPS. Both the client and server CPUs look completely busy=
 .
+> >>>
+> >>> That's a pretty nice improvement! Would be curious to hear what v2 lo=
+oks
+> >>> like.
+> >
+> > Looks the same as v1, which makes sense as both the client and server
+> > are using IORING_SETUP_DEFER_TASKRUN.
+>
+> OK, sounds good.
+>
+> > I did observe fio seem to get stuck forever on one out of the 85 or so
+> > runs, though. I'm a little concerned there might be a missing wakeup.
+> > It was using the default iodepth_batch_complete_min=3D1 (waiting for
+> > io_uring completions) and IORING_SETUP_DEFER_TASKRUN.
+>
+> There's a bug in v2 where it can get missed, the in-tree code should
+> have that fixed. It was the atomic_dec_and_test() and
+> atomic_try_cmpxchg() in io_req_local_work_add() racing.
 
-Suggested direction
--------------------
-Have Landlock register a uring_cmd hook that maps the device command to the=
- same
-checks the ioctl path applies (IOCTL_DEV, and truncate where relevant), so =
-a
-single chokepoint covers every f_op->uring_cmd provider (block, NVMe, ublk,=
- and
-any future one). Mirrors how SELinux/Smack already gate this surface.
+Great, glad it's already fixed.
 
-I am happy to send a patch for this if you would like.
+>
+> >> And here's some more stuff on top you might find interesting. For a
+> >> 6 NVMe drive test, it drops my task work usage from top-of-profiles
+> >> to ~2%.
+> >>
+> >> https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git/log/?h=
+=3Dio_uring-tw-mpscq-batch
+> >>
+> >> The patches sit on top of the io_uring-tw-mpscq branch.
+> >
+> > Yeah there are some interesting ideas there.
+> >
+> > The ublk server isn't using UBLK_F_BATCH_IO, so it unfortunately
+> > wouldn't benefit from the task work batching for
+> > UBLK_U_IO_COMMIT_IO_CMDS. The batching would probably need to be
+> > scoped to the whole io_submit_sqes() in order to allow batching across
+> > the multiple UBLK_U_IO_COMMIT_AND_FETCH_REQ commands. I'm also not
+> > sure about the claim that __ublk_walk_cmd_buf() won't sleep;
+> > ublk_batch_commit_io() calls io_buffer_unregister_bvec(), which could
+> > sleep depending on the io_uring issue_flags.
+>
+> It's very much just a POC series of things... I suspect to get the
+> benefit of it, we'd need a bit of refactoring and reworking first. It
+> was more to get the idea out/across, not going anywhere right now.
+>
+> > The NVMe passthrough task work batching could definitely reduce
+> > contention on the task work queue. I'll run a perf test.
+>
+> Thanks!
 
-Best regards,
+I tried it out and the 4K read throughput looks a little lower
+actually (about a 1.7% improvement over the baseline vs. 2.6% with
+just v2). Since the workload is loading 24 NVMe devices, I suspect
+there just isn't much to be gained from batching completions within a
+single NVMe queue.
 
-Bryam Vargas
-Independent security researcher, HEXLAB S.A.S., Cali, Colombia
-hexlabsecurity@proton.me
+I do see the time in __ioreq_task_work_add() on the ublk server went
+down from 1.04% to 0.43%, though there's now 0.67% in the newly added
+io_local_work_flush_batch().
 
+The time in update_io_ticks() (largely from blk_account_io_done() on
+NVMe completions) increased from 0.18% to 1.11%, though I'm a little
+surprised that would be caused by these patches.
+
+Best,
+Caleb
 

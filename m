@@ -1,160 +1,262 @@
-Return-Path: <io-uring+bounces-13753-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13754-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by mail.lfdr.de with LMTP
-	id U8JUHg14MWp5kAUAu9opvQ
-	(envelope-from <io-uring+bounces-13753-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 16 Jun 2026 18:21:33 +0200
+	id JAEjJnuwMWq6pAUAu9opvQ
+	(envelope-from <io-uring+bounces-13754-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 16 Jun 2026 22:22:19 +0200
 X-Original-To: lists+io-uring@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB2DF691F9C
-	for <lists+io-uring@lfdr.de>; Tue, 16 Jun 2026 18:21:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DBE06952CE
+	for <lists+io-uring@lfdr.de>; Tue, 16 Jun 2026 22:22:19 +0200 (CEST)
 Authentication-Results: mail.lfdr.de;
-	dkim=pass header.d=kernel-dk.20251104.gappssmtp.com header.s=20251104 header.b=uEOmTZ+C;
-	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13753-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c0a:e001:db::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-13753-lists+io-uring=lfdr.de@vger.kernel.org";
-	dmarc=none;
+	dkim=pass header.d=proton.me header.s=protonmail header.b=ZSqXwoP1;
+	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13754-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c0a:e001:db::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-13754-lists+io-uring=lfdr.de@vger.kernel.org";
+	dmarc=pass (policy=quarantine) header.from=proton.me;
 	arc=pass ("subspace.kernel.org:s=arc-20240116:i=1")
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id C7BA832855A9
-	for <lists+io-uring@lfdr.de>; Tue, 16 Jun 2026 16:08:45 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id D5639320A1BE
+	for <lists+io-uring@lfdr.de>; Tue, 16 Jun 2026 20:16:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BFF84657D0;
-	Tue, 16 Jun 2026 16:08:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3C0389104;
+	Tue, 16 Jun 2026 20:16:56 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5925945BD6F
-	for <io-uring@vger.kernel.org>; Tue, 16 Jun 2026 16:08:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B7938D011;
+	Tue, 16 Jun 2026 20:16:52 +0000 (UTC)
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781626120; cv=none; b=Fhy3qd/vJQOMQc573PHa7X0LB9RpAtB5iqSumII6dOsv2R58sTPhVIT/RpmjZqpgGyIWPwdk41ALDfrHPkUL6/CidNxizputjdbncXiuxw9ASoBMAT9lKD07jhL+TTjuVBBeb56qT7pHjzSJhMcgCI8B78wpZ+qlx5//TPnLzos=
+	t=1781641016; cv=none; b=KRL7g/WwS9Swj4HbY6JZ+OGBLzqfFQdGV5RKkcWsdOzC1SF+yApEht/auartrgK6JAFWj4LmO7FgWakQj0VWSYQVnryle7I1MOir3EPRF8+XcaGIbr8qNChfqqSW/0rVarRehnH3jRhdNOQFOYMkGORqaNitHIL1anSXzDGGQmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781626120; c=relaxed/simple;
-	bh=114CpVtkB6p1CIb6o0+A+XoYmOp70hQhk51t9u+29HY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=eXCKZO/AvSkthb9CKNgRhw9jNG3/ZMjdNcU4j1GIpGDluuHuFWdYDOI1obf8iLn7jsDPTQLwDBSIvQQi/VEfgKl1AfoNop6Xz6EkYsVfqiv0KfXsTjuelptiVrtfhiE79QX75S2bnUT+cfKB9uKgcqty395sSnU04VdC44IwF2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=uEOmTZ+C; arc=none smtp.client-ip=209.85.160.49
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-43d16405b54so1793304fac.3
-        for <io-uring@vger.kernel.org>; Tue, 16 Jun 2026 09:08:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1781626117; x=1782230917; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KK8pQaJRHjqFuo46fkJ7FtOQfX1elMDIW9ynP3FkvE8=;
-        b=uEOmTZ+Ci1BiBYd51xdXdgaZNmRg1eHe4hF+FRW6+O3ghp1UntZ5mz3+iou/QnQAXt
-         U2x80DDYFniIsznKMNZphOueMb+jcTu2tr9FOAohwZylyxWrm77G/fKtYt1LLBzb8hbJ
-         t3SCG7uF3bhPEDY9/sfcIkKMLVC09H24bXCZZDwLtJrMaocu3amSjcWiYvJaJwcmpszy
-         8A0aTQIQtbdEnuYSLTbEr5eOHYf37Kf1fYiFUTHQqyVRMMwY35evQGcA3t0Gr7Pq4y9C
-         qB++THCBbUtegg8ku4zim3DSmEREiCJRhYg+SkbzHJd2QD+x/NwJcc+ShMknbWZ6jz3T
-         5W/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781626117; x=1782230917;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=KK8pQaJRHjqFuo46fkJ7FtOQfX1elMDIW9ynP3FkvE8=;
-        b=Ht9H2D1qzikjM32bfw2wLuyONv7UEULNCGni9ZhrSJsybWXSqSK3SictF/j6h6sA8K
-         /P9UUybRWghYMqfEZKqfJ+J/mwlIFJeHcH5+JY8a3zp5aY8hqCkHrmPKti7rzEglUaI7
-         owKkGSMwVU+LLQ6FZFioyT+B/Ju9i7CyjpkOrfUsOT5ugAzNZ9Z/NKyqpGkENjHhJDO/
-         boa59XlOPiH2CLbXBZHkBGJycnwLjZOOjPAxsffLziAfkgK2XBTNKGPoofy+65HxFM+S
-         2om3n2DqX2RTS8MrXiXRICnNSpWczQ3y6zcKTbGiPmQe67B8WLZOqwF74XQYPCBe4cpw
-         4RGQ==
-X-Gm-Message-State: AOJu0YzlHL7emyGChgAw2pC/Zz9SHjdlu6/Ue0deQ1yGm3UIbZhBwwIx
-	5IiZBf9VQKN20y4dBZhdHNnQ9yFIIPpdoTpygZp9ucCuOpJSl2DVX0fn/zzS61efFol4fC+y+z/
-	SVqtq2LU=
-X-Gm-Gg: Acq92OFK5F6fsxtaoi/WuBdWaWZOVPEzbOk8sF8NzS6/d6IRVhcdpz3+wTYTw8Q7P+b
-	X8H+eT85KjDaUCSpWLwpDyKoo6JTY9cWlz+UCBMYwSuFjWGZbuN8rl/vfDpHGkJMP80cP6/jDQH
-	zaWKPauSut5anYhwZdxfTFp7wogKb1NhpVZP87qYRtuWZu4CSfIseMCKlRHAkkeSqB3GfcW0/qg
-	XnCJ4Zk2Cpo5NudQLknldVwPS35FZfleL1znv5u2DsAtdNaUdU2AIWbjAvtdNNoJ6VaB95iXTRk
-	0m7gSo4AU2I7FMFMVYLZguGK47aw+095VfNeIBjyW81DgsjGPQxYSdR8Tk1JO9lXdFX+D1Q6538
-	v4/TcxG7NvRSBJapUJeOIrMZUf/kqC5u0AXZOhOL1JTuX0wqjn2GUJ/rQ7G4j8qweaQdAlEf9A8
-	r459T7CYNGIUisS6aLZZmz4c4RMP1QtjzNdwf/mzqYbLs6DQnvFBIvFTF6sgBprtlC12lDz/Mnj
-	Qzs
-X-Received: by 2002:a05:6808:2210:b0:487:500f:ef56 with SMTP id 5614622812f47-489429e5b80mr230690b6e.34.1781626117278;
-        Tue, 16 Jun 2026 09:08:37 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-4875ddd9fd3sm4631101b6e.7.2026.06.16.09.08.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jun 2026 09:08:36 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: guzebing <guzebing1612@gmail.com>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20260608133316.3656440-1-guzebing1612@gmail.com>
-References: <20260608133316.3656440-1-guzebing1612@gmail.com>
-Subject: Re: [PATCH] io_uring/register: preserve SQ array entries on resize
-Message-Id: <178162611649.2191657.14070998514588053092.b4-ty@b4>
-Date: Tue, 16 Jun 2026 10:08:36 -0600
+	s=arc-20240116; t=1781641016; c=relaxed/simple;
+	bh=V1NLVnV77x1FwzmeepuZ5M0qTAvv7JRkHF4W5JsQSXo=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=TwKIT+96Cb5zbZT47bFmxFP1bpf9iqLMjVLLJmKolj1lMBGNTqcyQkxTYBLW7SV+LMUlbd3jjdn04wFQuMyRDDnPBeeHqSR5wzZjbiu1RPDDU6GjJx1RlZM1M6t9HHLeuUC1P5XZ6jfnnA/JrvSoP+vd3VzyeGY3tEe5e1oPcuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=ZSqXwoP1; arc=none smtp.client-ip=185.70.43.16
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1781641008; x=1781900208;
+	bh=H3Goi+Y+UYTPjsaFMxwCKhXsIsypsit8EhU2bFsQTZ8=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=ZSqXwoP18j95VEpeIPuJrId4YQp29HTTpm39pM4v+fM4XP33kyZUmEu2wzTuoDYLu
+	 vFSNW4xOrw0N24Afqk6Fo3+Vkl18qSjujUAiK1/hNYIOS889a9itxmVlcnrm8TF4Af
+	 7giJ3PN9MxzKPnw4TfXrhbEgCqDdPA12VfvyZlug20gYFsXH8CjkBAtHH0MduT6G6q
+	 6fEzS5XFR6q7Ujq3uOZOcYJ6mZwcBs8gVNFDa5KegSVOhmtC5LGUkpA/iwKXGNfMaP
+	 VgcZxB3NfyA/SC5L8hVen29zPm6czIiC99C3o6Oy7Bp0P9iP/Kh+M0GUFy1sfd1xWK
+	 Gl+tpnYLLcf+Q==
+Date: Tue, 16 Jun 2026 20:16:41 +0000
+To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+From: Bryam Vargas <hexlabsecurity@proton.me>
+Cc: =?utf-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, Paul Moore <paul@paul-moore.com>, Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, linux-security-module@vger.kernel.org, io-uring@vger.kernel.org, linux-block@vger.kernel.org, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Landlock: LANDLOCK_ACCESS_FS_IOCTL_DEV bypass via io_uring IORING_OP_URING_CMD
+Message-ID: <20260616201633.275067-1-hexlabsecurity@proton.me>
+Feedback-ID: 199661219:user:proton
+X-Pm-Message-ID: 3e618764aa8d1c1ba3df37c48f031a42fe7e9e1c
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15.2
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Action: no action
 X-Spamd-Result: default: False [-1.16 / 15.00];
+	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[kernel-dk.20251104.gappssmtp.com:s=20251104];
+	DMARC_POLICY_ALLOW(-0.50)[proton.me,quarantine];
+	R_DKIM_ALLOW(-0.20)[proton.me:s=protonmail];
 	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RECEIVED_HELO_LOCALHOST(0.00)[];
-	FORGED_RECIPIENTS(0.00)[m:guzebing1612@gmail.com,m:io-uring@vger.kernel.org,m:linux-kernel@vger.kernel.org,s:lists@lfdr.de];
-	DMARC_NA(0.00)[kernel.dk];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
+	FORGED_RECIPIENTS(0.00)[m:mic@digikod.net,m:gnoack@google.com,m:paul@paul-moore.com,m:axboe@kernel.dk,m:kbusch@kernel.org,m:hch@lst.de,m:sagi@grimberg.me,m:linux-security-module@vger.kernel.org,m:io-uring@vger.kernel.org,m:linux-block@vger.kernel.org,m:linux-nvme@lists.infradead.org,m:linux-kernel@vger.kernel.org,s:lists@lfdr.de];
+	TAGGED_FROM(0.00)[bounces-13754-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	FORWARDED(0.00)[lists@lfdr.de];
-	FORGED_SENDER(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
+	FORGED_SENDER(0.00)[hexlabsecurity@proton.me,io-uring@vger.kernel.org];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13753-lists,io-uring=lfdr.de];
-	RCPT_COUNT_THREE(0.00)[3];
-	DKIM_TRACE(0.00)[kernel-dk.20251104.gappssmtp.com:+];
-	FORGED_SENDER_FORWARDING(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[5];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	RCVD_COUNT_THREE(0.00)[3];
+	MIME_TRACE(0.00)[0:+];
+	FORWARDED(0.00)[lists@lfdr.de];
+	FROM_HAS_DN(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FORGED_SENDER_FORWARDING(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[hexlabsecurity@proton.me,io-uring@vger.kernel.org];
+	DKIM_TRACE(0.00)[proton.me:+];
 	ALIAS_RESOLVED(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
-	TO_DN_SOME(0.00)[];
 	FORGED_RECIPIENTS_FORWARDING(0.00)[];
+	MISSING_XM_UA(0.00)[];
 	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[kernel-dk.20251104.gappssmtp.com:dkim,vger.kernel.org:from_smtp,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,kernel.dk:from_mime]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[proton.me:dkim,proton.me:email,proton.me:mid,proton.me:from_mime,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,vger.kernel.org:from_smtp]
 X-Rspamd-Server: lfdr
-X-Rspamd-Queue-Id: CB2DF691F9C
+X-Rspamd-Queue-Id: 3DBE06952CE
 
+Hello Micka=C3=ABl, and Landlock / io_uring folks,
 
-On Mon, 08 Jun 2026 21:33:16 +0800, guzebing wrote:
-> Ring resizing copies pending SQEs from the old SQE array into the new
-> one so submissions queued before the resize can still be consumed
-> afterwards.
-> 
-> That copy currently walks the SQ head/tail range directly. This is only
-> correct when there is no SQ array indirection. With a regular SQ array,
-> each pending SQ entry contains an index into the SQE array. After resize,
-> ctx->sq_array is repointed at the newly allocated array, so pending
-> entries lose their old logical-to-physical mapping and may submit the
-> wrong SQE.
-> 
-> [...]
+A task confined by a Landlock ruleset that grants READ_FILE/WRITE_FILE on a=
+ block
+or NVMe character device but withholds LANDLOCK_ACCESS_FS_IOCTL_DEV can sti=
+ll
+reach the device-command surface through io_uring IORING_OP_URING_CMD with =
+the
+IOCTL_DEV check bypassed: the request enters the device-command handler (bl=
+ock
+discard, or the NVMe char-device passthrough) where the equivalent ioctl(2)=
+ is
+denied. The destructive completion and the NVMe-admin surface follow from t=
+he
+code -- see Impact.
 
-Applied, thanks!
+Affected
+--------
+Any kernel with CONFIG_SECURITY_LANDLOCK=3Dy and Landlock enabled that supp=
+orts
+LANDLOCK_ACCESS_FS_IOCTL_DEV (Landlock ABI >=3D 5, since Linux 6.8) and io_=
+uring
+uring_cmd for the device class (block BLOCK_URING_CMD_DISCARD; NVMe passthr=
+ough).
+Confirmed by source inspection on mainline (v7.1-rc7) and reproduced on Lin=
+ux
+7.0.11 (Landlock ABI 8). The confined task needs a writable fd to a device =
+it is
+legitimately allowed to use (e.g. a partition/loop device or an NVMe namesp=
+ace
+passed into a container or granted by the ruleset); no CAP is required to r=
+each
+the io_uring path. The gap is structural -- Landlock has never registered a
+uring_cmd hook -- so it is present from ABI 5 (Linux 6.8) through current
+mainline (v7.1-rc7) and is not a regression tied to a single Fixes: commit.
 
-[1/1] io_uring/register: preserve SQ array entries on resize
-      commit: 1fe703cc708f19209ae8e6261247483db723c221
+Root cause
+----------
+On the ioctl(2) path, the syscall handler in fs/ioctl.c calls
+security_file_ioctl() (its only call site on the ioctl(2) path) before
+dispatching to do_vfs_ioctl(); that reaches Landlock hook_file_ioctl_common=
+(),
+which denies a device ioctl unless the file's
+allowed_access holds LANDLOCK_ACCESS_FS_IOCTL_DEV (BLKDISCARD/BLKSECDISCARD=
+/
+BLKZEROOUT and NVMe passthrough are not in the is_masked_device_ioctl()
+allow-list, so they require the right).
+
+io_uring reaches the same device-command surface by a different producer:
+
+  IORING_OP_URING_CMD -> io_uring_cmd()   io_uring/uring_cmd.c
+   -> security_uring_cmd(ioucmd)          (the ONLY LSM gate on this path)
+   -> file->f_op->uring_cmd()             e.g. blkdev_uring_cmd() / nvme_ns=
+_chr_uring_cmd()
+
+Landlock's LSM_HOOK_INIT list (security/landlock/fs.c, net.c, task.c) regis=
+ters
+file_ioctl/file_ioctl_compat but no uring_cmd hook -- only SELinux
+(selinux_uring_cmd) and Smack (smack_uring_cmd) gate this surface -- so
+security_uring_cmd() returns 0 for a Landlocked task and hook_file_ioctl /
+IOCTL_DEV is never consulted. For block, blkdev_cmd_discard() is then gated=
+ only
+by BLK_OPEN_WRITE; for NVMe, nvme_ns_chr_uring_cmd() reaches the admin/IO
+passthrough with no security_file_ioctl on the path. There is no shared hel=
+per
+that re-applies the IOCTL_DEV check.
+
+SELinux and Smack hooking uring_cmd while Landlock does not is the coverage
+asymmetry; the Landlock documentation describes IOCTL_DEV as gating ioctl(2=
+) but
+does not mention io_uring.
+
+Reproducer
+----------
+A self-contained PoC is available on request (it needs root only to set up =
+a loop
+block device and open it; Landlock enforcement is uid-independent, so the
+confined child demonstrates the gap regardless of the setup uid). The child
+applies a Landlock ruleset handling READ_FILE|WRITE_FILE|IOCTL_DEV with a r=
+ule
+granting only READ_FILE|WRITE_FILE on the device, then:
+
+  (1) ioctl(fd, BLKDISCARD, range)        -> -EACCES  (Landlock enforces IO=
+CTL_DEV)
+  (2) IORING_OP_URING_CMD,
+      cmd_op =3D BLOCK_URING_CMD_DISCARD     -> reaches the block command h=
+andler
+
+Observed on Linux 7.0.11 (Landlock ABI 8):
+
+  [1] ioctl(BLKDISCARD)   -> ret=3D-1 errno=3D13 (Permission denied)
+  [2] uring_cmd(DISCARD)  -> cqe.res=3D-22 (Invalid argument)
+
+A Landlock denial is always -EACCES; the io_uring path returned -EINVAL, wh=
+ich
+originates in a post-authorization check inside the block command handler
+(blk_validate_byte_range() in blkdev_cmd_discard()), reached only after
+security_uring_cmd() returned 0. So this run demonstrates the authorization
+bypass -- the request traversed the LSM gate into the block device-command
+handler with no IOCTL_DEV check -- and then failed a parameter check, not a=
+n
+authorization check. The destructive completion (an authorized discard with=
+ a
+granularity-aligned range) is the expected behaviour but was not exercised =
+in
+this run.
+
+Impact
+------
+Demonstrated: the LANDLOCK_ACCESS_FS_IOCTL_DEV authorization is bypassed. T=
+he
+device-command request reaches the block command handler with no Landlock c=
+heck;
+the only remaining gate is BLK_OPEN_WRITE (held, since the policy granted w=
+rite).
+Inferred from the code, not exercised here: an authorized DISCARD with a va=
+lid
+range completes (DISCARD/secure-erase semantics, destroying on-device data)=
+, and
+the same missing hook leaves the NVMe char-device uring_cmd surface ungated=
+ --
+nvme_ns_chr_uring_cmd (namespace device /dev/nvmeXnY) -> nvme_ns_uring_cmd =
+for
+NVME_URING_CMD_IO/IO_VEC passthrough, and nvme_dev_uring_cmd (controller de=
+vice
+/dev/nvmeX) for NVME_URING_CMD_ADMIN (format, sanitize, firmware download,
+security send) -- both reach f_op->uring_cmd with no Landlock/IOCTL_DEV gat=
+e.
+
+So the confirmed finding is a missing authorization (the confined task esca=
+pes
+its own IOCTL_DEV restriction); the destructive data effect and the NVMe-ad=
+min
+high-water-mark follow from the code but are not shown in the run above. Th=
+e
+proven authorization bypass alone scores CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C=
+:N/I:H/A:N
+(6.5 Medium) -- S:C because the confined task crosses the Landlock policy
+boundary it was placed under, I:H because the bypassed path reaches a handl=
+er
+whose authorized completion modifies device data. With the device command
+completing destructively the projected ceiling is
+CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:N/I:H/A:H (8.4 High), the A:H component
+reasoned from the source rather than executed. No memory safety is involved=
+.
+
+Suggested direction
+-------------------
+Have Landlock register a uring_cmd hook that maps the device command to the=
+ same
+checks the ioctl path applies (IOCTL_DEV, and truncate where relevant), so =
+a
+single chokepoint covers every f_op->uring_cmd provider (block, NVMe, ublk,=
+ and
+any future one). Mirrors how SELinux/Smack already gate this surface.
+
+I am happy to send a patch for this if you would like.
 
 Best regards,
--- 
-Jens Axboe
 
-
+Bryam Vargas
+Independent security researcher, HEXLAB S.A.S., Cali, Colombia
+hexlabsecurity@proton.me
 
 

@@ -1,265 +1,151 @@
-Return-Path: <io-uring+bounces-13750-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13751-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by mail.lfdr.de with LMTP
-	id PXo5KiRqMWokiwUAu9opvQ
-	(envelope-from <io-uring+bounces-13750-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 16 Jun 2026 17:22:12 +0200
+	id KKUEOVdyMWozjgUAu9opvQ
+	(envelope-from <io-uring+bounces-13751-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 16 Jun 2026 17:57:11 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id F32F4690F7B
-	for <lists+io-uring@lfdr.de>; Tue, 16 Jun 2026 17:22:11 +0200 (CEST)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id 758916918C7
+	for <lists+io-uring@lfdr.de>; Tue, 16 Jun 2026 17:57:11 +0200 (CEST)
 Authentication-Results: mail.lfdr.de;
-	dkim=pass header.d=purestorage.com header.s=google2022 header.b=SKTa1SKu;
-	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13750-lists+io-uring=lfdr.de@vger.kernel.org" designates 172.234.253.10 as permitted sender) smtp.mailfrom="io-uring+bounces-13750-lists+io-uring=lfdr.de@vger.kernel.org";
-	dmarc=pass (policy=quarantine) header.from=purestorage.com;
-	arc=pass ("subspace.kernel.org:s=arc-20240116:i=2")
+	dkim=pass header.d=kernel-dk.20251104.gappssmtp.com header.s=20251104 header.b=kJB7E0dc;
+	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13751-lists+io-uring=lfdr.de@vger.kernel.org" designates 172.232.135.74 as permitted sender) smtp.mailfrom="io-uring+bounces-13751-lists+io-uring=lfdr.de@vger.kernel.org";
+	dmarc=none;
+	arc=pass ("subspace.kernel.org:s=arc-20240116:i=1")
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 3C44731CCC19
-	for <lists+io-uring@lfdr.de>; Tue, 16 Jun 2026 15:15:42 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 32F153043F0D
+	for <lists+io-uring@lfdr.de>; Tue, 16 Jun 2026 15:49:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A8E43C05C;
-	Tue, 16 Jun 2026 15:15:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E612E364024;
+	Tue, 16 Jun 2026 15:49:13 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD75D43DA2C
-	for <io-uring@vger.kernel.org>; Tue, 16 Jun 2026 15:15:39 +0000 (UTC)
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781622941; cv=pass; b=JCrWxKD6bvWflTsYAJyc0paKHKUfQ0wtHihRSGBWFH4fhxsIOMtfxsJKYT3zuwDHNwH4BCT1X2oD+eoVL2f+guVuha7Kjx3WVdJp0FCqzjXastHiMs0igEsIVslpz9Y5fNDMSMkGU1KaRqBOygviQDNVXPLoXPOy9T8LTB9AVaE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781622941; c=relaxed/simple;
-	bh=/ix2D+fsTM+4TwedNe9z9hDyU0TUOVMKrtdEeY/Vybc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oPJEJtmHhz0iARJlYi4rI3BpFmXt4/++Oz2GW9w4k2Ry7vht5ve4hq27NFLqCkFhwpbE1lBmgE+dkeSM4HfTPx7b6Lj0XuEZMosJRJAvSsL+IDPwe2iUQuVRJvW+Lel1zCPpKYGqRBOsqjms/5U2yfJrRMaoMFu8NA5KzdWPpdw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=purestorage.com; spf=pass smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=SKTa1SKu; arc=pass smtp.client-ip=209.85.210.48
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-7e6d7263025so900753a34.0
-        for <io-uring@vger.kernel.org>; Tue, 16 Jun 2026 08:15:39 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1781622938; cv=none;
-        d=google.com; s=arc-20240605;
-        b=JXOWhE4/VI7SlF4CoUg/lRCIo17wi2zVvO22UNfZZ0GyLM8RSBhG1+9r6uLnlU6AFD
-         ILpjvhHD5p5OoTU4PXi8tJLkleIoQls9QKyxQImSMMFNqi1HOpzUZFIgfulOlHLMJmPN
-         pK7rN4FmPmrHbeXXyr4KKvd8kkwNrDCkh32NS0ODz3RiRm3VMgD3jTYe0nbzIw58q9+K
-         Bb0bTcpAcBCvU1eBJ7GYie7MdX0Jz+5vB9lrrqUAJwHj0Ez5Btq4VN0OTgCwPPWlBQ6d
-         tQTOOwi7oS3QxLm5kcHF7uwBcO4wO/Yz15T9VycA2XGdfWt73aMt5chgn2ePh3px/vw4
-         7CiQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=rd66yi9t2yXzKphJAjKWBegQuTAPcHJUaUhA7v+8Lsw=;
-        fh=THtEAWxJDgPQ25tM6yiGCOtDvkVXCTcLQyE4VGd9v7k=;
-        b=EVglXjE26PrePch1i3aMAIfKWPpAN62QqLEC8tBmIRoICjJ0i290H6aTzMlgu1cR/N
-         3v1v9tTENjFC4YfccEgMM1Gp7+9CUHFY7g5CW1yjgtG7d0WumX9bJ/f2JadvRDheCyHp
-         o6co1UASjBb/psNEfDIDZMJBv1uJARQYJm7EpgDNYOiy18N+HBWfQ79RgeId03NMRAEd
-         +3BRJ5iEgaVM+GnbeaEaiv/C+DeT6oOpBmOLMiiafHidclsRVAF0dSkDM0WBamRCV1zq
-         5eanuUPPrMEoA+/GwiPeyk/67rkdR+pAr2DcTqdtB8mO6joprQKqEUb3V/lUa5YhPqIg
-         L7YA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF9244104F
+	for <io-uring@vger.kernel.org>; Tue, 16 Jun 2026 15:49:11 +0000 (UTC)
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781624953; cv=none; b=H6pU0A9C4nhhF+Y1Wl2lQcy1QUIBzVTxLb58mrn2gHccARJD58V2cc4ckj6NOUbnloniloT3TyqQne4UT+27v+ksSdZIAgwgABbfZAS/qdA6uSlrRs17yATVOPxrjjEgxb7tNz9Z1RdTPf5jUKEMLke9OG0/4jNg+8AdLy1rCa8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781624953; c=relaxed/simple;
+	bh=r0AK/4YrcKFxY2xUAkAtfMJTmxeEB48SGQppjaj6/us=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=dSPpn2dS/7+E3qHtJK4AnRmGZmV3my9rzZap385MTTjekMm6tDdbrtk33vDjDM09mnw2/cdcCLsh4VanMqmz6uqEVyBFXyJcuCVuQyjbJjQ8CUBgD9yfDm/XNblXVrJNTbhGamFiDuo7jJduqZrIbqhgDHQVKWEyTTWaNHfVokI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=kJB7E0dc; arc=none smtp.client-ip=209.85.161.51
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-6a0a0b46cd9so659317eaf.1
+        for <io-uring@vger.kernel.org>; Tue, 16 Jun 2026 08:49:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1781622938; x=1782227738; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1781624950; x=1782229750; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rd66yi9t2yXzKphJAjKWBegQuTAPcHJUaUhA7v+8Lsw=;
-        b=SKTa1SKupIkMpY7q3GPmgzjFxr44aDfMXy1N8KLn12lQSsY3/pa8jJPr/a2Ox7F+W7
-         nEsj7Lpf3n+R3n4rVe1VyBZfGATUmpyXGeFLZgl6Xho45UOX8EcVPE7IIswaWBab7akM
-         GkFyOzc06SQDIRkxHnIkuB3TBgasxuhao9lUPq0QPYqjo+0UU6Dha47SdJeVG5XBmC0Q
-         qPTIZfgv0V5IOnpZQ3A8fbAL0odIDqehX02ZOtWML1sw+Nr8bTJiHBwcFxcmqoP0dYmW
-         qAdQOJwBGKL79GS77dcy/fNfml7E2VBjijTeRTlc8JRV8JV/ysu5Umkzwh4ZxZwoWeZq
-         AIOw==
+        bh=70fqFEm947VbkU6gs3LBTyckLcbn4fupq4AOOEXmMRM=;
+        b=kJB7E0dc43ZhOXC3ooDYQd1bS8D1bb6Of/VjD/il2evUK32UpRR/o123gufljiArKN
+         +LP9Z5Nflx1MVbke+wyNHi3WVRErs6+iVDqRBj193wZuioRXdDYZxo47rfDU03flNvQp
+         GDcw1WQtZzzPTR/ndS1pjZnEB4LBWEuPTTyX7tWNBSXuqo2i8VesksyMmJnxBHxRjxkT
+         HArsqRjL9kHz+6AbP229a1/afgWdGDxx2wcFOLItpow/rh7NpBP0eKVCngmaV0VYs+/K
+         E0CKn4CZGpgwlplK4LR7RsSDiAnK8Uz56MaYMvEV1kikmEKYFIXN3Z4nEhNc84y55utv
+         gSBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781622938; x=1782227738;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20251104; t=1781624950; x=1782229750;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=rd66yi9t2yXzKphJAjKWBegQuTAPcHJUaUhA7v+8Lsw=;
-        b=SIFqGcjrpQOO38jWXqc9kIawCtIBbUIN4eVTiA8L+hm8egxQxQGSkAo8JJJ717iwtK
-         lrb0ohrDuEg9MMBgvP6+f4mVN4ymSjvcK+T+c/3RDBrAQTf9FycycsPfkQOaucNlQEKW
-         A06saIT2kC36DiuYakT4XoBw6KVP+xhiPYWyer1efsNFaSgFdhadic728Ft9lmitOhRt
-         6eL6OtxVJr3U99KDm5QBQHP8mkBsf2p5K/1h1xJDjJUX/qSw4OPjUM9TwsagINWAbCu+
-         4VSuxHlaknjRBcF+oM5mzlynbSTAo9HhK3seEJQ1UofoBhONU5LThfSzApS2o8hYkucb
-         kq6Q==
-X-Gm-Message-State: AOJu0Ywz2/7vK86p9zTZGpjiUCNRjTCPjI6rGVZPZqSaC6bP4RZsB/qE
-	LiAFoY4tC11Xy9Kcywvi4vFD/FpW+LuXu4U92tZvxD4xppP1dzyuJBxy1gdm8VP+klBaSw5Mijd
-	lXeNxLF7bnntor/fm829YM2F56L7f8GuHY+lSDyn4GMpOq4uxe+cMs4eOXw==
-X-Gm-Gg: Acq92OECrFKtRKittYxj4zNRJCxwcQoJBlAvWVmY6NihxQXHegaffm1XXupqa2f6MEU
-	1Hdo0VPPrcFqdJkYwFlYwXtIOf4rGGoci6C9Irjh1BtXWl5qXHZNBdzdh9YwkscLAcrgF/TLMWP
-	Sbv5j+bk+pR559Qd/0QFkA1g+zfm7MpluWySesCje7XKH6sGBKzVf6lN9X9nQnVW5jLopcgtmea
-	orEtm2MPxvx/+lUR7G9u4omLHKyDgERFmcJe3G9ZErZKFXr4SfymwRVxpQQ9wxYk3QjA82VVzN0
-	udYS4e8=
-X-Received: by 2002:a05:6830:490c:b0:7db:cf33:844d with SMTP id
- 46e09a7af769-7e90b3aff8dmr45472a34.3.1781622938347; Tue, 16 Jun 2026 08:15:38
- -0700 (PDT)
+        bh=70fqFEm947VbkU6gs3LBTyckLcbn4fupq4AOOEXmMRM=;
+        b=Bfy+YXjmq6vl5SaXtWzCdVOGTyTCCLNE5UnWFtA3pk2A0bqJgX9P/L6PNlpUzwoA5n
+         Acm1ayxuzqJjlruoKoyvNMjosN/pl8UNvkmj3lZGzo53vBMdKU/SM5QALTX/eCsqez13
+         sOk2TqkylMQRfAl0WqKqdUmVP2WLHefnjC/TMxz4i220fuobf113UjxUSHXxl8D09B6L
+         6dOqJ957WR9kV2vGPSPYoIeWE3mBrd9V2uCFRm6FdrOtXQKIIHPBMk67M+ajFMhM1eq+
+         NtnPh7DbzvFAVvsZUHpSFTZ1r5z5UNcUsfX+YjDLD1/Fijo5HjuDHOX9oQOdZiLIj6CE
+         JSlw==
+X-Gm-Message-State: AOJu0YxTRJp2zQq6iiBrLP+st0/1Jqtb7SZOeXVBWjVxOpYX2I3SKldw
+	fZZ0ADVG8r7EQgH0By34Q3nZ3+wI4tlMmTHKMcOgI1YgWWjYhlzpfF9EDjW7jNrDstUH0ao2xZU
+	ogbHFLi0=
+X-Gm-Gg: Acq92OFiXDcTOpQHCJnDWKttUX99l3K3vdZUV7MRPYybnr/g/ZNCCnMfSFSpH4P793z
+	96hCBAxTiWNlqGTEZO8rXynCkJB8FNI58DFlYNbjRemayE2VSFWVhTq+hqyPPeMXBj7YcajNGKw
+	y3+nlESPTp0W06N+F+Hm1Fjn2tyq0OabEfb9p9DUR6r6L/f5mV06RIw9vJX5aVwxMzd4xX4VdzK
+	CyADADeCYK5z4eKIUbLK+8zzE1Vz5/qRNhxQHIwhwDaMQva4Ssox1gj1EFmg5fP8UW8vX9HTx/F
+	/H1+NXZtkDg1ZGystcYlCibuwR0XDhWZa+aiLTzdcmVUlRwvm5ML237+8J/IF+LTeyjHgbrjuOY
+	xMDXrXT18ViDFTlbIde7s0b7rD1iwYwZPjm2/Fg1ERuEkN+/2Q0kO/7x3mzKqpk/5/EDbIqBHrg
+	RTelxB0xkEs7XcgOHx2yVh/9LDHgGHVTBtNd357EjWLZ8kTARo7q4cLDP42i0t+FYBkBYxUlgRD
+	ULqOVTXfnd5z4A=
+X-Received: by 2002:a05:6820:806:b0:69e:89dd:175a with SMTP id 006d021491bc7-69edc622308mr11504270eaf.20.1781624950391;
+        Tue, 16 Jun 2026 08:49:10 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-69f00edacdasm5054586eaf.11.2026.06.16.08.49.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Jun 2026 08:49:09 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Ricardo Robaina <rrobaina@redhat.com>
+Cc: paul@paul-moore.com, sgrubb@redhat.com
+In-Reply-To: <20260616123632.3209545-1-rrobaina@redhat.com>
+References: <20260616123632.3209545-1-rrobaina@redhat.com>
+Subject: Re: [PATCH] io_uring, audit: don't log IORING_OP_RECV_ZC
+Message-Id: <178162494946.2184109.3179193650867699448.b4-ty@b4>
+Date: Tue, 16 Jun 2026 09:49:09 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <0600ea2a-9a60-49e6-aeba-3bbab4b9d3d2@kernel.dk>
-In-Reply-To: <0600ea2a-9a60-49e6-aeba-3bbab4b9d3d2@kernel.dk>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Tue, 16 Jun 2026 08:15:27 -0700
-X-Gm-Features: AVVi8CcFV2IBTK0EtYEw7baZnkmFGicj9YqsJ26rn1QU50SIvKVWScaUO6A1mdI
-Message-ID: <CADUfDZp5N1_LV8ujM9Hp=Bno=tARr4ZRAHqh1aRA2d1TNj5mZA@mail.gmail.com>
-Subject: Re: [PATCH] io_uring: get rid of tw_pending for !DEFER task work
-To: Jens Axboe <axboe@kernel.dk>
-Cc: io-uring <io-uring@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15.2
 X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[purestorage.com,quarantine];
-	R_DKIM_ALLOW(-0.20)[purestorage.com:s=google2022];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+X-Spamd-Result: default: False [-1.16 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
+	R_DKIM_ALLOW(-0.20)[kernel-dk.20251104.gappssmtp.com:s=20251104];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_RECIPIENTS(0.00)[m:axboe@kernel.dk,m:io-uring@vger.kernel.org,s:lists@lfdr.de];
-	TO_DN_ALL(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
+	FORGED_RECIPIENTS(0.00)[m:io-uring@vger.kernel.org,m:linux-kernel@vger.kernel.org,m:rrobaina@redhat.com,m:paul@paul-moore.com,m:sgrubb@redhat.com,s:lists@lfdr.de];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
+	DMARC_NA(0.00)[kernel.dk];
 	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_TWO(0.00)[2];
-	SUBJECT_HAS_EXCLAIM(0.00)[];
-	FORWARDED(0.00)[lists@lfdr.de];
-	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FORGED_SENDER(0.00)[csander@purestorage.com,io-uring@vger.kernel.org];
-	TAGGED_FROM(0.00)[bounces-13750-lists,io-uring=lfdr.de];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FORGED_SENDER(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FORWARDED(0.00)[lists@lfdr.de];
+	TAGGED_FROM(0.00)[bounces-13751-lists,io-uring=lfdr.de];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
 	FORGED_SENDER_FORWARDING(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[csander@purestorage.com,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[purestorage.com:+];
+	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
+	DKIM_TRACE(0.00)[kernel-dk.20251104.gappssmtp.com:+];
 	ALIAS_RESOLVED(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
 	FORGED_RECIPIENTS_FORWARDING(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[vger.kernel.org:from_smtp,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,mail.gmail.com:mid,purestorage.com:dkim,purestorage.com:email,purestorage.com:from_mime]
+	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[vger.kernel.org:from_smtp,sto.lore.kernel.org:rdns,sto.lore.kernel.org:helo,kernel.dk:from_mime]
 X-Rspamd-Server: lfdr
-X-Rspamd-Queue-Id: F32F4690F7B
+X-Rspamd-Queue-Id: 758916918C7
 
-On Tue, Jun 16, 2026 at 5:20=E2=80=AFAM Jens Axboe <axboe@kernel.dk> wrote:
->
-> The normal task_work path used a tw_pending bit to ensure the callback
-> was only added once: the mpscq drains incrementally, so a single
-> tctx_task_work() run can take the queue through empty -> non-empty
-> several times, and each transition would otherwise re-add the already
-> pending callback_head. This corrupts the task_work list, and is what
-> tw_pending protects again.
->
-> This can go away, if we stop running the task_work as soon as the queue
-> empties.
->
-> Suggested-by: Caleb Sander Mateos <csander@purestorage.com>
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-Reviewed-by: Caleb Sander Mateos <csander@purestorage.com>
+On Tue, 16 Jun 2026 09:36:32 -0300, Ricardo Robaina wrote:
+> IORING_OP_RECV_ZC is a read operation. Audit only tracks file/socket
+> creation, not subsequent reads. Set audit_skip to align with
+> audit-userspace uringop_table.h.
 
->
-> ---
->
-> diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_type=
-s.h
-> index 6415a3353ee0..87151a5b62c1 100644
-> --- a/include/linux/io_uring_types.h
-> +++ b/include/linux/io_uring_types.h
-> @@ -149,8 +149,6 @@ struct io_uring_task {
->
->         struct { /* task_work */
->                 struct mpscq            task_list;
-> -               /* BIT(0) guards adding tw only once */
-> -               unsigned long           tw_pending;
->                 struct callback_head    task_work;
->         } ____cacheline_aligned_in_smp;
->  };
-> diff --git a/io_uring/mpscq.h b/io_uring/mpscq.h
-> index c801384c6a0a..f910526766fd 100644
-> --- a/io_uring/mpscq.h
-> +++ b/io_uring/mpscq.h
-> @@ -122,4 +122,13 @@ static inline struct llist_node *mpscq_pop(struct mp=
-scq *q,
->         return NULL;
->  }
->
-> +/*
-> + * Returns true if the most recent mpscq_pop() that returned a node also
-> + * emptied the queue. Consumer must be serialized.
-> + */
-> +static inline bool mpscq_pop_emptied(struct mpscq *q, struct llist_node =
-*head)
-> +{
-> +       return head =3D=3D &q->stub;
-> +}
-> +
->  #endif /* IOU_MPSCQ_H */
-> diff --git a/io_uring/tw.c b/io_uring/tw.c
-> index e74372233f40..f2ce806b01a1 100644
-> --- a/io_uring/tw.c
-> +++ b/io_uring/tw.c
-> @@ -34,10 +34,6 @@ void io_tctx_fallback_work(struct work_struct *work)
->                                                   fallback_work);
->         unsigned int count =3D 0;
->
-> -       /* see tctx_task_work() - a set bit must always have a run coming=
- */
-> -       clear_bit(0, &tctx->tw_pending);
-> -       smp_mb__after_atomic();
-> -
->         /*
->          * Run the entries directly. We're in PF_KTHRED context, hence
->          * io_should_terminate_tw() is true and they will be marked as
-> @@ -101,6 +97,13 @@ void tctx_task_work_run(struct io_uring_task *tctx, u=
-nsigned int max_entries,
->                                 io_poll_task_func, io_req_rw_complete,
->                                 (struct io_tw_req){req}, ts);
->                 (*count)++;
-> +               /*
-> +                * Break if most recent pop emptied the queue. This helps
-> +                * bound task_work run, and also protects the regular
-> +                * task_work addition.
-> +                */
-> +               if (mpscq_pop_emptied(&tctx->task_list, tctx->task_head))
-> +                       break;
->                 if (unlikely(need_resched())) {
->                         ctx_flush_and_put(ctx, ts);
->                         ctx =3D NULL;
-> @@ -127,8 +130,6 @@ void tctx_task_work(struct callback_head *cb)
->         unsigned int count =3D 0;
->
->         tctx =3D container_of(cb, struct io_uring_task, task_work);
-> -       clear_bit(0, &tctx->tw_pending);
-> -       smp_mb__after_atomic();
->         tctx_task_work_run(tctx, UINT_MAX, &count);
->  }
->
-> @@ -206,7 +207,7 @@ void io_req_normal_work_add(struct io_kiocb *req)
->         struct io_uring_task *tctx =3D req->tctx;
->         struct io_ring_ctx *ctx =3D req->ctx;
->
-> -       /* task_work already pending, we're done */
-> +       /* tw run already pending, nothing else to do */
->         if (!mpscq_push(&tctx->task_list, &req->io_task_work.node))
->                 return;
->
-> @@ -223,10 +224,6 @@ void io_req_normal_work_add(struct io_kiocb *req)
->                 return;
->         }
->
-> -       /* task_work must only be added once */
-> -       if (test_and_set_bit(0, &tctx->tw_pending))
-> -               return;
-> -
->         if (likely(!task_work_add(tctx->task, &tctx->task_work, ctx->noti=
-fy_method)))
->                 return;
->
-> --
-> Jens Axboe
->
+Applied, thanks!
+
+[1/1] io_uring, audit: don't log IORING_OP_RECV_ZC
+      commit: bdc2fc388c348ee14b4f984ff75f2ea440cefd44
+
+Best regards,
+-- 
+Jens Axboe
+
+
+
 

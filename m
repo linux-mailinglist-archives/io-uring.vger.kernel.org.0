@@ -1,229 +1,187 @@
-Return-Path: <io-uring+bounces-13793-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13794-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by mail.lfdr.de with LMTP
-	id 9OmWNExMNWo8rwYAu9opvQ
-	(envelope-from <io-uring+bounces-13793-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Fri, 19 Jun 2026 16:03:56 +0200
+	id 4fe3EGZpNWqRvgYAu9opvQ
+	(envelope-from <io-uring+bounces-13794-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Fri, 19 Jun 2026 18:08:06 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1B8B6A63F2
-	for <lists+io-uring@lfdr.de>; Fri, 19 Jun 2026 16:03:55 +0200 (CEST)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id B879C6A6F14
+	for <lists+io-uring@lfdr.de>; Fri, 19 Jun 2026 18:08:05 +0200 (CEST)
 Authentication-Results: mail.lfdr.de;
-	dkim=pass header.d=redhat.com header.s=mimecast20190719 header.b=PjD6qjkf;
-	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13793-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c15:e001:75::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-13793-lists+io-uring=lfdr.de@vger.kernel.org";
-	dmarc=pass (policy=quarantine) header.from=redhat.com;
+	dkim=pass header.d=krisman.be header.s=MBO0001 header.b=iFvfCnfV;
+	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13794-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c09:e001:a7::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-13794-lists+io-uring=lfdr.de@vger.kernel.org";
+	dmarc=pass (policy=none) header.from=krisman.be;
 	arc=pass ("subspace.kernel.org:s=arc-20240116:i=1")
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id 380263015D59
-	for <lists+io-uring@lfdr.de>; Fri, 19 Jun 2026 14:03:26 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 77AFC3026FA7
+	for <lists+io-uring@lfdr.de>; Fri, 19 Jun 2026 16:07:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AAF2361DCB;
-	Fri, 19 Jun 2026 14:03:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D0293B960F;
+	Fri, 19 Jun 2026 16:07:42 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D3428CF6F
-	for <io-uring@vger.kernel.org>; Fri, 19 Jun 2026 14:03:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B403BB682;
+	Fri, 19 Jun 2026 16:07:38 +0000 (UTC)
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781877804; cv=none; b=FsehK84+0C7lm3LRsuTMjFpS7FEfoxnBGpwFAf0BBwnw9HYC94uOk9WFldYTV4g8I9ppPN9/nMaH2UkHBNUaErP6wYm3URD0/g3XfFZKJvaPm5VETkRf41PyC1BdW5k2cQTLVxm0MLTnHlbYJTxJWrvIFIgdV4hE/X7xDKt6PoA=
+	t=1781885262; cv=none; b=RPpZXFEG/sunr1v+mYhx5CjAE7wC39LZDaAjcARLbrqkl5gGG2Wvq8utdekver/ZwfWVftGvDjsiInSXteIGyyRp/XXwu8FELHMuo8Oo9i9J7LCOY63K4VSxySG3WT1oaXEAReF1jfYJkODR4Xowi7nn9TAPMVLupD9RRliZhuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781877804; c=relaxed/simple;
-	bh=hi720SOjNMqZAfbk6PAQ+05T5pKF39tbt9W4zea7Cxw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rc1xELXBlXsoRUU9RtCoNfV0VbbeCq+jJCsACYGdeL5uns+4/yPnSKMG7efoJWp5o20H2gYXAxuYEn4yKV58u0urxsdAMYxw21wUWKVwMZHX8ownIykPZQDluIxjy57UvgJGPdDZv4w+eJ8hU/Edr0CoQwO3dcy8/K/yW3fuhhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PjD6qjkf; arc=none smtp.client-ip=170.10.129.124
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1781877802;
+	s=arc-20240116; t=1781885262; c=relaxed/simple;
+	bh=fE67BqjDyTheSgqd4EZb5JKPlSAJ3XTJgI08s/KrHZQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=c4Z6EFFpnyJJ6J/QDz9coebSmg0duKO5ijkIcP5gfEwgIo+7ZYAq5xF7z+FZLkaLtGC9QWQYzL3B9t7W0qaLvac020kloSK4b7Hmo4iPd1fcBGsGi/4lDb0u25/Pis7HmuLIpEGPt6ewRg4ZzYyQcDWBrmq/pMEIbCuIXOlIaEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=iFvfCnfV; arc=none smtp.client-ip=80.241.56.172
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4ghjD66TF5z9tll;
+	Fri, 19 Jun 2026 18:07:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=MBO0001;
+	t=1781885255;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=gTWlObZIKVVnnVTmmWbmsMewcq7XfNONPw+/ZJWcgRM=;
-	b=PjD6qjkfjFt/BZpN/I7yyaHBga7O8hKNLYEfvEgjPkaoMCvlcHXixwUWPqsEp+z34/Grpy
-	k5ptNd2PTutKW/CzLg4S6ewxYC/y879YN1cm4XC8cpbvaKx37VWG2g2f0hpQmCWn03smkP
-	tA5YacbiZcXrqGpXUaLm1oN9fRfioyo=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-459-YXvW-4zRO52wkKADgvpE3w-1; Fri,
- 19 Jun 2026 10:03:18 -0400
-X-MC-Unique: YXvW-4zRO52wkKADgvpE3w-1
-X-Mimecast-MFC-AGG-ID: YXvW-4zRO52wkKADgvpE3w_1781877797
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 37832195DBAC;
-	Fri, 19 Jun 2026 14:03:17 +0000 (UTC)
-Received: from fedora (unknown [10.44.34.12])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 7799A195608C;
-	Fri, 19 Jun 2026 14:03:14 +0000 (UTC)
-Received: by fedora (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Fri, 19 Jun 2026 16:03:16 +0200 (CEST)
-Date: Fri, 19 Jun 2026 16:03:12 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Andrew Morton <akpm@linux-foundation.org>, Kees Cook <kees@kernel.org>,
-	Christian Brauner <brauner@kernel.org>
-Cc: Kusaram Devineni <kusaram@devineni.in>, Jens Axboe <axboe@kernel.dk>,
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Subject: Re: [PATCH v2] signalfd: don't dequeue the forced fatal signals
-Message-ID: <ajVMIG0imWthpYEU@redhat.com>
-References: <adKJMRkQJXEwHs-j@redhat.com>
- <202604052136.440E9CFA44@keescook>
- <adO3HG8bvwRPcmte@redhat.com>
+	bh=9yD4xHJw2ixlS54/w1wwmeUxIlbpa8OqFoDWj8fXiZY=;
+	b=iFvfCnfVzZyPln9esVpNbq5l7C+0oARS3Lvf8iWOzCduA+XDjoAKv6ubs39TTbv1XNUnJC
+	vHwsFy4eAjJ7eGfDeRKeiO6JaMG4xrOh2G2of6GTUYk8fUJkRlZVQX1Rswgrl4Q/2ykqGy
+	PSZTCPoJoNmjUJ/LNV396/zodn3QLAt1mPm2YKUuFBnDam9UMeQdrGRKC1D6vd8is+VShg
+	YhlSZOeLAR6hoVtWoJlzih55kcGxg5Gbxim6z+gZnvSKesO+vpZ8CyPNSvGgJ11M70ZBTk
+	4SREkuweUa1dE2Rc12DhDsBjwDQCnpsJukUt/BNQZrmQs1hKbppzDXTxpWxQQw==
+From: Gabriel Krisman Bertazi <gabriel@krisman.be>
+To: Cyber_black <Cyberblackk@proton.me>, "io-uring@vger.kernel.org"
+ <io-uring@vger.kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "axboe@kernel.dk" <axboe@kernel.dk>, "stable@vger.kernel.org"
+ <stable@vger.kernel.org>, "gregkh@linuxfoundation.org"
+ <gregkh@linuxfoundation.org>
+Subject: Re: [BUG] io_uring: possible CQE32 overflow flush inconsistency in
+ __io_cqring_overflow_flush()
+In-Reply-To: <6oAi5ghNgkCrElyHzHJrE8l3g7Dg7Uc9PpeZmbGD93Xic5x5MI54B1pehHhjiGrb5VB0icQvFaemtH-Pvb8bJkivv6qxD_NZUEvwyFkk62k=@proton.me>
+References: <6oAi5ghNgkCrElyHzHJrE8l3g7Dg7Uc9PpeZmbGD93Xic5x5MI54B1pehHhjiGrb5VB0icQvFaemtH-Pvb8bJkivv6qxD_NZUEvwyFkk62k=@proton.me>
+Date: Fri, 19 Jun 2026 12:07:30 -0400
+Message-ID: <87ik7eqzst.fsf@mailhost.krisman.be>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <adO3HG8bvwRPcmte@redhat.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Action: no action
 X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[redhat.com,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
-	R_DKIM_ALLOW(-0.20)[redhat.com:s=mimecast20190719];
+	DMARC_POLICY_ALLOW(-0.50)[krisman.be,none];
+	R_DKIM_ALLOW(-0.20)[krisman.be:s=MBO0001];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-13793-lists,io-uring=lfdr.de];
-	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FORGED_RECIPIENTS(0.00)[m:akpm@linux-foundation.org,m:kees@kernel.org,m:brauner@kernel.org,m:kusaram@devineni.in,m:axboe@kernel.dk,m:linux-kernel@vger.kernel.org,m:io-uring@vger.kernel.org,s:lists@lfdr.de];
-	FORGED_SENDER(0.00)[oleg@redhat.com,io-uring@vger.kernel.org];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[redhat.com:+];
-	FORWARDED(0.00)[lists@lfdr.de];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	MISSING_XM_UA(0.00)[];
+	FORGED_RECIPIENTS(0.00)[m:Cyberblackk@proton.me,m:io-uring@vger.kernel.org,m:linux-kernel@vger.kernel.org,m:axboe@kernel.dk,m:stable@vger.kernel.org,m:gregkh@linuxfoundation.org,s:lists@lfdr.de];
 	TO_DN_SOME(0.00)[];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	FORWARDED(0.00)[lists@lfdr.de];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	RCVD_COUNT_THREE(0.00)[4];
+	FORGED_SENDER(0.00)[gabriel@krisman.be,io-uring@vger.kernel.org];
+	TAGGED_FROM(0.00)[bounces-13794-lists,io-uring=lfdr.de];
+	FROM_HAS_DN(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
 	FORGED_SENDER_FORWARDING(0.00)[];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[oleg@redhat.com,io-uring@vger.kernel.org];
-	FORGED_RECIPIENTS_FORWARDING(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[gabriel@krisman.be,io-uring@vger.kernel.org];
+	DKIM_TRACE(0.00)[krisman.be:+];
 	ALIAS_RESOLVED(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
 	TAGGED_RCPT(0.00)[io-uring];
-	RCVD_COUNT_SEVEN(0.00)[7]
+	FORGED_RECIPIENTS_FORWARDING(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sto.lore.kernel.org:rdns,sto.lore.kernel.org:helo,vger.kernel.org:from_smtp,proton.me:email,linuxfoundation.org:email,mailhost.krisman.be:mid]
 X-Rspamd-Server: lfdr
-X-Rspamd-Queue-Id: D1B8B6A63F2
+X-Rspamd-Queue-Id: B879C6A6F14
 
-It seems that this fix is going to be lost ;)
+Cyber_black <Cyberblackk@proton.me> writes:
 
-Can anyone pick it up?
-
-Oleg.
-
-On 04/06, Oleg Nesterov wrote:
+> On Fri, Jun 19, 2026 at 04:49:32AM +0000, Greg KH wrote:> Please turn thi=
+s into a real patch that you have gregkh@linuxfoundation.org to verify it
+>> resolves the issue so you get full credit for the fix.
 >
-> These signals should act like SIGKILL, in that userspace must never dequeue
-> them. But as Kusaram explains, io_uring-driven signalfd_read_iter() called
-> from get_signal() -> task_work_run() paths can do this before get_signal()
-> has a chance to dequeue such a signal and notice SA_IMMUTABLE.
-> 
-> Change signalfd_poll() and signalfd_dequeue() to add pending SA_IMMUTABLE
-> signals to ctx->sigmask.
-> 
-> TODO: we should probably change force_sig_info_to_task(HANDLER_EXIT) to
-> make fatal_signal_pending() true, or add a fatal_or_forced_signal_pending()
-> helper. Then signalfd_dequeue() could just return -EINTR in this case.
-> This also makes sense for get_signal(), which could prioritize a fatal
-> signal sent by (say) force_sig_seccomp(force_coredump => true), just like
-> it already prioritizes SIGKILL.
-> 
-> Cc: stable@kernel.org
-> Reported-by: syzbot+0a4c46806941297fecb9@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=0a4c46806941297fecb9
-> Tested-by: syzbot+0a4c46806941297fecb9@syzkaller.appspotmail.com
-> Link: https://lore.kernel.org/all/69d122fd.050a0220.2dbe29.001c.GAE@google.com/
-> Suggested-by: Kusaram Devineni <kusaram@devineni.in>
-> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
-> Reviewed-by: Kees Cook <kees@kernel.org>
-> ---
->  fs/signalfd.c | 28 ++++++++++++++++++++++------
->  1 file changed, 22 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/signalfd.c b/fs/signalfd.c
-> index dff53745e352..22bc0870a824 100644
-> --- a/fs/signalfd.c
-> +++ b/fs/signalfd.c
-> @@ -48,17 +48,30 @@ static int signalfd_release(struct inode *inode, struct file *file)
->  	return 0;
->  }
->  
-> +static void refine_sigmask(struct signalfd_ctx *ctx, sigset_t *sigmask)
-> +{
-> +	struct k_sigaction *k = current->sighand->action;
-> +	int n;
-> +
-> +	*sigmask = ctx->sigmask;
-> +	for (n = 1; n <= _NSIG; ++n, ++k) {
-> +		if (k->sa.sa_flags & SA_IMMUTABLE)
-> +			sigaddset(sigmask, n);
-> +	}
-> +}
-> +
->  static __poll_t signalfd_poll(struct file *file, poll_table *wait)
->  {
->  	struct signalfd_ctx *ctx = file->private_data;
->  	__poll_t events = 0;
-> +	sigset_t sigmask;
->  
->  	poll_wait(file, &current->sighand->signalfd_wqh, wait);
->  
->  	spin_lock_irq(&current->sighand->siglock);
-> -	if (next_signal(&current->pending, &ctx->sigmask) ||
-> -	    next_signal(&current->signal->shared_pending,
-> -			&ctx->sigmask))
-> +	refine_sigmask(ctx, &sigmask);
-> +	if (next_signal(&current->pending, &sigmask) ||
-> +	    next_signal(&current->signal->shared_pending, &sigmask))
->  		events |= EPOLLIN;
->  	spin_unlock_irq(&current->sighand->siglock);
->  
-> @@ -155,11 +168,13 @@ static ssize_t signalfd_dequeue(struct signalfd_ctx *ctx, kernel_siginfo_t *info
->  				int nonblock)
->  {
->  	enum pid_type type;
-> -	ssize_t ret;
->  	DECLARE_WAITQUEUE(wait, current);
-> +	sigset_t sigmask;
-> +	ssize_t ret;
->  
->  	spin_lock_irq(&current->sighand->siglock);
-> -	ret = dequeue_signal(&ctx->sigmask, info, &type);
-> +	refine_sigmask(ctx, &sigmask);
-> +	ret = dequeue_signal(&sigmask, info, &type);
->  	switch (ret) {
->  	case 0:
->  		if (!nonblock)
-> @@ -174,7 +189,7 @@ static ssize_t signalfd_dequeue(struct signalfd_ctx *ctx, kernel_siginfo_t *info
->  	add_wait_queue(&current->sighand->signalfd_wqh, &wait);
->  	for (;;) {
->  		set_current_state(TASK_INTERRUPTIBLE);
-> -		ret = dequeue_signal(&ctx->sigmask, info, &type);
-> +		ret = dequeue_signal(&sigmask, info, &type);
->  		if (ret != 0)
->  			break;
->  		if (signal_pending(current)) {
-> @@ -184,6 +199,7 @@ static ssize_t signalfd_dequeue(struct signalfd_ctx *ctx, kernel_siginfo_t *info
->  		spin_unlock_irq(&current->sighand->siglock);
->  		schedule();
->  		spin_lock_irq(&current->sighand->siglock);
-> +		refine_sigmask(ctx, &sigmask);
->  	}
->  	spin_unlock_irq(&current->sighand->siglock);
->  
-> -- 
-> 2.52.0
-> 
+> Hi Greg,
+>
+> Apologies for the previous mail's format. The patch compiles cleanly
+> on arm64. My current environment does not support io_uring (ENOSYS)
+> so I was unable to run the liburing suite, but the fix itself is
+> straightforward.
 
+What's the context, was this sent against stable?  The issue exists
+in mainline.
+
+> From 522b70bdd3ac64c64dd21842cb5901e59a1fb058 Mon Sep 17 00:00:00 2001
+> From: Eneshan Erdogan Karaca <cyberblackk@proton.me>
+> Date: Fri, 19 Jun 2026 07:59:58 +0000
+> Subject: [PATCH] io_uring: fix cqe_size/is_cqe32 inconsistency in overflow
+> =C2=A0flush
+
+Ideally, send it as a patch to the list with [PATCH] so it doesn't vanish u=
+nder a [BUG]
+tag.
+>
+> When IORING_SETUP_CQE32 is set, Block A doubles cqe_size to handle
+> 32-byte CQEs. Block B then resets is_cqe32 to false so that
+> io_get_cqe_overflow() uses its own ctx flag check internally, but
+> fails to reset cqe_size. This leaves cqe_size=3D32 while a 16-byte
+> slot is allocated, causing memcpy() to write beyond the allocated
+> CQE slot.
+
+How was this found?  Do you have a syzbot or a trigger?  The fix looks
+good but the patch appears corrupted, with a bunch of NBSP.
+
+>
+> Fix this by also resetting cqe_size when is_cqe32 is cleared.
+>
+> Signed-off-by: Eneshan Erdogan Karaca <cyberblackk@proton.me>
+> ---
+> =C2=A0io_uring/io_uring.c | 4 +++-
+> =C2=A01 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+> index 1ea2fca34a36..f9690291633a 100644
+> --- a/io_uring/io_uring.c
+> +++ b/io_uring/io_uring.c
+> @@ -543,8 +543,10 @@ static void __io_cqring_overflow_flush(struct io_rin=
+g_ctx *ctx, bool dying)
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 is_cqe32 =3D true;
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 cqe_size <<=3D 1;
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 }
+> - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (ctx->flags & IORIN=
+G_SETUP_CQE32)
+> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (ctx->flags & IORIN=
+G_SETUP_CQE32) {
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 is_cqe32 =3D false;
+> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 cqe_size =3D sizeof(struct io_uring_cqe);
+> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 }
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (!dying) {
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 if (!io_get_cqe_overflow(ctx, &cqe, true, is_cqe32))
+> --
+> 2.34.1
+>
+> Thanks,
+> Eneshan Erdogan Karaca
+
+--=20
+Gabriel Krisman Bertazi
 

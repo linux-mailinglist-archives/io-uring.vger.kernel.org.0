@@ -1,229 +1,190 @@
-Return-Path: <io-uring+bounces-13796-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13797-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by mail.lfdr.de with LMTP
-	id jcKEDf2qNWpe2wYAu9opvQ
-	(envelope-from <io-uring+bounces-13796-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Fri, 19 Jun 2026 22:47:57 +0200
+	id lgVrLyAQNmoj7QYAu9opvQ
+	(envelope-from <io-uring+bounces-13797-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Sat, 20 Jun 2026 05:59:28 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 873976A7B3D
-	for <lists+io-uring@lfdr.de>; Fri, 19 Jun 2026 22:47:56 +0200 (CEST)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0560D6A84C8
+	for <lists+io-uring@lfdr.de>; Sat, 20 Jun 2026 05:59:28 +0200 (CEST)
 Authentication-Results: mail.lfdr.de;
-	dkim=pass header.d=kernel.org header.s=k20260515 header.b=kMk3cXHu;
-	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13796-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c0a:e001:db::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-13796-lists+io-uring=lfdr.de@vger.kernel.org";
-	dmarc=pass (policy=quarantine) header.from=kernel.org;
+	dkim=none;
+	dmarc=fail reason="SPF not aligned (relaxed), No valid DKIM" header.from=appspotmail.com (policy=none);
+	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13797-lists+io-uring=lfdr.de@vger.kernel.org" designates 172.234.253.10 as permitted sender) smtp.mailfrom="io-uring+bounces-13797-lists+io-uring=lfdr.de@vger.kernel.org";
 	arc=pass ("subspace.kernel.org:s=arc-20240116:i=1")
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 3C41F303FFBE
-	for <lists+io-uring@lfdr.de>; Fri, 19 Jun 2026 20:47:55 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 2A4C43033D06
+	for <lists+io-uring@lfdr.de>; Sat, 20 Jun 2026 03:59:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 660DB35AC13;
-	Fri, 19 Jun 2026 20:47:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A61B9218E91;
+	Sat, 20 Jun 2026 03:59:25 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f205.google.com (mail-oi1-f205.google.com [209.85.167.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A98305679;
-	Fri, 19 Jun 2026 20:47:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F1C231842
+	for <io-uring@vger.kernel.org>; Sat, 20 Jun 2026 03:59:24 +0000 (UTC)
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781902074; cv=none; b=Gf/fAh+aLbIIaFXb7xhytRsWhaB/Vo3gU+wlFu/473IwRoJeyPAdkQIoW3bGpsIbu3sLFJoDXdovl39v6KsEvlCwZXozwHah+B3Ca1Zqz5fKrj5DvcO8qFHjOBeHqpdYcP2+ru+i43EV7UeCtuZv27nimwOdE9tFgu5oWNtymEc=
+	t=1781927965; cv=none; b=PRAxw3T/HoVDw4evmBlU0te2ejWd7C7PvLA5F2cT8S8NejOdfA2TWX1c1Hb9u2sc92YUgoKoxT4Ujt0cF/Ig1aFhcBzbKeyqN/3QbYrm3p44gvCJ9wHMV5Ijwmd89Kkz1xrrHEo6fsr7ymaxAZJYjXMn9n/7/z1nOr22qK08dlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781902074; c=relaxed/simple;
-	bh=ShzyKQcD/fORAt0e4n4OEY7UfiOZFwsOuiKAmPm5DdU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HIDqMU3whIWtSOucxQPysJn5sKOOZQchtBLVjS7/9Mjhvjs/mSuYhLpgz5eNJfQj7XK5rlN7BwBLOV6FHTc8/uFAFXHLXVE5Ii0fV4rDcY0FGM9fs7LCpROEs30KXlM8K0TaoXzsjIPPIIk7p98ciZyYLJ/hvlL98ZlRxRWf/QU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kMk3cXHu; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E0EC1F000E9;
-	Fri, 19 Jun 2026 20:47:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781902073;
-	bh=oMepAgFoiMAcYRoSAIlQ6epWJLgq46cFe3AvDVMIw4U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=kMk3cXHuC2lghPQeYaKjrO+oNMGuOOMBJQX+4oeTxGkw377PY59NPaA23oqbfGuMT
-	 s8VjPFh1iJVUgu0cptTommezQ5bAED7q3S5JzZVv8dezEdIKFpp//eJdwkAU55dCuR
-	 4AF2BD5hWQhS1CThPPaCEFFO52iHTiPR84/R4YKmeWCKFVDdZzFTJnuu800VM6CUmg
-	 3sWWyXkX94ExQ0d5XFQ/s1h+rCrBhbfJPd62CAci/NErzS1cPDsEZ5mm57jrvlCNP7
-	 MLLiUD2zR4ZZOCpYjLpICPtQHYvVUxktXPQ476+NgD1N/7n7lfweaYtOXqpWH6j2ME
-	 FmjOIvYjqbiYw==
-Date: Fri, 19 Jun 2026 13:47:52 -0700
-From: Kees Cook <kees@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Kusaram Devineni <kusaram@devineni.in>,
-	Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
-	io-uring@vger.kernel.org
-Subject: Re: [PATCH v2] signalfd: don't dequeue the forced fatal signals
-Message-ID: <202606191347.85254DD62@keescook>
-References: <adKJMRkQJXEwHs-j@redhat.com>
- <202604052136.440E9CFA44@keescook>
- <adO3HG8bvwRPcmte@redhat.com>
- <ajVMIG0imWthpYEU@redhat.com>
+	s=arc-20240116; t=1781927965; c=relaxed/simple;
+	bh=zjbTYABBQCq4MV195LvlToSF2Y8xv4Wp7WS3HzDItJE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=mXbso/KaNEkQak+azlDTUHaqQV1/iR574olcu5rinOc4pKtzkjuAFGi+a+qXV7E3gehp32bt0gAACg3Rm+Lt0VG1m4spjeSvreYLNRwao0ZGYYjpQpO54JqlhrhTkX4g09qBhi3uIiqdm8I8z3iVw/9N6nJzuVtN401esvjDVD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.167.205
+Received: by mail-oi1-f205.google.com with SMTP id 5614622812f47-48976713b46so1967447b6e.0
+        for <io-uring@vger.kernel.org>; Fri, 19 Jun 2026 20:59:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781927963; x=1782532763;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hBIEmhr57CNARluLSmTu1YJVZdcg6Ib83HB4fCchvfY=;
+        b=iA70pklj2cpKHIUHoxwUm81KWZ8WUz5ze4LOSQVXDbBuBS0sAEFgm/bJZXDgKrSs4S
+         BI/IU9gIhalc6MTOnDTMBuL1ZY03MGYvpzscsa/VQDkZ6B3q7O4cbA+yUyC8E7skc329
+         ORWtFqxJezRTHR+6eYn5gFkwXfSfusqaVPrao2a6MDqMw/iVIWXSeVT0G4qtRqN4W8Am
+         INVFkqm7O8pl2rjtE1tmdXFdw9NVTLOU96D+jsNNLJZvRDxpy/esdfktErxNkBmfDuEX
+         +OVj5kfeMCRL4pyWSXvtHSh3pfLd5jSm3nSm/r8ZkXnpjbH6IKT7FA0Wp5CVP5SNoDXp
+         vFUA==
+X-Forwarded-Encrypted: i=1; AFNElJ+yEUW7PLrSTtR5Yf1AgaiM/R4NlxNMP1XoAdiLEjB82YEP2fHTaQGkCsQxSNxOghXsufsCchua8w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQS6aJvmNWj9yBuqWUv+RT/RcXxn/Uh43oWHalcWKSGO15qhLy
+	FXRALdquGNKhupl32jCLM30VkHKsomnVMhq9TpwaQAUypdmUxukylASAOPVBUpq+IH+fJxTIN76
+	KZZwkpakD4RQaAf9RIaS1tQ1Woy8rxYznRkpnzDSfKeSThV6LTEmdJ3mdAeA=
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ajVMIG0imWthpYEU@redhat.com>
+X-Received: by 2002:a05:6808:1491:b0:479:ac7d:6d8a with SMTP id
+ 5614622812f47-4896ac02527mr5769421b6e.24.1781927963296; Fri, 19 Jun 2026
+ 20:59:23 -0700 (PDT)
+Date: Fri, 19 Jun 2026 20:59:23 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6a36101b.be22b350.2a3e9.0001.GAE@google.com>
+Subject: [syzbot] [io-uring?] WARNING in io_pin_pages (2)
+From: syzbot <syzbot+f99b00a963915b6b52c6@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.66 / 15.00];
-	WHITELIST_SPF_DKIM(-3.00)[kernel.org:d:+,kernel.org:s:+];
+X-Spamd-Result: default: False [-0.36 / 15.00];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=f1fef3a5f0899512];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20260515];
+	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
+	DMARC_POLICY_SOFTFAIL(0.10)[appspotmail.com : SPF not aligned (relaxed), No valid DKIM,none];
 	HAS_LIST_UNSUB(-0.01)[];
+	TAGGED_FROM(0.00)[bounces-13797-lists,io-uring=lfdr.de,f99b00a963915b6b52c6];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[goo.gl:url,syzkaller.appspotmail.com:from_mime,storage.googleapis.com:url,vger.kernel.org:from_smtp,appspotmail.com:email,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,syzkaller.appspot.com:url,googlegroups.com:email];
+	FORGED_RECIPIENTS(0.00)[m:axboe@kernel.dk,m:io-uring@vger.kernel.org,m:linux-kernel@vger.kernel.org,m:syzkaller-bugs@googlegroups.com,s:lists@lfdr.de];
 	FORWARDED(0.00)[lists@lfdr.de];
-	FORGED_RECIPIENTS(0.00)[m:oleg@redhat.com,m:akpm@linux-foundation.org,m:brauner@kernel.org,m:kusaram@devineni.in,m:axboe@kernel.dk,m:linux-kernel@vger.kernel.org,m:io-uring@vger.kernel.org,s:lists@lfdr.de];
-	RCVD_COUNT_THREE(0.00)[4];
+	RCPT_COUNT_THREE(0.00)[4];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	FORGED_SENDER(0.00)[kees@kernel.org,io-uring@vger.kernel.org];
-	TAGGED_FROM(0.00)[bounces-13796-lists,io-uring=lfdr.de];
+	RCVD_COUNT_THREE(0.00)[4];
+	FORGED_SENDER(0.00)[syzbot@syzkaller.appspotmail.com,io-uring@vger.kernel.org];
+	FORGED_RECIPIENTS_FORWARDING(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	MIME_TRACE(0.00)[0:+];
+	PRECEDENCE_BULK(0.00)[];
+	FORGED_SENDER_FORWARDING(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[syzbot@syzkaller.appspotmail.com,io-uring@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
 	MISSING_XM_UA(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FORGED_SENDER_FORWARDING(0.00)[];
+	TO_DN_NONE(0.00)[];
+	R_DKIM_NA(0.00)[];
 	ALIAS_RESOLVED(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[kees@kernel.org,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	RCPT_COUNT_SEVEN(0.00)[7];
+	REDIRECTOR_URL(0.00)[goo.gl];
 	TAGGED_RCPT(0.00)[io-uring];
-	TO_DN_SOME(0.00)[];
-	FORGED_RECIPIENTS_FORWARDING(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[vger.kernel.org:from_smtp,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,keescook:mid]
+	SUBJECT_HAS_QUESTION(0.00)[]
 X-Rspamd-Server: lfdr
-X-Rspamd-Queue-Id: 873976A7B3D
+X-Rspamd-Queue-Id: 0560D6A84C8
 
-On Fri, Jun 19, 2026 at 04:03:12PM +0200, Oleg Nesterov wrote:
-> It seems that this fix is going to be lost ;)
+Hello,
 
-Eek; thanks for the reminder. If Christian doesn't beat me to it, I'll
-grab this for -next after -rc2 so we can get some soak time.
+syzbot found the following issue on:
 
--Kees
+HEAD commit:    83f1454877cc Merge tag 'ext4_for_linus-7.2-rc1' of git://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1211daae580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f1fef3a5f0899512
+dashboard link: https://syzkaller.appspot.com/bug?extid=f99b00a963915b6b52c6
+compiler:       gcc (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for Debian) 2.44
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=164b12ae580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=165bb986580000
 
-> 
-> Can anyone pick it up?
-> 
-> Oleg.
-> 
-> On 04/06, Oleg Nesterov wrote:
-> >
-> > These signals should act like SIGKILL, in that userspace must never dequeue
-> > them. But as Kusaram explains, io_uring-driven signalfd_read_iter() called
-> > from get_signal() -> task_work_run() paths can do this before get_signal()
-> > has a chance to dequeue such a signal and notice SA_IMMUTABLE.
-> > 
-> > Change signalfd_poll() and signalfd_dequeue() to add pending SA_IMMUTABLE
-> > signals to ctx->sigmask.
-> > 
-> > TODO: we should probably change force_sig_info_to_task(HANDLER_EXIT) to
-> > make fatal_signal_pending() true, or add a fatal_or_forced_signal_pending()
-> > helper. Then signalfd_dequeue() could just return -EINTR in this case.
-> > This also makes sense for get_signal(), which could prioritize a fatal
-> > signal sent by (say) force_sig_seccomp(force_coredump => true), just like
-> > it already prioritizes SIGKILL.
-> > 
-> > Cc: stable@kernel.org
-> > Reported-by: syzbot+0a4c46806941297fecb9@syzkaller.appspotmail.com
-> > Closes: https://syzkaller.appspot.com/bug?extid=0a4c46806941297fecb9
-> > Tested-by: syzbot+0a4c46806941297fecb9@syzkaller.appspotmail.com
-> > Link: https://lore.kernel.org/all/69d122fd.050a0220.2dbe29.001c.GAE@google.com/
-> > Suggested-by: Kusaram Devineni <kusaram@devineni.in>
-> > Signed-off-by: Oleg Nesterov <oleg@redhat.com>
-> > Reviewed-by: Kees Cook <kees@kernel.org>
-> > ---
-> >  fs/signalfd.c | 28 ++++++++++++++++++++++------
-> >  1 file changed, 22 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/fs/signalfd.c b/fs/signalfd.c
-> > index dff53745e352..22bc0870a824 100644
-> > --- a/fs/signalfd.c
-> > +++ b/fs/signalfd.c
-> > @@ -48,17 +48,30 @@ static int signalfd_release(struct inode *inode, struct file *file)
-> >  	return 0;
-> >  }
-> >  
-> > +static void refine_sigmask(struct signalfd_ctx *ctx, sigset_t *sigmask)
-> > +{
-> > +	struct k_sigaction *k = current->sighand->action;
-> > +	int n;
-> > +
-> > +	*sigmask = ctx->sigmask;
-> > +	for (n = 1; n <= _NSIG; ++n, ++k) {
-> > +		if (k->sa.sa_flags & SA_IMMUTABLE)
-> > +			sigaddset(sigmask, n);
-> > +	}
-> > +}
-> > +
-> >  static __poll_t signalfd_poll(struct file *file, poll_table *wait)
-> >  {
-> >  	struct signalfd_ctx *ctx = file->private_data;
-> >  	__poll_t events = 0;
-> > +	sigset_t sigmask;
-> >  
-> >  	poll_wait(file, &current->sighand->signalfd_wqh, wait);
-> >  
-> >  	spin_lock_irq(&current->sighand->siglock);
-> > -	if (next_signal(&current->pending, &ctx->sigmask) ||
-> > -	    next_signal(&current->signal->shared_pending,
-> > -			&ctx->sigmask))
-> > +	refine_sigmask(ctx, &sigmask);
-> > +	if (next_signal(&current->pending, &sigmask) ||
-> > +	    next_signal(&current->signal->shared_pending, &sigmask))
-> >  		events |= EPOLLIN;
-> >  	spin_unlock_irq(&current->sighand->siglock);
-> >  
-> > @@ -155,11 +168,13 @@ static ssize_t signalfd_dequeue(struct signalfd_ctx *ctx, kernel_siginfo_t *info
-> >  				int nonblock)
-> >  {
-> >  	enum pid_type type;
-> > -	ssize_t ret;
-> >  	DECLARE_WAITQUEUE(wait, current);
-> > +	sigset_t sigmask;
-> > +	ssize_t ret;
-> >  
-> >  	spin_lock_irq(&current->sighand->siglock);
-> > -	ret = dequeue_signal(&ctx->sigmask, info, &type);
-> > +	refine_sigmask(ctx, &sigmask);
-> > +	ret = dequeue_signal(&sigmask, info, &type);
-> >  	switch (ret) {
-> >  	case 0:
-> >  		if (!nonblock)
-> > @@ -174,7 +189,7 @@ static ssize_t signalfd_dequeue(struct signalfd_ctx *ctx, kernel_siginfo_t *info
-> >  	add_wait_queue(&current->sighand->signalfd_wqh, &wait);
-> >  	for (;;) {
-> >  		set_current_state(TASK_INTERRUPTIBLE);
-> > -		ret = dequeue_signal(&ctx->sigmask, info, &type);
-> > +		ret = dequeue_signal(&sigmask, info, &type);
-> >  		if (ret != 0)
-> >  			break;
-> >  		if (signal_pending(current)) {
-> > @@ -184,6 +199,7 @@ static ssize_t signalfd_dequeue(struct signalfd_ctx *ctx, kernel_siginfo_t *info
-> >  		spin_unlock_irq(&current->sighand->siglock);
-> >  		schedule();
-> >  		spin_lock_irq(&current->sighand->siglock);
-> > +		refine_sigmask(ctx, &sigmask);
-> >  	}
-> >  	spin_unlock_irq(&current->sighand->siglock);
-> >  
-> > -- 
-> > 2.52.0
-> > 
-> 
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/87171ffb708f/disk-83f14548.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/cf1d27787991/vmlinux-83f14548.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/6e9a56090e11/bzImage-83f14548.xz
 
--- 
-Kees Cook
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f99b00a963915b6b52c6@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+!(flags & __GFP_NOWARN)
+WARNING: mm/slub.c:6841 at __kvmalloc_node_noprof+0x6f7/0xa60 mm/slub.c:6841, CPU#1: syz.0.17/5823
+Modules linked in:
+CPU: 1 UID: 0 PID: 5823 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/09/2026
+RIP: 0010:__kvmalloc_node_noprof+0x6f7/0xa60 mm/slub.c:6841
+Code: c1 e8 5d 0f ff ff 4d 85 f6 0f 85 21 fd ff ff 48 81 fb ff ff ff 7f 0f 86 b8 fc ff ff 41 81 e4 00 20 00 00 0f 85 07 fd ff ff 90 <0f> 0b 90 e9 fe fc ff ff be 43 01 00 00 48 c7 c7 22 f2 f1 8d e8 a0
+RSP: 0018:ffffc9000249fa88 EFLAGS: 00010246
+RAX: 0000000000000001 RBX: 0000000080000008 RCX: 0000000100000000
+RDX: 0000000000000000 RSI: ffffffff8c1d1100 RDI: ffffffff8e1e6928
+RBP: 000000d6000000ca R08: 00000000004028c0 R09: 00000000ffffffff
+R10: 0000000000000001 R11: 0000000000000001 R12: 0000000000000000
+R13: 00000000ffffffff R14: 0000000000000000 R15: 00000000004028c0
+FS:  000055556bd29500(0000) GS:ffff88812442d000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffd3d173e44 CR3: 0000000076c8e000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ io_pin_pages+0xc3/0x1e0 io_uring/memmap.c:59
+ io_sqe_buffer_register+0x1d9/0x1500 io_uring/rsrc.c:884
+ io_sqe_buffers_register.cold+0x346/0x4c3 io_uring/rsrc.c:995
+ __io_uring_register io_uring/register.c:767 [inline]
+ __do_sys_io_uring_register+0x13ce/0x1bc0 io_uring/register.c:1029
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0x115/0x840 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fcd6539ce59
+Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 e8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc5b4af188 EFLAGS: 00000246 ORIG_RAX: 00000000000001ab
+RAX: ffffffffffffffda RBX: 00007fcd65615fa0 RCX: 00007fcd6539ce59
+RDX: 0000200000000000 RSI: 0000000000000000 RDI: 0000000000000002
+RBP: 00007fcd65432e6f R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000001000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fcd65615fac R14: 00007fcd65615fa0 R15: 00007fcd65615fa0
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 

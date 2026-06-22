@@ -1,48 +1,50 @@
-Return-Path: <io-uring+bounces-13802-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13803-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by mail.lfdr.de with LMTP
-	id evZJAVq1OGoSggcAu9opvQ
-	(envelope-from <io-uring+bounces-13802-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Mon, 22 Jun 2026 06:08:58 +0200
+	id 0hEmFv60OGrzgQcAu9opvQ
+	(envelope-from <io-uring+bounces-13803-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Mon, 22 Jun 2026 06:07:26 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id 784B56AC72A
-	for <lists+io-uring@lfdr.de>; Mon, 22 Jun 2026 06:08:57 +0200 (CEST)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [IPv6:2600:3c09:e001:a7::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDEA76AC6E3
+	for <lists+io-uring@lfdr.de>; Mon, 22 Jun 2026 06:07:25 +0200 (CEST)
 Authentication-Results: mail.lfdr.de;
-	dkim=pass header.d=linux.dev header.s=key1 header.b=oHrwj+Sj;
-	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13802-lists+io-uring=lfdr.de@vger.kernel.org" designates 172.105.105.114 as permitted sender) smtp.mailfrom="io-uring+bounces-13802-lists+io-uring=lfdr.de@vger.kernel.org";
+	dkim=pass header.d=linux.dev header.s=key1 header.b=U+k2BeK5;
+	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13803-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c09:e001:a7::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-13803-lists+io-uring=lfdr.de@vger.kernel.org";
 	dmarc=pass (policy=none) header.from=linux.dev;
 	arc=pass ("subspace.kernel.org:s=arc-20240116:i=1")
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id E772230027B9
-	for <lists+io-uring@lfdr.de>; Mon, 22 Jun 2026 04:06:46 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id 203813008C23
+	for <lists+io-uring@lfdr.de>; Mon, 22 Jun 2026 04:07:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD961352003;
-	Mon, 22 Jun 2026 04:06:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1A23546DE;
+	Mon, 22 Jun 2026 04:06:59 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D9B350A05
-	for <io-uring@vger.kernel.org>; Mon, 22 Jun 2026 04:06:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B493546F0
+	for <io-uring@vger.kernel.org>; Mon, 22 Jun 2026 04:06:53 +0000 (UTC)
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782101203; cv=none; b=HskPWkPEaX5kOYLVAYKNPNrhg8q3LqTjo0wxLxZ0I6fhoBCy86+ZmmhnxuHIKbmtxN3Xg7b5U38XEALvOgt6KB6fAsqtrCr9B0up3biP5MJWMVL04LaIXggvmignM//h1RyS2FrGzfuz+5r6tosd5vfONal0QIHQu++p0twmVjQ=
+	t=1782101219; cv=none; b=nbxnIyYbwOhu5i+TaJQiLN15JC6rW/DLXtzsIOCNJRpzmfou5ybq2bvZQelskSCzzj48rUcNji20B6Z0jkT7KL3hYRGf1MBfkVSUEdUZXT76D9dG3YYWQDEH2rLKkr5I/gZH5lJpJeudeqZw4DX63Rt4LZjKqz7GxbFWB8vljBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782101203; c=relaxed/simple;
-	bh=sI2dRrm2rYzC5hsq52tWdXiGHIDaT9AxOFi7X+Rlza0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=s5J/xG2NdHLqFqRUSmLqIU/zS2UL5GJcu40GHEAKX9nia5nzVM/G44CpX1tgX1/SibT6nS7kFY6Ib8YWraHtF1ClcWZ3SouJkq8aY/nsVGvHV336p5gcoTEvibqomYq+6xSEOHQrChK9MzFN4c+Kf+fYkGdig0trHc3y9PRfKeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=oHrwj+Sj; arc=none smtp.client-ip=91.218.175.173
+	s=arc-20240116; t=1782101219; c=relaxed/simple;
+	bh=3hj4vsPUJDxfEYfiZALpitLc4rdoWBuYdp2GxysY30s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=DOzj86VGr9O/o10Iee8adpEuAE4qL0u5csvJWplarzCwNVWDxcPx4ZJfbIAgzNR7Mscr2kdRycjfLyINYWNw1ppFwZe0ovCoOZ/tsQ6m5ExQIHUJsveLT8Xdcjg8jwIw4IJJ06KRi3AAC5kJMdaVnODgneY0JMxE0ZGzij6GyMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=U+k2BeK5; arc=none smtp.client-ip=91.218.175.171
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1782101196;
+	t=1782101210;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ZUWyFEvXeVLfLgRyqSt5dzUpDWIXdvcmv/YrGiPhDm0=;
-	b=oHrwj+SjzLCSYGSoHMsBlTyi/BPO1LYEAowZCiJy/BgfowxK1Nhv4wBnxGATzNJAQy2Usu
-	3Aui+a8Xl2VwYnUg4vaKt1jLEunHuuM12PdPzSO2e5i/XDE+X1RLFq1HeiZLctcF2EtPOU
-	pEKF/++lDxrY0G4TuBJvKoXJ/NqYwTU=
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ifihl8QoiBoywP+aXJrYFC3QhTRNuzfTpuEgOqKFH8M=;
+	b=U+k2BeK53z2j05swHRT0lacq0ZTVsZXyAyHCLZNDF76tNliwPGXmpiDoHZSwTAZAVNO1bW
+	D0heyFxlfRNySZ2eTObHrN21BX8AQCwBl+WBAUkcc4UCehXoqyuJU7Kdwf8tJzpvbifLz7
+	HteD2STjYo7LJnqoMTdXNA1BRgkU+dM=
 From: Kaitao Cheng <kaitao.cheng@linux.dev>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	David Hildenbrand <david@kernel.org>,
@@ -94,243 +96,442 @@ Cc: David Howells <dhowells@redhat.com>,
 	virtualization@lists.linux.dev,
 	damon@lists.linux.dev,
 	llvm@lists.linux.dev,
-	chengkaitao <chengkaitao@kylinos.cn>
-Subject: [PATCH v3 0/7] Prepare mutable list iterators to cache cursor state
-Date: Mon, 22 Jun 2026 12:05:30 +0800
-Message-ID: <20260622040533.29824-1-kaitao.cheng@linux.dev>
+	Kaitao Cheng <chengkaitao@kylinos.cn>
+Subject: [PATCH v3 1/7] list: Add mutable iterator variants
+Date: Mon, 22 Jun 2026 12:05:31 +0800
+Message-ID: <20260622040533.29824-2-kaitao.cheng@linux.dev>
+In-Reply-To: <20260622040533.29824-1-kaitao.cheng@linux.dev>
+References: <20260622040533.29824-1-kaitao.cheng@linux.dev>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-1.16 / 15.00];
-	MID_CONTAINS_FROM(1.00)[];
+X-Spamd-Result: default: False [-0.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[linux.dev,none];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c09:e001:a7::/64:c];
 	R_DKIM_ALLOW(-0.20)[linux.dev:s=key1];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-13802-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-13803-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	FORGED_SENDER(0.00)[kaitao.cheng@linux.dev,io-uring@vger.kernel.org];
-	FORWARDED(0.00)[lists@lfdr.de];
 	FORGED_RECIPIENTS(0.00)[m:akpm@linux-foundation.org,m:david@kernel.org,m:axboe@kernel.dk,m:tj@kernel.org,m:viro@zeniv.linux.org.uk,m:brauner@kernel.org,m:ast@kernel.org,m:daniel@iogearbox.net,m:andrii@kernel.org,m:hannes@cmpxchg.org,m:peterz@infradead.org,m:mingo@redhat.com,m:acme@kernel.org,m:namhyung@kernel.org,m:tglx@kernel.org,m:juri.lelli@redhat.com,m:vincent.guittot@linaro.org,m:paul@paul-moore.com,m:andriy.shevchenko@linux.intel.com,m:paulmck@kernel.org,m:shakeel.butt@linux.dev,m:christian.koenig@amd.com,m:dhowells@redhat.com,m:simona.vetter@ffwll.ch,m:rdunlap@infradead.org,m:luca.ceresoli@bootlin.com,m:phasta@kernel.org,m:linux-block@vger.kernel.org,m:linux-kernel@vger.kernel.org,m:cgroups@vger.kernel.org,m:linux-ntfs-dev@lists.sourceforge.net,m:linux-fsdevel@vger.kernel.org,m:io-uring@vger.kernel.org,m:audit@vger.kernel.org,m:bpf@vger.kernel.org,m:netdev@vger.kernel.org,m:dri-devel@lists.freedesktop.org,m:linux-perf-users@vger.kernel.org,m:linux-trace-kernel@vger.kernel.org
  ,m:kexec@lists.infradead.org,m:live-patching@vger.kernel.org,m:linux-modules@vger.kernel.org,m:linux-crypto@vger.kernel.org,m:linux-pm@vger.kernel.org,m:rcu@vger.kernel.org,m:sched-ext@lists.linux.dev,m:linux-mm@kvack.org,m:virtualization@lists.linux.dev,m:damon@lists.linux.dev,m:llvm@lists.linux.dev,m:chengkaitao@kylinos.cn,s:lists@lfdr.de];
-	FORGED_SENDER_MAILLIST(0.00)[];
+	FORGED_SENDER(0.00)[kaitao.cheng@linux.dev,io-uring@vger.kernel.org];
+	MIME_TRACE(0.00)[0:+];
 	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FORGED_SENDER_FORWARDING(0.00)[];
-	RCPT_COUNT_GT_50(0.00)[51];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[kaitao.cheng@linux.dev,io-uring@vger.kernel.org];
+	FORWARDED(0.00)[lists@lfdr.de];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	DKIM_TRACE(0.00)[linux.dev:+];
-	ALIAS_RESOLVED(0.00)[];
-	TAGGED_RCPT(0.00)[io-uring];
-	FORGED_RECIPIENTS_FORWARDING(0.00)[];
+	MISSING_XM_UA(0.00)[];
 	TO_DN_SOME(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[kylinos.cn:email,vger.kernel.org:from_smtp,tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo,linux.dev:dkim,linux.dev:mid,linux.dev:from_mime]
+	PRECEDENCE_BULK(0.00)[];
+	FORGED_SENDER_FORWARDING(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[kaitao.cheng@linux.dev,io-uring@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_GT_50(0.00)[51];
+	FORGED_RECIPIENTS_FORWARDING(0.00)[];
+	ALIAS_RESOLVED(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c09::/32, country:SG];
+	TAGGED_RCPT(0.00)[io-uring];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[kylinos.cn:email,sto.lore.kernel.org:rdns,sto.lore.kernel.org:helo,vger.kernel.org:from_smtp,linux.dev:dkim,linux.dev:mid,linux.dev:from_mime]
 X-Rspamd-Server: lfdr
-X-Rspamd-Queue-Id: 784B56AC72A
+X-Rspamd-Queue-Id: DDEA76AC6E3
 
-From: chengkaitao <chengkaitao@kylinos.cn>
+From: Kaitao Cheng <chengkaitao@kylinos.cn>
 
-The list_for_each*_safe() helpers are used when the loop body may remove
-the current entry.  Their current interface, however, forces every caller
-to define a temporary cursor outside the macro and pass it in, even when
-the caller never uses that cursor directly.  For most call sites this
-extra cursor is just boilerplate required by the macro implementation.
+The list_for_each*_safe() helpers are used when the loop body may
+remove the current entry.  Their API exposes the temporary cursor at
+every call site, even though most users only need it for the iterator
+implementation and never reference it in the loop body.
 
-This is awkward because the saved next pointer is an internal detail of
-the iteration.  Callers that only remove or move the current entry do not
-need to spell it out.
+Add *_mutable() variants for list and hlist iteration.  The new helpers
+support both forms: callers may keep passing an explicit temporary cursor
+when they need to inspect or reset it, or omit it and let the helper use
+a unique internal cursor.
 
-The _safe() suffix has also caused confusion.  Christian Koenig pointed
-out that the name is easy to read as a thread-safe variant, especially
-for beginners, even though it only means that the iterator keeps enough
-state to tolerate removal of the current entry.  He suggested _mutable()
-as a clearer description of what the loop permits.
+This makes call sites that only mutate the list through the current entry
+less noisy, while keeping the existing *_safe() helpers available for
+compatibility.
 
-Add *_mutable() iterator variants for list, hlist and llist.  The new
-helpers are variadic and support both forms.  In the common case, the
-caller omits the temporary cursor and the macro creates a unique internal
-cursor with typeof(pos) and __UNIQUE_ID().  If a loop really needs an
-explicit temporary cursor, the caller can still pass it and the helper
-keeps the existing *_safe() behaviour.
+Signed-off-by: Kaitao Cheng <chengkaitao@kylinos.cn>
+---
+ include/linux/list.h | 269 +++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 231 insertions(+), 38 deletions(-)
 
-For example, a call site may use the shorter form:
-
-  list_for_each_entry_mutable(pos, head, member)
-
-or keep the explicit temporary cursor form:
-
-  list_for_each_entry_mutable(pos, tmp, head, member)
-
-The existing *_safe() helpers remain available for compatibility.  This
-series only converts users in mm, block, kernel, init and io_uring.  If
-this approach looks acceptable, the remaining users can be converted in
-follow-up series.
-
-Changes in v3 (Christian König, Andy Shevchenko):
-- Convert safe list walks to mutable iterators
-
-Changes in v2 (Muchun Song, Andy Shevchenko):
-- Drop the list_for_each_entry_mutable*() helpers from v1 and make the
-  cursor change directly in the existing list_for_each_entry*() helpers.
-- Open-code special list walks that rely on updating the loop cursor in
-  the body, preserving their existing traversal semantics.
-
-Link to v2:
-https://lore.kernel.org/all/20260609061347.93688-1-kaitao.cheng@linux.dev/
-
-Link to v1:
-https://lore.kernel.org/all/20260529082149.76764-1-kaitao.cheng@linux.dev/
-
-Kaitao Cheng (7):
-  list: Add mutable iterator variants
-  llist: Add mutable iterator variants
-  mm: Use mutable list iterators
-  block: Use mutable list iterators
-  kernel: Use mutable list iterators
-  initramfs: Use mutable list iterator
-  io_uring: Use mutable list iterators
-
- block/bfq-iosched.c                 |  17 +-
- block/blk-cgroup.c                  |  12 +-
- block/blk-flush.c                   |   4 +-
- block/blk-iocost.c                  |  18 +-
- block/blk-mq.c                      |   8 +-
- block/blk-throttle.c                |   4 +-
- block/kyber-iosched.c               |   4 +-
- block/partitions/ldm.c              |   8 +-
- block/sed-opal.c                    |   4 +-
- include/linux/list.h                | 269 ++++++++++++++++++++++++----
- include/linux/llist.h               |  81 +++++++--
- init/initramfs.c                    |   5 +-
- io_uring/cancel.c                   |   6 +-
- io_uring/poll.c                     |   3 +-
- io_uring/rw.c                       |   4 +-
- io_uring/timeout.c                  |   8 +-
- io_uring/uring_cmd.c                |   3 +-
- kernel/audit_tree.c                 |   4 +-
- kernel/audit_watch.c                |  16 +-
- kernel/auditfilter.c                |   4 +-
- kernel/auditsc.c                    |   4 +-
- kernel/bpf/arena.c                  |  10 +-
- kernel/bpf/arraymap.c               |   8 +-
- kernel/bpf/bpf_local_storage.c      |   3 +-
- kernel/bpf/bpf_lru_list.c           |  25 ++-
- kernel/bpf/btf.c                    |  18 +-
- kernel/bpf/cgroup.c                 |   7 +-
- kernel/bpf/cpumap.c                 |   4 +-
- kernel/bpf/devmap.c                 |  10 +-
- kernel/bpf/helpers.c                |   8 +-
- kernel/bpf/local_storage.c          |   4 +-
- kernel/bpf/memalloc.c               |  16 +-
- kernel/bpf/offload.c                |   8 +-
- kernel/bpf/states.c                 |   4 +-
- kernel/bpf/stream.c                 |   4 +-
- kernel/bpf/verifier.c               |   6 +-
- kernel/cgroup/cgroup-v1.c           |   4 +-
- kernel/cgroup/cgroup.c              |  54 +++---
- kernel/cgroup/dmem.c                |  12 +-
- kernel/cgroup/rdma.c                |   8 +-
- kernel/events/core.c                |  44 +++--
- kernel/events/uprobes.c             |  12 +-
- kernel/exit.c                       |   8 +-
- kernel/fail_function.c              |   4 +-
- kernel/gcov/clang.c                 |   4 +-
- kernel/irq_work.c                   |   4 +-
- kernel/kexec_core.c                 |   4 +-
- kernel/kprobes.c                    |  16 +-
- kernel/livepatch/core.c             |   4 +-
- kernel/livepatch/core.h             |   4 +-
- kernel/liveupdate/kho_block.c       |   4 +-
- kernel/liveupdate/luo_flb.c         |   4 +-
- kernel/locking/rwsem.c              |   2 +-
- kernel/locking/test-ww_mutex.c      |   2 +-
- kernel/module/main.c                |  11 +-
- kernel/padata.c                     |   4 +-
- kernel/power/snapshot.c             |   8 +-
- kernel/power/wakelock.c             |   4 +-
- kernel/printk/printk.c              |  11 +-
- kernel/ptrace.c                     |   4 +-
- kernel/rcu/rcutorture.c             |   3 +-
- kernel/rcu/tasks.h                  |   9 +-
- kernel/rcu/tree.c                   |   6 +-
- kernel/resource.c                   |   4 +-
- kernel/sched/core.c                 |   4 +-
- kernel/sched/ext.c                  |  22 +--
- kernel/sched/fair.c                 |  28 +--
- kernel/sched/topology.c             |   4 +-
- kernel/sched/wait.c                 |   4 +-
- kernel/seccomp.c                    |   4 +-
- kernel/signal.c                     |  11 +-
- kernel/smp.c                        |   4 +-
- kernel/taskstats.c                  |   8 +-
- kernel/time/clockevents.c           |   6 +-
- kernel/time/clocksource.c           |   4 +-
- kernel/time/posix-cpu-timers.c      |   4 +-
- kernel/time/posix-timers.c          |   3 +-
- kernel/torture.c                    |   3 +-
- kernel/trace/bpf_trace.c            |   4 +-
- kernel/trace/ftrace.c               |  49 +++--
- kernel/trace/ring_buffer.c          |  25 ++-
- kernel/trace/trace.c                |  12 +-
- kernel/trace/trace_dynevent.c       |   6 +-
- kernel/trace/trace_dynevent.h       |   5 +-
- kernel/trace/trace_events.c         |  35 ++--
- kernel/trace/trace_events_filter.c  |   4 +-
- kernel/trace/trace_events_hist.c    |   8 +-
- kernel/trace/trace_events_trigger.c |  17 +-
- kernel/trace/trace_events_user.c    |  16 +-
- kernel/trace/trace_stat.c           |   4 +-
- kernel/user-return-notifier.c       |   3 +-
- kernel/workqueue.c                  |  16 +-
- mm/backing-dev.c                    |   8 +-
- mm/balloon.c                        |   8 +-
- mm/cma.c                            |   4 +-
- mm/compaction.c                     |   4 +-
- mm/damon/core.c                     |   4 +-
- mm/damon/sysfs-schemes.c            |   4 +-
- mm/dmapool.c                        |   4 +-
- mm/huge_memory.c                    |   8 +-
- mm/hugetlb.c                        |  56 +++---
- mm/hugetlb_vmemmap.c                |  16 +-
- mm/khugepaged.c                     |  14 +-
- mm/kmemleak.c                       |   7 +-
- mm/ksm.c                            |  25 +--
- mm/list_lru.c                       |   4 +-
- mm/memcontrol-v1.c                  |   8 +-
- mm/memory-failure.c                 |  12 +-
- mm/memory-tiers.c                   |   4 +-
- mm/migrate.c                        |  23 ++-
- mm/mmu_notifier.c                   |   9 +-
- mm/page_alloc.c                     |   8 +-
- mm/page_reporting.c                 |   2 +-
- mm/percpu.c                         |  11 +-
- mm/pgtable-generic.c                |   4 +-
- mm/rmap.c                           |  10 +-
- mm/shmem.c                          |   9 +-
- mm/slab_common.c                    |  14 +-
- mm/slub.c                           |  33 ++--
- mm/swapfile.c                       |   4 +-
- mm/userfaultfd.c                    |  12 +-
- mm/vmalloc.c                        |  24 +--
- mm/vmscan.c                         |   7 +-
- mm/zsmalloc.c                       |   4 +-
- 124 files changed, 875 insertions(+), 681 deletions(-)
-
+diff --git a/include/linux/list.h b/include/linux/list.h
+index 09d979976b3b..1081def7cea9 100644
+--- a/include/linux/list.h
++++ b/include/linux/list.h
+@@ -7,6 +7,7 @@
+ #include <linux/stddef.h>
+ #include <linux/poison.h>
+ #include <linux/const.h>
++#include <linux/args.h>
+ 
+ #include <asm/barrier.h>
+ 
+@@ -763,28 +764,72 @@ static inline void list_splice_tail_init(struct list_head *list,
+ #define list_for_each_prev(pos, head) \
+ 	for (pos = (head)->prev; !list_is_head(pos, (head)); pos = pos->prev)
+ 
+-/**
+- * list_for_each_safe - iterate over a list safe against removal of list entry
+- * @pos:	the &struct list_head to use as a loop cursor.
+- * @n:		another &struct list_head to use as temporary storage
+- * @head:	the head for your list.
++/*
++ * list_for_each_safe is an old interface, use list_for_each_mutable instead.
+  */
+ #define list_for_each_safe(pos, n, head) \
+ 	for (pos = (head)->next, n = pos->next; \
+ 	     !list_is_head(pos, (head)); \
+ 	     pos = n, n = pos->next)
+ 
++#define __list_for_each_mutable_internal(pos, tmp, head)		\
++	for (typeof(pos) tmp = (pos = (head)->next)->next;		\
++	     !list_is_head(pos, (head));				\
++	     pos = tmp, tmp = pos->next)
++
++#define __list_for_each_mutable1(pos, head)				\
++	__list_for_each_mutable_internal(pos, __UNIQUE_ID(next), head)
++
++#define __list_for_each_mutable2(pos, next, head)			\
++	list_for_each_safe(pos, next, head)
++
+ /**
+- * list_for_each_prev_safe - iterate over a list backwards safe against removal of list entry
++ * list_for_each_mutable - iterate over a list safe against entry removal
+  * @pos:	the &struct list_head to use as a loop cursor.
+- * @n:		another &struct list_head to use as temporary storage
+- * @head:	the head for your list.
++ * @...:	either (head) or (next, head)
++ *
++ * next:	another &struct list_head to use as optional temporary storage.
++ *		The temporary cursor is internal unless explicitly supplied by
++ *		the caller.
++ * head:	the head for your list.
++ */
++#define list_for_each_mutable(pos, ...)					\
++	CONCATENATE(__list_for_each_mutable, COUNT_ARGS(__VA_ARGS__))	\
++		(pos, __VA_ARGS__)
++
++/*
++ * list_for_each_prev_safe is an old interface, use list_for_each_prev_mutable instead.
+  */
+ #define list_for_each_prev_safe(pos, n, head) \
+ 	for (pos = (head)->prev, n = pos->prev; \
+ 	     !list_is_head(pos, (head)); \
+ 	     pos = n, n = pos->prev)
+ 
++#define __list_for_each_prev_mutable_internal(pos, tmp, head)		\
++	for (typeof(pos) tmp = (pos = (head)->prev)->prev;		\
++	     !list_is_head(pos, (head));				\
++	     pos = tmp, tmp = pos->prev)
++
++#define __list_for_each_prev_mutable1(pos, head)			\
++	__list_for_each_prev_mutable_internal(pos, __UNIQUE_ID(prev), head)
++
++#define __list_for_each_prev_mutable2(pos, prev, head)			\
++	list_for_each_prev_safe(pos, prev, head)
++
++/**
++ * list_for_each_prev_mutable - iterate over a list backwards safe against entry removal
++ * @pos:	the &struct list_head to use as a loop cursor.
++ * @...:	either (head) or (prev, head)
++ *
++ * prev:	another &struct list_head to use as optional temporary storage.
++ *		The temporary cursor is internal unless explicitly supplied by
++ *		the caller.
++ * head:	the head for your list.
++ */
++#define list_for_each_prev_mutable(pos, ...)				\
++	CONCATENATE(__list_for_each_prev_mutable, COUNT_ARGS(__VA_ARGS__)) \
++		(pos, __VA_ARGS__)
++
+ /**
+  * list_count_nodes - count nodes in the list
+  * @head:	the head for your list.
+@@ -895,12 +940,8 @@ static inline size_t list_count_nodes(struct list_head *head)
+ 	for (; !list_entry_is_head(pos, head, member);			\
+ 	     pos = list_prev_entry(pos, member))
+ 
+-/**
+- * list_for_each_entry_safe - iterate over list of given type safe against removal of list entry
+- * @pos:	the type * to use as a loop cursor.
+- * @n:		another type * to use as temporary storage
+- * @head:	the head for your list.
+- * @member:	the name of the list_head within the struct.
++/*
++ * list_for_each_entry_safe is an old interface, use list_for_each_entry_mutable instead.
+  */
+ #define list_for_each_entry_safe(pos, n, head, member)			\
+ 	for (pos = list_first_entry(head, typeof(*pos), member),	\
+@@ -908,15 +949,36 @@ static inline size_t list_count_nodes(struct list_head *head)
+ 	     !list_entry_is_head(pos, head, member); 			\
+ 	     pos = n, n = list_next_entry(n, member))
+ 
++#define __list_for_each_entry_mutable_internal(pos, tmp, head, member)	\
++	for (typeof(pos) tmp = list_next_entry(pos =			\
++		list_first_entry(head, typeof(*pos), member), member);	\
++	     !list_entry_is_head(pos, head, member);			\
++	     pos = tmp, tmp = list_next_entry(tmp, member))
++
++#define __list_for_each_entry_mutable2(pos, head, member)		\
++	__list_for_each_entry_mutable_internal(pos, __UNIQUE_ID(next), head, member)
++
++#define __list_for_each_entry_mutable3(pos, next, head, member)		\
++	list_for_each_entry_safe(pos, next, head, member)
++
+ /**
+- * list_for_each_entry_safe_continue - continue list iteration safe against removal
++ * list_for_each_entry_mutable - iterate over a list safe against entry removal
+  * @pos:	the type * to use as a loop cursor.
+- * @n:		another type * to use as temporary storage
+- * @head:	the head for your list.
+- * @member:	the name of the list_head within the struct.
++ * @...:	either (head, member) or (next, head, member)
+  *
+- * Iterate over list of given type, continuing after current point,
+- * safe against removal of list entry.
++ * next:	another type * to use as optional temporary storage. The
++ *		temporary cursor is internal unless explicitly supplied by the
++ *		caller.
++ * head:	the head for your list.
++ * member:	the name of the list_head within the struct.
++ */
++#define list_for_each_entry_mutable(pos, ...)				\
++	CONCATENATE(__list_for_each_entry_mutable, COUNT_ARGS(__VA_ARGS__)) \
++		(pos, __VA_ARGS__)
++
++/*
++ * list_for_each_entry_safe_continue is an old interface,
++ * use list_for_each_entry_mutable_continue instead.
+  */
+ #define list_for_each_entry_safe_continue(pos, n, head, member) 		\
+ 	for (pos = list_next_entry(pos, member), 				\
+@@ -924,30 +986,79 @@ static inline size_t list_count_nodes(struct list_head *head)
+ 	     !list_entry_is_head(pos, head, member);				\
+ 	     pos = n, n = list_next_entry(n, member))
+ 
++#define __list_for_each_entry_mutable_continue_internal(pos, tmp, head, member) \
++	for (typeof(pos) tmp = list_next_entry(pos =			\
++		list_next_entry(pos, member), member);			\
++	     !list_entry_is_head(pos, head, member);			\
++	     pos = tmp, tmp = list_next_entry(tmp, member))
++
++#define __list_for_each_entry_mutable_continue2(pos, head, member)	\
++	__list_for_each_entry_mutable_continue_internal(pos,		\
++		__UNIQUE_ID(next), head, member)
++
++#define __list_for_each_entry_mutable_continue3(pos, next, head, member) \
++	list_for_each_entry_safe_continue(pos, next, head, member)
++
+ /**
+- * list_for_each_entry_safe_from - iterate over list from current point safe against removal
++ * list_for_each_entry_mutable_continue - continue list iteration safe against removal
+  * @pos:	the type * to use as a loop cursor.
+- * @n:		another type * to use as temporary storage
+- * @head:	the head for your list.
+- * @member:	the name of the list_head within the struct.
++ * @...:	either (head, member) or (next, head, member)
+  *
+- * Iterate over list of given type from current point, safe against
+- * removal of list entry.
++ * next:	another type * to use as optional temporary storage. The
++ *		temporary cursor is internal unless explicitly supplied by the
++ *		caller.
++ * head:	the head for your list.
++ * member:	the name of the list_head within the struct.
++ *
++ * Iterate over list of given type, continuing after current point,
++ * safe against removal of list entry.
++ */
++#define list_for_each_entry_mutable_continue(pos, ...)			\
++	CONCATENATE(__list_for_each_entry_mutable_continue,		\
++		COUNT_ARGS(__VA_ARGS__))(pos, __VA_ARGS__)
++
++/*
++ * list_for_each_entry_safe_from is an old interface,
++ * use list_for_each_entry_mutable_from instead.
+  */
+ #define list_for_each_entry_safe_from(pos, n, head, member) 			\
+ 	for (n = list_next_entry(pos, member);					\
+ 	     !list_entry_is_head(pos, head, member);				\
+ 	     pos = n, n = list_next_entry(n, member))
+ 
++#define __list_for_each_entry_mutable_from_internal(pos, tmp, head, member) \
++	for (typeof(pos) tmp = list_next_entry(pos, member);		\
++	     !list_entry_is_head(pos, head, member);			\
++	     pos = tmp, tmp = list_next_entry(tmp, member))
++
++#define __list_for_each_entry_mutable_from2(pos, head, member)		\
++	__list_for_each_entry_mutable_from_internal(pos,		\
++		__UNIQUE_ID(next), head, member)
++
++#define __list_for_each_entry_mutable_from3(pos, next, head, member)	\
++	list_for_each_entry_safe_from(pos, next, head, member)
++
+ /**
+- * list_for_each_entry_safe_reverse - iterate backwards over list safe against removal
++ * list_for_each_entry_mutable_from - iterate over list from current point safe against removal
+  * @pos:	the type * to use as a loop cursor.
+- * @n:		another type * to use as temporary storage
+- * @head:	the head for your list.
+- * @member:	the name of the list_head within the struct.
++ * @...:	either (head, member) or (next, head, member)
+  *
+- * Iterate backwards over list of given type, safe against removal
+- * of list entry.
++ * next:	another type * to use as optional temporary storage. The
++ *		temporary cursor is internal unless explicitly supplied by the
++ *		caller.
++ * head:	the head for your list.
++ * member:	the name of the list_head within the struct.
++ *
++ * Iterate over list of given type from current point, safe against
++ * removal of list entry.
++ */
++#define list_for_each_entry_mutable_from(pos, ...)			\
++	CONCATENATE(__list_for_each_entry_mutable_from,			\
++		COUNT_ARGS(__VA_ARGS__))(pos, __VA_ARGS__)
++
++/*
++ * list_for_each_entry_safe_reverse is an old interface,
++ * use list_for_each_entry_mutable_reverse instead.
+  */
+ #define list_for_each_entry_safe_reverse(pos, n, head, member)		\
+ 	for (pos = list_last_entry(head, typeof(*pos), member),		\
+@@ -955,6 +1066,37 @@ static inline size_t list_count_nodes(struct list_head *head)
+ 	     !list_entry_is_head(pos, head, member); 			\
+ 	     pos = n, n = list_prev_entry(n, member))
+ 
++#define __list_for_each_entry_mutable_reverse_internal(pos, tmp, head, member) \
++	for (typeof(pos) tmp = list_prev_entry(pos =			\
++		list_last_entry(head, typeof(*pos), member), member);	\
++	     !list_entry_is_head(pos, head, member);			\
++	     pos = tmp, tmp = list_prev_entry(tmp, member))
++
++#define __list_for_each_entry_mutable_reverse2(pos, head, member)	\
++	__list_for_each_entry_mutable_reverse_internal(pos,		\
++		__UNIQUE_ID(prev), head, member)
++
++#define __list_for_each_entry_mutable_reverse3(pos, prev, head, member)	\
++	list_for_each_entry_safe_reverse(pos, prev, head, member)
++
++/**
++ * list_for_each_entry_mutable_reverse - iterate backwards over list safe against removal
++ * @pos:	the type * to use as a loop cursor.
++ * @...:	either (head, member) or (prev, head, member)
++ *
++ * prev:	another type * to use as optional temporary storage. The
++ *		temporary cursor is internal unless explicitly supplied by the
++ *		caller.
++ * head:	the head for your list.
++ * member:	the name of the list_head within the struct.
++ *
++ * Iterate backwards over list of given type, safe against removal
++ * of list entry.
++ */
++#define list_for_each_entry_mutable_reverse(pos, ...)			\
++	CONCATENATE(__list_for_each_entry_mutable_reverse,		\
++		COUNT_ARGS(__VA_ARGS__))(pos, __VA_ARGS__)
++
+ /**
+  * list_safe_reset_next - reset a stale list_for_each_entry_safe loop
+  * @pos:	the loop cursor used in the list_for_each_entry_safe loop
+@@ -1189,6 +1331,31 @@ static inline void hlist_splice_init(struct hlist_head *from,
+ 	for (pos = (head)->first; pos && ({ n = pos->next; 1; }); \
+ 	     pos = n)
+ 
++#define __hlist_for_each_mutable_internal(pos, tmp, head)		\
++	for (typeof(pos) tmp = (pos = (head)->first) ? pos->next : NULL; \
++	     pos;							\
++	     pos = tmp, tmp = pos ? pos->next : NULL)
++
++#define __hlist_for_each_mutable1(pos, head)				\
++	__hlist_for_each_mutable_internal(pos, __UNIQUE_ID(next), head)
++
++#define __hlist_for_each_mutable2(pos, next, head)			\
++	hlist_for_each_safe(pos, next, head)
++
++/**
++ * hlist_for_each_mutable - iterate over a hlist safe against entry removal
++ * @pos:	the &struct hlist_node to use as a loop cursor.
++ * @...:	either (head) or (next, head)
++ *
++ * next:	another &struct hlist_node to use as optional temporary storage.
++ *		The temporary cursor is internal unless explicitly supplied by
++ *		the caller.
++ * head:	the head for your hlist.
++ */
++#define hlist_for_each_mutable(pos, ...)				\
++	CONCATENATE(__hlist_for_each_mutable, COUNT_ARGS(__VA_ARGS__))	\
++		(pos, __VA_ARGS__)
++
+ #define hlist_entry_safe(ptr, type, member) \
+ 	({ typeof(ptr) ____ptr = (ptr); \
+ 	   ____ptr ? hlist_entry(____ptr, type, member) : NULL; \
+@@ -1224,18 +1391,44 @@ static inline void hlist_splice_init(struct hlist_head *from,
+ 	for (; pos;							\
+ 	     pos = hlist_entry_safe((pos)->member.next, typeof(*(pos)), member))
+ 
+-/**
+- * hlist_for_each_entry_safe - iterate over list of given type safe against removal of list entry
+- * @pos:	the type * to use as a loop cursor.
+- * @n:		a &struct hlist_node to use as temporary storage
+- * @head:	the head for your list.
+- * @member:	the name of the hlist_node within the struct.
++/*
++ * hlist_for_each_entry_safe is an old interface, use hlist_for_each_entry_mutable instead.
+  */
+ #define hlist_for_each_entry_safe(pos, n, head, member) 		\
+ 	for (pos = hlist_entry_safe((head)->first, typeof(*pos), member);\
+ 	     pos && ({ n = pos->member.next; 1; });			\
+ 	     pos = hlist_entry_safe(n, typeof(*pos), member))
+ 
++#define __hlist_for_each_entry_mutable_internal(pos, tmp, head, member)	\
++	for (struct hlist_node *tmp = (pos =				\
++		hlist_entry_safe((head)->first, typeof(*pos), member)) ? \
++		pos->member.next : NULL;				\
++	     pos;							\
++	     pos = hlist_entry_safe((tmp), typeof(*pos), member),	\
++		tmp = pos ? pos->member.next : NULL)
++
++#define __hlist_for_each_entry_mutable2(pos, head, member)		\
++	__hlist_for_each_entry_mutable_internal(pos,			\
++		__UNIQUE_ID(next), head, member)
++
++#define __hlist_for_each_entry_mutable3(pos, next, head, member)	\
++	hlist_for_each_entry_safe(pos, next, head, member)
++
++/**
++ * hlist_for_each_entry_mutable - iterate over hlist safe against entry removal
++ * @pos:	the type * to use as a loop cursor.
++ * @...:	either (head, member) or (next, head, member)
++ *
++ * next:	a &struct hlist_node to use as optional temporary storage. The
++ *		temporary cursor is internal unless explicitly supplied by the
++ *		caller.
++ * head:	the head for your hlist.
++ * member:	the name of the hlist_node within the struct.
++ */
++#define hlist_for_each_entry_mutable(pos, ...)				\
++	CONCATENATE(__hlist_for_each_entry_mutable,			\
++		COUNT_ARGS(__VA_ARGS__))(pos, __VA_ARGS__)
++
+ /**
+  * hlist_count_nodes - count nodes in the hlist
+  * @head:	the head for your hlist.
 -- 
 2.43.0
 

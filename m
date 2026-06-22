@@ -1,396 +1,157 @@
-Return-Path: <io-uring+bounces-13815-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13816-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by mail.lfdr.de with LMTP
-	id I7uHIFmVOWpbvQcAu9opvQ
-	(envelope-from <io-uring+bounces-13815-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Mon, 22 Jun 2026 22:04:41 +0200
+	id LwevJdalOWrjvwcAu9opvQ
+	(envelope-from <io-uring+bounces-13816-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Mon, 22 Jun 2026 23:15:02 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9D746B234C
-	for <lists+io-uring@lfdr.de>; Mon, 22 Jun 2026 22:04:40 +0200 (CEST)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id D95F26B26E1
+	for <lists+io-uring@lfdr.de>; Mon, 22 Jun 2026 23:15:01 +0200 (CEST)
 Authentication-Results: mail.lfdr.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=0Z65KrMP;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=iETszE90;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=1uDJ2xtz;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=PV5c+J4W;
-	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13815-lists+io-uring=lfdr.de@vger.kernel.org" designates 172.234.253.10 as permitted sender) smtp.mailfrom="io-uring+bounces-13815-lists+io-uring=lfdr.de@vger.kernel.org";
-	dmarc=pass (policy=none) header.from=suse.de;
+	dkim=pass header.d=kernel-dk.20251104.gappssmtp.com header.s=20251104 header.b=qCBaXwIX;
+	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13816-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c0a:e001:db::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-13816-lists+io-uring=lfdr.de@vger.kernel.org";
+	dmarc=none;
 	arc=pass ("subspace.kernel.org:s=arc-20240116:i=1")
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 59C1D30210C4
-	for <lists+io-uring@lfdr.de>; Mon, 22 Jun 2026 20:04:38 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id A93963003ECF
+	for <lists+io-uring@lfdr.de>; Mon, 22 Jun 2026 21:15:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D5723507B;
-	Mon, 22 Jun 2026 20:04:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C73A2D1913;
+	Mon, 22 Jun 2026 21:15:00 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AACF529D27D
-	for <io-uring@vger.kernel.org>; Mon, 22 Jun 2026 20:04:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB8D3659FD
+	for <io-uring@vger.kernel.org>; Mon, 22 Jun 2026 21:14:57 +0000 (UTC)
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782158677; cv=none; b=i9Q3TKzx/faGEMh4rSaxJq4ljyEt50Ah+RKDvRbyQPww5MhQnXyGJBmY+HdOuG6UMox5s3JAe3zSNYG1naED+n8/QX5HGjV6wngCudNl98LRrNdm5bY1Pd2O4RnilWLl4yi5QLQ8yZv+wPqJVqBvflNdf8VRZzNX8/a1ypJcBrM=
+	t=1782162900; cv=none; b=Jj17972Ty7FyPyKeNvO0oCaFMu503TbQXEbQUq/lbBN1gQJJggHMF47HB50G3fst/sv8g8tZUSkCwBKxjCVziBR0FpY9W4soAuH0u3eljRxkF8ebaOI6B+LcIwWJvOFefhE4MdqNIqdh2BAfoZj6ia2xrFEaV7FlMij5PrOebKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782158677; c=relaxed/simple;
-	bh=ax34Mm2Ug7TBtmvFu0ZPNofqnI2cRzVmpuoQy7ChFS4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=cUHXFKp/UBKmDuoZjNBFd63SWOZZdxz/dDw+9yaXvmE1koG7Z3GHZlm+M7uBDjzhq5x753w14+euNQwjk4OPX1NRoo7+g4ErOVf398RlLk6p5HQKNCeSTg+ini3RL/t5tDXlU/r/x4ekKoh4YgL65DXKGSDITvXNHbTtptHIOmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0Z65KrMP; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=iETszE90; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1uDJ2xtz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=PV5c+J4W; arc=none smtp.client-ip=195.135.223.131
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E1B2F75DAF;
-	Mon, 22 Jun 2026 20:04:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1782158674; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Q+VX6ZJ5oyzU9vu6Dyu7pFS1sghuqBTFoVYH+Nmk/Fc=;
-	b=0Z65KrMPDMjMz3Vys6i2dJ4rtWNqZHDhwgnvysqoYFzJgJAhE1aWAZPqd7nFOpmTCWI6Xe
-	8wU++O5KCsIStJvPnq0wu9vm7rAEMzaNgOZ5iLVz5b7QmfMmppna/EI9O3yqt61KdFY1+R
-	gXDJfNpNHCc5EYWfCt4UgaqfUddI8m0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1782158674;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Q+VX6ZJ5oyzU9vu6Dyu7pFS1sghuqBTFoVYH+Nmk/Fc=;
-	b=iETszE90ApUnuwB8ObD6XzGdGlrvKelU2MHDwJRg/CYpV+ENmi5YLcWAMAwJ/HJ9XinJ+s
-	BED38gjOIW7ZXHAw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1782158673; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Q+VX6ZJ5oyzU9vu6Dyu7pFS1sghuqBTFoVYH+Nmk/Fc=;
-	b=1uDJ2xtzNM9tnXIfjSIfgDLGOx7BTebz0n84zjzkiWLX0kHwDUDDtH3rroVrqt+1CGa45t
-	WfDTNVMtNZU1ATKGFoZuCT55P8ytRorilp8x84FZ0x1feSJURrB4EZJXxkgt3snJhgksXp
-	3tQtw6SJb8AmV3iNpQ0BhtqDE9S72yw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1782158673;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Q+VX6ZJ5oyzU9vu6Dyu7pFS1sghuqBTFoVYH+Nmk/Fc=;
-	b=PV5c+J4Wluy3E6d87w1ihTPvWlkWozX3XXgjxAxjO8Cl71g7oKx74xvDMtfwnFQ7viIWhA
-	aN2cBwvTD0m00OCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7535F779A8;
-	Mon, 22 Jun 2026 20:04:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id F7F2EFGVOWrBHAAAD6G6ig
-	(envelope-from <krisman@suse.de>); Mon, 22 Jun 2026 20:04:33 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Harshal Chavan <harshal24.chavan@gmail.com>, io-uring@vger.kernel.org,
- axboe@kernel.dk
-Cc: gregkh@linuxfoundation.org, kees@kernel.org, gustavoars@kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, Harshal
- Chavan <harshal24.chavan@gmail.com>
-Subject: Re: [PATCH v4] io_uring/register: add IORING_REGISTER_CLONE_FILES
- opcode
-In-Reply-To: <20260619093641.25339-1-harshal24.chavan@gmail.com>
-Organization: SUSE
-References: <20260619093641.25339-1-harshal24.chavan@gmail.com>
-Date: Mon, 22 Jun 2026 16:04:27 -0400
-Message-ID: <871pdyxrxw.fsf@mailhost.krisman.be>
+	s=arc-20240116; t=1782162900; c=relaxed/simple;
+	bh=yYzF34EEf9UeVw3Wewl3ZrMgfGs99N5U51ooLzlZ8NM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=cXN5pAiWEG5i4zem7+JKVCY5e+Hc9ZwMynVpCi3bpZufxMzv0nlY1w99Yi3HdTJAXIJGC6B15yj/5yzDamV+Wf9N6IzQuMkAesTvPA6QMPxSfpag8WDZPaPil+ddJ5JnYF2Sk8YHq7NVIeuwfFyLfWVLgBM4TeeikizdIOsj6qk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=qCBaXwIX; arc=none smtp.client-ip=209.85.219.41
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-8dd21386a9aso42252646d6.2
+        for <io-uring@vger.kernel.org>; Mon, 22 Jun 2026 14:14:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1782162897; x=1782767697; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3G8naCToAbITiqNZ/ZZF0ALS3MOMsS1Z8DWN2VdXaB0=;
+        b=qCBaXwIXchJlDDls9FMmjj7/JRwu+/jCU1XBE9aGeAhu4YyuUunvm4/UAFTRY5hKRl
+         6ZTHmGqTqSjmKpJHNVS8tbhI1iUXv6AL2ir7imwXSaLyEX4qZkUKAZDMfx9kWSYrUF57
+         vQN21RUQhhOC+ijA+6zoPu9m9q/oYabt0ELg4EOFBWg5pSNjzWQQjhyXUyBUlbtrMLg2
+         BDFfWNl98PGu5GXs6LvqljdF6bVYlF2+6NCQjEbW79p+Hbs7D+f/rXGQ2/RSBorw0W7s
+         yItp6peUamsthXaCy8S5I0PeogDY461bLL3Yx8RMrD2M9hmatp0PmpWE3jG+ZJ57O8Pe
+         bBpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1782162897; x=1782767697;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=3G8naCToAbITiqNZ/ZZF0ALS3MOMsS1Z8DWN2VdXaB0=;
+        b=nUKS230PDxjN4gOvRwyTRHnH/SwT+xDjR7hzC+RNyX30OXIQriuob9I0o2Re7tRbhm
+         VFMWzQx1+OdLNwm6mxI+B+T5gXrUfOUrHBmQYSP16APtFYz4Rs4hsIHYYmUH8p7kKNz6
+         Gpc8ZFelCVcUebOhMgGkO3L8QALfrlw9bDGX00Trdj2A2kAXbACdFAtcGmiIDd1vC+i0
+         G6yGn71okH4fYRTRft5Pw6V/DrD4A3SnzokJag5HQFFKo4vgkNvQT3PICs5xdeSE9zlD
+         ESApb55RyOzV7D8Q8tOkR2U8tSnM3wmJviZ/3HJVa+fQeSVKEsLJcoZrsmv8Ylz4qlP7
+         ECiw==
+X-Gm-Message-State: AOJu0YwlRSZh04P85lU00kKZmj3WP6RTPblH1F+p5T6Djj3Y3e33iTaf
+	lZvq2s2bDNSFYBkVi9y51i1z2RTQ1I6gGMkk2/ruUFXYPK6lXTQnToMiggwaCnqZKB0rTGp+y5e
+	hawseCqk=
+X-Gm-Gg: AfdE7ckYMgU2Az6w9Kx5gab9RP8P2W7PxS6NMtGhvVpPFvz0LeaBZxaXa8Mbf5q8rMz
+	fJiqu76ba+tcG7S16Obp9WW0kuiQhX6XB1Syoj8qYTo15YFBDVPHDhpRLC6kZ1fKknKgk1UY+lb
+	LoFsewKoyasWgYbyvF+7zCqH/6skofjUsXwJQ/kmQVSi8vdnHZbKpnA+slYMtwVBYsMO2citRUn
+	n5/3Oh3o+4v0oz3JVZ68RISna00ehV/sKLMWx4C9/qWSNNOxh6OCfxlAEZET72kRSwPxJVTcVdZ
+	p1omf6/m8PcBBwaKGk+GII3Mt+nGyPGO46grXz1NahZVauQy5PxVl2FY57EFAPDddVxpAhh2LQh
+	36lsbHBeCvVJv6ChM4zdhhZowskSkFq5eKzen6m9qczdTnBnmaYmxOPJDjeBAW7s+7xWVFPW/pT
+	qKM1BoMgoI56Du0RulZSPzbRyggfmL+9djJ8M=
+X-Received: by 2002:a0c:f6c4:0:b0:8db:3bf7:7aae with SMTP id 6a1803df08f44-8de3e7ef8fdmr219524146d6.35.1782162897045;
+        Mon, 22 Jun 2026 14:14:57 -0700 (PDT)
+Received: from [127.0.0.1] ([99.196.128.58])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8df82b67affsm106912866d6.45.2026.06.22.14.14.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Jun 2026 14:14:56 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: Deepanshu Kartikey <kartikey406@gmail.com>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ syzbot+f99b00a963915b6b52c6@syzkaller.appspotmail.com
+In-Reply-To: <20260621012933.50571-1-kartikey406@gmail.com>
+References: <20260621012933.50571-1-kartikey406@gmail.com>
+Subject: Re: [PATCH] io_uring/memmap: bound io_pin_pages() by page array
+ byte size
+Message-Id: <178216289049.99876.2987989144128669864.b4-ty@b4>
+Date: Mon, 22 Jun 2026 15:14:50 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -2.80
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15.2
 X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-0.16 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-1.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[suse.de,none];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	R_DKIM_ALLOW(-0.20)[kernel-dk.20251104.gappssmtp.com:s=20251104];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-13815-lists,io-uring=lfdr.de];
-	FREEMAIL_CC(0.00)[linuxfoundation.org,kernel.org,vger.kernel.org,gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	FORWARDED(0.00)[lists@lfdr.de];
-	HAS_ORG_HEADER(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com,vger.kernel.org,kernel.dk];
-	RCVD_TLS_LAST(0.00)[];
-	FORGED_SENDER(0.00)[krisman@suse.de,io-uring@vger.kernel.org];
-	FORGED_RECIPIENTS(0.00)[m:harshal24.chavan@gmail.com,m:io-uring@vger.kernel.org,m:axboe@kernel.dk,m:gregkh@linuxfoundation.org,m:kees@kernel.org,m:gustavoars@kernel.org,m:linux-kernel@vger.kernel.org,m:linux-hardening@vger.kernel.org,m:harshal24chavan@gmail.com,s:lists@lfdr.de];
-	DKIM_TRACE(0.00)[suse.de:+];
-	MISSING_XM_UA(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FORGED_SENDER_FORWARDING(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
-	PRECEDENCE_BULK(0.00)[];
+	FORGED_RECIPIENTS(0.00)[m:kartikey406@gmail.com,m:io-uring@vger.kernel.org,m:linux-kernel@vger.kernel.org,m:syzbot+f99b00a963915b6b52c6@syzkaller.appspotmail.com,m:syzbot@syzkaller.appspotmail.com,s:lists@lfdr.de];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
 	FROM_HAS_DN(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[krisman@suse.de,io-uring@vger.kernel.org];
+	DMARC_NA(0.00)[kernel.dk];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_LAST(0.00)[];
+	FORWARDED(0.00)[lists@lfdr.de];
+	FORGED_SENDER(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-13816-lists,io-uring=lfdr.de];
+	RCPT_COUNT_THREE(0.00)[4];
+	DKIM_TRACE(0.00)[kernel-dk.20251104.gappssmtp.com:+];
+	FORGED_SENDER_FORWARDING(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	ALIAS_RESOLVED(0.00)[];
+	TAGGED_RCPT(0.00)[io-uring,f99b00a963915b6b52c6];
+	TO_DN_SOME(0.00)[];
 	FORGED_RECIPIENTS_FORWARDING(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	RCPT_COUNT_SEVEN(0.00)[9];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[io-uring];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[vger.kernel.org:from_smtp,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,suse.de:dkim,suse.de:from_mime]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[vger.kernel.org:from_smtp,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
 X-Rspamd-Server: lfdr
-X-Rspamd-Queue-Id: C9D746B234C
+X-Rspamd-Queue-Id: D95F26B26E1
 
-Harshal Chavan <harshal24.chavan@gmail.com> writes:
 
-> Currently, if an application wants to duplicate registered file
-> descriptors from one io_uring instance to another, it must manually
-> unregister and re-register them, incurring unnecessary overhead.
->
-> Add IORING_REGISTER_CLONE_FILES to allow direct cloning of the file
-> table from a source ring to a destination ring. This implementation
-> strictly mirrors the io_clone_buffers UAPI, supporting partial offsets
-> and the IORING_REGISTER_DST_REPLACE flag.
->
-> To ensure lock synchronization safety, destination nodes are strictly
-> allocated as new, private io_rsrc_nodes rather than sharing references
-> across rings.
->
-> Signed-off-by: Harshal Chavan <harshal24.chavan@gmail.com>
+On Sun, 21 Jun 2026 06:59:33 +0530, Deepanshu Kartikey wrote:
+> io_pin_pages() checks that nr_pages does not exceed INT_MAX, then
+> allocates a struct page * array of nr_pages entries. kvmalloc() limits
+> allocations to INT_MAX bytes, but the check counts pages, not bytes.
+> On 64-bit each entry is 8 bytes, so the array hits the INT_MAX byte
+> limit at INT_MAX / sizeof(struct page *) pages, well before the page
+> count check fires.
+> 
+> [...]
 
-Hello,
+Applied, thanks!
 
-Do you have the liburing side and test cases?
+[1/1] io_uring/memmap: bound io_pin_pages() by page array byte size
+      commit: 3996771b8f759729cba0a28007438c085f814d61
 
-A few comments inline.
-
-> ---
->  include/uapi/linux/io_uring.h |  12 +++
->  io_uring/register.c           |   6 ++
->  io_uring/rsrc.c               | 149 ++++++++++++++++++++++++++++++++++
->  io_uring/rsrc.h               |   1 +
->  4 files changed, 168 insertions(+)
->
-> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-> index 909fb7aea638..0727602ce12f 100644
-> --- a/include/uapi/linux/io_uring.h
-> +++ b/include/uapi/linux/io_uring.h
-> @@ -723,6 +723,9 @@ enum io_uring_register_op {
->  	/* register bpf filtering programs */
->  	IORING_REGISTER_BPF_FILTER		= 37,
->  
-> +	/* clone file descriptors from another ring*/
-                                                   ^ spacing
-
-> +	IORING_REGISTER_CLONE_FILES		= 38,
-> +
->  	/* this goes last */
->  	IORING_REGISTER_LAST,
->  
-> @@ -854,6 +857,15 @@ struct io_uring_clone_buffers {
->  	__u32	pad[3];
->  };
->  
-> +struct io_uring_clone_files {
-> +	__u32 src_fd;
-> +	__u32 flags;
-> +	__u32 src_off;
-> +	__u32 dst_off;
-> +	__u32 nr;
-> +	__u32 pad[3];
-> +};
-> +
->  struct io_uring_buf {
->  	__u64	addr;
->  	__u32	len;
-> diff --git a/io_uring/register.c b/io_uring/register.c
-> index dce5e2f9cf77..bbc8c506ea2d 100644
-> --- a/io_uring/register.c
-> +++ b/io_uring/register.c
-> @@ -924,6 +924,12 @@ static int __io_uring_register(struct io_ring_ctx *ctx, unsigned opcode,
->  			break;
->  		ret = io_register_clone_buffers(ctx, arg);
->  		break;
-> +	case IORING_REGISTER_CLONE_FILES:
-> +		ret = -EINVAL;
-> +		if (!arg || nr_args != 1)
-> +			break;
-> +		ret = io_register_clone_files(ctx, arg);
-> +		break;
->  	case IORING_REGISTER_ZCRX_IFQ:
->  		ret = -EINVAL;
->  		if (!arg || nr_args != 1)
-> diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-> index 650303626be6..a598e5af4c0a 100644
-> --- a/io_uring/rsrc.c
-> +++ b/io_uring/rsrc.c
-> @@ -1303,6 +1303,155 @@ int io_register_clone_buffers(struct io_ring_ctx *ctx, void __user *arg)
->  	return ret;
->  }
->  
-> +static int io_clone_file_node(struct io_ring_ctx *ctx,
-> +			      struct io_rsrc_node *src_node,
-> +			      int dst_index,
-> +			      struct io_file_table *new_table)
-> +{
-> +	struct io_rsrc_node *dst_node;
-> +	struct file *file;
-> +
-> +	dst_node = io_rsrc_node_alloc(ctx, IORING_RSRC_FILE);
-> +	if (!dst_node)
-> +		return -ENOMEM;
-> +
-> +	file = io_slot_file(src_node);
-> +	get_file(file);
-> +	io_fixed_file_set(dst_node, file);
-> +
-> +	new_table->data.nodes[dst_index] = dst_node;
-> +	io_file_bitmap_set(new_table, dst_index);
-> +
-> +	return 0;
-> +}
-> +
-> +static int io_clone_files(struct io_ring_ctx *ctx, struct io_ring_ctx *src_ctx,
-> +			  struct io_uring_clone_files *arg)
-> +{
-> +	struct io_file_table new_file_table;
-> +	unsigned int dst_nr = ctx->file_table.data.nr;
-> +	unsigned int src_nr = src_ctx->file_table.data.nr;
-> +	unsigned int new_nr, i;
-> +
-> +	lockdep_assert_held(&ctx->uring_lock);
-> +	lockdep_assert_held(&src_ctx->uring_lock);
-> +
-> +	if (ctx->user != src_ctx->user || ctx->mm_account != src_ctx->mm_account)
-> +		return -EINVAL;
-
-I don't think it makes sense to check ->user here.  But is mm_account
-necessary either?  How could you get the src_ctx from another process?
-
-> +
-> +	if (dst_nr && !(arg->flags & IORING_REGISTER_DST_REPLACE))
-> +		return -EBUSY;
-> +
-> +	if (!src_nr)
-> +		return -ENXIO;
-> +
-> +	if (!arg->nr)
-> +		arg->nr = src_nr;
-> +	else if (arg->nr > src_nr)
-> +		return -EINVAL;
-> +
-> +	if (check_add_overflow(arg->src_off, arg->nr, &i) || i > src_nr)
-> +		return -EINVAL;
-> +	if (check_add_overflow(arg->dst_off, arg->nr, &i))
-> +		return -EINVAL;
-> +
-> +	new_nr = max(dst_nr, arg->dst_off + arg->nr);
-> +	if (new_nr > IORING_MAX_FIXED_FILES)
-> +		return -EINVAL;
-> +
-> +	memset(&new_file_table, 0, sizeof(new_file_table));
-> +	if (!io_alloc_file_tables(ctx, &new_file_table, new_nr))
-> +		return -ENOMEM;
-> +
-> +	/* Copy original nodes from before the cloned range */
-> +	for (i = 0; i < min(arg->dst_off, dst_nr); i++) {
-> +		struct io_rsrc_node *src_node = io_rsrc_node_lookup(&ctx->file_table.data, i);
-> +
-> +		if (!src_node)
-> +			continue;
-> +		if (io_clone_file_node(ctx, src_node, i, &new_file_table))
-> +			goto out;
-> +	}
-> +
-> +	/* Copy the actual cloned range from the source ring */
-> +	for (i = 0; i < arg->nr; i++) {
-> +		struct io_rsrc_node *src_node = io_rsrc_node_lookup(&src_ctx->file_table.data,
-> +				arg->src_off + i);
-> +
-> +		if (!src_node)
-> +			continue;
-> +		if (io_clone_file_node(ctx, src_node, arg->dst_off + i, &new_file_table))
-> +			goto out;
-> +	}
-> +
-> +	/* Copy original nodes from after the cloned range */
-> +	for (i = arg->dst_off + arg->nr; i < dst_nr; i++) {
-> +		struct io_rsrc_node *src_node = io_rsrc_node_lookup(&ctx->file_table.data, i);
-> +
-> +		if (!src_node)
-> +			continue;
-> +		if (io_clone_file_node(ctx, src_node, i, &new_file_table))
-> +			goto out;
-> +	}
-> +
-> +	/* free the old file table if there is any data present */
-> +	if (dst_nr)
-> +		io_free_file_tables(ctx, &ctx->file_table);
-> +
-> +	WARN_ON_ONCE(ctx->file_table.data.nr);
-> +	ctx->file_table = new_file_table;
-> +	io_file_table_set_alloc_range(ctx, 0, ctx->file_table.data.nr);
-> +	return 0;
-> +
-> +out:
-> +	/* Error Path: Safely destroy whatever we partially built */
-> +	io_free_file_tables(ctx, &new_file_table);
-> +	return -ENOMEM;
-> +}
-> +
-> +int io_register_clone_files(struct io_ring_ctx *ctx, void __user *arg)
-> +{
-> +	struct io_uring_clone_files clone_arg;
-> +	struct io_ring_ctx *src_ctx;
-> +	bool registered_src;
-> +	struct file *file;
-> +	int ret;
-> +
-> +	if (copy_from_user(&clone_arg, arg, sizeof(clone_arg)))
-> +		return -EFAULT;
-> +	if (clone_arg.flags &
-> +	    ~(IORING_REGISTER_SRC_REGISTERED | IORING_REGISTER_DST_REPLACE))
-> +		return -EINVAL;
-> +
-> +	if (memchr_inv(clone_arg.pad, 0, sizeof(clone_arg.pad)))
-> +		return -EINVAL;
-> +
-> +	registered_src = (clone_arg.flags & IORING_REGISTER_SRC_REGISTERED) != 0;
-
-This is better written as
-
-registered_src = !!(clone_arg.flags & IORING_REGISTER_SRC_REGISTERED);
-
-> +	file = io_uring_ctx_get_file(clone_arg.src_fd, registered_src);
-> +	if (IS_ERR(file))
-> +		return PTR_ERR(file);
-> +
-> +	src_ctx = file->private_data;
-> +	/* Same ring clone is not allowed */
-> +	if (src_ctx == ctx) {
-> +		ret = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	mutex_unlock(&ctx->uring_lock);
-> +	lock_two_rings(ctx, src_ctx);
-> +
-> +	ret = io_clone_files(ctx, src_ctx, &clone_arg);
-> +
-> +out:
-> +	if (src_ctx != ctx)
-> +		mutex_unlock(&src_ctx->uring_lock);
-
-Make the mutex_unlock unconditionally above the out label.  It is never
-locked in the error context.
-
+Best regards,
 -- 
-Gabriel Krisman Bertazi
+Jens Axboe
+
+
+
 

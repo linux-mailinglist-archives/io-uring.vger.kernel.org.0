@@ -1,279 +1,250 @@
-Return-Path: <io-uring+bounces-13859-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13860-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by mail.lfdr.de with LMTP
-	id 0L5pAHHIQ2oPhwoAu9opvQ
-	(envelope-from <io-uring+bounces-13859-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 30 Jun 2026 15:45:21 +0200
+	id mMhUK9oSRGr4nwoAu9opvQ
+	(envelope-from <io-uring+bounces-13860-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 30 Jun 2026 21:02:50 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B2D66E5005
-	for <lists+io-uring@lfdr.de>; Tue, 30 Jun 2026 15:45:20 +0200 (CEST)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 037246E760F
+	for <lists+io-uring@lfdr.de>; Tue, 30 Jun 2026 21:02:50 +0200 (CEST)
 Authentication-Results: mail.lfdr.de;
-	dkim=pass header.d=gmail.com header.s=20251104 header.b=AAJtQXrZ;
-	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13859-lists+io-uring=lfdr.de@vger.kernel.org" designates 172.234.253.10 as permitted sender) smtp.mailfrom="io-uring+bounces-13859-lists+io-uring=lfdr.de@vger.kernel.org";
-	dmarc=pass (policy=none) header.from=gmail.com;
-	arc=pass ("subspace.kernel.org:s=arc-20240116:i=2")
+	dkim=pass header.d=kernel-dk.20251104.gappssmtp.com header.s=20251104 header.b=niRcrtwt;
+	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13860-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c0a:e001:db::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-13860-lists+io-uring=lfdr.de@vger.kernel.org";
+	dmarc=none;
+	arc=pass ("subspace.kernel.org:s=arc-20240116:i=1")
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 6AA96306BCFA
-	for <lists+io-uring@lfdr.de>; Tue, 30 Jun 2026 13:41:27 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id ACFD930B7527
+	for <lists+io-uring@lfdr.de>; Tue, 30 Jun 2026 19:00:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD0DA3921CC;
-	Tue, 30 Jun 2026 13:41:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 461933C061C;
+	Tue, 30 Jun 2026 19:00:13 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A73A37B3F9
-	for <io-uring@vger.kernel.org>; Tue, 30 Jun 2026 13:41:25 +0000 (UTC)
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782826886; cv=pass; b=TKB2QRZ4ej++yyB57l6roFnax6CTBVqTwJNia/6SDhNI94lAApOKJdslOmpbLo9yfh0kUuGhI27Yv7XnSeC+3Z6Gw+QyqekHqa/S35ogPe90Hs7cUJDj6gFIUJ3Zz6Ff0dNH8KmBPMMWnE5e+o69f00/gzaYa1f3HeNfWP3DOFo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782826886; c=relaxed/simple;
-	bh=xoPU2K5o4fSamMrq8Nn4qkJOZoY5H0ni3IFUulSADvc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NHtrjEw0T6bb8uAkIraJtte4m6KsFWQzQxJh0zCTWxNg5I5od7v4+S5SWz9+QkpRBGX7CHp30W+LvNCUJXG2fIiiWBNKO7hPVj5xDNHgkZorXAmA77nB9w0THR47q4cKhKNH0y7fPxk/qe949YKopJcLojyRGod/j7AxylroWRU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AAJtQXrZ; arc=pass smtp.client-ip=209.85.128.41
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-493b691cb44so11874105e9.0
-        for <io-uring@vger.kernel.org>; Tue, 30 Jun 2026 06:41:24 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1782826884; cv=none;
-        d=google.com; s=arc-20260327;
-        b=gV7ZUSsN3zbJFw+Qd+bmYzYlfvpp50QhT0yHDg4PP6GwjVILymWqrpFt7ALqPok5Er
-         /zcQ9auTHfBseOVKwE5Oy0c/gnXPdo5h+dZgE1dCc8TytR8TP66yHWhEZCjH1/1Fkm/O
-         xX+OR0EZMh8MHjZUZjW1TM7Pf4aephxW09S3+d5RM6jwgQr8pwjM7atHWWsHz+rwaHb4
-         hIRZnPamyi21oo9i94KGMlirtS/5v9NGOJJRzn0e1jjFjqmAPrBiK7RKiO6bZWEJKSHU
-         s+bYRIzk2wzPyYlCxR48RRV/RHWkkeVh8705eXrff7TEG4VgQGBWNN7ShgHB/1cPCFdh
-         m3RA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=pa21sicLXG3a6RoR+4X0u++Mm7jJAtyyMoUdGzgneHU=;
-        fh=byydpFfk5dTt9IOuTXKEQNA2ileepK88T/zicoI+wio=;
-        b=dJ8GqM0d/xJggM9YEhhPoXXGvSDJO+ugnfPhxRI8n0iRnvyY+k+h6MFAXrkHQPZ7nS
-         lWkuQg2g8XKiZKT08CQd/F/ttwNIBqRKv0xAV9fSe3KalWGNpiJkW3WXzsdQwj8eHjZi
-         X9aDSfxs2ZVlkyMXjYVOfWMAaFG3SxjrDcCBvLzn6Khf1Wvj3TohlNVVWpkp9vW2yp2l
-         P/0ZCOu/zqgxTZf/sQuJBBXSllhoOqhIggSHrK33zbtnZsrC/jYX0RW5EkNukDLRRMHW
-         Tur5+XHAxsCozbxZoDVewGirWrdznVggKn+b3chbWCJeVwA1KppVSKM4WGm/6FfP984Z
-         meRg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E81CD32B114
+	for <io-uring@vger.kernel.org>; Tue, 30 Jun 2026 19:00:09 +0000 (UTC)
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1782846013; cv=none; b=gEqXhvEj+dB2PH7+r6CftSgOspuqtlpZacqhFp0CpkDCG1N1sWECqqaSUe3xC4Dv8P5uHBN1jLDbt/QbiWLZhx3275exz283vr1kBupHnLrrxS45TKDf2ku7JVhRQphNhtRriMcBldXWcC4MBRYEH/OqQQKw8EWP/B8jdEhuCLo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1782846013; c=relaxed/simple;
+	bh=MRlVly6IwVEUfshQrSGanGM9XCu9NkTsRVEWk3QQIMU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u73ZssAGtlc48jFk+dwmzWvTVwf88249HmvUAU85yackSAUrpvYghpjvZFxrIWyyVQnVh+aCgWu2iHZDhK/puu2aLYk+hCr03ERkYEnfSxsRVmoMYUynRqtzO79MnmTgY1VWygcRRGpZKtjYrjP1W50VljBvAQCQnvMo9eWnRNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=niRcrtwt; arc=none smtp.client-ip=209.85.161.42
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-6a145935764so1651565eaf.3
+        for <io-uring@vger.kernel.org>; Tue, 30 Jun 2026 12:00:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782826884; x=1783431684; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pa21sicLXG3a6RoR+4X0u++Mm7jJAtyyMoUdGzgneHU=;
-        b=AAJtQXrZsljDMytA7URQZDEJUhQ9+jqsjuOWvcq1HmVwtQ2ch5PMFY+8D6NhU1MahE
-         S9EYuDXq74QMZn9jFoM5qtOr7UQXiVcSnYSEWkc9LqpNGKjfMVUj2xqakaEI8WnsHA7x
-         ISbisBlb/tKXqYMP1LlX7tRVmQj4uxamI5hULUtp11p+71V3HegL+nxu6u8N9+UyI5HD
-         uTXM2VfXhpRTY/Sw3x6zkKd5vShRfV+RVNXGv6VyhN+14bNhjD4McNW827HjhFSKXnDL
-         UQRC1wahuuHrJkLl5zPqc1JuZf0PRs1iqWNBFYtZS2Eu5DUn3e5oxmaLm7tpAuVHI9AI
-         c9xA==
+        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1782846009; x=1783450809; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pcw0JrYae6holC107hwb8phuCW3lZ9aLQBkPPToEfOI=;
+        b=niRcrtwt/hS8Lt34cEYNGldpCA8PrbnDzxh5h6pUvjltXa6Mh0UB8lS/PKjYayc8h8
+         KNvklyySBpai1zAJwhKeDr7d0WgKn8Wf9A6E01zytFCMN9Qh5AVitsrlO2LZwtuy5VDl
+         fBLmTeHOO71tTtL1yqdLFmWsGezzWFHnJlIAYUlqBq7fJYJ8mwrZdZYidRga9Zpi7N8J
+         qFO/UZ9kQ3GfX1rhIVoJBR94cF7+qq4NZdh3c9SB7OXs97rE32KDbVR8alAFzy7o19c7
+         M1PfhS11DjzqozR/Yj3mT1Not9M9dXxPprZAnXnEhJBAQKTUWdFBYNpVje2w8waOKwa7
+         MTGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782826884; x=1783431684;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=pa21sicLXG3a6RoR+4X0u++Mm7jJAtyyMoUdGzgneHU=;
-        b=GrLPuW6/Wan0hdQSp3fJU0+eNvOyQhbmQbt0qhFRgTWUXUoA4aEi/urwE/8LNxsoAF
-         TtMSRp9eIipMDvqE6vN+0YDVwWPNSERbF2TpIs3RpMrUANE+m4KEeO+vqIUeisEt6Z05
-         LC+E4Uo+b4q9HckQgGbMjlWrEao7CyC7Vf2Z6knX85cIvcVfTFGnMWmx00khS123e5/2
-         JmzH8yopqXsmk5Fb4tYBgdd16uywDrDdR0MKToTAVit3rYNJ0pOKtJ0a8GazIhurC6O0
-         SyJ2EaL1UvvGMnBvqzwkmbq1d2pHgYIKsKEOWDdVKqHfIh40IFYVPY5YTnFCnJoA0IWb
-         BqRw==
-X-Gm-Message-State: AOJu0YzhE9YLgUdW0fPH/i1/RX+d6DRp8ZqXVdghasYC+x4dxdPHW4SA
-	ueHMxa8hQ2ulf7yjIWH0iYk06RyUFQeOrQvWFjBUdtM9wVZVGTJWbpltqOp2oACaDVgmimbxLh6
-	ZdVfXWxM6ngHyDveUwDQinKsvhNirmXJpDqBG
-X-Gm-Gg: AfdE7ckx4Sm1Gi9jRbfqvdgNHKMHH3lfzPZQxQmwTp3Hr9Qdtc8Ip32J2y50GUryqiH
-	KYaa6oZJyMoBIkeQFAup89PlJFm/QmUO4ay1nvzih2y1mFJ1e0zfX9+c038fDGM898erzL71Awn
-	bXpEHed+djMqrwOzcAEanbZ1Io0zPdvAFULVcEohnRbXZJj+EdeGvd42ks42lj/91ViLdd49laP
-	Pwb87Nhw9lYdmBLSw+Sh6gBu6p1tdFzkVVJ5NtWL3h07GajjSm/3z0BCSmxYfHqxElwBmOVPOAC
-	u2bpp73mX4PadCoLXHjF8ly8ZJQ/Yqc109nbVFaB1w==
-X-Received: by 2002:a05:600c:3e0f:b0:493:a5d4:3798 with SMTP id
- 5b1f17b1804b1-493bda28d59mr11508455e9.1.1782826883348; Tue, 30 Jun 2026
- 06:41:23 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1782846009; x=1783450809;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pcw0JrYae6holC107hwb8phuCW3lZ9aLQBkPPToEfOI=;
+        b=OXGXSd8mTjyIv6tNjjx7l5NREwSS6GXuF/F+fmu/mltlxv3MxO1M5uIyAFtmEOeSo7
+         m0ddZ7XuSPbm5fRKn1mZgaeVwb0b8IK239kFCYxM7hdT06OI3UiaBA5eszr4jqHZgUqi
+         mjFxCoUvpa8Mvaw9nG1fkILwR6CqTvtLENUgUmnYmNLiHOD4wHVw4uGRf92lJbvnHqc5
+         2yO7qveciOJlJU67eMWZxzERkLYCA/077eej6yjmHnIfUeNe7yD4sMOSriDL+v8mnQKQ
+         EUz73od/bPx/Xv+vw5wXUcEsAh3hCvV5ECLVOHlmV94WLCAnTQ3XSQMlH3nMz7t/kQ+w
+         rC9g==
+X-Forwarded-Encrypted: i=1; AFNElJ9ubdG3tsfvrwBs7AhhK1L0DTDLf7WwNEhB4xlUXd7CIQyzUXkGnoHbrTe/v4tkMwpEljDHdq+YDg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YybW8nhYVPIJFNS4mqYU2Pv53yIJwyJXhqxqPKp4wsYjftYe0Me
+	5NW7W5Z3ssImO5FBY5PVE+W1L6DX4mOPulZUKn0PRJyujsZkRKXiaoc8ytgBXufLBvfnmZ0eb/6
+	O40kbQ8U=
+X-Gm-Gg: AfdE7clXUl1CaNC7Ei/OoWt4GUlEs1igYeoU0Mr249cX7MyHPcP1u5Wdeo/jowCJRyL
+	Hj9/YHwMhOkS+LegyNPVb7pw4uP41o1JJJoDJB7QZlxbnxftZpNqvnhBLv9cVWpgPYkGdTp+EeV
+	m0jvOtA/9yIDe+JGk+lsLpozcKywiDr2iuCOkgvXN8w3gPe+i7Q2ohFwE1e2aYViWS3nEBeR/wI
+	TGK9yolbwSabRZX9iaNBSkEvtPSm+TeYIeK3TFhK5/9Os7hNfaQIcae9VWlLjMxzXbtm2KVvtgZ
+	9jsO3gJ4wnWW4h4fCiD/4o4aoUTI7n02DatoOmPTaLJLyw53loppb4h3hevx0m1E5BF0bonjYEU
+	gmHjf3Dzh+NsdBXpIfUSfWfTvIq+Nj7sxI8Ai+mu/MRjEuf/AVk9UWbBdVS1BfJnBReA4It6B1o
+	SgXeJdy/uZ2StDnV2r95Yy5Ny61imKaPW+Crx1iow/6/4VWCuvv2qK0E178LUaZuuF1RM05k0=
+X-Received: by 2002:a05:6820:4b06:b0:69e:57a1:8923 with SMTP id 006d021491bc7-6a18902e7e1mr3489458eaf.14.1782846008728;
+        Tue, 30 Jun 2026 12:00:08 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-6a189173c55sm2896161eaf.3.2026.06.30.12.00.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Jun 2026 12:00:08 -0700 (PDT)
+Message-ID: <8c8b9ace-dc84-46bf-8495-44bf2f2b0680@kernel.dk>
+Date: Tue, 30 Jun 2026 13:00:06 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAG48ez02Sio8ZENVK3gUWM+8j6NgG9LxtnDV=v+FSqsqs_KfnA@mail.gmail.com>
- <20260624090145.1715865-2-robert@fmmr.tech>
-In-Reply-To: <20260624090145.1715865-2-robert@fmmr.tech>
-From: Andrey Konovalov <andreyknvl@gmail.com>
-Date: Tue, 30 Jun 2026 15:41:03 +0200
-X-Gm-Features: AVVi8CfLdl--pUxA7bc7sjYDMXH1jNn9Ovhha-7OFBfug_w1YUKX-_k5aA2LmKo
-Message-ID: <CA+fCnZf6pj66Z0wmGPa+yRbzK7BQDx+ZoFO7nJ7rGnCfOW10Qw@mail.gmail.com>
-Subject: Re: [PATCH v4] io_uring: annotate remote tasks for kcoverage
-To: Robert Femmer <robert@fmmr.tech>
-Cc: io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, 
-	Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com, 
-	Jann Horn <jannh@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [BUG REPORT] btrfs/io_uring: GPF in tctx_task_work_run after
+ encoded read error completion
+To: Yue Sun <samsun1006219@gmail.com>, Chris Mason <clm@fb.com>,
+ David Sterba <dsterba@suse.com>
+Cc: linux-btrfs@vger.kernel.org, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20260630091609.3414-1-samsun1006219@gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20260630091609.3414-1-samsun1006219@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-2.16 / 15.00];
-	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20251104];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+X-Spamd-Result: default: False [-1.66 / 15.00];
+	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
+	R_DKIM_ALLOW(-0.20)[kernel-dk.20251104.gappssmtp.com:s=20251104];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_RECIPIENTS(0.00)[m:robert@fmmr.tech,m:io-uring@vger.kernel.org,m:axboe@kernel.dk,m:dvyukov@google.com,m:kasan-dev@googlegroups.com,m:jannh@google.com,s:lists@lfdr.de];
+	FORGED_RECIPIENTS(0.00)[m:samsun1006219@gmail.com,m:clm@fb.com,m:dsterba@suse.com,m:linux-btrfs@vger.kernel.org,m:io-uring@vger.kernel.org,m:linux-kernel@vger.kernel.org,s:lists@lfdr.de];
+	DMARC_NA(0.00)[kernel.dk];
 	RCVD_TLS_LAST(0.00)[];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13859-lists,io-uring=lfdr.de];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	FORGED_SENDER(0.00)[andreyknvl@gmail.com,io-uring@vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	FORWARDED(0.00)[lists@lfdr.de];
-	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[gmail.com,fb.com,suse.com];
 	FROM_HAS_DN(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FORGED_SENDER(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
+	TO_DN_SOME(0.00)[];
+	TAGGED_FROM(0.00)[bounces-13860-lists,io-uring=lfdr.de];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FORWARDED(0.00)[lists@lfdr.de];
+	DKIM_TRACE(0.00)[kernel-dk.20251104.gappssmtp.com:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
 	RCPT_COUNT_FIVE(0.00)[6];
 	FORGED_SENDER_FORWARDING(0.00)[];
-	ALIAS_RESOLVED(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[andreyknvl@gmail.com,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	TAGGED_RCPT(0.00)[io-uring];
+	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	ALIAS_RESOLVED(0.00)[];
 	FORGED_RECIPIENTS_FORWARDING(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[vger.kernel.org:from_smtp,mail.gmail.com:mid,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[io-uring];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[vger.kernel.org:from_smtp,kernel.dk:mid,kernel.dk:from_mime,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
 X-Rspamd-Server: lfdr
-X-Rspamd-Queue-Id: 4B2D66E5005
+X-Rspamd-Queue-Id: 037246E760F
 
-On Wed, Jun 24, 2026 at 11:03=E2=80=AFAM Robert Femmer <robert@fmmr.tech> w=
-rote:
->
-> Fuzzers use coverage information to guide generation of test cases
-> towards new or interesting code paths. Syzkaller, specifically, makes
-> use kcoverage (CONFIG_KCOV). Coverage information is not collected for
-> kernel tasks unless annotated by kcov_remote_start and kcov_remote_stop.
-> This patch annotates io-uring's work queue and sqpoll tasks.
->
-> Depends-On: 20260430-kcov-refactor-common-handle-v1-1-23a0c7a0ba38@google=
-.com
-> Signed-off-by: Robert Femmer <robert@fmmr.tech>
-> ---
->  include/linux/io_uring_types.h | 2 ++
->  io_uring/io-wq.c               | 5 +++++
->  io_uring/io_uring.c            | 2 ++
->  io_uring/sqpoll.c              | 3 +++
->  4 files changed, 12 insertions(+)
->
-> diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_type=
-s.h
-> index 244392026c6d..b6590b2b350c 100644
-> --- a/include/linux/io_uring_types.h
-> +++ b/include/linux/io_uring_types.h
-> @@ -504,6 +504,8 @@ struct io_ring_ctx {
->         struct io_mapped_region         ring_region;
->         /* used for optimised request parameter and wait argument passing=
-  */
->         struct io_mapped_region         param_region;
-> +
-> +       struct kcov_common_handle_id    kcov_handle;
->  };
->
->  /*
-> diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
-> index 8cc7b47d3089..173299dfc9c2 100644
-> --- a/io_uring/io-wq.c
-> +++ b/io_uring/io-wq.c
-> @@ -19,6 +19,7 @@
->  #include <linux/mmu_context.h>
->  #include <linux/sched/sysctl.h>
->  #include <uapi/linux/io_uring.h>
-> +#include <linux/kcov.h>
->
->  #include "io-wq.h"
->  #include "slist.h"
-> @@ -639,6 +640,7 @@ static void io_worker_handle_work(struct io_wq_acct *=
-acct,
->                 /* handle a whole dependent link */
->                 do {
->                         struct io_wq_work *next_hashed, *linked;
-> +                       struct io_kiocb *req;
->                         unsigned int work_flags =3D atomic_read(&work->fl=
-ags);
->                         unsigned int hash =3D __io_wq_is_hashed(work_flag=
-s)
->                                 ? __io_get_work_hash(work_flags)
-> @@ -649,7 +651,10 @@ static void io_worker_handle_work(struct io_wq_acct =
-*acct,
->                         if (do_kill &&
->                             (work_flags & IO_WQ_WORK_UNBOUND))
->                                 atomic_or(IO_WQ_WORK_CANCEL, &work->flags=
-);
-> +                       req =3D container_of(work, struct io_kiocb, work)=
-;
-> +                       kcov_remote_start_common(req->ctx->kcov_handle);
->                         io_wq_submit_work(work);
-> +                       kcov_remote_stop();
->                         io_assign_current_work(worker, NULL);
->
->                         linked =3D io_wq_free_work(work);
-> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> index 103b6c88f252..ab7c3e45e238 100644
-> --- a/io_uring/io_uring.c
-> +++ b/io_uring/io_uring.c
-> @@ -59,6 +59,7 @@
->  #include <linux/audit.h>
->  #include <linux/security.h>
->  #include <linux/jump_label.h>
-> +#include <linux/kcov.h>
->
->  #define CREATE_TRACE_POINTS
->  #include <trace/events/io_uring.h>
-> @@ -293,6 +294,7 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(s=
-truct io_uring_params *p)
->         INIT_HLIST_HEAD(&ctx->cancelable_uring_cmd);
->         io_napi_init(ctx);
->         mutex_init(&ctx->mmap_lock);
-> +       ctx->kcov_handle =3D kcov_common_handle();
->
->         return ctx;
->
-> diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
-> index 46c12afec73e..aafb640d3b2f 100644
-> --- a/io_uring/sqpoll.c
-> +++ b/io_uring/sqpoll.c
-> @@ -13,6 +13,7 @@
->  #include <linux/cpuset.h>
->  #include <linux/sched/cputime.h>
->  #include <linux/io_uring.h>
-> +#include <linux/kcov.h>
->
->  #include <uapi/linux/io_uring.h>
->
-> @@ -342,10 +343,12 @@ static int io_sq_thread(void *data)
->
->                 cap_entries =3D !list_is_singular(&sqd->ctx_list);
->                 list_for_each_entry(ctx, &sqd->ctx_list, sqd_list) {
-> +                       kcov_remote_start_common(ctx->kcov_handle);
->                         int ret =3D __io_sq_thread(ctx, sqd, cap_entries,=
- &ist);
->
->                         if (!sqt_spin && (ret > 0 || !list_empty(&ctx->io=
-poll_list)))
->                                 sqt_spin =3D true;
-> +                       kcov_remote_stop();
->                 }
->                 if (io_sq_tw(&retry_list, IORING_TW_CAP_ENTRIES_VALUE))
->                         sqt_spin =3D true;
-> --
-> 2.54.0
->
+On 6/30/26 3:16 AM, Yue Sun wrote:
+> Hello,
+> 
+> I can reproduce a general protection fault on current upstream master by using
+> IORING_OP_URING_CMD with BTRFS_IOC_ENCODED_READ on a loop-backed btrfs image
+> while fail_make_request injects read errors.
+> 
+> Summary
+> -------
+> 
+> The crash happens while io_uring is running task_work for a btrfs encoded read
+> completion:
+> 
+>   tctx_task_work_run()
+>     mutex_lock(&ctx->uring_lock)
+> 
+> The faulting mutex address is poisoned:
+> 
+>   RDI: dead000000001129
+>   KASAN: maybe wild-memory-access in range [0xdead000000001128-0xdead00000000112f]
+> 
+> The root cause might be a double-completion/use-after-free race in the
+> btrfs io_uring encoded read error path.
+> 
+> The timing appears to be:
+> 
+>   # CPU0: userspace task issues IORING_OP_URING_CMD.
+>   io_uring_enter()
+>     btrfs_uring_cmd()
+>       btrfs_uring_encoded_read()
+>         ret = btrfs_encoded_read(...)
+>         if (ret == -EIOCBQUEUED)
+>           btrfs_uring_read_extent(..., cmd)
+> 
+>   btrfs_uring_read_extent()
+>     priv->cmd = cmd
+>     ret = btrfs_encoded_read_regular_fill_pages(..., priv)
+> 
+>   # In this helper, priv is struct btrfs_encoded_read_private.
+>   # uring_ctx points to the caller's struct btrfs_uring_priv.
+>   btrfs_encoded_read_regular_fill_pages(..., uring_ctx=priv)
+>     refcount_set(&priv->pending_refs, 1)
+>     priv->uring_ctx = uring_ctx
+>     refcount_inc(&priv->pending_refs)
+>     btrfs_submit_bbio(bbio, 0)
+> 
+>   # CPU1: the submitted bio fails quickly, before CPU0 drops its owner ref.
+>   btrfs_encoded_read_endio()
+>     WRITE_ONCE(priv->status, bbio->bio.bi_status)
+>     refcount_dec_and_test(&priv->pending_refs)
+>     # pending_refs goes 2 -> 1, so this context does not queue completion.
+> 
+>   # CPU0: btrfs_submit_bbio() has returned and the uring branch continues.
+>   btrfs_encoded_read_regular_fill_pages(..., uring_ctx=priv)
+>     if (refcount_dec_and_test(&priv->pending_refs)) {
+>       ret = blk_status_to_errno(READ_ONCE(priv->status))
+>       btrfs_uring_read_extent_endio(uring_ctx, ret)
+>       kfree(priv)
+>       return ret
+>     }
+> 
+>   # Here priv is the caller's struct btrfs_uring_priv.
+>   btrfs_uring_read_extent_endio(priv, err)
+>     bc->priv = priv
+>     io_uring_cmd_complete_in_task(priv->cmd, btrfs_uring_read_finished)
+> 
+>   # CPU0: task_work is queued, but the helper returns a normal error instead
+>   # of -EIOCBQUEUED, so the caller takes the synchronous failure path.
+>   btrfs_uring_read_extent()
+>     if (ret && ret != -EIOCBQUEUED)
+>       goto out_fail
+>   out_fail:
+>     btrfs_unlock_extent(...)
+>     btrfs_inode_unlock(...)
+>     kfree(priv)
+>     __free_page(...)
+>     kfree(pages)
+>     return ret
+> 
+>   # Later, the same task waits for io_uring completions and runs task_work.
+>   io_uring_enter()
+>     io_cqring_wait()
+>       io_run_task_work()
+>         task_work_run()
+>           tctx_task_work()
+>             tctx_task_work_run()
+>               req = container_of(node, struct io_kiocb, io_task_work.node)
+>               ctx = req->ctx
+>               mutex_lock(&ctx->uring_lock)
+>               # Crash: req->ctx appears poisoned/stale before
+>               # btrfs_uring_read_finished() is reached.
 
-From KCOV API side:
+If the work is passed to task_work, then btrfs must return -EIOCBQUEUED.
+Looks like a basic bug in btrfs, see below. Caveat - entirely
+untested/compiled/whatever. On vacation, btrfs guys can figure this out.
 
-Acked-by: Andrey Konovalov <andreyknvl@gmail.com>
 
-Thanks!
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 272598f6ae77..51c06618c733 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -9460,7 +9460,6 @@ int btrfs_encoded_read_regular_fill_pages(struct btrfs_inode *inode,
+ 			ret = blk_status_to_errno(READ_ONCE(priv->status));
+ 			btrfs_uring_read_extent_endio(uring_ctx, ret);
+ 			kfree(priv);
+-			return ret;
+ 		}
+ 
+ 		return -EIOCBQUEUED;
+
+-- 
+Jens Axboe
 

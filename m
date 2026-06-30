@@ -1,180 +1,129 @@
-Return-Path: <io-uring+bounces-13855-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13856-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by mail.lfdr.de with LMTP
-	id ysdRKayFQ2onaAoAu9opvQ
-	(envelope-from <io-uring+bounces-13855-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 30 Jun 2026 11:00:28 +0200
+	id 78fdENaJQ2q9agoAu9opvQ
+	(envelope-from <io-uring+bounces-13856-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 30 Jun 2026 11:18:14 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B2F26E1DCD
-	for <lists+io-uring@lfdr.de>; Tue, 30 Jun 2026 11:00:27 +0200 (CEST)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 873B36E207F
+	for <lists+io-uring@lfdr.de>; Tue, 30 Jun 2026 11:18:13 +0200 (CEST)
 Authentication-Results: mail.lfdr.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=iZrsH3kT;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=IM8PTSe2;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=KBYgwT7+;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=BxEi7nWk;
-	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13855-lists+io-uring=lfdr.de@vger.kernel.org" designates 172.234.253.10 as permitted sender) smtp.mailfrom="io-uring+bounces-13855-lists+io-uring=lfdr.de@vger.kernel.org";
-	dmarc=pass (policy=none) header.from=suse.de;
+	dkim=pass header.d=163.com header.s=s110527 header.b=Pcks8zuF;
+	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13856-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c0a:e001:db::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-13856-lists+io-uring=lfdr.de@vger.kernel.org";
+	dmarc=none;
 	arc=pass ("subspace.kernel.org:s=arc-20240116:i=1")
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id E28D830125C6
-	for <lists+io-uring@lfdr.de>; Tue, 30 Jun 2026 09:00:25 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 93602311ECA5
+	for <lists+io-uring@lfdr.de>; Tue, 30 Jun 2026 09:12:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9550437C112;
-	Tue, 30 Jun 2026 09:00:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA46A3E168F;
+	Tue, 30 Jun 2026 09:11:07 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 197F53438A4
-	for <io-uring@vger.kernel.org>; Tue, 30 Jun 2026 09:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9BE261B8D
+	for <io-uring@vger.kernel.org>; Tue, 30 Jun 2026 09:11:03 +0000 (UTC)
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782810025; cv=none; b=ITNkuU2A6+fVnZOJhwyoUQrc+RyfpRrFszCUqwaw5R6W/hNB1b0BcthzyxGMEk1canvGNWcdcigq5cEYgAzHIE22ETSjOwZgNbDzGwaRNPACvd2o9IuCybJelLqKIhNVe+w35Ns5X+D33U1IGixc+c5lb1iK5bY77YuQ4x/6g6k=
+	t=1782810667; cv=none; b=lh9+f/LL1lRq/a3DFmup6TA1lI+m+Z3QUruFAIiZkA6MTwTgf+O/1rLT20vTh5NMojLYURsKIVMeBzwnoDFuuvLGwg0kcEbK5Qtmt8ngZ0/BSYzvd71pxp3AJ1/q7oKbjHUOlt8PoVihh4YRvBlJuipdPFKN0S5v3axN+aWewzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782810025; c=relaxed/simple;
-	bh=kOe29cC4sJhOm3plC50LoMxQwm0D9HhrkW+nvEm8NGs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=GtaXnVZoasq+pYVD6L9IcGFPlJ7NEJhPAWbpegbhl24/F1hIKAYZvce/ydOQl7umkvYQzmGyeC+VYhn6FZuQ2gWh55cxZDeDvtbBqIVHepV46lpDgZgAG6mhqhaZJcj/NE92v7zd3akUnHcdqk/xGZh5DDhcF7BTGD2sVQLSGzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=iZrsH3kT; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=IM8PTSe2; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KBYgwT7+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BxEi7nWk; arc=none smtp.client-ip=195.135.223.131
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E60A975EBB;
-	Tue, 30 Jun 2026 09:00:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1782810022; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f1+O2WCp9jiLEOwPjE3ABodaDR6p6VbAmBaUKVlsie4=;
-	b=iZrsH3kTRWJTpx766NI8TyrOlLaLZ5VUcpBu9Sw2qc7AnRlqsosoY9Ec22mhvrKau5VJmw
-	xbapFWkgnuVfHuzJ/4r/yGSDz2DQjAT4O6xHbJIUtSW3trZyZlXO6Q/SSlBF2ayYz45N//
-	2GOWNoYyzWYHS63EMHyjtUTt721Xz3s=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1782810022;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f1+O2WCp9jiLEOwPjE3ABodaDR6p6VbAmBaUKVlsie4=;
-	b=IM8PTSe2OkKMMoWMjgTQ340E2VkwrjgyfXp5dOhLnFKTagEEx8x+6x62mqdgzh4+l60B/x
-	isjhVwngRxkFNYAg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1782810021; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f1+O2WCp9jiLEOwPjE3ABodaDR6p6VbAmBaUKVlsie4=;
-	b=KBYgwT7+TD3BYLgoovg7SP35qhm2ewzny4Il6Xukeu+VIfiyRXDKVgPwK9DnnF09DpYjZL
-	MrOWbNGjQWQxt1e9rVAfIwkMIHOyG9N1K1Wd4q2tMpvN2ysritL3IOZc5A/Stf0+/1rdG+
-	hLyjex44IPDd68goH7fGx3vbKD+Oxl0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1782810021;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f1+O2WCp9jiLEOwPjE3ABodaDR6p6VbAmBaUKVlsie4=;
-	b=BxEi7nWkG8C10rx5ci6JWPSnYQHaSNAWnOPMt9Dqkfmcu49Ou3P49hZRd8CZA3UlZ+iGkV
-	BiS13sx6ctwTzLDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CE66A779A8;
-	Tue, 30 Jun 2026 09:00:21 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id BiqfMKWFQ2oWNAAAD6G6ig
-	(envelope-from <krisman@suse.de>); Tue, 30 Jun 2026 09:00:21 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Yi Xie <xieyi@kylinos.cn>, axboe@kernel.dk
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, Yi Xie
- <xieyi@kylinos.cn>
-Subject: Re: [PATCH] io_uring/memmap: return PTR_ERR() from get_unmapped_area()
-In-Reply-To: <20260630065700.97360-1-xieyi@kylinos.cn>
-Organization: SUSE
-References: <20260630065700.97360-1-xieyi@kylinos.cn>
-Date: Tue, 30 Jun 2026 05:00:20 -0400
-Message-ID: <87jyrg5rob.fsf@mailhost.krisman.be>
+	s=arc-20240116; t=1782810667; c=relaxed/simple;
+	bh=nKQ6l91PIJzZhKyKinKW8v/oM+jEdCEC/HgrZY2A19A=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=bySD06DBuhIFRY72VLlA7tV72VIXQhv8MSm4c9bFLp4hPfjux86EDfiL66/ogGv8PJGmV6zlrEMQPAwOZ0uzmXW7fj/beU3pLx5GNmH7xZOGj0ukCxEoBSc9r1YrngrEZmhExFkZzVRIVVGLmSsdtyQpKqJbmVxjpwDkJVjRUcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Pcks8zuF; arc=none smtp.client-ip=220.197.31.5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=Wa
+	lhfPxv7+dqsGRk46VFpbPHDrgaAPEhEA/oldE5bBo=; b=Pcks8zuFhItHP7EK/6
+	UxrJRnTjHmPZKk2Hs0RF5zafoUPGzdDIQ9Jr/TFnfwYnknpTsqV+28o1LYOsON4U
+	o3Wt+3FLMRCb/XoYRNHWFE592TNiTGi4cVL41xyqblx+GA+Y1awC0Dd+0c/cyhMV
+	RDLIZ3yg7vXK0bgejEIXe5tx0=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wCH75EZiENqEWaKGA--.13722S2;
+	Tue, 30 Jun 2026 17:10:50 +0800 (CST)
+From: Yang Xiuwei <yangxiuwei@kylinos.cn>
+To: xieyi@kylinos.cn
+Cc: axboe@kernel.dk,
+	io-uring@vger.kernel.org
+Subject: Re: [PATCH] io_uring/rsrc: bound io_coalesce_buffer() page array allocation
+Date: Tue, 30 Jun 2026 17:10:43 +0800
+Message-Id: <20260630091043.522534-1-yangxiuwei@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20260630071017.100436-1-xieyi@kylinos.cn>
+References: <20260630071017.100436-1-xieyi@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -4.51
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wCH75EZiENqEWaKGA--.13722S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrKr18tF1kCry5tr1fZryrZwb_yoWxurg_uF
+	WkAa42yw43GF47Ga1qkFWfXFyDtw43Wr4xuFy5uFsrAFyrXFZIvw18Xas7Zr17Kws2yFZF
+	yr9a9a1jyryYgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xRGZXr7UUUUU==
+Sender: yangxiuwei2025@163.com
+X-CM-SenderInfo: p1dqw55lxzvxisqskqqrwthudrp/xtbCwRqTJGpDiBoRagAA3s
 X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-1.66 / 15.00];
+X-Spamd-Result: default: False [-0.16 / 15.00];
+	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[suse.de,none];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	R_DKIM_ALLOW(-0.20)[163.com:s=s110527];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13855-lists,io-uring=lfdr.de];
-	FORGED_RECIPIENTS(0.00)[m:xieyi@kylinos.cn,m:axboe@kernel.dk,m:io-uring@vger.kernel.org,m:linux-kernel@vger.kernel.org,s:lists@lfdr.de];
-	FORGED_SENDER(0.00)[krisman@suse.de,io-uring@vger.kernel.org];
 	FORWARDED(0.00)[lists@lfdr.de];
+	TAGGED_FROM(0.00)[bounces-13856-lists,io-uring=lfdr.de];
+	RCVD_TLS_LAST(0.00)[];
+	FORGED_SENDER(0.00)[yangxiuwei@kylinos.cn,io-uring@vger.kernel.org];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	HAS_ORG_HEADER(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_TRACE(0.00)[suse.de:+];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	MISSING_XM_UA(0.00)[];
+	DMARC_NA(0.00)[kylinos.cn];
+	RCVD_COUNT_THREE(0.00)[4];
+	FORGED_RECIPIENTS(0.00)[m:xieyi@kylinos.cn,m:axboe@kernel.dk,m:io-uring@vger.kernel.org,s:lists@lfdr.de];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	RCPT_COUNT_THREE(0.00)[3];
 	PRECEDENCE_BULK(0.00)[];
 	FORGED_SENDER_FORWARDING(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[krisman@suse.de,io-uring@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[yangxiuwei@kylinos.cn,io-uring@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCVD_COUNT_FIVE(0.00)[6];
+	DKIM_TRACE(0.00)[163.com:+];
+	TO_DN_NONE(0.00)[];
 	FORGED_RECIPIENTS_FORWARDING(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
 	ALIAS_RESOLVED(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
 	TAGGED_RCPT(0.00)[io-uring];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[vger.kernel.org:from_smtp,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,suse.de:dkim,suse.de:from_mime,kylinos.cn:email]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,vger.kernel.org:from_smtp,kylinos.cn:mid,kylinos.cn:from_mime]
 X-Rspamd-Server: lfdr
-X-Rspamd-Queue-Id: 9B2F26E1DCD
+X-Rspamd-Queue-Id: 873B36E207F
 
-Yi Xie <xieyi@kylinos.cn> writes:
+---
 
-> Use PTR_ERR() on validate failure, like io_uring_mmap().
+Hi Yi,
 
-FWIW, this is not about using PTR_ERR, but about changing the return on
-error to -EINVAL, which is what is returned by
-io_uring_validate_mmap_request.  The commit message should reflect that,
-specially because this is returned to userspace eventually, and might
-break some application checks..
+On Tue, 30 Jun 2026 at 15:10 +0800, Yi Xie wrote:
+> kvmalloc_objs() in io_coalesce_buffer() does not check for size overflow
+> when nr_folios is large.  Mirror the check used in memmap.c before
+> allocating the page pointer array.
 
+Thanks for the patch. I don't think this check is needed on the current call path.
 
-> Signed-off-by: Yi Xie <xieyi@kylinos.cn>
-> ---
->  io_uring/memmap.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/io_uring/memmap.c b/io_uring/memmap.c
-> index da1f6c5d07f8..23e8a85111bc 100644
-> --- a/io_uring/memmap.c
-> +++ b/io_uring/memmap.c
-> @@ -337,7 +337,7 @@ unsigned long io_uring_get_unmapped_area(struct file *filp, unsigned long addr,
->  
->  	ptr = io_uring_validate_mmap_request(filp, pgoff);
->  	if (IS_ERR(ptr))
-> -		return -ENOMEM;
-> +		return PTR_ERR(ptr);
->  
->  	/*
->  	 * Some architectures have strong cache aliasing requirements.
-> -- 
-> 2.25.1
->
+io_coalesce_buffer() is only called from io_sqe_buffer_register() after
+io_pin_pages() succeeds. io_pin_pages() already rejects:
 
--- 
-Gabriel Krisman Bertazi
+	nr_pages > INT_MAX / sizeof(struct page *)
+
+io_check_coalesce_buffer() only increments nr_folios when it walks across
+folio boundaries in the pinned page array, so we always have:
+
+	nr_folios <= nr_pages
+
+Thanks,
+Yang Xiuwei
+
 

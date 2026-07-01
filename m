@@ -1,372 +1,151 @@
-Return-Path: <io-uring+bounces-13867-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13868-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by mail.lfdr.de with LMTP
-	id Fs/CAHz4RGol4QoAu9opvQ
-	(envelope-from <io-uring+bounces-13867-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Wed, 01 Jul 2026 13:22:36 +0200
+	id l8XlLSv+RGqz4goAu9opvQ
+	(envelope-from <io-uring+bounces-13868-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Wed, 01 Jul 2026 13:46:51 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 635096ECC15
-	for <lists+io-uring@lfdr.de>; Wed, 01 Jul 2026 13:22:35 +0200 (CEST)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9972D6ECF4F
+	for <lists+io-uring@lfdr.de>; Wed, 01 Jul 2026 13:46:50 +0200 (CEST)
 Authentication-Results: mail.lfdr.de;
-	dkim=pass header.d=linux.dev header.s=key1 header.b=QRnvYhKi;
-	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13867-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c04:e001:36c::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-13867-lists+io-uring=lfdr.de@vger.kernel.org";
-	dmarc=pass (policy=none) header.from=linux.dev;
+	dkim=pass header.d=kernel-dk.20251104.gappssmtp.com header.s=20251104 header.b="nFU/1fQn";
+	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13868-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c15:e001:75::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-13868-lists+io-uring=lfdr.de@vger.kernel.org";
+	dmarc=none;
 	arc=pass ("subspace.kernel.org:s=arc-20240116:i=1")
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id EBD8D30775D4
-	for <lists+io-uring@lfdr.de>; Wed,  1 Jul 2026 11:09:59 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 411D5300BC53
+	for <lists+io-uring@lfdr.de>; Wed,  1 Jul 2026 11:42:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 506334508E4;
-	Wed,  1 Jul 2026 11:08:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1974480956;
+	Wed,  1 Jul 2026 11:42:36 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0332644BCB5;
-	Wed,  1 Jul 2026 11:08:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08BF52773E5
+	for <io-uring@vger.kernel.org>; Wed,  1 Jul 2026 11:42:32 +0000 (UTC)
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782904115; cv=none; b=c6NphUA832e34qfGqkNnfJS9+/caMKNam0n+A1yUmmwYBmH5pGOMgNdRNcsgdkgA+8kZ0V68o7gSnTFiPT4O1VVG3apCSTriSF7QtVU40bpmo95wIjZqMNpaK9xzuqLWmJOfgmyZuAti2/AJbQXzW+Zl7sLdrltgCq5mrk94SMk=
+	t=1782906156; cv=none; b=qITLTiPFivNqGVwW65MnULLiWiea0PWxfrAdI/DqGNTxid5knWr+S/KmvzX1tRl6gcytTXaeamqM9KMoCQX1+g325+fjTKLJXrVhHqJyS8Wf0TKOVUxZCtaqQHUSvlPUmHA+pyKieco5fJRzvcd2l7nJjNlJ/zjFPjywTI4bu9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782904115; c=relaxed/simple;
-	bh=S9U/QQkOj2QcN7GOUDf8Nq4vJ3cWwPyQIEl2/pEFaPo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bhW0nh0PqRc5FYwORkU8VTuEqYVF6zsDgdE2oWga05dcZX/rD1XsOovYwPGFAV4OWi9n2MqAzKvUU9KlGICuGBXQ3g/AqLbbRSD3rEeGP53Uwe6YpTUPsZsu7miFpLY1UV/KivphYjTDCIQol+c/vVpbBwd632YsLqx3v7euXUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QRnvYhKi; arc=none smtp.client-ip=91.218.175.171
-Message-ID: <0efcc0a9-a51d-4de8-8406-b8fa536a91b7@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1782904099;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ieMgPSS1eIBfAPTWcoeMePMwN2vKLGAwkXUol+yS3JM=;
-	b=QRnvYhKi7ifn2CAOqwrrTALRRhFuKdBNRY4USBSzQESgxOH79yyPbWsw+wvjxJGm9pDQu3
-	75wHltVABewcdEultw97xVO9Srux+vxmHLrM1y3qkyY8Qi8RlcbW/19L2d+jmEkSOqKAw5
-	8d3ZpLHm3o4fEt3mWUbZ+Ie+mvfoBxk=
-Date: Wed, 1 Jul 2026 19:07:22 +0800
+	s=arc-20240116; t=1782906156; c=relaxed/simple;
+	bh=QfsyRWxDX5ywfheIbHqbzMVfbQXD09RH22N9SnMHKzk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=DlJTO/t+l8Ywb+Ai6CRkJRdL1QNSChTApfdW+koyAWHZXWxjFQQDXKXcxuVfWxIf5jwIhRYm/e1pkSJ8pH+7Awg+ipuAZTjbq3PhHlfQgcfVRfLGYQ6L2neMUNxr3CqPPltbSsjJwopbfpdJb86uS5MIdrSV8c9ob+S/E8536m8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=nFU/1fQn; arc=none smtp.client-ip=209.85.210.47
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-7e9483cd614so464300a34.1
+        for <io-uring@vger.kernel.org>; Wed, 01 Jul 2026 04:42:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1782906151; x=1783510951; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uwtsEahTPL5jqfaqXp8JzpFcpPqQYNIPQ32MjLQLw7I=;
+        b=nFU/1fQnJcz01UMaeaOUIBgASNLx60URPg5QbpSyrZx40c7hywEVw8fa50mnQ3HrbN
+         6uSKa6PE1V1wYJBWMYKqxgMtn5bfTgJLUV8+hA6EVo+/pQMDEDQ386P0kpBBOKtytvFH
+         9zzOXp1JJ+vEszjGaouJpyhuedQRx0GxfpjUiWgLfA4wlUz12blRfM7YyRTDlf2vSX1K
+         qkiYYa1JBfX/N/Md/k4ZY+S/R2lSI4NlboQtvzgMZbtV36EB7fR5DQ8B2nT5/BJ125XO
+         7vxaYoOmjj32bXauWHIND+bEIAiUOy4hXLphnV2IJQIi+bUijXeWYCRbWfo7p8ZRfcRN
+         l4VQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1782906151; x=1783510951;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=uwtsEahTPL5jqfaqXp8JzpFcpPqQYNIPQ32MjLQLw7I=;
+        b=YHzdOeb7p6G9iwVz1MTwpAM0ZXC8dIvwA6G5YwfDPUGdG7AMQI7u1Oz6gYZudNEnlZ
+         0Pz46isqIjVv+jpVIZxY+VhXhL2bl1WMnY4M6lb+1KLgBdrHFp+B9lPd0gEYowfRNQBP
+         6Gt16KMoMC1zL8tXqe5Zk9OoEE7y0EJAU0BnIWwriI/V28fPw0vblJXhc/hO+DkrBlpY
+         sXARGKjWnD2KXiWIqng+BEbz/MMEw+oZdQaRmIwEHhFM73/9qihuVspDcrlE/ogQx8C8
+         L4vqgGBd9pnRoKb21RxxJ2BagIf15NNaHYabq0UoT0j9VOD1vSxE0Jy6rxBiJFyB/pfp
+         kZEA==
+X-Gm-Message-State: AOJu0YyNLQBf+CjW0IQrfSx/0jkAFYxlXw78aPUoYk2gdYK66oKkExoa
+	ZqiLv7A/nf5uC8Hs6i/tYLGNkqVYHpe+bTuPW0LdgF1Snjh1pB1hVBiveSjJuNq3k2x/30bTXg7
+	E3HvuxfU=
+X-Gm-Gg: AfdE7cm/CGAVw0MEu/z7uyNQ4wHprzmhbmA1xaBYXpmNknNz2XzuWfIxM3+htAw2a1x
+	XFNfpUEmD1pcL/liQzCO3VjTQlfwwl4skZNaCOWlu6WBsjE+jNcTSUnwJ6d2yawXqVCIHd7tnrc
+	q+dKsQqWjinYiXKiMuC0iB13P5i3VkPWGA9nLpw6ncrW9bnReb1xhcTpdkQZW47Ag+4UpRCzQSe
+	5ctHeSVp4jcx0uCcS1KvovGINbFzrtzJuoF3dv2Cbli/+m8Zno+9rB2IdMWSlsu7zD3jc20TWw1
+	yoFC0hNd1ewAEY3RAl1wkpUvbxCHDAdcCq08gdzbkX+a/m0YszzIPfv4R/8enhahly5YzgPErjz
+	cQUxuUN7S2mFVbBECaKE9ZRYLZkh4Iey2c0WdCJD0KjN7nJnwqQ2+XKnGpI6OAU1PP2uPH2JQoq
+	A2ultdW9KhNxr2mDUZpWqP4G0L7RbU8uAV6007ow0wDDfFon2ITI38XBWaHlbFImUQIUCF1k9zV
+	G3A
+X-Received: by 2002:a05:6830:3811:b0:7e9:cce4:803a with SMTP id 46e09a7af769-7eb3d04f4femr651848a34.10.1782906151432;
+        Wed, 01 Jul 2026 04:42:31 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7e9f328636dsm3668677a34.9.2026.07.01.04.42.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Jul 2026 04:42:30 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: krisman@suse.de, Yi Xie <xieyi@kylinos.cn>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20260630091206.126206-1-xieyi@kylinos.cn>
+References: <20260630091206.126206-1-xieyi@kylinos.cn>
+Subject: Re: [PATCH v2] io_uring/memmap: return -EINVAL from
+ get_unmapped_area() on bad mmap
+Message-Id: <178290615011.198657.2277099553649847509.b4-ty@b4>
+Date: Wed, 01 Jul 2026 05:42:30 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v3 1/7] list: Add mutable iterator variants
-To: Jani Nikula <jani.nikula@linux.intel.com>,
- David Laight <david.laight.linux@gmail.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- "David Hildenbrand (Arm)" <david@kernel.org>,
- Alexei Starovoitov <ast@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>,
- Tejun Heo <tj@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@kernel.org>,
- Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Paul Moore <paul@paul-moore.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- "Paul E. McKenney" <paulmck@kernel.org>,
- Shakeel Butt <shakeel.butt@linux.dev>, David Howells <dhowells@redhat.com>,
- Simona Vetter <simona.vetter@ffwll.ch>, Randy Dunlap
- <rdunlap@infradead.org>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Philipp Stanner <phasta@kernel.org>, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
- linux-ntfs-dev@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
- io-uring@vger.kernel.org, audit@vger.kernel.org, bpf@vger.kernel.org,
- netdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-perf-users@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- kexec@lists.infradead.org, live-patching@vger.kernel.org,
- linux-modules@vger.kernel.org, linux-crypto@vger.kernel.org,
- linux-pm@vger.kernel.org, rcu@vger.kernel.org, sched-ext@lists.linux.dev,
- linux-mm@kvack.org, virtualization@lists.linux.dev, damon@lists.linux.dev,
- llvm@lists.linux.dev, Kaitao Cheng <chengkaitao@kylinos.cn>,
- Muchun Song <muchun.song@linux.dev>
-References: <20260622040533.29824-1-kaitao.cheng@linux.dev>
- <20260622040533.29824-2-kaitao.cheng@linux.dev>
- <20260622094242.64531b9a@pumpkin>
- <351a6b67-b394-4c58-aee2-88b6c8089ad5@linux.dev>
- <cf8467c7-b98f-44a5-9cf9-60b43b5da711@amd.com>
- <20260624152324.3def88ce@pumpkin>
- <0ed6b5c3-e955-46e2-9fc6-075a0dfd1c4f@linux.dev>
- <734f66ca51485ee3ec9788c0eaaead681e00664b@intel.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kaitao Cheng <kaitao.cheng@linux.dev>
-In-Reply-To: <734f66ca51485ee3ec9788c0eaaead681e00664b@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15.2
 X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	SUSPICIOUS_RECIPS(1.50)[];
+X-Spamd-Result: default: False [-1.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[linux.dev,none];
-	R_DKIM_ALLOW(-0.20)[linux.dev:s=key1];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
+	R_DKIM_ALLOW(-0.20)[kernel-dk.20251104.gappssmtp.com:s=20251104];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_FROM(0.00)[bounces-13867-lists,io-uring=lfdr.de];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	FORWARDED(0.00)[lists@lfdr.de];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FORGED_RECIPIENTS(0.00)[m:jani.nikula@linux.intel.com,m:david.laight.linux@gmail.com,m:christian.koenig@amd.com,m:david@kernel.org,m:ast@kernel.org,m:akpm@linux-foundation.org,m:axboe@kernel.dk,m:tj@kernel.org,m:viro@zeniv.linux.org.uk,m:brauner@kernel.org,m:daniel@iogearbox.net,m:andrii@kernel.org,m:hannes@cmpxchg.org,m:peterz@infradead.org,m:mingo@redhat.com,m:acme@kernel.org,m:namhyung@kernel.org,m:tglx@kernel.org,m:juri.lelli@redhat.com,m:vincent.guittot@linaro.org,m:paul@paul-moore.com,m:andriy.shevchenko@linux.intel.com,m:paulmck@kernel.org,m:shakeel.butt@linux.dev,m:dhowells@redhat.com,m:simona.vetter@ffwll.ch,m:rdunlap@infradead.org,m:luca.ceresoli@bootlin.com,m:phasta@kernel.org,m:linux-block@vger.kernel.org,m:linux-kernel@vger.kernel.org,m:cgroups@vger.kernel.org,m:linux-ntfs-dev@lists.sourceforge.net,m:linux-fsdevel@vger.kernel.org,m:io-uring@vger.kernel.org,m:audit@vger.kernel.org,m:bpf@vger.kernel.org,m:netdev@vger.kernel.org,m:dri-devel@lists.freedesktop.org,m:linux-pe
- rf-users@vger.kernel.org,m:linux-trace-kernel@vger.kernel.org,m:kexec@lists.infradead.org,m:live-patching@vger.kernel.org,m:linux-modules@vger.kernel.org,m:linux-crypto@vger.kernel.org,m:linux-pm@vger.kernel.org,m:rcu@vger.kernel.org,m:sched-ext@lists.linux.dev,m:linux-mm@kvack.org,m:virtualization@lists.linux.dev,m:damon@lists.linux.dev,m:llvm@lists.linux.dev,m:chengkaitao@kylinos.cn,m:muchun.song@linux.dev,m:davidlaightlinux@gmail.com,s:lists@lfdr.de];
-	FORGED_SENDER(0.00)[kaitao.cheng@linux.dev,io-uring@vger.kernel.org];
-	FREEMAIL_TO(0.00)[linux.intel.com,gmail.com,amd.com,kernel.org];
-	RCVD_COUNT_THREE(0.00)[3];
+	FORGED_RECIPIENTS(0.00)[m:krisman@suse.de,m:xieyi@kylinos.cn,m:io-uring@vger.kernel.org,m:linux-kernel@vger.kernel.org,s:lists@lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
+	DMARC_NA(0.00)[kernel.dk];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-13868-lists,io-uring=lfdr.de];
+	FORWARDED(0.00)[lists@lfdr.de];
+	FORGED_SENDER(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
+	FORGED_SENDER_MAILLIST(0.00)[];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	FORGED_SENDER_FORWARDING(0.00)[];
-	RCPT_COUNT_GT_50(0.00)[54];
-	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[kaitao.cheng@linux.dev,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[linux.dev:+];
-	ALIAS_RESOLVED(0.00)[];
-	FORGED_RECIPIENTS_FORWARDING(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
 	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	FORGED_SENDER_FORWARDING(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[5];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
+	DKIM_TRACE(0.00)[kernel-dk.20251104.gappssmtp.com:+];
+	ALIAS_RESOLVED(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[kylinos.cn:email,tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo,vger.kernel.org:from_smtp]
+	FORGED_RECIPIENTS_FORWARDING(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[vger.kernel.org:from_smtp,kernel-dk.20251104.gappssmtp.com:dkim,sin.lore.kernel.org:rdns,sin.lore.kernel.org:helo]
 X-Rspamd-Server: lfdr
-X-Rspamd-Queue-Id: 635096ECC15
-
-在 2026/6/25 19:00, Jani Nikula 写道:
-> On Thu, 25 Jun 2026, Kaitao Cheng <kaitao.cheng@linux.dev> wrote:
->> 在 2026/6/24 22:23, David Laight 写道:
->>> On Wed, 24 Jun 2026 15:23:47 +0200
->>> Christian König <christian.koenig@amd.com> wrote:
->>>> On 6/24/26 15:14, Kaitao Cheng wrote:
->>>>> 在 2026/6/22 16:42, David Laight 写道:  
->>>>>> On Mon, 22 Jun 2026 12:05:31 +0800
->>>>>> Kaitao Cheng <kaitao.cheng@linux.dev> wrote:
->>>>>>  
->>>>>>> From: Kaitao Cheng <chengkaitao@kylinos.cn>
->>>>>>>
->>>>>>> The list_for_each*_safe() helpers are used when the loop body may
->>>>>>> remove the current entry.  Their API exposes the temporary cursor at
->>>>>>> every call site, even though most users only need it for the iterator
->>>>>>> implementation and never reference it in the loop body.
->>>>>>>
->>>>>>> Add *_mutable() variants for list and hlist iteration.  The new helpers
->>>>>>> support both forms: callers may keep passing an explicit temporary cursor
->>>>>>> when they need to inspect or reset it, or omit it and let the helper use
->>>>>>> a unique internal cursor.  
->>>>>>
->>>>>> I'm not really sure 'mutable' means anything either.
->>>>>> It is possible to make it valid for the loop body (or even other threads)
->>>>>> to delete arbitrary list items - but that needs significant extra overheads.
->>>>>>
->>>>>> It might be worth doing something that doesn't need the extra variable,
->>>>>> but there is little point doing all the churn just to rename things.
->>>>>>  
->>>>>>>
->>>>>>> This makes call sites that only mutate the list through the current entry
->>>>>>> less noisy, while keeping the existing *_safe() helpers available for
->>>>>>> compatibility.
->>>>>>>
->>>>>>> Signed-off-by: Kaitao Cheng <chengkaitao@kylinos.cn>
->>>>>>> ---
->>>>>>>  include/linux/list.h | 269 +++++++++++++++++++++++++++++++++++++------
->>>>>>>  1 file changed, 231 insertions(+), 38 deletions(-)
->>>>>>>
->>>>>>> diff --git a/include/linux/list.h b/include/linux/list.h
->>>>>>> index 09d979976b3b..1081def7cea9 100644
->>>>>>> --- a/include/linux/list.h
->>>>>>> +++ b/include/linux/list.h
->>>>>>> @@ -7,6 +7,7 @@
->>>>>>>  #include <linux/stddef.h>
->>>>>>>  #include <linux/poison.h>
->>>>>>>  #include <linux/const.h>
->>>>>>> +#include <linux/args.h>
->>>>>>>  
->>>>>>>  #include <asm/barrier.h>
->>>>>>>  
->>>>>>> @@ -763,28 +764,72 @@ static inline void list_splice_tail_init(struct list_head *list,
->>>>>>>  #define list_for_each_prev(pos, head) \
->>>>>>>  	for (pos = (head)->prev; !list_is_head(pos, (head)); pos = pos->prev)
->>>>>>>  
->>>>>>> -/**
->>>>>>> - * list_for_each_safe - iterate over a list safe against removal of list entry
->>>>>>> - * @pos:	the &struct list_head to use as a loop cursor.
->>>>>>> - * @n:		another &struct list_head to use as temporary storage
->>>>>>> - * @head:	the head for your list.
->>>>>>> +/*
->>>>>>> + * list_for_each_safe is an old interface, use list_for_each_mutable instead.
->>>>>>>   */
->>>>>>>  #define list_for_each_safe(pos, n, head) \
->>>>>>>  	for (pos = (head)->next, n = pos->next; \
->>>>>>>  	     !list_is_head(pos, (head)); \
->>>>>>>  	     pos = n, n = pos->next)
->>>>>>>  
->>>>>>> +#define __list_for_each_mutable_internal(pos, tmp, head)		\
->>>>>>> +	for (typeof(pos) tmp = (pos = (head)->next)->next;		\  
->>>>>>
->>>>>> Use auto
->>>>>>  
->>>>>>> +	     !list_is_head(pos, (head));				\
->>>>>>> +	     pos = tmp, tmp = pos->next)
->>>>>>> +
->>>>>>> +#define __list_for_each_mutable1(pos, head)				\
->>>>>>> +	__list_for_each_mutable_internal(pos, __UNIQUE_ID(next), head)
->>>>>>> +
->>>>>>> +#define __list_for_each_mutable2(pos, next, head)			\
->>>>>>> +	list_for_each_safe(pos, next, head)
->>>>>>> +
->>>>>>>  /**
->>>>>>> - * list_for_each_prev_safe - iterate over a list backwards safe against removal of list entry
->>>>>>> + * list_for_each_mutable - iterate over a list safe against entry removal
->>>>>>>   * @pos:	the &struct list_head to use as a loop cursor.
->>>>>>> - * @n:		another &struct list_head to use as temporary storage
->>>>>>> - * @head:	the head for your list.
->>>>>>> + * @...:	either (head) or (next, head)
->>>>>>> + *
->>>>>>> + * next:	another &struct list_head to use as optional temporary storage.
->>>>>>> + *		The temporary cursor is internal unless explicitly supplied by
->>>>>>> + *		the caller.
->>>>>>> + * head:	the head for your list.
->>>>>>> + */
->>>>>>> +#define list_for_each_mutable(pos, ...)					\
->>>>>>> +	CONCATENATE(__list_for_each_mutable, COUNT_ARGS(__VA_ARGS__))	\
->>>>>>> +		(pos, __VA_ARGS__)  
->>>>>>
->>>>>> The variable argument count logic really just slows down compilation.
->>>>>> Maybe there aren't enough copies of this code to make that significant.
->>>>>> But just because you can do it doesn't mean it is a gooD idea.
->>>>>> I'm also not sure it really adds anything to the readability.
->>>>>>
->>>>>> And, it you are going to make the middle argument optional there is
->>>>>> no need to change the macro name.  
->>>>>
->>>>> Christian König and Jani Nikula also disagree with the variadic-argument
->>>>> implementation approach. If we abandon that method, it means we will
->>>>> inevitably need to add some new macros. If mutable is not a good name,
->>>>> suggestions for better alternatives would be welcome; coming up with a
->>>>> suitable name is indeed rather tricky.  
->>>>
->>>> I don't think you need to add a new macro for the specific use case that people want to modify the next element of the iteration.
->>>>
->>>> If I remember your numbers correctly that is a really corner case and keeping using the existing *_safe() macros for that sounds perfectly fine to me.
->>>
->>> IIRC currently you have a choice of either:
->>> 	define               Item that can't be deleted
->>> 	list_for_each()	     The current item.
->>> 	list_for_each_safe() The next item.
->>> There is also likely to be code that updates the variables to allow
->>> for other scenarios.
->>>
->>> Note that if increase a reference count and release a lock then list_for_each()
->>> is likely safer than list_for_each_safe() :-)
->>>
->>> list.h has 9 variants of the 'safe' loop.
->>> The bloat of another 9 is getting excessive.
->>>
->>> It has to be said that this is one of my least favourite type of list...
->>
->> Hi Christian König, David Laight, Jani Nikula, David Hildenbrand,
->> Andy Shevchenko, Alexei Starovoitov
->>
->> For ease of discussion, I need to summarize the currently possible
->> approaches and briefly describe their respective pros and cons,
->> using the list_for_each_entry* interfaces as examples.
->>
->> 1. Add list_for_each_entry_mutable, while keeping list_for_each_entry
->> and list_for_each_entry_safe unchanged. list_for_each_entry_mutable
->> would be used specifically for safe deletion scenarios that do not
->> need to expose the temporary cursor externally. The code can refer to
->> the v1 version.
->>
->> Pros: Does not depend on immediate per-subsystem adaptation and can be
->>       merged directly.
->> Cons: Requires adding a whole set of mutable interfaces, which makes the
->>       code somewhat redundant.
-> 
-> Seems fine, and the original _safe naming is ambiguous anyway.
-> 
->> 2. Directly optimize away the temporary cursor in list_for_each_entry_safe
->> and define it inside the loop instead, changing the interface from four
->> arguments to three.
->>
->> Pros: Does not add redundant interfaces.
->> Cons: (1) Users need to manually update special cases that use the
->>       traversal variable of list_for_each_entry_safe, the new
->>       list_for_each_entry_safe would no longer apply there and would
->>       need to be open-coded.
->>       (2) Because the macro arguments changes, all list_for_each_entry_safe
->>       callers would need to be modified and merged together, making it
->>       difficult to merge such a large amount of code at once.
-> 
-> This won't fly because there are literally thousands of
-> list_for_each_entry_safe() users.
-> 
->> 3. Use a variadic macro approach to optimize list_for_each_entry_safe,
->> so that it supports both three and four arguments.
->>
->> Pros: (1) Does not add redundant interfaces.
->>       (2) Does not depend on immediate per-subsystem adaptation and can
->>       be merged directly.
->> Cons: (1) Increases compile time.
->>       (2) Makes the interface harder for users to use.
-> 
-> Basically I'm against any variadic macro tricks where the optional
-> argument is not the last argument. That's just way too surprising, and
-> goes against common practice in just about all other languages.
-> 
->> 4. Optimize list_for_each_entry by defining the temporary cursor internally,
->> making it compatible with the functionality of list_for_each_entry_safe.
->> The code can refer to the v2 version.
->>
->> Pros: (1) Does not add redundant interfaces.
->>       (2) The number of externally visible arguments of list_for_each_entry
->>       remains unchanged, still three.
->> Cons: (1) list_for_each_entry and list_for_each_entry_safe would be merged
->>       into one, and list_for_each_entry_safe would gradually be deprecated.
->>       (2) Users need to manually update special cases that use the traversal
->>       variable of list_for_each_entry, the new list_for_each_entry would no
->>       longer apply there and would need to be open-coded. There are 15 such
->>       cases in total.
-> 
-> This sounds good to me, though I take it there's some code size increase
-> and/or performance penalty?
-> 
-> Maybe the 15 cases are questionable anyway?
-> 
->> 5. Use a variadic macro approach to optimize list_for_each_entry, so that
->> it supports both three and four arguments.
->>
->> Pros: (1) Does not add redundant interfaces.
->>       (2) Does not depend on immediate per-subsystem adaptation and can be
->>       merged directly.
->> Cons: (1) Increases compile time.
->>       (2) list_for_each_entry and list_for_each_entry_safe would be merged
->>       into one, and list_for_each_entry_safe would gradually be deprecated.
-> 
-> Please don't do the macro tricks.
-> 
->> 6. Make no changes, keep the current logic unchanged, and close the current
->> email discussion.
-> 
-> I like hiding the temporary stuff when possible.
-> 
-> BR,
-> Jani.
-
-Hi all,
-If there are no objections, I will make the changes using the first approach.
+X-Rspamd-Queue-Id: 9972D6ECF4F
 
 
-Hi David Laight,
-You previously expressed a different opinion. Do you have any further comments
-on the current proposed approach?
+On Tue, 30 Jun 2026 17:12:06 +0800, Yi Xie wrote:
+> get_unmapped_area() returns -ENOMEM when io_uring_validate_mmap_request()
+> fails, but validation errors are -EINVAL. Propagate that errno to
+> userspace, like io_uring_mmap() already does.
 
+Applied, thanks!
+
+[1/1] io_uring/memmap: return -EINVAL from get_unmapped_area() on bad mmap
+      commit: df645b745941ea829b39134ac342f730f4d9d978
+
+Best regards,
 -- 
-Thanks
-Kaitao Cheng
+Jens Axboe
+
+
 
 

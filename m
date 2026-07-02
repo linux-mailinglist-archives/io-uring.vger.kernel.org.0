@@ -1,55 +1,58 @@
-Return-Path: <io-uring+bounces-13871-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13873-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by mail.lfdr.de with LMTP
-	id /G0KFqMkRmqmKgsAu9opvQ
-	(envelope-from <io-uring+bounces-13871-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Thu, 02 Jul 2026 10:43:15 +0200
+	id yPtuLQknRmoQKwsAu9opvQ
+	(envelope-from <io-uring+bounces-13873-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Thu, 02 Jul 2026 10:53:29 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [172.105.105.114])
-	by mail.lfdr.de (Postfix) with ESMTPS id F343B6F4EAD
-	for <lists+io-uring@lfdr.de>; Thu, 02 Jul 2026 10:43:14 +0200 (CEST)
+Received: from sto.lore.kernel.org (sto.lore.kernel.org [172.232.135.74])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE5A86F4FC9
+	for <lists+io-uring@lfdr.de>; Thu, 02 Jul 2026 10:53:28 +0200 (CEST)
 Authentication-Results: mail.lfdr.de;
-	dkim=pass header.d=163.com header.s=s110527 header.b=jiqnZea9;
-	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13871-lists+io-uring=lfdr.de@vger.kernel.org" designates 172.105.105.114 as permitted sender) smtp.mailfrom="io-uring+bounces-13871-lists+io-uring=lfdr.de@vger.kernel.org";
+	dkim=pass header.d=163.com header.s=s110527 header.b=WTh9Qtwo;
+	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13873-lists+io-uring=lfdr.de@vger.kernel.org" designates 172.232.135.74 as permitted sender) smtp.mailfrom="io-uring+bounces-13873-lists+io-uring=lfdr.de@vger.kernel.org";
 	dmarc=none;
 	arc=pass ("subspace.kernel.org:s=arc-20240116:i=1")
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id C729930D08FA
-	for <lists+io-uring@lfdr.de>; Thu,  2 Jul 2026 08:30:43 +0000 (UTC)
+	by sto.lore.kernel.org (Postfix) with ESMTP id B0FD430EDC2C
+	for <lists+io-uring@lfdr.de>; Thu,  2 Jul 2026 08:30:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7A71420E83;
-	Thu,  2 Jul 2026 08:30:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 974F23D967F;
+	Thu,  2 Jul 2026 08:30:24 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635DE42E8D6
-	for <io-uring@vger.kernel.org>; Thu,  2 Jul 2026 08:30:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC6D42E8C6
+	for <io-uring@vger.kernel.org>; Thu,  2 Jul 2026 08:30:19 +0000 (UTC)
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782981023; cv=none; b=tEqrshnav1rPllCuiaz+Z8CbGwK2F7iBnVFuDXex8ugMBgok1ySD69PDC9LRWHL5tpv7/xHqYsbSzfxf0ZFqjwt724bgLA6MBWrPj76+PUXK8oMN7C467rS/XZrsodS7GM3hZACJ6ONWxBxy3QyllKvrUKrpixFdFhRIFxn+d7M=
+	t=1782981024; cv=none; b=rqEB0l8IieOY1dnZBC/kfLuVu5B98J/ozkGOCbAGjBPpSpBy9Ny08uHbb9RwWunhC/DEmAd33Kq1AiwtLanZX8hAX/zJGTMhrv23SJH1e6AwFTJ3woS8mQs+hO475pvAA9bfFQGRbCiMGdp5GjNTTi2/N0/T8a94eaFmCbrk5qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782981023; c=relaxed/simple;
-	bh=5wZlGS4YhLti1YkSq19P+yAeHLvlDrgwEVzypPJR6LQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NUIEuOrzRNDcDY8Lz7SjPIiWhv6JVe24fe8DlMrDD254Wd69e7joThfhj+hzmTlZQIsXL9ESqWmx78usOGpXh50xF5yJ5mpqqrpNHTpeFJVmOJrkxxykcA+1MeBPabyqubLG9akDXWZUoFDKUTAam8s35FGGor/cF5Zv1TMykjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=jiqnZea9; arc=none smtp.client-ip=220.197.31.2
+	s=arc-20240116; t=1782981024; c=relaxed/simple;
+	bh=qU7JJNowmE4a/6g2mr5x1OlJRPHXeQFxjm3O/sOquxs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=GT9PM4l3oi0Nrlmu0UoIsACqE7igJnR4NERevPKqgDSZsuZCM/teFqkZeu7myZzBNsh5ltDLNqsjorbSlemNKiql7Seb2A7SwGOIevDL74CxIbogRBcXfnwgbVI0KQGOxSF3BCBHriVynxo3tPiNwKe+/Euz5QErr8XVDMZUNgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=WTh9Qtwo; arc=none smtp.client-ip=117.135.210.2
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=Kq
-	hNVbw0oRAGTaqcxuJURD7Mw0BrvUPgywmWCqxbj3w=; b=jiqnZea9qhVG/Fgtn+
-	f7ko9EeFkUe7WGzj+sxJFlMxhsuLXcgjcLloUyrxegCmq+LXzVZ8zq2vUSvC+oXk
-	VsAHba1y3ShxJcA9ENgKM978e1LJoLHrTZAPGkawrqjPDrdqTUWJIDuk1L3CPu0o
-	wO20/CvoMyPKXrag9mLFBkQIA=
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=9n
+	Ut1mkCSIQxa8hbS4yDLq4pxlNweeINSOSmAbxh0ts=; b=WTh9Qtwod/XqayS+Ep
+	+2JyCZVbxIPLDLjZkt3Gjf7q0cP47/Esdp43uLuR2PPco74GZM6XaTI6GrtIwBN0
+	UWtj2FFWyBP4AahdsO0HpArlwy0mu892H9MN2+U/qjDCUE0RcVsQjuE0G0yhE937
+	miX8aoXjOSTWKUe8Sangja31I=
 Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wDnH0R0IUZqmPUCHA--.22854S2;
-	Thu, 02 Jul 2026 16:29:41 +0800 (CST)
+	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wDnH0R0IUZqmPUCHA--.22854S3;
+	Thu, 02 Jul 2026 16:29:44 +0800 (CST)
 From: Yang Xiuwei <yangxiuwei@kylinos.cn>
 To: axboe@kernel.dk
 Cc: io-uring@vger.kernel.org,
 	Yang Xiuwei <yangxiuwei@kylinos.cn>
-Subject: [PATCH 0/2] io_uring/uring_cmd cleanups
-Date: Thu,  2 Jul 2026 16:29:35 +0800
-Message-Id: <20260702082937.3707134-1-yangxiuwei@kylinos.cn>
+Subject: [PATCH 1/2] io_uring/uring_cmd: copy SQE before issue_blocking punt
+Date: Thu,  2 Jul 2026 16:29:36 +0800
+Message-Id: <20260702082937.3707134-2-yangxiuwei@kylinos.cn>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20260702082937.3707134-1-yangxiuwei@kylinos.cn>
+References: <20260702082937.3707134-1-yangxiuwei@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -57,25 +60,25 @@ List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDnH0R0IUZqmPUCHA--.22854S2
-X-Coremail-Antispam: 1Uf129KBjvdXoW7GrWUtr4UCr1kAry8ZF4fZrb_yoW3Xrg_Cr
-	Z5G3yxWrW7XFWqv3W7Cw1rXr1rK3y7AFWUXr1fJry7Ar17AFykG395Gr4fJFsagF1IqF13
-	GFZ8A3sayryagjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xRR_HUtUUUUU==
+X-CM-TRANSID:_____wDnH0R0IUZqmPUCHA--.22854S3
+X-Coremail-Antispam: 1Uf129KBjvdXoWrtw13Kry8XrWfZrykXFW8JFb_yoW3Crb_Cr
+	Z8J348uFWfJrWUZr9rG340qr4Fkw47AFWjvrn3GryUGFy7Ca4kG3yDZr45tFnIg3ZrtFy5
+	JFZ8Ww13GrnxtjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUjOzV5UUUUU==
 Sender: yangxiuwei2025@163.com
-X-CM-SenderInfo: p1dqw55lxzvxisqskqqrwthudrp/xtbC6RaRImpGIXZiqAAA39
+X-CM-SenderInfo: p1dqw55lxzvxisqskqqrwthudrp/xtbCwRiSI2pGIXgS8gAA39
 X-Rspamd-Action: no action
 X-Spamd-Result: default: False [-0.16 / 15.00];
 	MID_CONTAINS_FROM(1.00)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	R_MISSING_CHARSET(0.50)[];
 	R_DKIM_ALLOW(-0.20)[163.com:s=s110527];
-	R_SPF_ALLOW(-0.20)[+ip4:172.105.105.114:c];
+	R_SPF_ALLOW(-0.20)[+ip4:172.232.135.74:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	FORWARDED(0.00)[lists@lfdr.de];
-	TAGGED_FROM(0.00)[bounces-13871-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-13873-lists,io-uring=lfdr.de];
 	MIME_TRACE(0.00)[0:+];
 	RCVD_TLS_LAST(0.00)[];
 	FORGED_SENDER_MAILLIST(0.00)[];
@@ -93,32 +96,36 @@ X-Spamd-Result: default: False [-0.16 / 15.00];
 	FORGED_SENDER_FORWARDING(0.00)[];
 	FORGED_RECIPIENTS_FORWARDING(0.00)[];
 	ALIAS_RESOLVED(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.105.96.0/20, country:SG];
+	ASN(0.00)[asn:63949, ipnet:172.232.128.0/19, country:SG];
 	TAGGED_RCPT(0.00)[io-uring];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[tor.lore.kernel.org:rdns,tor.lore.kernel.org:helo,vger.kernel.org:from_smtp]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[vger.kernel.org:from_smtp,sto.lore.kernel.org:rdns,sto.lore.kernel.org:helo,kylinos.cn:email,kylinos.cn:mid,kylinos.cn:from_mime]
 X-Rspamd-Server: lfdr
-X-Rspamd-Queue-Id: F343B6F4EAD
+X-Rspamd-Queue-Id: DE5A86F4FC9
 
-Two small io_uring/uring_cmd cleanups:
+io_uring_cmd_issue_blocking() punts to io-wq without copying the SQE
+off the submission queue, unlike the -EAGAIN and fallback paths. Copy
+the SQE into async data before queuing the work.
 
-- copy the SQE into async data in io_uring_cmd_issue_blocking()
-  before punting to io-wq, as the -EAGAIN and fallback punt paths
-  already do (discussed in May [1])
-- fix comment typos in io_uring_cmd_mark_cancelable() and correct
-  the memory-ordering note in __io_uring_cmd_done()
+Signed-off-by: Yang Xiuwei <yangxiuwei@kylinos.cn>
+---
+ io_uring/uring_cmd.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-The sqe_copy fix still has not made it to mainline; sending this series
-in case it is still useful.
-
-[1] https://lore.kernel.org/io-uring/56388741-f507-44e3-a144-5512a1fd99cb@kernel.dk/
-
-Yang Xiuwei (2):
-  io_uring/uring_cmd: copy SQE before issue_blocking punt
-  io_uring/uring_cmd: fix uring_cmd.c comments
-
- io_uring/uring_cmd.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
+diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+index 7b25dcd9d05f..fe32311b2e51 100644
+--- a/io_uring/uring_cmd.c
++++ b/io_uring/uring_cmd.c
+@@ -326,6 +326,10 @@ void io_uring_cmd_issue_blocking(struct io_uring_cmd *ioucmd)
+ {
+ 	struct io_kiocb *req = cmd_to_io_kiocb(ioucmd);
+ 
++	if (!(req->flags & REQ_F_SQE_COPIED)) {
++		io_uring_cmd_sqe_copy(req);
++		req->flags |= REQ_F_SQE_COPIED;
++	}
+ 	io_req_queue_iowq(req);
+ }
+ 
 -- 
 2.25.1
 

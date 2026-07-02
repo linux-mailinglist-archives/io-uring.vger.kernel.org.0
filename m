@@ -1,110 +1,111 @@
-Return-Path: <io-uring+bounces-13876-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13877-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by mail.lfdr.de with LMTP
-	id fjXoIe2tRmrrbQsAu9opvQ
-	(envelope-from <io-uring+bounces-13876-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Thu, 02 Jul 2026 20:29:01 +0200
+	id WcgCHtGwRmrJbgsAu9opvQ
+	(envelope-from <io-uring+bounces-13877-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Thu, 02 Jul 2026 20:41:21 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF1036FC0A3
-	for <lists+io-uring@lfdr.de>; Thu, 02 Jul 2026 20:29:00 +0200 (CEST)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF5596FC339
+	for <lists+io-uring@lfdr.de>; Thu, 02 Jul 2026 20:41:20 +0200 (CEST)
 Authentication-Results: mail.lfdr.de;
-	dkim=pass header.d=purestorage.com header.s=google2022 header.b="P63wksr/";
-	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13876-lists+io-uring=lfdr.de@vger.kernel.org" designates 172.234.253.10 as permitted sender) smtp.mailfrom="io-uring+bounces-13876-lists+io-uring=lfdr.de@vger.kernel.org";
+	dkim=pass header.d=purestorage.com header.s=google2022 header.b=GBrWKymN;
+	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13877-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c0a:e001:db::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-13877-lists+io-uring=lfdr.de@vger.kernel.org";
 	dmarc=pass (policy=quarantine) header.from=purestorage.com;
 	arc=pass ("subspace.kernel.org:s=arc-20240116:i=2")
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 82E6D3188CE9
-	for <lists+io-uring@lfdr.de>; Thu,  2 Jul 2026 17:43:29 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 1677831062E5
+	for <lists+io-uring@lfdr.de>; Thu,  2 Jul 2026 18:06:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0920034B183;
-	Thu,  2 Jul 2026 17:43:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9389340412;
+	Thu,  2 Jul 2026 18:06:55 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED46181334
-	for <io-uring@vger.kernel.org>; Thu,  2 Jul 2026 17:43:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50EEB390CB2
+	for <io-uring@vger.kernel.org>; Thu,  2 Jul 2026 18:06:54 +0000 (UTC)
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783014208; cv=pass; b=APTz0WN18SO+GZOfcMw3QycJZJupBObbWm8AJ72ZV3nqVKeNnxMy898Ei9+piONHBKAQ91xTJUZTjMolIpJgbs7HjqNMR0wr38zg3C9/yibbgojkvz8CmcUD5PBtycwl6OXyXl9iUl6UgFgBIiA0xxblN7aDQRKnD9vZpmi7F70=
+	t=1783015615; cv=pass; b=n79MtKZ+62TIX3HhT5YEyhz4+WoW2LoyJECakt7GS458hTjjzm16MAXZ4RvsujifD7laUoclv/k2ZkhQI1DJZsijFHh5HVMULm72z1m8QlhHiCXgFAgw5ggzy9BKM6sZkwlJagcCET9wA6weP+t89VJSyPnnxYVnmmn6q3N/3+8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783014208; c=relaxed/simple;
-	bh=xysqAxtMUE0jE721yfSL18mFiREUPhoj8c2wpM+qgM0=;
+	s=arc-20240116; t=1783015615; c=relaxed/simple;
+	bh=xd1kWf+RV9y4OxHlO2An/c+8nijrnwvHGG9TpqbMqWA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l257iSYYGLjy7BgJuaH2Iy/NUnv6iPc8kc+Hx+NsVgyb+jhaUIyse3z6RrTYcKyzFNxdau5sQvJd0+sqaooHcHgfKVMVunJtsTjlDvD5Uf/Vhfzntr/Zh1PuaMkGZDK28j7ShytkKH8JAClGnDfetoch3uiyAh015glZMpiD1a8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=purestorage.com; spf=pass smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=P63wksr/; arc=pass smtp.client-ip=209.85.210.45
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-7e9ec26b85dso250476a34.2
-        for <io-uring@vger.kernel.org>; Thu, 02 Jul 2026 10:43:27 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1783014206; cv=none;
+	 To:Cc:Content-Type; b=dC1Mw5SL82qvCmsTD+d5h/1vRxdtsRNPCiipaXlE2oXFPkN9B9IPv5xE7oufTkiGcQ5PLQH+G4upNjmJFuSPtfe+XSK8GHYw2jQUjLjFxfmUAFhS++Gi81IXStYevk/98Zaypb8Qj7MkYtOu3JJqLTXIEU37x88dcIVbwclpXOg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=purestorage.com; spf=pass smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=GBrWKymN; arc=pass smtp.client-ip=209.85.167.181
+Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-4960a66d36dso311021b6e.1
+        for <io-uring@vger.kernel.org>; Thu, 02 Jul 2026 11:06:54 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1783015613; cv=none;
         d=google.com; s=arc-20260327;
-        b=oSnUcvz6KQ84goAW6eSQ+vrZpB6eMbXXPdbjgCOGSOCjzINf5yfpQhS85FBoV3m2zj
-         uV5QicL1iBvGRo9VUM/RhW1jWo6r4LXg0QxIsGbsOOHySTuIha/pIjYkwzcFr7RZAVY/
-         aH5NCzTQ1hq3HbgKTrFIzvaqB/QwL+OUKHmYAgDZs5976ns4rqy8c1qtVm+jy0nEWwW8
-         vfeJDyZJG2pIQx2a3YJ2SwOlM/3bs2Mjm7XtNVqNBp4MnyrV14uJgZbHSnlPPLi+AHEa
-         /Ez7+kuLGqbGavZ6p3hLrXapklNu+IWR97A4dv0W6+6dFmK19+rXpMnLjLtugwNGRT+B
-         pTSw==
+        b=J3ix/5f6oNAoiiWyvyVLWdM7m97sgrYogSKRR3gKHjcu7xgRRjDXFrFpXHAjk9uCGI
+         5loMvAeFG8utxRnLDMW61n9ABMpPplcnAB06YLyzB6wuikQ8CakRFcPULuL7KwDOWH0T
+         gAdhJpE2MV7Yot2+wJ4YXSL5+jf/NuhEmlIhpybfDRaIYS8HNvy+4BAkdsZXcaafpN1C
+         qsQvfGeyMf/GbJM6UA9R4JKhMP0HbCmqE2oEd3n0wyWdso8hRSkrEdzlVUy/Tg+/l/om
+         BhOyZ96ilBB8+MickwmsRuouunm9//uReCI4WVbWwdBFqA/pmko1Ts0sqmwhWaSxaN3R
+         OSQQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=ihostLuk2MRMN1N7TPsgfS+tXZ3aTBctmLyR/H3ZpEE=;
-        fh=qN+hQU+3pu1pRjKYpKfVo9zQ5VuEGfuqJ5wUMlbrvDg=;
-        b=MWvJ85QOMyXIE2ngktxPlppmDUMA7WPzz/c/h9S5xxNbQnqWT+NCG1ehBamXtmyyf9
-         IlUe4jIFUK4Tus9p10HjIw69RXxt85yvDZfSX23uADoacsDXngcV31biW/XplPaBN9s6
-         SdDrviI+jCQF3BQCCrPgoXiL7GVkJKxUkzS1ViPQ8pRKraNl/e28K9TNeL1ngnJgg86p
-         9sUwIQAbHKsEB6tpBauPwrXP447YHVhrc2V8oEVCV3Ap7gbH9ec4rNNv6j7ISzstT4jQ
-         OwKt0X0nfdvkcR3NPWyDgBmuqh+pqHSpT8LsSw8aSu1jQost2iBrSBsrvHcElxoaZcRW
-         J2Aw==;
+        bh=xd1kWf+RV9y4OxHlO2An/c+8nijrnwvHGG9TpqbMqWA=;
+        fh=ET7tUtBxL+tpLGDmcXNMcejM+wmU6a0x91nuX3ECRzY=;
+        b=LeZrWsLkSdcv4yNiBdTyZRNOToGzo9SCyfK2EbAxRHxFVakKfgXq/G1wgHIqvDXLdH
+         +Y8IypiPQ2Mfg2gkR0OoIsFCOwGf8fnb01y9JL6DZ63OcaQD471BpnWZnxh5h9Jg8cV3
+         PkfUbxXl/dknyYAL6498bgDYag9uaFwFfIqXr/GFyLNJ7dXZZ9D04fvXq4XZI6P+lsA+
+         NHOB5hwJiqENd/EgA5TEOHzXi19O2AwnB1894EiUvEnAZeSP4PwzFUtDArMXmBMXHtJs
+         ERxgG/ghxzTZ7TrYTazi5GeoBFZe0cK5rib/0lDDc931+7VMapWEbLWJd1b+smxS2lZb
+         UveA==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1783014206; x=1783619006; darn=vger.kernel.org;
+        d=purestorage.com; s=google2022; t=1783015613; x=1783620413; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=ihostLuk2MRMN1N7TPsgfS+tXZ3aTBctmLyR/H3ZpEE=;
-        b=P63wksr/UirV776n4WcugaTsGqZrOiBwY/CjIIFuv10D2thH4O8W0wh1JodrKobD9K
-         Xeg0IZIVQBVyqdZpTNo7rFOuCFMalADPOpSywq66Xo1inUa2nLrkE3gPDDSlRCOxRhsr
-         mtos8fpNnyWEdl/QIKG0wrko2UG/Yun9Nn8gw3RS3gnUNbv+8W7Lw3NXf4Z08eI8FulU
-         txd9D0/vN9zHr4TWKDuznNqyZ/UU4OQeazY/ojN73KUn+ZzF72zcFBMXqtRzkWk4sWXN
-         Zth8xqELZNpDFlxhS2ZKj+tLEEYO/xzPkUtCMcHMRghbPkfHN1b9r0C2Gc6qX9stGnYg
-         Ft1A==
+        bh=xd1kWf+RV9y4OxHlO2An/c+8nijrnwvHGG9TpqbMqWA=;
+        b=GBrWKymNHF1fdnP66gS2t5VZG7mjRZ43b15zH9PiITZdp8oBuZODvm7TcH5gThbtTK
+         EZS2kZy0EycIktolr+PaleTCz0vlbVqf6XGzLdvVttXz9+7XVr6jjwIWk+CT7Wsylsh+
+         N9nH0fVN4efCvGAhuNFaw3LnCHTUwUOM7iYUOVBOH0gtmAR5z2vdbAmBWJ3f1S74J2J4
+         CNbKAilBbUljVrx1TqBpKIyJfodn1z4SR9b+ggJNm/aK22PumQXxfrGOIL7IUTOLiwrT
+         UoIl3+pbC1QaSVu0CgocIlidk4XH1bSv38keRCCCqLkkYyQd7p/xt0SER9/wLRYKpGr+
+         qdcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783014206; x=1783619006;
+        d=1e100.net; s=20251104; t=1783015613; x=1783620413;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=ihostLuk2MRMN1N7TPsgfS+tXZ3aTBctmLyR/H3ZpEE=;
-        b=dednu6aRzd0xEtHCWIlSsEZFE0pCS3ZDQ4wuhyP4QpZvpgaRphgRZASRzlisyPIHIR
-         Sex42g/4dZS1E0KjzxRLSZuEvjSipQqhZxROVGmlDFKqC5FnguP9cYfJ35UNDguvOaaQ
-         boTlTQozDpElcT1VDRb49Uv+V18Xl/6sMOwGwV7arlU/kUo3OnM6+9ehaNZatIdVoH3K
-         wCfdtuFQcxJqDdSgPrs2d8PKOqEapliFAC8oDUj9H3k+AEk1Ip3Lpwdq2MTtSLWeF/0s
-         v/p/rw2Z1HlomGAQGsCRZmHNfi+Nx5eNCcbBSQ7HsXnXnI8vi8UtTzDy4wQNiAGY8neu
-         06Sg==
-X-Forwarded-Encrypted: i=1; AFNElJ/DV+Mc9tjv9fmUv3xIjmAEaR/kgHuQic/neChq3FTHQ5YWYHoSvNDyEqBEtIMcv+NdF/KjeIIFEg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyo6cKM34rFzVqNspBQQQyFs6D4fFXvjus9x1hXVlzsIrlKPRZb
-	8uymdXV06O9mu09CKnPzg4ZND+7a7To/SqhNqse9FXH4DdK62LSIpmx0R2Y4WRXIabt3DX4y/SL
-	lDWKvqY/+Nqm9XQFVu1xCopQS8QvTyyTYK+BlEp+r4Q==
-X-Gm-Gg: AfdE7cm7mq1C8T4/gBlCEi3XAtwZIxXk2ozMdMnLtWSiIF/f6qKnJgQKwrBXBWhjQl6
-	ywiBCmoPHb0x/Z2k52QGCZMZouHv/B7UM9jgTkF0J+w6AvKyHYwWRn1947FXPIVESGU7EHpKZvR
-	F9bfCCG05AODZUFd/kKM68LZ18oGHkmN+7PSiMYFrVFcPMKZ7zSiD+O6cfQk1fJGxwv8X4NW4QT
-	x9ZbZXnJOgrU8dCxTgTnhsbnX//bbE6ja7W4e14I1hNOFe4onBQky00u2/+64uColOatFxA7Q==
-X-Received: by 2002:a05:6830:6d48:b0:7e9:a13a:ac86 with SMTP id
- 46e09a7af769-7eb4cc3d163mr2920241a34.4.1783014206128; Thu, 02 Jul 2026
- 10:43:26 -0700 (PDT)
+        bh=xd1kWf+RV9y4OxHlO2An/c+8nijrnwvHGG9TpqbMqWA=;
+        b=gjaLoER/OQHpH+fLKuKQcZsivdQ2kR9yHFDvrP6lu0Vk+CY2lJ6j1470oiG9/IUSXk
+         IV7kMDLIggo3qm2xoexxJRq92f3CwWdRceNjhtXPjsQENk+YRMq6gGawjxuuCIMnZcZL
+         aB1tJK6duOjo3wYMcvoyFA+hJCj6ijDPvw3YRcxZg54ilTT+8DgUGdsBjokt/jxb9v5n
+         rG7M5rus90WVp1Fettv3tz0hS6xRCjYuiiRsyYMMlLOSpzvx5khm3oibvrKdtPQhLPMb
+         McyKURyoi9eNrKz0DJ3OiX6L/mGhPkWc21N3s7LKCRRhI9p3tglGe2m36bH+MInOQ3Ft
+         I3LQ==
+X-Forwarded-Encrypted: i=1; AFNElJ8/ro7RkjeEpmUQulrRMlXXbeMXq0x9ZS+TDJoW1fQJxZAQuahLkTk+ZS4fkDW31qQhL6U0zRSSxA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfmDOE7A9MWt2zPIvP+vo78mtiVdEBQMoCx6hDTlhLfvaNoEsV
+	QHDTYaKWGQ7J6N0hvj6aBZ+yiIBhDGCg5D9N0m6kTNdRNPOOdkuIPxOGYYE2pT3ipoVhUmtdQMx
+	RZ9lk89RiSY/xx1PjunQC0lGSivX3j2a2DtE2hx8gIqTt9W02KW2gm1OsfQ==
+X-Gm-Gg: AfdE7clnImKxRRoE5RPEeRv4XsmubSdM0mjpEu+9G6/bSUWjUzr1Mf8NoztMHVEUrZc
+	SQPdoRTbMQ1ieGqnxvonUJI+pPhl998ke8ui5gURo21xErHbaTLpP1traXnnYakA2iM9t0xE+GJ
+	aafSoG48LQhv4HxWYXcWyQNjeshfLHUFILgwAzLwGgYwwKBtfx+XprVtkgzvzdajHfzL484NvMp
+	Kt31Td/r/T6OWNUxYQncltPqNXqI6uaE7NKnj1LvGLGaiolAyLDfvQeyAqah001udRU1/g5Eg==
+X-Received: by 2002:a05:6808:15a5:b0:497:da5f:d5c3 with SMTP id
+ 5614622812f47-497da5fd8ffmr1139968b6e.6.1783015613140; Thu, 02 Jul 2026
+ 11:06:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260702082937.3707134-1-yangxiuwei@kylinos.cn> <20260702082937.3707134-2-yangxiuwei@kylinos.cn>
-In-Reply-To: <20260702082937.3707134-2-yangxiuwei@kylinos.cn>
+References: <20260702082937.3707134-1-yangxiuwei@kylinos.cn>
+ <20260702082937.3707134-2-yangxiuwei@kylinos.cn> <CADUfDZqMpc5PCai9ZeUJQCJ++Cd3PszkDxyVu6WUMBKqwu1boQ@mail.gmail.com>
+In-Reply-To: <CADUfDZqMpc5PCai9ZeUJQCJ++Cd3PszkDxyVu6WUMBKqwu1boQ@mail.gmail.com>
 From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Thu, 2 Jul 2026 10:43:14 -0700
-X-Gm-Features: AVVi8CcBfFZ2ukGyICHJXiUa-nq1bGcr3ee6p1AH9mn3r7DumUVx6OEaFtIqrCo
-Message-ID: <CADUfDZqMpc5PCai9ZeUJQCJ++Cd3PszkDxyVu6WUMBKqwu1boQ@mail.gmail.com>
+Date: Thu, 2 Jul 2026 11:06:41 -0700
+X-Gm-Features: AVVi8CfoaEQUWrF1saee9h2s8brNIdC2B43LFvbW5Uq6A9Y7FOMoq4U4XHHQY9o
+Message-ID: <CADUfDZp4DmCvwGyp9dJEEojSbkkcW8Bj9ZZEXVg3vw_7KsWhyQ@mail.gmail.com>
 Subject: Re: [PATCH 1/2] io_uring/uring_cmd: copy SQE before issue_blocking punt
 To: Yang Xiuwei <yangxiuwei@kylinos.cn>
 Cc: axboe@kernel.dk, io-uring@vger.kernel.org
@@ -114,12 +115,12 @@ X-Rspamd-Action: no action
 X-Spamd-Result: default: False [-2.16 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=2];
 	DMARC_POLICY_ALLOW(-0.50)[purestorage.com,quarantine];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	R_DKIM_ALLOW(-0.20)[purestorage.com:s=google2022];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-13876-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-13877-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	FORGED_RECIPIENTS(0.00)[m:yangxiuwei@kylinos.cn,m:axboe@kernel.dk,m:io-uring@vger.kernel.org,s:lists@lfdr.de];
 	RCVD_COUNT_THREE(0.00)[4];
@@ -139,55 +140,31 @@ X-Spamd-Result: default: False [-2.16 / 15.00];
 	TAGGED_RCPT(0.00)[io-uring];
 	FORGED_RECIPIENTS_FORWARDING(0.00)[];
 	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo,kylinos.cn:email,mail.gmail.com:mid,vger.kernel.org:from_smtp]
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[kylinos.cn:email,vger.kernel.org:from_smtp,mail.gmail.com:mid,sea.lore.kernel.org:rdns,sea.lore.kernel.org:helo]
 X-Rspamd-Server: lfdr
-X-Rspamd-Queue-Id: BF1036FC0A3
+X-Rspamd-Queue-Id: CF5596FC339
 
-On Thu, Jul 2, 2026 at 1:41=E2=80=AFAM Yang Xiuwei <yangxiuwei@kylinos.cn> =
-wrote:
+On Thu, Jul 2, 2026 at 10:43=E2=80=AFAM Caleb Sander Mateos
+<csander@purestorage.com> wrote:
 >
-> io_uring_cmd_issue_blocking() punts to io-wq without copying the SQE
-> off the submission queue, unlike the -EAGAIN and fallback paths. Copy
-> the SQE into async data before queuing the work.
+> On Thu, Jul 2, 2026 at 1:41=E2=80=AFAM Yang Xiuwei <yangxiuwei@kylinos.cn=
+> wrote:
+> >
+> > io_uring_cmd_issue_blocking() punts to io-wq without copying the SQE
+> > off the submission queue, unlike the -EAGAIN and fallback paths. Copy
+> > the SQE into async data before queuing the work.
+>
+> Add a Fixes tag?
+> Fixes: ecf47d452ced ("io_uring/uring_cmd: implement ->sqe_copy() to
+> avoid unnecessary copies")
 
-Add a Fixes tag?
-Fixes: ecf47d452ced ("io_uring/uring_cmd: implement ->sqe_copy() to
-avoid unnecessary copies")
-
->
-> Signed-off-by: Yang Xiuwei <yangxiuwei@kylinos.cn>
-> ---
->  io_uring/uring_cmd.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-> index 7b25dcd9d05f..fe32311b2e51 100644
-> --- a/io_uring/uring_cmd.c
-> +++ b/io_uring/uring_cmd.c
-> @@ -326,6 +326,10 @@ void io_uring_cmd_issue_blocking(struct io_uring_cmd=
- *ioucmd)
->  {
->         struct io_kiocb *req =3D cmd_to_io_kiocb(ioucmd);
->
-> +       if (!(req->flags & REQ_F_SQE_COPIED)) {
-> +               io_uring_cmd_sqe_copy(req);
-> +               req->flags |=3D REQ_F_SQE_COPIED;
-
-Isn't this too late to copy the SQE? io_uring_cmd_issue_blocking() is
-called from the blk_cmd_complete() task work, which is already
-asynchronous with respect to the submission. So the kernel will
-already returned the SQ slot to userspace.
+Actually I'm not convinced this is an issue at all. Since commit
+212ec34e4e72 ("block: only read from sqe on initial invocation of
+blkdev_uring_cmd()"), blkdev_uring_cmd() only accesses the SQE on the
+initial issue. Even if the uring_cmd is re-issued asynchronously, it
+doesn't rely on the SQE having been preserved.
 
 Best,
 Caleb
-
-> +       }
->         io_req_queue_iowq(req);
->  }
->
-> --
-> 2.25.1
->
->
 

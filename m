@@ -1,124 +1,246 @@
-Return-Path: <io-uring+bounces-13919-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13920-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by mail.lfdr.de with LMTP
-	id /BbdH0lTTmoEKwIAu9opvQ
-	(envelope-from <io-uring+bounces-13919-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Wed, 08 Jul 2026 15:40:25 +0200
+	id fJ8fEIp1TmqyNAIAu9opvQ
+	(envelope-from <io-uring+bounces-13920-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Wed, 08 Jul 2026 18:06:34 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 960BE726E1B
-	for <lists+io-uring@lfdr.de>; Wed, 08 Jul 2026 15:40:24 +0200 (CEST)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3772B7286F6
+	for <lists+io-uring@lfdr.de>; Wed, 08 Jul 2026 18:06:33 +0200 (CEST)
 Authentication-Results: mail.lfdr.de;
-	dkim=pass header.d=kernel.org header.s=k20260515 header.b=YpDPSxtX;
-	dmarc=pass (policy=quarantine) header.from=kernel.org;
-	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13919-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c0a:e001:db::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-13919-lists+io-uring=lfdr.de@vger.kernel.org";
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=Nzam3ULE;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="5Axdm/DB";
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=Nzam3ULE;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="5Axdm/DB";
+	dmarc=pass (policy=none) header.from=suse.de;
+	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13920-lists+io-uring=lfdr.de@vger.kernel.org" designates 104.64.211.4 as permitted sender) smtp.mailfrom="io-uring+bounces-13920-lists+io-uring=lfdr.de@vger.kernel.org";
 	arc=pass ("subspace.kernel.org:s=arc-20240116:i=1")
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id DDB36305A5F5
-	for <lists+io-uring@lfdr.de>; Wed,  8 Jul 2026 13:35:07 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id C36763026146
+	for <lists+io-uring@lfdr.de>; Wed,  8 Jul 2026 15:45:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91C5237D100;
-	Wed,  8 Jul 2026 13:35:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4B6836F903;
+	Wed,  8 Jul 2026 15:45:48 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C183837BE8A;
-	Wed,  8 Jul 2026 13:35:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0A9B372B25
+	for <io-uring@vger.kernel.org>; Wed,  8 Jul 2026 15:45:46 +0000 (UTC)
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783517705; cv=none; b=asNu0KMfx8Sv070M4iqkYh1utS9jUUhoKCu+zRS9chiDAp75DKbjFJ8t3PVycgrBppKFVwhEnuU9ybJg3KlK649cRg7yWtktewvNRFhln+H5u8jrs31oEDme6haP2m6hTqz3K+aBTtdCedE2Ey5C4Tntk4oUx6kPAXYpiklXQww=
+	t=1783525548; cv=none; b=XFWVkiXb1Gy5PgrbrHcNGCtWz+YrMk6MhNSxas8sC98YPgnk1Z6DNn52LlFQE/3OfFp3GnyIGa8Sx/O2BPRPwQvMWq+8698qbRO5Zzj9VMJSVUc89RwtHATgfh34IlYz9rgE7261HakA7iaZ8tjNkXfS8KZfsj4nSYmR4kOXoks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783517705; c=relaxed/simple;
-	bh=TWNID/pAUI28h+lJfkz81BmjBgoYqq3Sueuw1+zXfok=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LJaPf0H1CIbtWplag4uxa0KWwB4pryUOlCdoc2VBKu63ZrYXm19oN1PqDhy0sTp9kZMRqf8GQZ6U9dsyvv0FFWQkgIcnnPlQplu1nR1UN3fzz+iKF68Vjs+V0wierf04HpqknSBvJjN59iSbUu0TViaRNm/pG+If/ARHUlpJ+NQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YpDPSxtX; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E41561F000E9;
-	Wed,  8 Jul 2026 13:35:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783517702;
-	bh=TWNID/pAUI28h+lJfkz81BmjBgoYqq3Sueuw1+zXfok=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=YpDPSxtXbaYcgl0wx8l/vdYvVWGs8eXfTpCO1uV7EbOuEygouyQ+w7xA5N+xuaPwt
-	 CEQNepACypCpDFJL5LN48DfQqFpgSe/D++3awZ3Wnszlz5DLle8/mh69t4FaY8bR8F
-	 CMZDR6qqARd4HWN7mYzkKLOMUzsgKGwFb8hYnrK9R6JSdnMdRpSL9fzRfJJMCJr7Wa
-	 Pr1GCs0SOphhdrLwcoffICSGh/llbuiZzOjC2fHWRWulzTzXCQDIMz+EnCSKjecFZ/
-	 gYytgvYqRdPzCCdEDSZy2YVjWVq7VKvJl0q+6V7gCybrFjKVxVB5YRn9FIl9pWzPpe
-	 JP+6pijzbwgZg==
-Date: Wed, 8 Jul 2026 07:35:00 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Ben Carey <benjamin.james.carey3@gmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [BUG] RCU hang with io_uring nvme polling
-Message-ID: <ak5SBF1kDsgrGJiS@kbusch-mbp>
-References: <85d1f999-7778-4c74-9d72-b8ac8500de31@kernel.dk>
- <aj6jQyJd3zmZFcwx@kbusch-mbp>
- <1932a509-4e27-485e-8e09-1da67e0082c8@kernel.dk>
- <aj6p3kZy1a8Mf68S@kbusch-mbp>
- <94614dd9-9351-4a64-83dc-4fc87e377e59@kernel.dk>
- <aj6tTiAB2NIol9Tf@kbusch-mbp>
- <CA+KFGSoyCSRzgamm-38oyAtEsqd7wZZ8awL79P40x7a819EK4w@mail.gmail.com>
- <CA+KFGSoZXejMvA5WNBSy=TVxiEiJs1-bxHXkewk8HtCR5m8sEw@mail.gmail.com>
- <akk8Xhyntk9_weMp@kbusch-mbp>
- <CA+KFGSoGVBzsnhht5Opo2PCf33M0uiLjK7BNQ-t2DjTDudwXrw@mail.gmail.com>
+	s=arc-20240116; t=1783525548; c=relaxed/simple;
+	bh=EWpZScGuDwkXjNfdOlMJs2P/6QIYqvKPf8gR5usPdE8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Mr/tZpE3Kmq5JEE0+oTsN4Qm5jbYrq1rP+PxmZAC6IJTihZlxEP96S6Hhg6G4BHUhejjF0h+0y9tw/zgX8tZ8Sxpvj5qLViZmQcRuQx5kuOKOaM2ph+riCHGE87fjTJ80CKTi183MPCTwR9L055lpGCV9YmX27ZV9nQSJoqDClY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Nzam3ULE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5Axdm/DB; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Nzam3ULE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5Axdm/DB; arc=none smtp.client-ip=195.135.223.130
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 721D776096;
+	Wed,  8 Jul 2026 15:45:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1783525544; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BGI/ciUAJ4aL/A2jCySoJbg4P4LPyDbk7ONkKSUeOCI=;
+	b=Nzam3ULEMummIzt2oRWkqca9YkX1a/4eGPyMSnSppZFG9wt4Km2DrO1qnAn9o/AT3KqATf
+	OmtwjCaJvCv363RjsAjzsZlMSPZ58vhlfkt2o8m98/oGdSBv19A3s8W8dX2WesEQLNTa8P
+	HG889eVczePv5bY8NtMQdkl91yp/3yA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1783525544;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BGI/ciUAJ4aL/A2jCySoJbg4P4LPyDbk7ONkKSUeOCI=;
+	b=5Axdm/DBxg7PfKKmM6F/0asBXhp39i74rT1xI5PpNIdQIjISGzNSIwGC/sbXvy/nFWKEiE
+	4HI+d2DwMhXPzaAw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1783525544; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BGI/ciUAJ4aL/A2jCySoJbg4P4LPyDbk7ONkKSUeOCI=;
+	b=Nzam3ULEMummIzt2oRWkqca9YkX1a/4eGPyMSnSppZFG9wt4Km2DrO1qnAn9o/AT3KqATf
+	OmtwjCaJvCv363RjsAjzsZlMSPZ58vhlfkt2o8m98/oGdSBv19A3s8W8dX2WesEQLNTa8P
+	HG889eVczePv5bY8NtMQdkl91yp/3yA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1783525544;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BGI/ciUAJ4aL/A2jCySoJbg4P4LPyDbk7ONkKSUeOCI=;
+	b=5Axdm/DBxg7PfKKmM6F/0asBXhp39i74rT1xI5PpNIdQIjISGzNSIwGC/sbXvy/nFWKEiE
+	4HI+d2DwMhXPzaAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 20E97779AE;
+	Wed,  8 Jul 2026 15:45:44 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id iHpRAahwTmqqTQAAD6G6ig
+	(envelope-from <krisman@suse.de>); Wed, 08 Jul 2026 15:45:44 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: Feng Xue <feng.xue@outlook.com>, "io-uring@vger.kernel.org"
+ <io-uring@vger.kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jens
+ Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>
+Subject: Re: [PATCH] io_uring/net: clear stale vec on buffer peek error
+ after expansion
+In-Reply-To: <SY0P300MB0070983BEEB976B8F46E3D4790FF2@SY0P300MB0070.AUSP300.PROD.OUTLOOK.COM>
+Organization: SUSE
+References: <SY0P300MB0070983BEEB976B8F46E3D4790FF2@SY0P300MB0070.AUSP300.PROD.OUTLOOK.COM>
+Date: Wed, 08 Jul 2026 11:45:38 -0400
+Message-ID: <87ldblwkm5.fsf@mailhost.krisman.be>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+KFGSoGVBzsnhht5Opo2PCf33M0uiLjK7BNQ-t2DjTDudwXrw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Flag: NO
+X-Spam-Score: -2.80
+X-Spam-Level: 
 X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.66 / 15.00];
-	WHITELIST_SPF_DKIM(-3.00)[kernel.org:d:+,kernel.org:s:+];
+X-Spamd-Result: default: False [-0.66 / 15.00];
+	SUSPICIOUS_RECIPS(1.50)[];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	MID_RHS_NOT_FQDN(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[kernel.org,quarantine];
-	R_DKIM_ALLOW(-0.20)[kernel.org:s=k20260515];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
+	DMARC_POLICY_ALLOW(-0.50)[suse.de,none];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	RCVD_TLS_LAST(0.00)[];
-	TAGGED_FROM(0.00)[bounces-13919-lists,io-uring=lfdr.de];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[4];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FORWARDED(0.00)[lists@lfdr.de];
-	FORGED_RECIPIENTS(0.00)[m:benjamin.james.carey3@gmail.com,m:axboe@kernel.dk,m:io-uring@vger.kernel.org,m:linux-kernel@vger.kernel.org,m:benjaminjamescarey3@gmail.com,s:lists@lfdr.de];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FORGED_SENDER(0.00)[kbusch@kernel.org,io-uring@vger.kernel.org];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
+	TO_DN_SOME(0.00)[];
+	TAGGED_FROM(0.00)[bounces-13920-lists,io-uring=lfdr.de];
+	FORGED_SENDER(0.00)[krisman@suse.de,io-uring@vger.kernel.org];
 	MIME_TRACE(0.00)[0:+];
+	FORWARDED(0.00)[lists@lfdr.de];
+	FORGED_RECIPIENTS(0.00)[m:feng.xue@outlook.com,m:io-uring@vger.kernel.org,m:linux-kernel@vger.kernel.org,m:axboe@kernel.dk,m:asml.silence@gmail.com,m:asmlsilence@gmail.com,s:lists@lfdr.de];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	HAS_ORG_HEADER(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,kernel.dk,gmail.com];
+	FREEMAIL_TO(0.00)[outlook.com,vger.kernel.org];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
 	FORGED_SENDER_FORWARDING(0.00)[];
-	ALIAS_RESOLVED(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[6];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[kbusch@kernel.org,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[kernel.org:+];
-	FORGED_RECIPIENTS_FORWARDING(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[krisman@suse.de,io-uring@vger.kernel.org];
+	DKIM_TRACE(0.00)[suse.de:+];
+	ALIAS_RESOLVED(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
 	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	TO_DN_SOME(0.00)[]
+	FORGED_RECIPIENTS_FORWARDING(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:from_mime,suse.de:dkim,sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,vger.kernel.org:from_smtp,outlook.com:email,vec.nr:url]
 X-Rspamd-Server: lfdr
-X-Rspamd-Queue-Id: 960BE726E1B
+X-Rspamd-Queue-Id: 3772B7286F6
 
-On Sat, Jul 04, 2026 at 03:35:14PM -0400, Ben Carey wrote:
-> I'm most definitely not qualified to suggest this as a passable alternative,
-> but when polling a tagset, is there a way to check if the tagset's been
-> completed by another thread? Maybe break out if, for each polled request,
-> request->state == MQ_RQ_COMPLETE? I'm unsure how to translate the parameters in
-> blk_hctx_poll into the set of requests being waited on.
+Feng Xue <feng.xue@outlook.com> writes:
 
-The overhead to track individual requests this way would largely negate
-any benefit to polling. A request could be reallocated and dispatched
-before the polling loop sees that it's complete, so at the very least
-you'd have to hold an extra reference on every request you are polling
-for to prevent that before you can check their status.
+> Subject: [PATCH] io_uring/net: clear stale vec on buffer peek error after=
+ expansion
+>
+> When io_ring_buffers_peek() expands the iovec array during a bundle
+> recv retry, it frees the old array (A) and allocates a new one (B).
+> If access_ok() then fails, B is also freed and -EFAULT is returned.
+>
+> The callers io_recv_buf_select() and io_send_select_buffer() only
+> update kmsg->vec.iovec on success, so on this error path vec.iovec
+> still points to freed A. The stale pointer survives into the netmsg
+> alloc cache via io_netmsg_recycle() (vec.nr < IO_VEC_CACHE_SOFT_CAP
+> so io_vec_free is not called). A subsequent bundle operation reuses
+> the cached hdr, sees vec.iovec non-NULL, sets REQ_F_NEED_CLEANUP,
+> and passes the dangling pointer back to io_ring_buffers_peek() =E2=80=94
+> which writes iovec entries to freed memory (use-after-free).
+>
+> If the alloc cache is full, the alternative cleanup path through
+> io_clean_op() =E2=86=92 io_vec_free() kfree()s the already-freed A
+> (double-free).
+>
+> Fix this by NULLing vec.iovec and zeroing vec.nr on the error path
+> when expansion occurred (detected by arg.iovs !=3D kmsg->vec.iovec).
+> Do not call io_vec_free() here =E2=80=94 A is already freed by the expans=
+ion
+> block, so kfree()ing it again would itself be a double-free.
+>
+> Apply the same fix to io_send_select_buffer() which has the identical
+> update-after-success pattern.
+
+cleaning in the caller makes the issue much more likely to happen again
+in a future use of this function.  It would be better to fix the bad
+semantics of io_ring_buffers_peek instead.
+
+In fact, this is exactly the point of this patch, which I believe
+already fixed this issue:
+
+https://lore.kernel.org/io-uring/178338543579.49877.9882374687710864124.b4-=
+ty@b4/T/#t
+
+>
+> Signed-off-by: Feng Xue <feng.xue@outlook.com>
+> Assisted by: XGPT
+> ---
+>  io_uring/net.c | 16 ++++++++++++++--
+>  1 file changed, 14 insertions(+), 2 deletions(-)
+>
+> diff --git a/io_uring/net.c b/io_uring/net.c
+> index XXXXXXX..XXXXXXX 100644
+> --- a/io_uring/net.c
+> +++ b/io_uring/net.c
+> @@ -631,8 +631,15 @@ static int io_send_select_buffer(struct io_kiocb *re=
+q, unsigned int issue_flags,
+>=20=20
+>  	ret =3D io_buffers_select(req, &arg, sel, issue_flags);
+> -	if (unlikely(ret < 0))
+> +	if (unlikely(ret < 0)) {
+> +		/*
+> +		 * Buffer selection may have freed the old iovec during
+> +		 * expansion. Clear vec to prevent stale-pointer reuse.
+> +		 */
+> +		if (kmsg->vec.iovec && arg.iovs !=3D kmsg->vec.iovec) {
+> +			kmsg->vec.iovec =3D NULL;
+> +			kmsg->vec.nr =3D 0;
+> +		}
+>  		return ret;
+> +	}
+>=20=20
+>  	if (arg.iovs !=3D &kmsg->fast_iov && arg.iovs !=3D kmsg->vec.iovec) {
+> @@ -1174,8 +1181,15 @@ static int io_recv_buf_select(struct io_kiocb *req,
+>=20=20
+>  		ret =3D io_buffers_peek(req, &arg, sel);
+> -		if (unlikely(ret < 0))
+> +		if (unlikely(ret < 0)) {
+> +			/*
+> +			 * Peek may have freed the old iovec during expansion.
+> +			 * Clear vec to prevent stale-pointer reuse or
+> +			 * double-free via io_vec_free on the cleanup path.
+> +			 */
+> +			if (kmsg->vec.iovec && arg.iovs !=3D kmsg->vec.iovec) {
+> +				kmsg->vec.iovec =3D NULL;
+> +				kmsg->vec.nr =3D 0;
+> +			}
+>  			return ret;
+> +		}
+>=20=20
+>  		if (arg.iovs !=3D &kmsg->fast_iov && arg.iovs !=3D kmsg->vec.iovec) {
+
+--=20
+Gabriel Krisman Bertazi
 

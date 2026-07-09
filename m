@@ -1,180 +1,172 @@
-Return-Path: <io-uring+bounces-13922-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13923-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by mail.lfdr.de with LMTP
-	id +RKMNMwbT2rKagIAu9opvQ
-	(envelope-from <io-uring+bounces-13922-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Thu, 09 Jul 2026 05:55:56 +0200
+	id 88UqHgRoT2qGgAIAu9opvQ
+	(envelope-from <io-uring+bounces-13923-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Thu, 09 Jul 2026 11:21:08 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DBA072C76C
-	for <lists+io-uring@lfdr.de>; Thu, 09 Jul 2026 05:55:56 +0200 (CEST)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [104.64.211.4])
+	by mail.lfdr.de (Postfix) with ESMTPS id 240CB72EDA3
+	for <lists+io-uring@lfdr.de>; Thu, 09 Jul 2026 11:21:07 +0200 (CEST)
 Authentication-Results: mail.lfdr.de;
-	dkim=pass header.d=gmail.com header.s=20251104 header.b=JTyf3ov4;
-	dmarc=pass (policy=none) header.from=gmail.com;
-	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13922-lists+io-uring=lfdr.de@vger.kernel.org" designates 172.234.253.10 as permitted sender) smtp.mailfrom="io-uring+bounces-13922-lists+io-uring=lfdr.de@vger.kernel.org";
+	dkim=pass header.d=bytedance.com header.s=2212171451 header.b=MeUqw1zd;
+	dmarc=pass (policy=quarantine) header.from=bytedance.com;
+	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13923-lists+io-uring=lfdr.de@vger.kernel.org" designates 104.64.211.4 as permitted sender) smtp.mailfrom="io-uring+bounces-13923-lists+io-uring=lfdr.de@vger.kernel.org";
 	arc=pass ("subspace.kernel.org:s=arc-20240116:i=1")
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id A4BD23005D1E
-	for <lists+io-uring@lfdr.de>; Thu,  9 Jul 2026 03:51:51 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id 0A3923014205
+	for <lists+io-uring@lfdr.de>; Thu,  9 Jul 2026 09:03:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484B41A681B;
-	Thu,  9 Jul 2026 03:51:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1BB23FC5BE;
+	Thu,  9 Jul 2026 09:03:14 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+Received: from va-1-112.ptr.blmpb.com (va-1-112.ptr.blmpb.com [209.127.230.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F113603D7
-	for <io-uring@vger.kernel.org>; Thu,  9 Jul 2026 03:51:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C40083EDACC
+	for <io-uring@vger.kernel.org>; Thu,  9 Jul 2026 09:03:11 +0000 (UTC)
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783569111; cv=none; b=Y49qOvKV/Wm1KRP+9ixg+xAqXjT6VJEZCY6bWaBiFR2JoJWJxhbfner77IquLu0vzmBG1CNMJY/5OsoHlvw59mL742nhEHomMDDWE1Wbn4si5sHCnSLQpRyfPU7Kgf0jCtsvYDgQOdMe4a16apUn93kXvyEIFYZhB25P+AJDxl0=
+	t=1783587794; cv=none; b=KXMa4VwSTbPGV3TWTcOLum2Mwn0Ua4skg5zH3c/KCi76LfL0adg4IwWzp2mCT5Uimcis10vrPHRqXbuZScf4D5l8PeThFjcsyrGTk5fcqeh0g1a6Qy9jzvDpZWkPCmvuBQGBDVDdKdAK6ojDG321GayeQC4/5TtH5Ie2YGY7Fpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783569111; c=relaxed/simple;
-	bh=F4bTmw3Ia8pqiZ9/QREErdk8NjhbpYg78rNe7xKGM0c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=af6vOb6oEGinZANDw2ZOog02upZbhFS1OgB+yeJGPtpKDWosTZxiZTHFEBY67ieI/deJj9ocrIAulWHNlCfZW4ZstNzpDUPSmEgXvrX5KL4RHxAO8dBvrwy89Cv5UPKsHxUoXJ5BuUm7gfIjm0oyfInLqRlsOTVrDNQL++sp4fA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JTyf3ov4; arc=none smtp.client-ip=209.85.215.182
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-c8b49639fbaso333528a12.0
-        for <io-uring@vger.kernel.org>; Wed, 08 Jul 2026 20:51:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783569109; x=1784173909; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=ADWepV0a44l5gT9v6C8qAvveUNdTZ8pec6JfMV9nv1c=;
-        b=JTyf3ov4vNbeeSD0dA7m2jTqHdzVqCGhIoFQ8GnOwYcRGt1dZnbmpjpKjYi7cAwjeB
-         feHmY4YQW1+brZKFWRLedSqSlFnznf9f2yvux9LlgpPZdzYSDz6Q2dYt8Pjit5e+JfF7
-         CqLN+NyWx0Lu/uCt1uOhg/GfcfkvhlFW1fmnpr7t3xNH/nKtrV52G2jlMZ8ITEpO5uzf
-         NJwYH9Lh4jp37DTgRTcdpwGfo3a0EDylL8lEXB/scB3JEeuBYyPZhBo9zfgHJ17L76g0
-         MjtkgKydXRvJeOChOYjOBT6/BuhUWQiQ25f2TfXHRcxK/Hq64LAiELk4GV1Uf0EH+pIM
-         x2uA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783569109; x=1784173909;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=ADWepV0a44l5gT9v6C8qAvveUNdTZ8pec6JfMV9nv1c=;
-        b=eBWjfjNIWkKkbLa5/B+yW/Rmrdr/v7eaexAuFc4/sv024fwgNLK8PMpb+4PPN1woYo
-         dquGdf6a/5GQMTMhcP0nHp0nq0p0jmGGPFAz7BPa11skP2VW85b4Xr3O0sl0S9FSKH5h
-         YXZp9eq0UCRg57KRdgEXki8XIi4MDUKUNp4mIkeGHNikarO7c87rxOAyR2I715X48j1/
-         mflXT9yCYZUF2sRUTAZBacq5XOGxgqhItHNbxXTO4ICm0fJr2QHpfTOG6comiO3vyizQ
-         mjNs+TeRkZPpNgMRz6NB18BIMeC9s/oq+QcqHCL9PpYPsTq2GNDE82Pz02IVY2p7CEb0
-         hZZg==
-X-Gm-Message-State: AOJu0YxZF/0tkln5vIQRwPT2FN0LgLrcXCjP9PH4hmEVEPftHygeB5b+
-	XGVgyBPegX71S6ydoe6VWfiFtdbHcGVxlNI3VJmAuXVCJmu5GuqgbhBzT89xLqr2
-X-Gm-Gg: AfdE7clWNrnDdaEynAiukzcmAFN6GoHtA6z6CggzX4ddnvdfAADFzdJXHoi6ydyRFBN
-	EMaqCEQlkLif7nWWbUuruU2Nwo5FvTFqzGiSy+rK/eOoH0+0Z3nkHSueTIInUA9KGOEc6ekGltR
-	vASpE1RB6qI+qwOsVYCDaWek/lSCWdQxfTOzwnex4Gq88qhW1DyeYxBPeZ8lBH8w0oBCmM+6ZLe
-	L2Jxx6164A0t9hN4g7REdxVzhywqZdPpNljx36HTnvQ9KP8rQoTHEJsommevGMp1OjysDXDjEeu
-	2UgxqIvhpQzh4l/QN7kg3+3XCzDULtkkEo5LuDhdiyKhMB/woF92r21JX+BkhlQxaMqowGbOqO3
-	HMQrL85Ri3LimgQF5GDuXCeDGMnyEgzUi2iyJvYp013RTN/YLyOnblb6W2VRw0JP/1taoQLJn+y
-	CErwRYcvFBGjf0CZDhpeWGzD4ExbqKYeZ8IgTwEH83Hn8cynjdjTD2YFZhCil8eitqM3b1hgveQ
-	NmgRSH+tP7TLfI=
-X-Received: by 2002:a05:6a20:d493:b0:3bf:7110:9949 with SMTP id adf61e73a8af0-3c0bcbe9106mr6684221637.6.1783569109026;
-        Wed, 08 Jul 2026 20:51:49 -0700 (PDT)
-Received: from DESKTOP-4AJO944.tail156a05.ts.net (ppp-223-24-194-101.revip6.asianet.co.th. [223.24.194.101])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-31174ac14f2sm27056633eec.27.2026.07.08.20.51.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jul 2026 20:51:48 -0700 (PDT)
-From: Woraphat Khiaodaeng <worapat.kd2@gmail.com>
-To: io-uring@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dev>,
-	Woraphat Khiaodaeng <worapat.kd2@gmail.com>
-Subject: [PATCH] io_uring: restore RCU read section in io_req_local_work_add()
-Date: Thu,  9 Jul 2026 10:51:00 +0700
-Message-ID: <20260709035100.2269-1-worapat.kd2@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1783587794; c=relaxed/simple;
+	bh=HZt2iungDBYDLP/rTlSbIxmzPrD8PxZAZfHX4nnzqC0=;
+	h=Cc:Mime-Version:Date:Message-Id:To:Subject:From:In-Reply-To:
+	 References:Content-Type; b=C4+4f9VEsmy5DDjPYNBBHgKRNSDpJpRAe11u9Z3Y0qjHlzbjVGBMLm1SnG9hCXk9tWU5OuugxGSKViK4d6SQLYw0tgvTXneq/E59ERA4s/sLjmVltux9jnVXbrwcwDoMy+RegIExtzBRIAHBTpPvu4ll8zGE16zyNld8x7ZD+Jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=MeUqw1zd; arc=none smtp.client-ip=209.127.230.112
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=2212171451; d=bytedance.com; t=1783587783; h=from:subject:
+ mime-version:from:date:message-id:subject:to:cc:reply-to:content-type:
+ mime-version:in-reply-to:message-id;
+ bh=HZt2iungDBYDLP/rTlSbIxmzPrD8PxZAZfHX4nnzqC0=;
+ b=MeUqw1zdJPTDbam09jxlp+xJDnSvu+j+YiCJgA/C4I1yz3VhognWL/ORDfGyiYsLVLJXbn
+ kcJveeQgA1boqgO8KzjWP1tgCPKBCNTJgpQfWDX9gIQyAvUh2e724on5C4VwIcosVpatC5
+ yhFleYHwKRoncllS64khCiPL2noDSzN4S3N1zU/egStbQxEXbQPvRdBZ2njAbnFXf7BcLJ
+ t+1uDTKoA7DCS4n9lXnxlz8CxmUgt9k1x4EvDp40CL/GRV6R9VD7eN4zkdZMXAFYlQIy0B
+ NjfJlnl68n7rEwMP17suU28bDXAHLrE3KWRAndjDkGNRUeY3Q1309j2KU6AecQ==
+Cc: "io-uring" <io-uring@vger.kernel.org>, 
+	"linux-kernel" <linux-kernel@vger.kernel.org>, "axboe" <axboe@kernel.dk>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Date: Thu, 09 Jul 2026 17:02:58 +0800
+Message-Id: <d9210bcdf73fbe1ac8b6ec132865609a3ed68688.d5a91db4.0585.4d41.9906.f471ca9a7118@bytedance.com>
+To: "peterz" <peterz@infradead.org>, "rostedt" <rostedt@goodmis.org>
+Subject: Re: [PATCH] io_uring/io-wq: avoid repeated task_work scans during teardown
+From: "changfengnan" <changfengnan@bytedance.com>
+X-Lms-Return-Path: <lba+16a4f63c5+840c33+vger.kernel.org+changfengnan@bytedance.com>
+In-Reply-To: <d9210bcdf73fbe1ac8b6ec132865609a3ed68688.e79dfdc8.0374.4705.bd44.702afa9fc1bd@bytedance.com>
+References: <20260520031221.83210-1-changfengnan@bytedance.com>
+	<469287b6-201a-497d-ac67-03e1336dd81a@kernel.dk>
+	<d9210bcdf73fbe1ac8b6ec132865609a3ed68688.e79dfdc8.0374.4705.bd44.702afa9fc1bd@bytedance.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-Rspamd-Action: no action
 X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20251104];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	DMARC_POLICY_ALLOW(-0.50)[bytedance.com,quarantine];
+	MV_CASE(0.50)[];
+	R_DKIM_ALLOW(-0.20)[bytedance.com:s=2212171451];
+	R_SPF_ALLOW(-0.20)[+ip4:104.64.211.4:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.dev,gmail.com];
-	FORGED_SENDER(0.00)[worapatkd2@gmail.com,io-uring@vger.kernel.org];
-	TAGGED_FROM(0.00)[bounces-13922-lists,io-uring=lfdr.de];
-	FORWARDED(0.00)[lists@lfdr.de];
+	FORGED_SENDER(0.00)[changfengnan@bytedance.com,io-uring@vger.kernel.org];
 	RCVD_TLS_LAST(0.00)[];
-	FORGED_RECIPIENTS(0.00)[m:io-uring@vger.kernel.org,m:axboe@kernel.dev,m:worapat.kd2@gmail.com,m:worapatkd2@gmail.com,s:lists@lfdr.de];
+	TO_DN_ALL(0.00)[];
+	FORWARDED(0.00)[lists@lfdr.de];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	PRECEDENCE_BULK(0.00)[];
-	FORGED_SENDER_FORWARDING(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[worapatkd2@gmail.com,io-uring@vger.kernel.org];
+	RCVD_COUNT_THREE(0.00)[3];
+	FORGED_RECIPIENTS(0.00)[m:io-uring@vger.kernel.org,m:linux-kernel@vger.kernel.org,m:axboe@kernel.dk,m:peterz@infradead.org,m:rostedt@goodmis.org,s:lists@lfdr.de];
+	TAGGED_FROM(0.00)[bounces-13923-lists,io-uring=lfdr.de];
 	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
-	RCVD_COUNT_FIVE(0.00)[5];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FORGED_SENDER_FORWARDING(0.00)[];
 	ALIAS_RESOLVED(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[changfengnan@bytedance.com,io-uring@vger.kernel.org];
+	DKIM_TRACE(0.00)[bytedance.com:+];
+	MID_RHS_MATCH_FROM(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
 	FORGED_RECIPIENTS_FORWARDING(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[vger.kernel.org:from_smtp,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns]
+	RCPT_COUNT_FIVE(0.00)[5];
+	ASN(0.00)[asn:63949, ipnet:104.64.192.0/19, country:SG];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[vger.kernel.org:from_smtp,infradead.org:email,sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,bytedance.com:from_mime,bytedance.com:email,bytedance.com:mid,bytedance.com:dkim,goodmis.org:email]
 X-Rspamd-Server: lfdr
-X-Rspamd-Queue-Id: 2DBA072C76C
+X-Rspamd-Queue-Id: 240CB72EDA3
 
-The task-work refactor that moved io_req_local_work_add() out of
-io_uring.c into the new io_uring/tw.c dropped the whole-body guard(rcu)()
-that used to cover the function body.
+Ping.
 
-For DEFER_TASKRUN rings the ring teardown still relies on that RCU read
-section pairing with its grace period:
-
-	/* pairs with RCU read section in io_req_local_work_add() */
-	if (ctx->flags & IORING_SETUP_DEFER_TASKRUN)
-		synchronize_rcu();
-	io_ring_ctx_free(ctx);
-
-io_req_local_work_add() keeps dereferencing ctx after mpscq_push() has
-published the request to the work list (ctx->cq_wait_nr, and
-ctx->submitter_task in the final wake_up_state()), without holding a ctx
-reference across that window. The RCU read section was the only thing
-guaranteeing an in-flight adder had finished touching ctx before
-io_ring_ctx_free() ran; synchronize_rcu() only waits for readers that
-are actually inside an RCU read-side critical section. With the guard
-gone the grace period no longer pairs with anything on the add side, so
-ctx can be freed and reused while io_req_local_work_add() is still using
-it.
-
-Restore the guard(rcu)() over the function body, matching the teardown
-pairing and the pre-refactor code (the guard was present when the
-function still lived in io_uring.c in v6.12).
-
-Fixes: d46ab2c98aba ("io_uring: switch local task_work to a mpscq")
-Signed-off-by: Woraphat Khiaodaeng <worapat.kd2@gmail.com>
----
- io_uring/tw.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/io_uring/tw.c b/io_uring/tw.c
-index a4c872870..4f7a0d107 100644
---- a/io_uring/tw.c
-+++ b/io_uring/tw.c
-@@ -153,6 +153,9 @@ void io_req_local_work_add(struct io_kiocb *req, unsigned flags)
- 	struct io_ring_ctx *ctx = req->ctx;
- 	int nr_wait;
- 
-+	/* pairs with synchronize_rcu() in io_ring_exit_work() */
-+	guard(rcu)();
-+
- 	/*
- 	 * We don't know how many requests there are in the link and whether
- 	 * they can even be queued lazily, fall back to non-lazy.
--- 
-2.43.0
-
+> From: "changfengnan"<changfengnan@bytedance.com>
+> Date:=C2=A0 Mon, Jun 15, 2026, 15:33
+> Subject:=C2=A0 Re: [PATCH] io_uring/io-wq: avoid repeated task_work scans=
+ during teardown
+> To: "peterz"<peterz@infradead.org>, "rostedt"<rostedt@goodmis.org>
+> Cc: "io-uring"<io-uring@vger.kernel.org>, "linux-kernel"<linux-kernel@vge=
+r.kernel.org>, "axboe"<axboe@kernel.dk>
+> Hi Peter & Steven:
+> Do you have time to help review this patch ?
+>=C2=A0
+> Thanks.
+>=C2=A0
+>=C2=A0
+> > From: "Jens Axboe"<axboe@kernel.dk>
+> > Date:=C2=A0 Fri, May 22, 2026, 00:59
+> > Subject:=C2=A0 Re: [PATCH] io_uring/io-wq: avoid repeated task_work sca=
+ns during teardown
+> > To: "Fengnan Chang"<changfengnan@bytedance.com>, <io-uring@vger.kernel.=
+org>, <linux-kernel@vger.kernel.org>, <peterz@infradead.org>, <rostedt@good=
+mis.org>
+> > On 5/19/26 9:12 PM, Fengnan Chang wrote:
+> > > We hit hard-lockup reports from iou-wrk threads stuck in
+> > > task_work_cancel_match() during io-wq teardown in syzkaller test.
+> > > The root cause is that teardown repeatedly rescans the submitter task=
+'s
+> > > full task_work list under pi_lock, once per matched item.
+> > >=C2=A0
+> > > Two spots are problematic:
+> > >=C2=A0
+> > > 1) io_wq_cancel_tw_create() loops calling task_work_cancel_match() to
+> > > =C2=A0 =C2=A0remove worker-creation callbacks one at a time. Each cal=
+l re-walks
+> > > =C2=A0 =C2=A0the entire list from scratch while holding pi_lock.
+> > >=C2=A0
+> > > 2) io_worker_exit() unconditionally scans the submitter task_work lis=
+t
+> > > =C2=A0 =C2=A0for its own create_work, even when it never queued one. =
+With many
+> > > =C2=A0 =C2=A0workers exiting simultaneously against a large unrelated=
+ task_work
+> > > =C2=A0 =C2=A0list, this adds up fast.
+> > >=C2=A0
+> > > Fix (1) by adding task_work_cancel_match_all() that unlinks all match=
+ing
+> > > callbacks in a single traversal, then iterating the returned list loc=
+ally.
+> > > Same try_cmpxchg() synchronisation as before, stops at the work_exite=
+d
+> > > sentinel.
+> > >=C2=A0
+> > > Fix (2) by skipping the cancel entirely unless create_state indicates=
+ a
+> > > pending create_work. Since create_state is exclusively owned via
+> > > test_and_set_bit_lock, at most one callback can be queued per worker,=
+ so
+> > > the cancel is also simplified from a loop to a single call.
+> > >=C2=A0
+> > > With this fix the reproducer (FIFO-open + MSG_RING SEND_FD stress) no
+> > > longer triggers hard-lockup reports, and task_work_cancel_match sampl=
+es
+> > > drop to microseconds.
+> >=C2=A0
+> > Looks good to me, nicer way to do this too.
+> >=C2=A0
+> > --=C2=A0
+> > Jens Axboe
+> >=C2=A0
 

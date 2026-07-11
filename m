@@ -1,88 +1,88 @@
-Return-Path: <io-uring+bounces-13973-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13974-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by mail.lfdr.de with LMTP
-	id jF9hJm0eUmq2MAMAu9opvQ
-	(envelope-from <io-uring+bounces-13973-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Sat, 11 Jul 2026 12:43:57 +0200
+	id b5+LMnceUmq6MAMAu9opvQ
+	(envelope-from <io-uring+bounces-13974-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Sat, 11 Jul 2026 12:44:07 +0200
 X-Original-To: lists+io-uring@lfdr.de
 Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12B53741474
-	for <lists+io-uring@lfdr.de>; Sat, 11 Jul 2026 12:43:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 440DC741486
+	for <lists+io-uring@lfdr.de>; Sat, 11 Jul 2026 12:44:07 +0200 (CEST)
 Authentication-Results: mail.lfdr.de;
-	dkim=pass header.d=gmail.com header.s=20251104 header.b=H0nbvqu+;
+	dkim=pass header.d=gmail.com header.s=20251104 header.b=MUgRBfag;
 	dmarc=pass (policy=none) header.from=gmail.com;
-	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13973-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c04:e001:36c::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-13973-lists+io-uring=lfdr.de@vger.kernel.org";
+	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13974-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c04:e001:36c::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-13974-lists+io-uring=lfdr.de@vger.kernel.org";
 	arc=pass ("subspace.kernel.org:s=arc-20240116:i=1")
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 9EE593068117
-	for <lists+io-uring@lfdr.de>; Sat, 11 Jul 2026 10:41:25 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id 9E818303AA38
+	for <lists+io-uring@lfdr.de>; Sat, 11 Jul 2026 10:41:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96986397329;
-	Sat, 11 Jul 2026 10:41:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C67573BB126;
+	Sat, 11 Jul 2026 10:41:25 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03BB23BB9FC
-	for <io-uring@vger.kernel.org>; Sat, 11 Jul 2026 10:41:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553083B7B84
+	for <io-uring@vger.kernel.org>; Sat, 11 Jul 2026 10:41:24 +0000 (UTC)
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783766483; cv=none; b=TyeU8Z4BldvXmnBYvRoponBA340kJJkPMr5d5MIEgGNhh4v/EEE3FbgdYi7nLVWcptn+I/9kiXksumCYzD78nLYsiyM+xs0Yd62DuEslyi5HhfDBW/CJyTrKXGLdUGeAv0jEVeRQjwOWQfotXyDT/jzn5P//QTl1JrgYMKLZQHs=
+	t=1783766485; cv=none; b=AaPdcYfWus0YpwzABu9KFjhD6FPRo2NU5Dw4A1FtFm9zHcVU7K3pKEUJ316mjikGZI7FQSdc8F4QUh/ls/R0iF1kSPpVZ3LmylIe88BE/zGkte+Wa9Y/B1kBSJ0N0PWoPrCi61fn7Gn7OpVVQ0QcLexZe4Rw/PsnrZXBhyE+1+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783766483; c=relaxed/simple;
-	bh=3C5ZHtmURh7dwurigU+mzj8rTDm7QKCNJ6nCU+yuRWA=;
+	s=arc-20240116; t=1783766485; c=relaxed/simple;
+	bh=fZdiAzGz7MDT4+l8yg8JqDcusAXgcqCF0bEYj/RAbu4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rAFqGt/T98rhC5gW394J6RdEzuwQDLy3Q1SLl+YHIIy6SfzPYmPoFXp75iXL5AbPmDIA35Su1/x9J0fnvQpjVCIOFNFEsZ2ibX3AFuMf4qWyoz6gezEnFFDTCZBnVn6z4MV6E8vPe1dmqyUHGWN6mPFJxC/Q31eUGxLMmYrL1fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H0nbvqu+; arc=none smtp.client-ip=209.85.218.41
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-c15cd3fd760so207987566b.2
-        for <io-uring@vger.kernel.org>; Sat, 11 Jul 2026 03:41:21 -0700 (PDT)
+	 MIME-Version; b=YpjNSJsES5F8qujoYXDmMXMFG03Q/84RNU/VfrHJ+VFJsvDntoOg5xM/hdAnHWyFBL8I+5uiJhng0VKRW4SL2DVIKeO08PbVpnZfAdo5NgUJ0kRVdv8F24M5prqHz4Q1PEgARSGAASqjmHWEI+UaIHoDdvUfVi8NuyAiS0keEaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MUgRBfag; arc=none smtp.client-ip=209.85.208.45
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-69c7697d523so287328a12.2
+        for <io-uring@vger.kernel.org>; Sat, 11 Jul 2026 03:41:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783766480; x=1784371280; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1783766483; x=1784371283; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=YzxgLXuoC3y9XYCE+1b8RBAVVFev+ejEK09g/vo1UEs=;
-        b=H0nbvqu+fPC8w5bfHmfEl/v5wPLcbO8aITWDR2aLRh6TY2UIvEcJFID5mF7Lqma4uo
-         JkMHZWwfu0so+xZnuLyNRJ7bADe+/PhyvEF2NIK3lVgXy5WG0MB/k7CE6ZwgbQpA8CLI
-         dE6VDu7vQg9ekIHAr7nwqftgRIMlKUWlB37mA06M1NVQVVehGjaDYE+I0cjW8wcIr12j
-         aK6GrVAnANAdR1+5zrnRD2fY/6OPd29QZ2Xa9Rs6QAfln7EAz0CQp0NrsKCXsgXbhdHj
-         2U26h+Nc+eglkxfr7vp/M1it2Iu/qs3Ynehaf2FUa8ZKjPwIY+GVZdNkcXAk14sJwJyE
-         RJ4A==
+        bh=MsN2Bg58rEwq83AyY9vwpi88nOUpz5zJ1GusdkCgnH0=;
+        b=MUgRBfagVEV3tdVmkz1L6Vuo4yWb3P9Tuwm0rD+oF0Nr0h+I/ze+pR9XviEks+bKik
+         wv57Fi+dP6tsrTyrEI3AZb+raz74y3XpjFlZcajQ499xz04THk3SCRJA8LLH8g10Cs8v
+         SaJ3G2DNK3p3wTDJ1y5osFDnwRWm90BK8GCEsDaoeuJaye5OPSP5Aeo9werdpkyJ5R2X
+         RvS3lh0pj08pNmBq9HWGSYUQVTsBpvB7DVxD0ygSFE4mY0DXRXAOOVAAh7YsD32tpMmK
+         gsSUrvh5H6OgbggupB+cAk3Zyh7tJblKpElBISOjSyLP3uwW69kL9BczT11PGaEdoPuE
+         P39g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783766480; x=1784371280;
+        d=1e100.net; s=20251104; t=1783766483; x=1784371283;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=YzxgLXuoC3y9XYCE+1b8RBAVVFev+ejEK09g/vo1UEs=;
-        b=X3Gq7GoqYddeuh1acUTpZnmsXvEY9T2UI84VJLiv3XTcYdjIpt0AYBu76lr9cDyMPG
-         wWGvGNonmkJQ4mQ0LLB9Zb4CkEWWBeZpyTYrfkrrIPpD/Z0bLrp80ssaHsicHtS+WEQT
-         uYNcddqHJULNROHXf0ZvYNZwZnElAExFRiaz/dThIzbnpSjJRHUxaVuTa3pZ2dsvy6IT
-         tja/FcvdBZwGtOLmfyflZc1kB6kdpYFocNO8MST3eXYZT4XIO28hbnqQDx+B8yg5fHJM
-         8wLkqoaQh5qhCWYyM1xD1/9hADalTQ3qcFv24yGnJZERGzdSecBNZAZA6CjNFPg6Ymel
-         svoQ==
-X-Gm-Message-State: AOJu0YzS4dyAzaLYqTkkXb1AW9u8aNPuqMTFqSfXvewI+P+boaym41YL
-	q5NRgfsEmgcyGqjJrlOtqIzvNugx0JGYhWPA0WPGovMLEFlMwNMi6b4sgtLcug==
-X-Gm-Gg: AfdE7clfW88q9mKxIWPYb/ET2ARb5AI4rm1K5zQnFpn13lp5tuVOMXSJToQ3ZK+eDsL
-	xOmx1tot8Xm6CCcHQJ7j74+RvSgCua62elJKgu1wOIYeer5myMGUyl8h3EPZ3JYgzYEQcfdA3xH
-	47o6wVuaSYICIgCARfUTWK/N17nAKY0gdZvWkPGlzGgfoA1pWi6/MlaEEsaGXprYAocVbmCbjhU
-	kocr4fxo8TA9A+ezVeENAJ2ApH54kcJQtuNhssLNCwlUMIfHLfvaUJLjcKFnOIvfm/QpalAfqUH
-	QaSUpAxgkyrHDRYc8ZUTIETUxpnc8MiyEME5LzyFooexxAi0oQuHlhfbBvAt3cOU3D0l1meb5mN
-	Y4nUayRfzRNBVw90rYivlBeAb8lQ3shg5yOVL6w3A7EQJLAj+05YSOSxYrSbXo2/JbKlDwx9MFR
-	9MZSiZLZ/MfJAOJ8tX/xAbrZ4KaV0u//uGNoa3qRBAHNloeZzGZbwYnrb1phKwghEHZrzhZjp2l
-	MmIiGodOecB7UBEEjlQQ3GI1L9Z8AvS6c9AW0zKYwLkIuFt+78t+5uMMfWM
-X-Received: by 2002:a17:907:6e89:b0:c11:ff2c:4f33 with SMTP id a640c23a62f3a-c161f3886bdmr89040966b.45.1783766480430;
-        Sat, 11 Jul 2026 03:41:20 -0700 (PDT)
+        bh=MsN2Bg58rEwq83AyY9vwpi88nOUpz5zJ1GusdkCgnH0=;
+        b=NFvE2UY0AJqQDI0Iw4Ifi1ODuq532VuvJd4ScvURl9h3Fu7Om5xABnxZNHj1Hb9I8y
+         EOLDuHB1O5EpAwEdFAJXudBmqE/xsmtzDfh712GJe4FtKf6/A3HnFSlDLB+C9ddQul0A
+         M1vQ/+6y6idr0q7+H56qq1nDp+1B3HP9fkHt/G9BA0IkXE83bE11kmvilxFbppFWFeu9
+         SZdMuG7vIInViBcklgKtxK9xoNSvujvHjoBFx2+36AO+bZ9L7xU7gMaVxUCnOkEk2zSa
+         8VHHAkxIG0ENB5JD6SEz0m9A752na277HUuo0uZcFJwOIz7tygsCRcOj8XuBBz5Z0aze
+         fF4A==
+X-Gm-Message-State: AOJu0Yx05Jix1zhQAjn1lKMbKGESuOhjBhm467ffwLJLwygDuKRBRwA/
+	bOoVI7AI3PFeMmJQgx1ynO6+RU4zftzzmig5VJ7PBQ8IFr65LptMQZj7fEE6pg==
+X-Gm-Gg: AfdE7clrAzEP1f/jWigINhT9PPM4DQJaveKoQuodYNNYcpyamAS1pDT0JvUYd5MYsta
+	v8B8Rwxe8q2TV8ed3+gAKSV6GlSYx3Apsjplyw6ZfEqWVG/GQjCs8ZYlzVFX4rT6KeLhEUMRhp8
+	ByY86undzCPxziSzTHX6JyyKVKikoEDeLte8nGhMspcvXHBg0RQHX5WltGeU3G9cSg/SJvQl4v5
+	1ErzFMlJVLRT629tZoCiEZQPEJXrWFGSeZACbhJpEh44lsIyNkaEh4LwAKQJYcFbm5qw/gtZfJ2
+	OghBYNG7Ud+vhveTp4qLWbO8TS3VQ2vet13CyYTL9xnKvG4NAywXBbG53Uzhn/dKNPptgtQkLEg
+	2myxd06DT12Pc1MYbkliMKO4Z+VdMfBTjU/Dfv9y1cSHW70FPrEOQ27qc71xJ3cSPk+6SGDbZ/p
+	TsouOSj3GPrkzHnuoVddxxM8r22if9uzEI0UakBgzyweSJSsYZlbSqJNNPrh30/ZTpqATQxJhyj
+	sFm9F3GaTNzS0SDk6qDLeDdVcK2lky1b02I1ePjUPIuwLPHWw==
+X-Received: by 2002:a17:907:cf87:b0:c12:80a9:d571 with SMTP id a640c23a62f3a-c161e9a4fc5mr102428666b.24.1783766482745;
+        Sat, 11 Jul 2026 03:41:22 -0700 (PDT)
 Received: from 127.0.0.1localhost (82-132-222-132.dab.02.net. [82.132.222.132])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c15d5de95e6sm483041566b.39.2026.07.11.03.41.18
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c15d5de95e6sm483041566b.39.2026.07.11.03.41.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Jul 2026 03:41:19 -0700 (PDT)
+        Sat, 11 Jul 2026 03:41:21 -0700 (PDT)
 From: Pavel Begunkov <asml.silence@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: asml.silence@gmail.com,
 	netdev@vger.kernel.org
-Subject: [PATCH review-only 16/17] io_urint/zcrx: narrow var scope in io_zcrx_recv_skb()
-Date: Sat, 11 Jul 2026 11:40:09 +0100
-Message-ID: <87e57608b1525ebcf4cb1cf29b00ca76ba3b982b.1783616211.git.asml.silence@gmail.com>
+Subject: [PATCH review-only 17/17] io_uring/zcrx: don't reload skb_shinfo
+Date: Sat, 11 Jul 2026 11:40:10 +0100
+Message-ID: <a190271e54e46afe752ee37411bc0ac46d87a11b.1783616211.git.asml.silence@gmail.com>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <cover.1783616211.git.asml.silence@gmail.com>
 References: <cover.1783616211.git.asml.silence@gmail.com>
@@ -103,7 +103,7 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-13973-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-13974-lists,io-uring=lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
 	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
@@ -129,100 +129,50 @@ X-Spamd-Result: default: False [-1.66 / 15.00];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[vger.kernel.org:from_smtp,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
 X-Rspamd-Server: lfdr
-X-Rspamd-Queue-Id: 12B53741474
+X-Rspamd-Queue-Id: 440DC741486
 
-A preparation patch that limits scopes of a couple variables in
-io_zcrx_recv_skb() and rename them, it makes it easier to reason about
-the code.
+Keep skb_shinfo in a local variable so that it doesn't reload it on
+every iteration of the loop.
 
 Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 ---
- io_uring/zcrx.c | 35 ++++++++++++++++-------------------
- 1 file changed, 16 insertions(+), 19 deletions(-)
+ io_uring/zcrx.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
 diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
-index f7592a3c058d..74046a09911a 100644
+index 74046a09911a..0aa6455971d6 100644
 --- a/io_uring/zcrx.c
 +++ b/io_uring/zcrx.c
-@@ -1836,8 +1836,7 @@ io_zcrx_recv_skb(read_descriptor_t *desc, struct sk_buff *skb,
+@@ -1836,6 +1836,7 @@ io_zcrx_recv_skb(read_descriptor_t *desc, struct sk_buff *skb,
  	struct io_kiocb *req = args->req;
  	struct sk_buff *frag_iter;
  	unsigned start, start_off = offset;
--	int i, copy, end, off;
--	int ret = 0;
-+	int i, ret = 0;
++	struct skb_shared_info *shi;
+ 	int i, ret = 0;
  
  	len = min_t(size_t, len, desc->count);
- 	/*
-@@ -1875,20 +1874,19 @@ io_zcrx_recv_skb(read_descriptor_t *desc, struct sk_buff *skb,
- 
- 	for (i = 0; i < skb_shinfo(skb)->nr_frags; i++) {
- 		const skb_frag_t *frag;
-+		unsigned frag_end;
- 
- 		if (WARN_ON(start > offset + len))
- 			return -EFAULT;
- 
- 		frag = &skb_shinfo(skb)->frags[i];
--		end = start + skb_frag_size(frag);
-+		frag_end = start + skb_frag_size(frag);
- 
--		if (offset < end) {
--			copy = end - offset;
--			if (copy > len)
--				copy = len;
-+		if (offset < frag_end) {
-+			unsigned copy = min(frag_end - offset, len);
-+			unsigned frag_off = offset - start;
- 
--			off = offset - start;
--			ret = io_zcrx_recv_frag(req, ifq, frag, off, copy);
-+			ret = io_zcrx_recv_frag(req, ifq, frag, frag_off, copy);
- 			if (ret < 0)
- 				goto out;
- 
-@@ -1897,24 +1895,23 @@ io_zcrx_recv_skb(read_descriptor_t *desc, struct sk_buff *skb,
- 			if (len == 0 || ret != copy)
- 				goto out;
- 		}
--		start = end;
-+		start = frag_end;
+@@ -1871,17 +1872,15 @@ io_zcrx_recv_skb(read_descriptor_t *desc, struct sk_buff *skb,
  	}
  
- 	skb_walk_frags(skb, frag_iter) {
-+		unsigned frag_end;
-+
+ 	start = skb_headlen(skb);
++	shi = skb_shinfo(skb);
+ 
+-	for (i = 0; i < skb_shinfo(skb)->nr_frags; i++) {
+-		const skb_frag_t *frag;
+-		unsigned frag_end;
++	for (i = 0; i < shi->nr_frags; i++) {
++		const skb_frag_t *frag = &shi->frags[i];
++		unsigned frag_end = start + skb_frag_size(frag);
+ 
  		if (WARN_ON(start > offset + len))
  			return -EFAULT;
  
--		end = start + frag_iter->len;
--		if (offset < end) {
-+		frag_end = start + frag_iter->len;
-+		if (offset < frag_end) {
-+			unsigned copy = min(frag_end - offset, len);
-+			unsigned frag_off = offset - start;
- 			size_t count;
- 
--			copy = end - offset;
--			if (copy > len)
--				copy = len;
+-		frag = &skb_shinfo(skb)->frags[i];
+-		frag_end = start + skb_frag_size(frag);
 -
--			off = offset - start;
- 			count = desc->count;
--			ret = io_zcrx_recv_skb(desc, frag_iter, off, copy);
-+			ret = io_zcrx_recv_skb(desc, frag_iter, frag_off, copy);
- 			desc->count = count;
- 			if (ret < 0)
- 				goto out;
-@@ -1924,7 +1921,7 @@ io_zcrx_recv_skb(read_descriptor_t *desc, struct sk_buff *skb,
- 			if (len == 0 || ret != copy)
- 				goto out;
- 		}
--		start = end;
-+		start = frag_end;
- 	}
- 
- out:
+ 		if (offset < frag_end) {
+ 			unsigned copy = min(frag_end - offset, len);
+ 			unsigned frag_off = offset - start;
 -- 
 2.54.0
 

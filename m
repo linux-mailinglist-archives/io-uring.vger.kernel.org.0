@@ -1,164 +1,174 @@
-Return-Path: <io-uring+bounces-13996-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13997-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by mail.lfdr.de with LMTP
-	id uuQRC1ffVGq2gAAAu9opvQ
-	(envelope-from <io-uring+bounces-13996-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Mon, 13 Jul 2026 14:51:35 +0200
+	id KffhLgQvVWoulAAAu9opvQ
+	(envelope-from <io-uring+bounces-13997-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Mon, 13 Jul 2026 20:31:32 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0AF574B1FA
-	for <lists+io-uring@lfdr.de>; Mon, 13 Jul 2026 14:51:34 +0200 (CEST)
+Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id C44A674E7F9
+	for <lists+io-uring@lfdr.de>; Mon, 13 Jul 2026 20:31:31 +0200 (CEST)
 Authentication-Results: mail.lfdr.de;
-	dkim=pass header.d=debian.org header.s=smtpauto.stravinsky header.b=gveA3B7n;
-	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13996-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c04:e001:36c::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-13996-lists+io-uring=lfdr.de@vger.kernel.org";
-	dmarc=pass (policy=none) header.from=debian.org;
+	dkim=fail ("headers rsa verify failed") header.d=0sec.ai header.s=google header.b=RaXZ0HFF;
+	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13997-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c0a:e001:db::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-13997-lists+io-uring=lfdr.de@vger.kernel.org";
+	dmarc=none;
 	arc=pass ("subspace.kernel.org:s=arc-20240116:i=1")
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by tor.lore.kernel.org (Postfix) with ESMTP id 89F603014753
-	for <lists+io-uring@lfdr.de>; Mon, 13 Jul 2026 12:51:27 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 758F23043531
+	for <lists+io-uring@lfdr.de>; Mon, 13 Jul 2026 18:31:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F7E37BE93;
-	Mon, 13 Jul 2026 12:51:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 050E11DED5B;
+	Mon, 13 Jul 2026 18:31:30 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2163840BCD2;
-	Mon, 13 Jul 2026 12:51:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21768EAC7
+	for <io-uring@vger.kernel.org>; Mon, 13 Jul 2026 18:31:27 +0000 (UTC)
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783947083; cv=none; b=CCm46F0xGONp2Cm92LCyLjeKJRe1betPIDVMp7FQbs4mLiqugZKOsDv35CtTNRD7nHT4nUgQ3cAe/HolMW+hfnhsn9Spyerq0yCNotw3GGNLSJqUHvRDKx3kuLLKq7vogTY9QEPJtwjPEpyMSPBBySRFCvJnFF9vJvEW/JwDUF0=
+	t=1783967489; cv=none; b=r2VxCRcksEkHy6271Ncdgce4I4ejgbTU8TRZX0qSZYQGD9NZhKWpi+bX5KcNkEjQexcXb1flpQi+rS2+Mek3TxItDub+GzRXIsg1jG4we3TL6nxpsuYiIypPOp00hTy1haEjuCBU5In1KkZnWDePrwGnDq15arsm190KN53UZjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783947083; c=relaxed/simple;
-	bh=moPgrszvV0964G3VTWpVvuEC6kwV9PytXHcZOov9llE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ciINinlqWoTrNy14LiSeDqDAUv9Q3TjJrbsSkgftibc/yrT3zkHhPupKTXicgjsIIjUAqZul4Wg4tnbfQFeoTkfwCzuKnVgtSl73F5hZwjMhChcb2VgdghGXDZPiZpLdm2TAF+GrGRQRSeRx/yUmVLrvwiwwouWICNvMSrEGsG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=gveA3B7n; arc=none smtp.client-ip=82.195.75.108
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
-	s=smtpauto.stravinsky; h=X-Debian-User:Cc:To:Message-Id:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:
-	Reply-To:Content-ID:Content-Description:In-Reply-To:References;
-	bh=E7Tq8EwVWjmXsEi4MzM7BUX4QKWNx0sPNYqYBv/0ADw=; b=gveA3B7nb4GlA+ArP3sI7oIKhO
-	ff3IsVNsFW30jPwX4BrHLkxJU7kuKc+/a9Lg1+O6ZJvhUu1PhTH0HAEoqS3xkS46flO9rfadz8yC1
-	EATaWRn934vsxB6zAXkf+v9vpoIJtau35o8ST7CPDOF5lN2ugDWaXk0YhVzpd+MPD7xglgv2swATE
-	51PXb5lbhwdATDsIgAEEhcnkxMglEQbKReEFbv0ciCBaQgN6b0j8U6C+6LTHSbGho9YFwWdDgcHX/
-	3vhb+WUYS3vJELGwA5wU3gKyiuT8bHHo2WI1BsVgwAhtBLg6nIQ95K/BDs6pCLAsQ57burzd+mVKb
-	MUi9E9lg==;
-Received: from authenticated-user
-	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.96)
-	(envelope-from <leitao@debian.org>)
-	id 1wjG7t-001Vny-0t;
-	Mon, 13 Jul 2026 12:51:13 +0000
-From: Breno Leitao <leitao@debian.org>
-Date: Mon, 13 Jul 2026 05:51:06 -0700
-Subject: [PATCH] io_uring/kbuf: fix use-after-free of new iovec on bundle
- grow
+	s=arc-20240116; t=1783967489; c=relaxed/simple;
+	bh=95oOiJdu3a9OfAuqQbchxv4PpiKvLM2iB6tkG3Eobgg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hP7AzhB9VtJ/qR5KhZTJ7sqfVfcM6yPW7T0MzKfgaJqjUwvdXhrMwHgdRo+2H4+0EEz46MsKm4AuwSrBZ63rVBknsblOvkMRa1NWxTG8YKfEeDGz8JlDuJ5WnLkwoJ37FutxR/6Gq7/eu2oeow/xDJn3yqcfPJmy7eWIcm6ggLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0sec.ai; spf=pass smtp.mailfrom=0sec.ai; dkim=temperror (0-bit key) header.d=0sec.ai header.i=@0sec.ai header.b=RaXZ0HFF; arc=none smtp.client-ip=209.85.221.45
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-471eeac43bfso3415524f8f.3
+        for <io-uring@vger.kernel.org>; Mon, 13 Jul 2026 11:31:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=0sec.ai; s=google; t=1783967486; x=1784572286; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=oR/f7encpZVkiKBTK1olxsoJ4tgqYqikW+d6n0bDAg4=;
+        b=RaXZ0HFFJ3NoTZlgEgTs+9X6vVl6SfJ3PgHg5iOhe1VUPId2VLmHsOhc3+aZDQULUQ
+         VMbyoKXwtv2jTSfc2lpSLnnpA/QPqNNRmNs+1QHOXMkhz+zG6dg0KnQ8JQGwzkRvW9Dm
+         VejG9Fe3dw2C+ipbZiQOUoxynso6XMGbwxOcdSUYQDZPeF1RO7tLNAbAFBk2mskL7d/L
+         wCkFoGSDTytLHjTZvPi5FaZcHStmlpMngUTtTE9HJYGJvT2El8NX+2pHTz8SGl47n1AS
+         tl8cUuUbhBrB2wxN4fHmT1Y7HvmGFZRJHbt6TEO3R5YHEINU+q1KpuwoaJyCwpTZzvo3
+         ButQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783967486; x=1784572286;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=oR/f7encpZVkiKBTK1olxsoJ4tgqYqikW+d6n0bDAg4=;
+        b=njn+qXUhh8KOCk2rvgE6RiVq3DXmbUi3M9dupeYweYrTJqH+yNkmuruXYcBefeFuJ2
+         L/+zSrowA+k6xXNrnWaqCD36qKvSWWywLlZnKk7MqNL54RBB4DVBQz6fgqiooJ8WoWZC
+         Y4V46norPkunvG9Vv1kh60kfKjUsQIXxXJF5najuHBY2zBORRzec1bGXdJwe6etHpb+e
+         p6wgY9jJ1N36lQeJeybpC9r5QhFjxncQQxGRVl+gseCAohrRCA4kwSVLJDTJk/7AanTb
+         t0M5RFELjw6R3rZbni9mzWLO+uc185w+WQfyOWJRqVYAEgQR1BQEBftzFS7ovGTH0osR
+         6BIQ==
+X-Gm-Message-State: AOJu0Yx/KKjUGhV+wpolSb9pIz8C4uSCGmv7qzb9Scd1VyAGoOo2N7SB
+	wTclkoJIpA2DjHu6zueuSS/m0x1xYyYGhmr7kF5JqMgS083eGiOtxf7WPWEGT7wNjpiRtU+ntfT
+	p0/n9UyXV
+X-Gm-Gg: AfdE7ckJN9HW4MKMsIpBQOCuLzaAw/oaXkbY9PqoJ4JC362/ouxyWzYF81jqnev4CoQ
+	m2vqO0+Ir7iHd8jpBvnSv7xl+DWrOwsqL7quuU8kRESERa0if/2isL8GW5h09y/iUGPrL+czNi9
+	xGCtH/ZKu4vJfPlIAHtV5kpiCdp85iUUoMSwGoR39qIAQMJ/ja0j/UDboAMmUBPR6GeSMEeOFYZ
+	m6hejEXuzIfyeGNw+6qIZttXP80pCP9aCi/mArLkpwp9clCCF8b88Fqq0iKdtktpa+1hp5GFUcx
+	fI67I6diCd1tCq/JwCSaHM9FIfmCOOC0FiN2eYBDxxlDuYfO96hrttAAsQUQglv3+S3/34mFS0H
+	kIR77rtP+a9SAEuVOvtBcI6PIW9upUjfgRLDO6+wWfvmOGrXegHpPuKMtKBdv2tD2Uicie0yhXI
+	H+iMxoFuB86N1XvgwRC9fhWodRp7S58v98GLFXG6o0eAasJzJXQVY6cIkvXdGZ0lkwpIH7tFlOp
+	cfkxs+hOIq3KXEVWBrsBDYvlub7B6fgZNY=
+X-Received: by 2002:a5d:5846:0:b0:472:79bc:3919 with SMTP id ffacd0b85a97d-47f2dceac0cmr11350573f8f.39.1783967486402;
+        Mon, 13 Jul 2026 11:31:26 -0700 (PDT)
+Received: from PeakBook-Mini.tail8e484.ts.net ([178.197.218.188])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f4635a9cesm1314729f8f.14.2026.07.13.11.31.25
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 13 Jul 2026 11:31:25 -0700 (PDT)
+From: Doruk Tan Ozturk <doruk@0sec.ai>
+To: axboe@kernel.dk
+Cc: io-uring@vger.kernel.org,
+	Doruk Tan Ozturk <doruk@0sec.ai>
+Subject: [PATCH] io_uring/kbuf: free the old cached iovec, not the returned one, on bundle grow
+Date: Mon, 13 Jul 2026 20:31:24 +0200
+Message-ID: <20260713183124.4217-1-doruk@0sec.ai>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260713-io_uring_dangling-v1-1-b9bdc0f0e776@debian.org>
-X-B4-Tracking: v=1; b=H4sIADnfVGoC/x3MYQqEIBAG0KsM3++EVLLwKssikZMNxLQoGwvR3
- Rd6B3gXGlfhhkgXKp/S5FBEsh1h2WYtbCQjElzvQj9ab+RI3ypaUp617KLFTOPifB7CZP2AjvC
- pvMrvOV/v+/4DcErsXGMAAAA=
-X-Change-ID: 20260713-io_uring_dangling-87c23d568135
-To: Jens Axboe <axboe@kernel.dk>, Hao-Yu Yang <naup96721@gmail.com>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-team@meta.com, Breno Leitao <leitao@debian.org>
-X-Mailer: b4 0.16-dev-d5d98
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2019; i=leitao@debian.org;
- h=from:subject:message-id; bh=moPgrszvV0964G3VTWpVvuEC6kwV9PytXHcZOov9llE=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBqVN8+uaROUoiUZj+JYMrOJROHLVyHqukjb4yoz
- GO6A07kEymJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCalTfPgAKCRA1o5Of/Hh3
- bWKUEACw84QGsfLIW9b89KSsDAlY2HZlFfTXxJl3kb6pCTOHpBhpN8z0OzN8s1wUe47ye9udukL
- e3quYmp10+RucFSQv2LWQYeLhpjwJeR5TyfGliTNc1mx/CyvEnnBcZgyadrAN2XgHyEzPX4Ajhs
- +pejc60LVGKk+MOYzNpRU2zxBoej88C/9o/FL9yP5wTsbWJ7WLpve3UORo/7kWAUyMYZ83hN36B
- VjbzB6oouIj3V0kdIXf4VOtYdRn5sya4VBYq4duhGRmqGRFdun39BnOIl6PNP+JdeU0+WMUj2P+
- eYR8E9sxNWbMjC0xj5R58r/lESJYEsYLeELAl3T9c2p5m9r0W1Ltf5yegZ8PK4qHl6GM5sOU3c6
- Bhtusb7NrV+zM54HQ2OA6AOKxP/JpiioZtgBwgKbgnEITi9hIGIFAWpwqdfBO2IYdNFPtbXP2wK
- nAr5V4bQBRSTPOPHu12kpP8hWuYE0nr5hqN6f4U9FkNw27Jx+yVWU1mbdTv2CD9n+FIWCFp5l20
- aWOCb59H4CaShJu9+9spP9TLPYWnmEjC1xIn3DY++ICO9yFbUw5SC7YVeH4T71anHt9Za27ip1C
- bVHqt4yuw5VnM3ZdUk6xjnEyhy+1XEFGD9lDnAkg9vgznSL5rhyfU/to4qB5S5nrqQSdMA+8KcY
- sbvEU2L9uuuLJ2w==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
-X-Debian-User: leitao
+Content-Transfer-Encoding: 8bit
 X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-2.16 / 15.00];
+X-Spamd-Result: default: False [1.04 / 15.00];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_REJECT(1.00)[0sec.ai:s=google];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	DMARC_POLICY_ALLOW(-0.50)[debian.org,none];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
-	R_DKIM_ALLOW(-0.20)[debian.org:s=smtpauto.stravinsky];
+	R_MISSING_CHARSET(0.50)[];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	RCVD_TLS_LAST(0.00)[];
-	FORGED_RECIPIENTS(0.00)[m:axboe@kernel.dk,m:naup96721@gmail.com,m:io-uring@vger.kernel.org,m:linux-kernel@vger.kernel.org,m:kernel-team@meta.com,m:leitao@debian.org,s:lists@lfdr.de];
-	RCVD_COUNT_THREE(0.00)[4];
-	FORGED_SENDER(0.00)[leitao@debian.org,io-uring@vger.kernel.org];
-	TAGGED_FROM(0.00)[bounces-13996-lists,io-uring=lfdr.de];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_TO(0.00)[kernel.dk,gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	FORWARDED(0.00)[lists@lfdr.de];
-	FROM_HAS_DN(0.00)[];
+	TAGGED_FROM(0.00)[bounces-13997-lists,io-uring=lfdr.de];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FORGED_SENDER_FORWARDING(0.00)[];
-	ALIAS_RESOLVED(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	DMARC_NA(0.00)[0sec.ai];
+	FORGED_SENDER(0.00)[doruk@0sec.ai,io-uring@vger.kernel.org];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_RECIPIENTS(0.00)[m:axboe@kernel.dk,m:io-uring@vger.kernel.org,m:doruk@0sec.ai,s:lists@lfdr.de];
+	FORWARDED(0.00)[lists@lfdr.de];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[0sec.ai:-];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	TO_DN_SOME(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[leitao@debian.org,io-uring@vger.kernel.org];
-	DKIM_TRACE(0.00)[debian.org:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[io-uring];
+	FORGED_SENDER_FORWARDING(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[doruk@0sec.ai,io-uring@vger.kernel.org];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_THREE(0.00)[3];
+	RCVD_COUNT_FIVE(0.00)[5];
 	FORGED_RECIPIENTS_FORWARDING(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	ALIAS_RESOLVED(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[vger.kernel.org:from_smtp,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns]
+	TAGGED_RCPT(0.00)[io-uring];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[vger.kernel.org:from_smtp,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,0sec.ai:from_mime,0sec.ai:email,0sec.ai:mid]
 X-Rspamd-Server: lfdr
-X-Rspamd-Queue-Id: B0AF574B1FA
+X-Rspamd-Queue-Id: C44A674E7F9
 
-When io_ring_buffers_peek() grows a provided-buffer bundle, it allocates
-a new iovec array and points arg->iovs at it. The KBUF_MODE_FREE cleanup
-added at the end of the function then does kfree(arg->iovs), which frees
-this freshly allocated array that is about to be returned to and used by
-the caller, instead of the old cached iovec (org_iovs) it was meant to
-release. The caller reads the now-freed array, resulting in a
-use-after-free, easily triggered by the liburing recv-bundle-short-ooo
-test:
+Commit cd053d788c3f ("io_uring: fix dangling iovec after provided-buffer
+bundle grow failure") moved the KBUF_MODE_FREE kfree() out of the expand
+branch to after the validation loop, so the old cached iovec is only
+released once the new buffers have been validated. However, by the time
+control reaches the post-loop free, arg->iovs has already been reassigned
+in the expand branch to the freshly allocated array that is about to be
+returned to the caller:
 
-  BUG: KASAN: slab-use-after-free in io_recv+0x4bc/0xc60
-  Read of size 8 at addr ffff00037b20c240 by task recv-bundle-sho
-   io_recv
-  Allocated by task:
-   __kmalloc_noprof
-   io_ring_buffers_peek
-   io_buffers_peek
-   io_recv
-  Freed by task:
-   kfree
-   io_ring_buffers_peek
-   io_buffers_peek
-   io_recv
+	iov = kmalloc_objs(struct iovec, nr_avail);
+	...
+	arg->iovs = iov;		/* now the array we return */
+	...
+	if (arg->mode & KBUF_MODE_FREE)
+		kfree(arg->iovs);	/* ... but this frees it */
 
-Free org_iovs instead, and only when it was actually replaced by a new
-allocation. On the access_ok() failure path the new array is already
-freed and the request is left pointing at the original iovec, so nothing
-needs to be released at this point in that case.
+On a successful grow, io_ring_buffers_peek() therefore frees the very
+iovec array it returns. io_recv_buf_select() then builds an iov_iter over
+that freed array and caches it in kmsg->vec.iovec, giving a
+slab-use-after-free read during the recv copy and a later double free of
+the iovec array on request cleanup. The array is a kmalloc() whose size is
+controlled by the number of ring buffers the caller commits, so the freed
+object lands in an attacker-influenced kmalloc cache.
+
+KBUF_MODE_FREE is meant to release the *old* cached iovec once it has been
+replaced by a larger one. Free the captured org_iovs instead, and only
+when a grow actually happened (arg->iovs != org_iovs) so the no-grow case
+still returns the reused array. The -EFAULT failure path already frees the
+new array and leaves org_iovs for the caller, so it is unaffected.
+
+Reproduced on next-20260710 with KASAN by an unprivileged IORING_OP_RECV
+using IORING_RECVSEND_BUNDLE over a provided-buffer ring: a first
+(expanding) bundle caches a small iovec, and an in-request bundle retry
+grows again under KBUF_MODE_FREE, triggering both the UAF read and the
+double free. The change eliminates the KASAN splat.
 
 Fixes: cd053d788c3f ("io_uring: fix dangling iovec after provided-buffer bundle grow failure")
-Signed-off-by: Breno Leitao <leitao@debian.org>
+Signed-off-by: Doruk Tan Ozturk <doruk@0sec.ai>
 ---
  io_uring/kbuf.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-index b6b969b55e122..07d81dc7cbe29 100644
+index b6b969b55e12..07d81dc7cbe2 100644
 --- a/io_uring/kbuf.c
 +++ b/io_uring/kbuf.c
 @@ -328,8 +328,8 @@ static int io_ring_buffers_peek(struct io_kiocb *req, struct buf_sel_arg *arg,
@@ -172,13 +182,7 @@ index b6b969b55e122..07d81dc7cbe29 100644
  
  	if (head == tail)
  		req->flags |= REQ_F_BL_EMPTY;
-
----
-base-commit: bee763d5f341b99cf472afeb508d4988f62a6ca1
-change-id: 20260713-io_uring_dangling-87c23d568135
-
-Best regards,
---  
-Breno Leitao <leitao@debian.org>
+-- 
+2.43.0
 
 

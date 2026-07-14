@@ -1,89 +1,92 @@
-Return-Path: <io-uring+bounces-14006-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-14007-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by mail.lfdr.de with LMTP
-	id a4hpNLNqVmq95AAAu9opvQ
-	(envelope-from <io-uring+bounces-14006-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 14 Jul 2026 18:58:27 +0200
+	id B2fhIpdqVmqv5AAAu9opvQ
+	(envelope-from <io-uring+bounces-14007-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 14 Jul 2026 18:57:59 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sea.lore.kernel.org (sea.lore.kernel.org [172.234.253.10])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B7617572AC
-	for <lists+io-uring@lfdr.de>; Tue, 14 Jul 2026 18:58:27 +0200 (CEST)
+Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85F2C75728C
+	for <lists+io-uring@lfdr.de>; Tue, 14 Jul 2026 18:57:58 +0200 (CEST)
 Authentication-Results: mail.lfdr.de;
-	dkim=pass header.d=gmail.com header.s=20251104 header.b=KDs3Htvd;
-	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-14006-lists+io-uring=lfdr.de@vger.kernel.org" designates 172.234.253.10 as permitted sender) smtp.mailfrom="io-uring+bounces-14006-lists+io-uring=lfdr.de@vger.kernel.org";
+	dkim=pass header.d=gmail.com header.s=20251104 header.b="OM/sCiJz";
+	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-14007-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c15:e001:75::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-14007-lists+io-uring=lfdr.de@vger.kernel.org";
 	dmarc=pass (policy=none) header.from=gmail.com;
 	arc=pass ("subspace.kernel.org:s=arc-20240116:i=1")
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id B59E930BE565
-	for <lists+io-uring@lfdr.de>; Tue, 14 Jul 2026 16:57:22 +0000 (UTC)
+	by sin.lore.kernel.org (Postfix) with ESMTP id E01B73006912
+	for <lists+io-uring@lfdr.de>; Tue, 14 Jul 2026 16:57:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02BA4DD6D1;
-	Tue, 14 Jul 2026 16:57:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 699B74DD6DB;
+	Tue, 14 Jul 2026 16:57:27 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A5304DD6DA
-	for <io-uring@vger.kernel.org>; Tue, 14 Jul 2026 16:57:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 145A14DD6D1
+	for <io-uring@vger.kernel.org>; Tue, 14 Jul 2026 16:57:25 +0000 (UTC)
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784048241; cv=none; b=frZL5PQk2GW+jODXY6bwhJ+kLgf+4hd9fitygMu4KHVkjO8bw9z1CSAEGdSfCYkY7YH8QC05BzXj1yFRhv5PGUoyYf43GI2KDXAmfS1Q2wtqhMti4H9RbXZAsGqNsx0uuyE8KksM+5+iUnL8BkJZIw3sDd75FCGUmaVvJ7d9rRA=
+	t=1784048247; cv=none; b=ZuUo6I/uWPaYMZbz/5INTEGmXyWig+/+aVpwz9KlMcqhX+9/YtBZH9TCyJZjsRhK2+f/UIA0DEN31Zqbahj60FrMCRMacAaW9hxQJgL8rmXQAaREXz0OnHWLnlF4vd/SHJcv2vNAl1igdrXjfUJ/0QAboBS9oWuU/ykmk/E7JM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784048241; c=relaxed/simple;
-	bh=O1ebWhT9r1BV4x+pRqO2Ajo95W672XzqB7q4eFL/Rkw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pkBBPbK01zaBVbnxqUD0h7tgaA137abIcFq/M3TC5d7inwzqSbW0K1hUbLJCfPVvb3JbLY/CHxEMrVYZUJK8grxgd9mxcrkG+BT2WOKRu2riKLHRmwmV2ddoGiFiB/7AIjbkheP86AY0Ef6206sbMAyM7H6IMcw3Rk3FybeqN6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KDs3Htvd; arc=none smtp.client-ip=209.85.215.172
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-ca957432c7fso3123396a12.1
-        for <io-uring@vger.kernel.org>; Tue, 14 Jul 2026 09:57:20 -0700 (PDT)
+	s=arc-20240116; t=1784048247; c=relaxed/simple;
+	bh=mCQQopz1rpnPRxSmDQXgDSyBfIB0fEBYPnOjEYLdbOc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Y024jc/5NHInQjDQzusmnmlYd9SP+oCtKLv/IfBxC8sG74q5y05Ja7lmYnRAYo8iGofrISG0XL4v2wxycrcZ5MXZ4MFQFI65UpKvvABwqhemm/h7zE/TDST0AFhyTO6UQXLiptoIvqVs56Yg0VzwxDaKN0B9iFKYt9M+G+WdCps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OM/sCiJz; arc=none smtp.client-ip=209.85.216.48
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-38511175ad3so3692596a91.2
+        for <io-uring@vger.kernel.org>; Tue, 14 Jul 2026 09:57:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784048240; x=1784653040; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=8gqLo5lz3vVUAC4/4Ogo9UQMER/Hwqu/vYGNyPCJOgQ=;
-        b=KDs3HtvdqhMAZgYtJmYFPf61Om9fMl9nCc2SrFk1mJlRngJ4aemgdHQdfgjFgDaiaC
-         IJOuU69lPMy/Em1EZEbTndscMhLwV+OLw3nzNf85a5RrooI7DfrGK4vbSALNWxsHRjoh
-         hJSDWs9AqOiQJGz0jc5AWMXyOokI9T3F+ZO/04V1Rj6m6wnmBqH8AfvbBjYGTRkP+bRx
-         btJ8rct/XoZiyGMihYV1006fSDTcwcom5g/I3FUuqthtvGiMDNVipp30Ug2EIL7r2tPX
-         d8fJ1JYkksrWU7Jr+/MkFW2Ci9FQY+R2X43wESIm4bGh07HkrWiXkbPFFGdzKV1wsvFU
-         a0aA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784048240; x=1784653040;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1784048245; x=1784653045; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=8gqLo5lz3vVUAC4/4Ogo9UQMER/Hwqu/vYGNyPCJOgQ=;
-        b=fUXIAHtTSCKEZwehvFMRZMco/7BeKKIx96LChz3IetGpD4AJo/xzHD5oY+kbFJ08Fj
-         q5LmvRPVHDtchV+nuTFGEIeZhbSUDEEMcc5tTBf4G6SNGVoCqfN7xno78Hd+DyAY6pgi
-         mKGDIWL8q3Fv6QntMSH82HBVbE+574uGDGp5zLiU+2XFuPUOTnWXVQjy1o5eJ6l6PT5i
-         wx/Q9Z1ZTsI/+5Sr938wavRnvQJDOf23e9kZD8MDHNxLIeQ8U5bQeK+1VkuWGHnltgkD
-         yKM9YWqaAy2/DION84eE3SOE+zqaWMeZRqAotVoIFhfofW2dBagh5o4CwgbhlK51D9Zl
-         k+hQ==
-X-Gm-Message-State: AOJu0YxAdLI0ht//ZdaxSlGx6NAOXCLGX7jp0+6XapBiNQwW03gELJK7
-	hy15rQZqoIODVwlq7pk5sdMr9NxfT0JyPFjqTGTCEdiewC+3IVZBNPQRwbrKwFUBgXQ=
-X-Gm-Gg: AfdE7ckqnUlrOxfArC3A/a6k0AjCTsdUs6sWmpi5v2Qk6q964GNNb7474u4xng0UJYq
-	QgvYFy0xron2p9LAs7dYUjqggsHj+bGwFfuf96AwXfIirMHdccaTjWfpaxatE+n+qS+6MjI0FaO
-	5gZI4ghQg9dMyRuqpoEYtkV8Wm3SxUHMK6BB6i1IEYbVe6S6tNpmgCQl0GYzbFHQ1rozaS0XCSV
-	zQlJGE6J6JxULsA2Dfh6JYDzP2bXZTlgIOff2mykvdb++76XAO8DIVCoxgR/hM9hxtty+ANbKoj
-	WsQkLsVgsGdmFrfA6RUSGWNvDDeXwvVDHMQH2GXtaB8pxsqrZpzzymUZXInj61QTysW95cbOxkN
-	rkK2ES7yWt+Mnpqv+e41BSCPuvH591VyVirRjH98sbM76aXuL9AeGYDp0inJkw9qvNsQK33LSPS
-	YxpSTPTvbkihl6nBlX4UX61IctAz7Yg3sIwLqAi9RsGHU6cAkBu25qGix7H+LV7t7DhNmjyRSWj
-	l/i0G7OA64hZYuT5eHy/UKKpCDZED5b94VUG2vW4Z7AtBPo/s6UBKYWS8Y2PshQeFsFoesppn15
-	v1e+tjF3mC4=
-X-Received: by 2002:a05:6a20:a107:b0:3c0:9c19:658c with SMTP id adf61e73a8af0-3c3576b3036mr3971997637.70.1784048239672;
-        Tue, 14 Jul 2026 09:57:19 -0700 (PDT)
+        bh=4TbwrSqwI+gjW+6EHVvdE2b1XHwiMCMJ+OBUijAyljQ=;
+        b=OM/sCiJz9G0NS83T6c/Yi2CkNuheYuR6QayV3K/yj1ac1lJpDmQOtis5WnVNZcLkTK
+         UOv8xBChHqBvyPohjhPds6uVw6/O2LET2sZPATIOXT+1aU9gx4IajLSo2+33nw6j6DOx
+         Y+4O8MNYx0blKFVFPvfF9BPks1cRAcc58nOx90ZHBsquy7ss9skD5+JhtdCtXQdmhVOH
+         QobuW0seOBpQBl58AkaOocDtWj2RMFSqTqP67yeS5s6fTKVB6xdAzVZF5Zp0MIoA11n1
+         F9PDfrS1N8Owx1Mxp9FgMnjCtHwHF6ZdlLEOxKZPdr8Mwdb87AEeBq1Lu9LjpsJp09Zq
+         EEPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784048245; x=1784653045;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=4TbwrSqwI+gjW+6EHVvdE2b1XHwiMCMJ+OBUijAyljQ=;
+        b=H18AmYZns2iZWEIcZ+86dQ/m2ahWBrIhUYP4Wx/Ro5ZE6ozyEHKNooAuzI9JsHOQJR
+         1F0cFFitV5itwDrKc8WPvayYK94Zb+SMs7V+QvyrvnYlKwS2zBUToSQo9uX9eO8XM8u6
+         WE4FsDJlB5+d68UAwlV6Cg8SWKjSuvFDeAsxjul17uEbf2a/j8cqsdc/VS+L6xYUqZBR
+         gDxDTt9XaB7mXgwNVDj6bAzVtU5P8sO7+qDC0cxChbJ9z1cbitgVZNVhRn+EHHa/b1hV
+         18GLJ6wtguHsaEe3+4nQiFYJO3UFt2FGZwfosnjCJSf2q5XY7Nw9MFvuGIjADm3P/d16
+         1Vpg==
+X-Gm-Message-State: AOJu0YwpnghX0yVbgZrh4HhXTn8Ju54Xjy1bzFlvFCkhFGZAQgxfonz/
+	9HaySY3xczo8M85+zHJISoSClH4m32R5kipea2CuPdsSYu+T09rWM4/qGBXUWohz4Ac=
+X-Gm-Gg: AfdE7cmAddg6wN7pl/LVOuqX0L+2XWqr6eBAWoE4UzKP3mEvSJ9sW8eZph9zKINUn5q
+	QEp9krlzrFJQGxjjUHLFguejFWgG63VDPcr/WRotUPBmNGeNIBZFQzp6Bto5F3O0LQ57j9KJvta
+	cjH3eHxlmFRq/9vgChas5wJjxCuGL0hnPCayKFLgXLpdkSBgQBxNJeugBUz5sGk+uxRil6pS2UY
+	0hyhN9q5A46rcu56YWS6iFtpEmmIzR23+q5d7HQxIey5Wc4kTTRP1oqubPX3uUEB+SlPi2TbPZe
+	zd1ppoj+sSZbUTHbOWIh4W7igDlJvGkQBi6FjRiYs9lVMk9aQkimqurvAc9Odr2Y8db++IQZOmV
+	XkbeHEfRM5/D8d3t+3lY1IjGr24w2H2edwd7C9dK70dK55MqRosg3HOa3O49gKKDEoPBJV+oy0A
+	As0BTkTkf3dVX5uP4Z3CFT6jAgIsaTE9t7L/eEqFIr/KORoNVQXebR2Ru3IqSiAcKyrRUxTicCf
+	bdATMunXbfkJ0TeBU1gZtk0QqK538vlW4JRHTy7nAPKTu2CwPIHccNNz2SgcfJ5+fBhzEzMTXWO
+X-Received: by 2002:a17:90b:5610:b0:381:fa5:521f with SMTP id 98e67ed59e1d1-38e1ae5f652mr2726920a91.3.1784048245138;
+        Tue, 14 Jul 2026 09:57:25 -0700 (PDT)
 Received: from prateek-Aspire-A515-57G.. ([182.77.77.253])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-311a6115e61sm67241222eec.22.2026.07.14.09.57.12
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-311a6115e61sm67241222eec.22.2026.07.14.09.57.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jul 2026 09:57:18 -0700 (PDT)
+        Tue, 14 Jul 2026 09:57:24 -0700 (PDT)
 From: Prateek <kprateek283@gmail.com>
 To: io-uring@vger.kernel.org
 Cc: axboe@kernel.dk,
 	krisman@suse.de,
 	Prateek <kprateek283@gmail.com>
-Subject: [PATCH v2 1/2] src/queue: don't swallow -ETIME when SQEs were submitted
-Date: Tue, 14 Jul 2026 22:27:01 +0530
-Message-ID: <20260714165702.237136-1-kprateek283@gmail.com>
+Subject: [PATCH v2 2/2] test/timeout-swallow: verify -ETIME is not swallowed
+Date: Tue, 14 Jul 2026 22:27:02 +0530
+Message-ID: <20260714165702.237136-2-kprateek283@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260714165702.237136-1-kprateek283@gmail.com>
+References: <20260714165702.237136-1-kprateek283@gmail.com>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -97,14 +100,14 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	R_MISSING_CHARSET(0.50)[];
 	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_SPF_ALLOW(-0.20)[+ip4:172.234.253.10:c];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
 	R_DKIM_ALLOW(-0.20)[gmail.com:s=20251104];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
 	FREEMAIL_CC(0.00)[kernel.dk,suse.de,gmail.com];
 	TO_DN_SOME(0.00)[];
-	TAGGED_FROM(0.00)[bounces-14006-lists,io-uring=lfdr.de];
+	TAGGED_FROM(0.00)[bounces-14007-lists,io-uring=lfdr.de];
 	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
 	MIME_TRACE(0.00)[0:+];
@@ -121,65 +124,164 @@ X-Spamd-Result: default: False [-0.66 / 15.00];
 	DKIM_TRACE(0.00)[gmail.com:+];
 	RCVD_COUNT_FIVE(0.00)[5];
 	FORGED_RECIPIENTS_FORWARDING(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:172.234.224.0/19, country:SG];
+	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
 	ALIAS_RESOLVED(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[vger.kernel.org:from_smtp,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,suse.de:email]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,vger.kernel.org:from_smtp]
 X-Rspamd-Server: lfdr
-X-Rspamd-Queue-Id: 1B7617572AC
+X-Rspamd-Queue-Id: 85F2C75728C
 
-If _io_uring_get_cqe() submits SQEs and then times out waiting for
-completions, it returns the submit count instead of -ETIME:
-
-  1. The first enter submits the SQEs; because submit > 0 the kernel
-     returns the submit count, not -ETIME, and it is stored in err.
-  2. On the next iteration the has_ts shortcut wants to report -ETIME,
-     but the 'if (!err)' guard sees the non-zero submit count and keeps
-     it, so -ETIME is dropped.
-
-That contradicts io_uring_submit_and_wait_timeout(3) and
-io_uring_wait_cqes(3), which document -ETIME on timeout.
-
-At these two sites (lines 113 and 118) err is only ever 0 or a positive
-submit count. A negative error from __io_uring_peek_cqe() or a prior
-enter breaks out of the loop before reaching here. So the change is
-functionally equivalent to dropping the err condition entirely; we change
-'!err' to 'err >= 0' so -ETIME is successfully synthesized whenever no
-CQE was seen.
-
-The guards were added in 2f61e849 ("src/queue: don't wait twice if
-looping in _io_uring_get_cqe()") to carry the submit count across
-iterations for the partial-completion case (got some CQEs, no error);
-that case still returns the count because both sites remain guarded by
-!cqe.
+Regression test for the previous commit. Submits an SQE and waits with a
+zero timeout for more completions than can arrive; the result must be
+-ETIME, not the positive submit count. Covers the normal EXT_ARG wait
+path and the registered-wait path, each skipped gracefully where
+unsupported.
 
 Signed-off-by: Prateek <kprateek283@gmail.com>
 Reviewed-by: Gabriel Krisman Bertazi <krisman@suse.de>
 Signed-off-by: Prateek <kprateek283@gmail.com>
 ---
- src/queue.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ test/Makefile          |   1 +
+ test/timeout-swallow.c | 117 +++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 118 insertions(+)
+ create mode 100644 test/timeout-swallow.c
 
-diff --git a/src/queue.c b/src/queue.c
-index fcd3c702..e2e5a061 100644
---- a/src/queue.c
-+++ b/src/queue.c
-@@ -110,12 +110,12 @@ static int _io_uring_get_cqe(struct io_uring *ring,
- 			 * timeout, so treat any timeout the same as -ETIME here.
- 			 */
- 			if (data->get_flags & IORING_ENTER_EXT_ARG_REG) {
--				if (!cqe && !err)
-+				if (!cqe && err >= 0)
- 					err = -ETIME;
- 			} else {
- 				struct io_uring_getevents_arg *arg = data->arg;
- 
--				if (!cqe && arg->ts && !err)
-+				if (!cqe && arg->ts && err >= 0)
- 					err = -ETIME;
- 			}
- 			break;
+diff --git a/test/Makefile b/test/Makefile
+index d6358a93..ae23ef6d 100644
+--- a/test/Makefile
++++ b/test/Makefile
+@@ -293,6 +293,7 @@ test_srcs := \
+ 	timerfd-short-read.c \
+ 	timeout.c \
+ 	timeout-new.c \
++	timeout-swallow.c \
+ 	timestamp.c \
+ 	timestamp-bug.c \
+ 	truncate.c \
+diff --git a/test/timeout-swallow.c b/test/timeout-swallow.c
+new file mode 100644
+index 00000000..d08365da
+--- /dev/null
++++ b/test/timeout-swallow.c
+@@ -0,0 +1,117 @@
++/* SPDX-License-Identifier: MIT */
++/*
++ * Description: tests that io_uring_wait_cqes() and variants do not swallow 
++ *              -ETIME when loop-fetching CQEs if some SQEs were submitted.
++ */
++#include <stdio.h>
++#include <unistd.h>
++#include <errno.h>
++#include <sys/time.h>
++#include "liburing.h"
++#include "helpers.h"
++
++/*
++ * Test the normal -ETIME swallow path.
++ */
++static int test_timeout(struct io_uring *ring)
++{
++    struct io_uring_sqe *sqe;
++    struct io_uring_cqe *cqe;
++    struct __kernel_timespec long_ts = { .tv_sec = 10, .tv_nsec = 0 };
++    struct __kernel_timespec zero_ts = { .tv_sec = 0, .tv_nsec = 0 };
++    int ret;
++
++    if (!(ring->features & IORING_FEAT_EXT_ARG))
++        return T_EXIT_SKIP;
++
++    sqe = io_uring_get_sqe(ring);
++    if (!sqe) {
++        fprintf(stderr, "get_sqe failed\n");
++        return T_EXIT_FAIL;
++    }
++    /* Long timeout, won't complete immediately */
++    io_uring_prep_timeout(sqe, &long_ts, 1, 0);
++    
++    /* Zero timeout forces immediate expiry inside the syscall on first/second pass */
++    ret = io_uring_submit_and_wait_timeout(ring, &cqe, 2, &zero_ts, NULL);
++    
++    if (ret == -ETIME) {
++        return T_EXIT_PASS;
++    }
++
++    fprintf(stderr, "test_timeout failed: expected -ETIME, got %d\n", ret);
++    return T_EXIT_FAIL;
++}
++
++/*
++ * Test the registered-wait -ETIME swallow path.
++ */
++static int test_timeout_reg(struct io_uring *ring)
++{
++    struct io_uring_sqe *sqe;
++    struct io_uring_cqe *cqe;
++    struct __kernel_timespec long_ts = { .tv_sec = 10, .tv_nsec = 0 };
++    struct io_uring_reg_wait reg = { .ts = { .tv_sec = 0, .tv_nsec = 0 } };
++    int ret;
++
++    if (!(ring->features & IORING_FEAT_EXT_ARG))
++        return T_EXIT_SKIP;
++
++    ret = io_uring_register_wait_reg(ring, &reg, 1);
++    if (ret) {
++        /* Not supported on this kernel */
++        return T_EXIT_SKIP;
++    }
++
++    sqe = io_uring_get_sqe(ring);
++    if (!sqe) {
++        fprintf(stderr, "get_sqe failed\n");
++        return T_EXIT_FAIL;
++    }
++    io_uring_prep_timeout(sqe, &long_ts, 1, 0);
++    
++    ret = io_uring_submit_and_wait_reg(ring, &cqe, 2, 0);
++    if (ret == -ETIME) {
++        return T_EXIT_PASS;
++    }
++
++    fprintf(stderr, "test_timeout_reg failed: expected -ETIME, got %d\n", ret);
++    return T_EXIT_FAIL;
++}
++
++int main(int argc, char *argv[])
++{
++    struct io_uring ring;
++    int ret, ret2, final_ret = T_EXIT_PASS;
++
++    if (argc > 1)
++        return T_EXIT_SKIP;
++
++    ret = io_uring_queue_init(8, &ring, 0);
++    if (ret) {
++        if (ret == -ENOSYS)
++            return T_EXIT_SKIP;
++        fprintf(stderr, "queue_init failed: %d\n", ret);
++        return T_EXIT_FAIL;
++    }
++
++    ret = test_timeout(&ring);
++    if (ret == T_EXIT_FAIL) {
++        fprintf(stderr, "test_timeout failed\n");
++        final_ret = T_EXIT_FAIL;
++    }
++
++    ret2 = test_timeout_reg(&ring);
++    if (ret2 == T_EXIT_FAIL) {
++        fprintf(stderr, "test_timeout_reg failed\n");
++        final_ret = T_EXIT_FAIL;
++    }
++
++    io_uring_queue_exit(&ring);
++
++    if (final_ret == T_EXIT_FAIL)
++        return T_EXIT_FAIL;
++    if (ret == T_EXIT_SKIP && ret2 == T_EXIT_SKIP)
++        return T_EXIT_SKIP;
++    return T_EXIT_PASS;
++}
 -- 
 2.43.0
 

@@ -1,288 +1,187 @@
-Return-Path: <io-uring+bounces-14007-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-14008-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by mail.lfdr.de with LMTP
-	id B2fhIpdqVmqv5AAAu9opvQ
-	(envelope-from <io-uring+bounces-14007-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 14 Jul 2026 18:57:59 +0200
+	id +dzcHRJ8VmpP7AAAu9opvQ
+	(envelope-from <io-uring+bounces-14008-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 14 Jul 2026 20:12:34 +0200
 X-Original-To: lists+io-uring@lfdr.de
-Received: from sin.lore.kernel.org (sin.lore.kernel.org [IPv6:2600:3c15:e001:75::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85F2C75728C
-	for <lists+io-uring@lfdr.de>; Tue, 14 Jul 2026 18:57:58 +0200 (CEST)
+Received: from tor.lore.kernel.org (tor.lore.kernel.org [IPv6:2600:3c04:e001:36c::12fc:5321])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE442757C32
+	for <lists+io-uring@lfdr.de>; Tue, 14 Jul 2026 20:12:33 +0200 (CEST)
 Authentication-Results: mail.lfdr.de;
-	dkim=pass header.d=gmail.com header.s=20251104 header.b="OM/sCiJz";
-	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-14007-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c15:e001:75::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-14007-lists+io-uring=lfdr.de@vger.kernel.org";
-	dmarc=pass (policy=none) header.from=gmail.com;
+	dkim=pass header.d=kernel-dk.20251104.gappssmtp.com header.s=20251104 header.b=sKj7+uCt;
+	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-14008-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c04:e001:36c::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-14008-lists+io-uring=lfdr.de@vger.kernel.org";
+	dmarc=none;
 	arc=pass ("subspace.kernel.org:s=arc-20240116:i=1")
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sin.lore.kernel.org (Postfix) with ESMTP id E01B73006912
-	for <lists+io-uring@lfdr.de>; Tue, 14 Jul 2026 16:57:28 +0000 (UTC)
+	by tor.lore.kernel.org (Postfix) with ESMTP id D0F0F301DD92
+	for <lists+io-uring@lfdr.de>; Tue, 14 Jul 2026 18:12:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 699B74DD6DB;
-	Tue, 14 Jul 2026 16:57:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 215103CF204;
+	Tue, 14 Jul 2026 18:12:32 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 145A14DD6D1
-	for <io-uring@vger.kernel.org>; Tue, 14 Jul 2026 16:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2386D3C8717
+	for <io-uring@vger.kernel.org>; Tue, 14 Jul 2026 18:12:27 +0000 (UTC)
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784048247; cv=none; b=ZuUo6I/uWPaYMZbz/5INTEGmXyWig+/+aVpwz9KlMcqhX+9/YtBZH9TCyJZjsRhK2+f/UIA0DEN31Zqbahj60FrMCRMacAaW9hxQJgL8rmXQAaREXz0OnHWLnlF4vd/SHJcv2vNAl1igdrXjfUJ/0QAboBS9oWuU/ykmk/E7JM4=
+	t=1784052752; cv=none; b=Zx11QAzdiyI0NS0VY6l9P8QlCRI5hf1taQCMG2uEkkoKFrPBKnSeIXdxcpf4r4PAi0LCvbIluiu0mInSuWFZp/TB+lBsqQ50ktJMxw+aeONPjtk6QYIJyWB7aE5JGmk8HT4QBCGmPBcHyS886Y1qpMsESbpHEoA0nmkneaUcYUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784048247; c=relaxed/simple;
-	bh=mCQQopz1rpnPRxSmDQXgDSyBfIB0fEBYPnOjEYLdbOc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Y024jc/5NHInQjDQzusmnmlYd9SP+oCtKLv/IfBxC8sG74q5y05Ja7lmYnRAYo8iGofrISG0XL4v2wxycrcZ5MXZ4MFQFI65UpKvvABwqhemm/h7zE/TDST0AFhyTO6UQXLiptoIvqVs56Yg0VzwxDaKN0B9iFKYt9M+G+WdCps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OM/sCiJz; arc=none smtp.client-ip=209.85.216.48
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-38511175ad3so3692596a91.2
-        for <io-uring@vger.kernel.org>; Tue, 14 Jul 2026 09:57:25 -0700 (PDT)
+	s=arc-20240116; t=1784052752; c=relaxed/simple;
+	bh=OmzPNLP26tbGifMrCuq3Z6m3xkkZ1hxuLR3nZucJItw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h9T+slypV7swkaUk1701VqGU1HCmmTpLC10ZREAJQZHyiUHyGWxuicCGjx0JlPMA0kBU65xUkiFAYbjK0HYI8kST8cIZgorPQSfKX0UVCAxKiK/GvIALk3KDibKZBskUrAY9Gdb6J1wodyWbAhJC89hhp+Dqidscpn4rNlARhzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20251104.gappssmtp.com header.i=@kernel-dk.20251104.gappssmtp.com header.b=sKj7+uCt; arc=none smtp.client-ip=209.85.210.41
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-7ebd88be784so644050a34.2
+        for <io-uring@vger.kernel.org>; Tue, 14 Jul 2026 11:12:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784048245; x=1784653045; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=4TbwrSqwI+gjW+6EHVvdE2b1XHwiMCMJ+OBUijAyljQ=;
-        b=OM/sCiJz9G0NS83T6c/Yi2CkNuheYuR6QayV3K/yj1ac1lJpDmQOtis5WnVNZcLkTK
-         UOv8xBChHqBvyPohjhPds6uVw6/O2LET2sZPATIOXT+1aU9gx4IajLSo2+33nw6j6DOx
-         Y+4O8MNYx0blKFVFPvfF9BPks1cRAcc58nOx90ZHBsquy7ss9skD5+JhtdCtXQdmhVOH
-         QobuW0seOBpQBl58AkaOocDtWj2RMFSqTqP67yeS5s6fTKVB6xdAzVZF5Zp0MIoA11n1
-         F9PDfrS1N8Owx1Mxp9FgMnjCtHwHF6ZdlLEOxKZPdr8Mwdb87AEeBq1Lu9LjpsJp09Zq
-         EEPg==
+        d=kernel-dk.20251104.gappssmtp.com; s=20251104; t=1784052746; x=1784657546; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=3D2pM45k27nuy7ZPkAAwVvHStxmCG9QP15BT6xmTtZI=;
+        b=sKj7+uCtARm+mXBaIddpIthPZclsHmaee2pT7NCRjjWcRJR4KH75zLIYHvprpJygrR
+         8KZopcF8VJqZdZRp0xbbu0X8enw8+wHxs+kF/y2AQw8P0OEYqXY+B3FM3rF9OspbOAK/
+         w6cOfH2GNXYlYGdYP+cFB/kfVOhKm52hWtAh1uZeLBBSu62ZNnFdHP0T4DjlVPX/ofDh
+         b+V2ZsI/+9VlE3EwGoAGrGaaPF1zJM6Oma3ltzREPi7EfFkPtkj78qjq3aLEKY/n4gt/
+         7NbibWCKFRWsNhHBmW4u2TfL/M8IrW5Bdsz2G+3kO+rU/Lxo1bO/rmXSePDbdGUYvOdd
+         VIyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784048245; x=1784653045;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=4TbwrSqwI+gjW+6EHVvdE2b1XHwiMCMJ+OBUijAyljQ=;
-        b=H18AmYZns2iZWEIcZ+86dQ/m2ahWBrIhUYP4Wx/Ro5ZE6ozyEHKNooAuzI9JsHOQJR
-         1F0cFFitV5itwDrKc8WPvayYK94Zb+SMs7V+QvyrvnYlKwS2zBUToSQo9uX9eO8XM8u6
-         WE4FsDJlB5+d68UAwlV6Cg8SWKjSuvFDeAsxjul17uEbf2a/j8cqsdc/VS+L6xYUqZBR
-         gDxDTt9XaB7mXgwNVDj6bAzVtU5P8sO7+qDC0cxChbJ9z1cbitgVZNVhRn+EHHa/b1hV
-         18GLJ6wtguHsaEe3+4nQiFYJO3UFt2FGZwfosnjCJSf2q5XY7Nw9MFvuGIjADm3P/d16
-         1Vpg==
-X-Gm-Message-State: AOJu0YwpnghX0yVbgZrh4HhXTn8Ju54Xjy1bzFlvFCkhFGZAQgxfonz/
-	9HaySY3xczo8M85+zHJISoSClH4m32R5kipea2CuPdsSYu+T09rWM4/qGBXUWohz4Ac=
-X-Gm-Gg: AfdE7cmAddg6wN7pl/LVOuqX0L+2XWqr6eBAWoE4UzKP3mEvSJ9sW8eZph9zKINUn5q
-	QEp9krlzrFJQGxjjUHLFguejFWgG63VDPcr/WRotUPBmNGeNIBZFQzp6Bto5F3O0LQ57j9KJvta
-	cjH3eHxlmFRq/9vgChas5wJjxCuGL0hnPCayKFLgXLpdkSBgQBxNJeugBUz5sGk+uxRil6pS2UY
-	0hyhN9q5A46rcu56YWS6iFtpEmmIzR23+q5d7HQxIey5Wc4kTTRP1oqubPX3uUEB+SlPi2TbPZe
-	zd1ppoj+sSZbUTHbOWIh4W7igDlJvGkQBi6FjRiYs9lVMk9aQkimqurvAc9Odr2Y8db++IQZOmV
-	XkbeHEfRM5/D8d3t+3lY1IjGr24w2H2edwd7C9dK70dK55MqRosg3HOa3O49gKKDEoPBJV+oy0A
-	As0BTkTkf3dVX5uP4Z3CFT6jAgIsaTE9t7L/eEqFIr/KORoNVQXebR2Ru3IqSiAcKyrRUxTicCf
-	bdATMunXbfkJ0TeBU1gZtk0QqK538vlW4JRHTy7nAPKTu2CwPIHccNNz2SgcfJ5+fBhzEzMTXWO
-X-Received: by 2002:a17:90b:5610:b0:381:fa5:521f with SMTP id 98e67ed59e1d1-38e1ae5f652mr2726920a91.3.1784048245138;
-        Tue, 14 Jul 2026 09:57:25 -0700 (PDT)
-Received: from prateek-Aspire-A515-57G.. ([182.77.77.253])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-311a6115e61sm67241222eec.22.2026.07.14.09.57.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jul 2026 09:57:24 -0700 (PDT)
-From: Prateek <kprateek283@gmail.com>
-To: io-uring@vger.kernel.org
-Cc: axboe@kernel.dk,
-	krisman@suse.de,
-	Prateek <kprateek283@gmail.com>
-Subject: [PATCH v2 2/2] test/timeout-swallow: verify -ETIME is not swallowed
-Date: Tue, 14 Jul 2026 22:27:02 +0530
-Message-ID: <20260714165702.237136-2-kprateek283@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260714165702.237136-1-kprateek283@gmail.com>
-References: <20260714165702.237136-1-kprateek283@gmail.com>
+        d=1e100.net; s=20251104; t=1784052746; x=1784657546;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=3D2pM45k27nuy7ZPkAAwVvHStxmCG9QP15BT6xmTtZI=;
+        b=jroZtBxdy8zoErNdU6j3requyIoG+dEOTypW7hFPmj29uxnvqLsQdPCf4huivcDywc
+         ReSX54IjUfzRVUI4ABtyF75ASeosnyanRGTNVWmBJMRSNOM2gMzsaDzl97drp4fAvS9z
+         wcN072DEj3a2vwDRH3QSCZOQyOG0cJIOxMVeeba9ZkJu98AQ0U/ZEGx7dYcy72vb2LRw
+         R9re5OdTazDUaYvZJMZVE+dbrtdd2ncsT9quBx5ErZmdv1lXVTS+zbw99n0Du3e9ynbY
+         c/p0LCoIRr0cZ2ih8iaqGDTw+lAB+Lwomh0HT830vFucdfSgVxRW2Kg45jHEoZ4je/J9
+         XF9Q==
+X-Forwarded-Encrypted: i=1; AFNElJ++Q75LwEj1NxcQ/PfMySHVPVVdxUfLAGrH/POmtYftPzSVBpZ4nVSOFsL2YykKjF9RdgnbwUPhHg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YynsRfBjExZKhAl84xeN+I9jB/J7NUtjuixpm2ytd9irAAoZaZQ
+	1Zwbqk9JXFW4PYJN9Xhx0MCwcaE6sOJi/3jKveeOMPzzwjcyqgoTiKciGuV9BckwsXJ2waIBxM9
+	B+Kh0+OQ=
+X-Gm-Gg: AfdE7ckhD4d9MPCp/LJwZgHPsfCMS0snqwYMsMoL+iLVIeSndKuOUILqVkRAYHGE4/B
+	4OPUH7x44ZyDNl+ukGvaN13GouSum5/b0N8CPHJ0ue8zH9/d1Zu53GOjk9Cr5/ClzcByRyitt+u
+	n+Jyakwk3Drqk2dAF+7ojIrW/njdKq+72UHRkOuP8sdQtwL121lrly8k+DpdSQKev1yDLYPFhak
+	XWBNqWI89S6l2maYekW76qlvhJ0aMudtbwg915TuZd79y61lNBzy6IgsCh+uL+EbJlpskJQlbMb
+	EozBVqRDe9fInzmqD6hAt8qDI4HmOuNMJpmywqSymAZex9ori4Vk+GhdY+7KOXG6dn0Ye6oI4hb
+	7eFnmUN0PYuFU916h9oU/bz0HyZK6wTTVbghqHZCRVZPW3bY350sMTxfq6NErBiB6M3goM6SA8b
+	U/67qVKVESOoflIcAzed+HJY9LgbsQfBVhBsXfqFV7uw5gXrMfA1Ow//15T84tWBEUzsCPOk0=
+X-Received: by 2002:a05:6820:4d0b:b0:6a3:74fd:a877 with SMTP id 006d021491bc7-6a39a55e32bmr8326630eaf.11.1784052746524;
+        Tue, 14 Jul 2026 11:12:26 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-6a36a5eee0fsm14728632eaf.5.2026.07.14.11.12.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Jul 2026 11:12:25 -0700 (PDT)
+Message-ID: <8be1df21-f3e6-42ae-bf92-6694449cf527@kernel.dk>
+Date: Tue, 14 Jul 2026 12:12:24 -0600
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] test/timeout-swallow: verify -ETIME is not
+ swallowed
+To: Prateek <kprateek283@gmail.com>, io-uring@vger.kernel.org
+Cc: krisman@suse.de
+References: <20260714165702.237136-1-kprateek283@gmail.com>
+ <20260714165702.237136-2-kprateek283@gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20260714165702.237136-2-kprateek283@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	MID_CONTAINS_FROM(1.00)[];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
-	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
-	R_SPF_ALLOW(-0.20)[+ip6:2600:3c15:e001:75::/64:c];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20251104];
+	R_DKIM_ALLOW(-0.20)[kernel-dk.20251104.gappssmtp.com:s=20251104];
+	R_SPF_ALLOW(-0.20)[+ip6:2600:3c04:e001:36c::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[kernel.dk,suse.de,gmail.com];
-	TO_DN_SOME(0.00)[];
-	TAGGED_FROM(0.00)[bounces-14007-lists,io-uring=lfdr.de];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	TAGGED_FROM(0.00)[bounces-14008-lists,io-uring=lfdr.de];
+	FORGED_RECIPIENTS(0.00)[m:kprateek283@gmail.com,m:io-uring@vger.kernel.org,m:krisman@suse.de,s:lists@lfdr.de];
 	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FORWARDED(0.00)[lists@lfdr.de];
-	FORGED_SENDER(0.00)[kprateek283@gmail.com,io-uring@vger.kernel.org];
-	FORGED_RECIPIENTS(0.00)[m:io-uring@vger.kernel.org,m:axboe@kernel.dk,m:krisman@suse.de,m:kprateek283@gmail.com,s:lists@lfdr.de];
-	FORGED_SENDER_MAILLIST(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	FREEMAIL_FROM(0.00)[gmail.com];
-	PRECEDENCE_BULK(0.00)[];
-	FORGED_SENDER_FORWARDING(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[kprateek283@gmail.com,io-uring@vger.kernel.org];
+	DMARC_NA(0.00)[kernel.dk];
 	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[gmail.com:+];
+	FREEMAIL_TO(0.00)[gmail.com,vger.kernel.org];
+	MIME_TRACE(0.00)[0:+];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FORWARDED(0.00)[lists@lfdr.de];
+	FORGED_SENDER(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
+	FORGED_SENDER_MAILLIST(0.00)[];
+	DKIM_TRACE(0.00)[kernel-dk.20251104.gappssmtp.com:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c04::/32, country:SG];
+	TO_DN_SOME(0.00)[];
+	FORGED_SENDER_FORWARDING(0.00)[];
 	RCVD_COUNT_FIVE(0.00)[5];
-	FORGED_RECIPIENTS_FORWARDING(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c15::/32, country:SG];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[axboe@kernel.dk,io-uring@vger.kernel.org];
+	RCPT_COUNT_THREE(0.00)[3];
 	ALIAS_RESOLVED(0.00)[];
+	FORGED_RECIPIENTS_FORWARDING(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[sin.lore.kernel.org:helo,sin.lore.kernel.org:rdns,vger.kernel.org:from_smtp]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[vger.kernel.org:from_smtp,tor.lore.kernel.org:helo,tor.lore.kernel.org:rdns,kernel.dk:from_mime,kernel.dk:mid,kernel-dk.20251104.gappssmtp.com:dkim,suse.de:email]
 X-Rspamd-Server: lfdr
-X-Rspamd-Queue-Id: 85F2C75728C
+X-Rspamd-Queue-Id: CE442757C32
 
-Regression test for the previous commit. Submits an SQE and waits with a
-zero timeout for more completions than can arrive; the result must be
--ETIME, not the positive submit count. Covers the normal EXT_ARG wait
-path and the registered-wait path, each skipped gracefully where
-unsupported.
+On 7/14/26 10:57 AM, Prateek wrote:
+> Signed-off-by: Prateek <kprateek283@gmail.com>
+> Reviewed-by: Gabriel Krisman Bertazi <krisman@suse.de>
+> Signed-off-by: Prateek <kprateek283@gmail.com>
 
-Signed-off-by: Prateek <kprateek283@gmail.com>
-Reviewed-by: Gabriel Krisman Bertazi <krisman@suse.de>
-Signed-off-by: Prateek <kprateek283@gmail.com>
----
- test/Makefile          |   1 +
- test/timeout-swallow.c | 117 +++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 118 insertions(+)
- create mode 100644 test/timeout-swallow.c
+Similar for both, don't add 2 signed-off-by lines.
 
-diff --git a/test/Makefile b/test/Makefile
-index d6358a93..ae23ef6d 100644
---- a/test/Makefile
-+++ b/test/Makefile
-@@ -293,6 +293,7 @@ test_srcs := \
- 	timerfd-short-read.c \
- 	timeout.c \
- 	timeout-new.c \
-+	timeout-swallow.c \
- 	timestamp.c \
- 	timestamp-bug.c \
- 	truncate.c \
-diff --git a/test/timeout-swallow.c b/test/timeout-swallow.c
-new file mode 100644
-index 00000000..d08365da
---- /dev/null
-+++ b/test/timeout-swallow.c
-@@ -0,0 +1,117 @@
-+/* SPDX-License-Identifier: MIT */
-+/*
-+ * Description: tests that io_uring_wait_cqes() and variants do not swallow 
-+ *              -ETIME when loop-fetching CQEs if some SQEs were submitted.
-+ */
-+#include <stdio.h>
-+#include <unistd.h>
-+#include <errno.h>
-+#include <sys/time.h>
-+#include "liburing.h"
-+#include "helpers.h"
-+
-+/*
-+ * Test the normal -ETIME swallow path.
-+ */
-+static int test_timeout(struct io_uring *ring)
-+{
-+    struct io_uring_sqe *sqe;
-+    struct io_uring_cqe *cqe;
-+    struct __kernel_timespec long_ts = { .tv_sec = 10, .tv_nsec = 0 };
-+    struct __kernel_timespec zero_ts = { .tv_sec = 0, .tv_nsec = 0 };
-+    int ret;
-+
-+    if (!(ring->features & IORING_FEAT_EXT_ARG))
-+        return T_EXIT_SKIP;
-+
-+    sqe = io_uring_get_sqe(ring);
-+    if (!sqe) {
-+        fprintf(stderr, "get_sqe failed\n");
-+        return T_EXIT_FAIL;
-+    }
-+    /* Long timeout, won't complete immediately */
-+    io_uring_prep_timeout(sqe, &long_ts, 1, 0);
-+    
-+    /* Zero timeout forces immediate expiry inside the syscall on first/second pass */
-+    ret = io_uring_submit_and_wait_timeout(ring, &cqe, 2, &zero_ts, NULL);
-+    
-+    if (ret == -ETIME) {
-+        return T_EXIT_PASS;
-+    }
-+
-+    fprintf(stderr, "test_timeout failed: expected -ETIME, got %d\n", ret);
-+    return T_EXIT_FAIL;
-+}
-+
-+/*
-+ * Test the registered-wait -ETIME swallow path.
-+ */
-+static int test_timeout_reg(struct io_uring *ring)
-+{
-+    struct io_uring_sqe *sqe;
-+    struct io_uring_cqe *cqe;
-+    struct __kernel_timespec long_ts = { .tv_sec = 10, .tv_nsec = 0 };
-+    struct io_uring_reg_wait reg = { .ts = { .tv_sec = 0, .tv_nsec = 0 } };
-+    int ret;
-+
-+    if (!(ring->features & IORING_FEAT_EXT_ARG))
-+        return T_EXIT_SKIP;
-+
-+    ret = io_uring_register_wait_reg(ring, &reg, 1);
-+    if (ret) {
-+        /* Not supported on this kernel */
-+        return T_EXIT_SKIP;
-+    }
-+
-+    sqe = io_uring_get_sqe(ring);
-+    if (!sqe) {
-+        fprintf(stderr, "get_sqe failed\n");
-+        return T_EXIT_FAIL;
-+    }
-+    io_uring_prep_timeout(sqe, &long_ts, 1, 0);
-+    
-+    ret = io_uring_submit_and_wait_reg(ring, &cqe, 2, 0);
-+    if (ret == -ETIME) {
-+        return T_EXIT_PASS;
-+    }
-+
-+    fprintf(stderr, "test_timeout_reg failed: expected -ETIME, got %d\n", ret);
-+    return T_EXIT_FAIL;
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+    struct io_uring ring;
-+    int ret, ret2, final_ret = T_EXIT_PASS;
-+
-+    if (argc > 1)
-+        return T_EXIT_SKIP;
-+
-+    ret = io_uring_queue_init(8, &ring, 0);
-+    if (ret) {
-+        if (ret == -ENOSYS)
-+            return T_EXIT_SKIP;
-+        fprintf(stderr, "queue_init failed: %d\n", ret);
-+        return T_EXIT_FAIL;
-+    }
-+
-+    ret = test_timeout(&ring);
-+    if (ret == T_EXIT_FAIL) {
-+        fprintf(stderr, "test_timeout failed\n");
-+        final_ret = T_EXIT_FAIL;
-+    }
-+
-+    ret2 = test_timeout_reg(&ring);
-+    if (ret2 == T_EXIT_FAIL) {
-+        fprintf(stderr, "test_timeout_reg failed\n");
-+        final_ret = T_EXIT_FAIL;
-+    }
-+
-+    io_uring_queue_exit(&ring);
-+
-+    if (final_ret == T_EXIT_FAIL)
-+        return T_EXIT_FAIL;
-+    if (ret == T_EXIT_SKIP && ret2 == T_EXIT_SKIP)
-+        return T_EXIT_SKIP;
-+    return T_EXIT_PASS;
-+}
+> diff --git a/test/timeout-swallow.c b/test/timeout-swallow.c
+> new file mode 100644
+> index 00000000..d08365da
+> --- /dev/null
+> +++ b/test/timeout-swallow.c
+> @@ -0,0 +1,117 @@
+> +/* SPDX-License-Identifier: MIT */
+> +/*
+> + * Description: tests that io_uring_wait_cqes() and variants do not swallow 
+> + *              -ETIME when loop-fetching CQEs if some SQEs were submitted.
+> + */
+> +#include <stdio.h>
+> +#include <unistd.h>
+> +#include <errno.h>
+> +#include <sys/time.h>
+> +#include "liburing.h"
+> +#include "helpers.h"
+> +
+> +/*
+> + * Test the normal -ETIME swallow path.
+> + */
+> +static int test_timeout(struct io_uring *ring)
+> +{
+> +    struct io_uring_sqe *sqe;
+> +    struct io_uring_cqe *cqe;
+> +    struct __kernel_timespec long_ts = { .tv_sec = 10, .tv_nsec = 0 };
+> +    struct __kernel_timespec zero_ts = { .tv_sec = 0, .tv_nsec = 0 };
+> +    int ret;
+
+Bad style in this file, all over. Tabs are tabs, not some random amount
+of spaces. Follow the style of code around you rather than just use your
+own. And watch for trailing whitespace, you have a that in
+multiple spots.
+
+> +    /* Long timeout, won't complete immediately */
+> +    io_uring_prep_timeout(sqe, &long_ts, 1, 0);
+> +    
+
+Like the line below the prep here, trailing whitespace.
+
 -- 
-2.43.0
-
+Jens Axboe
 

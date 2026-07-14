@@ -1,88 +1,66 @@
-Return-Path: <io-uring+bounces-13997-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-13998-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by mail.lfdr.de with LMTP
-	id KffhLgQvVWoulAAAu9opvQ
-	(envelope-from <io-uring+bounces-13997-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Mon, 13 Jul 2026 20:31:32 +0200
+	id fiCQLnSnVWqzrQAAu9opvQ
+	(envelope-from <io-uring+bounces-13998-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 14 Jul 2026 05:05:24 +0200
 X-Original-To: lists+io-uring@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id C44A674E7F9
-	for <lists+io-uring@lfdr.de>; Mon, 13 Jul 2026 20:31:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E89627508CE
+	for <lists+io-uring@lfdr.de>; Tue, 14 Jul 2026 05:05:23 +0200 (CEST)
 Authentication-Results: mail.lfdr.de;
-	dkim=fail ("headers rsa verify failed") header.d=0sec.ai header.s=google header.b=RaXZ0HFF;
-	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13997-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c0a:e001:db::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-13997-lists+io-uring=lfdr.de@vger.kernel.org";
+	dkim=none;
+	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-13998-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c0a:e001:db::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-13998-lists+io-uring=lfdr.de@vger.kernel.org";
 	dmarc=none;
 	arc=pass ("subspace.kernel.org:s=arc-20240116:i=1")
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id 758F23043531
-	for <lists+io-uring@lfdr.de>; Mon, 13 Jul 2026 18:31:30 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id D4ADD302FAB5
+	for <lists+io-uring@lfdr.de>; Tue, 14 Jul 2026 03:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 050E11DED5B;
-	Mon, 13 Jul 2026 18:31:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 810BA2FF65F;
+	Tue, 14 Jul 2026 03:03:37 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21768EAC7
-	for <io-uring@vger.kernel.org>; Mon, 13 Jul 2026 18:31:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69D0438A733;
+	Tue, 14 Jul 2026 03:03:32 +0000 (UTC)
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783967489; cv=none; b=r2VxCRcksEkHy6271Ncdgce4I4ejgbTU8TRZX0qSZYQGD9NZhKWpi+bX5KcNkEjQexcXb1flpQi+rS2+Mek3TxItDub+GzRXIsg1jG4we3TL6nxpsuYiIypPOp00hTy1haEjuCBU5In1KkZnWDePrwGnDq15arsm190KN53UZjM=
+	t=1783998217; cv=none; b=b5Kv54iWBTTfrimzXkRqT51VYNmK3eiw98zyhOka20U/FZxTPI07MPwWDKKRdhSpNNtZSP5SyrDFozGIfXAj5LWYXvPiABs02VXj9KN3GF+sCmdcSgEcVup939ycRNfg+ch30b1dl3m70KO2Z2CBFe6yRJ9+VM/a4vIQW2MqGMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783967489; c=relaxed/simple;
-	bh=95oOiJdu3a9OfAuqQbchxv4PpiKvLM2iB6tkG3Eobgg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hP7AzhB9VtJ/qR5KhZTJ7sqfVfcM6yPW7T0MzKfgaJqjUwvdXhrMwHgdRo+2H4+0EEz46MsKm4AuwSrBZ63rVBknsblOvkMRa1NWxTG8YKfEeDGz8JlDuJ5WnLkwoJ37FutxR/6Gq7/eu2oeow/xDJn3yqcfPJmy7eWIcm6ggLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0sec.ai; spf=pass smtp.mailfrom=0sec.ai; dkim=temperror (0-bit key) header.d=0sec.ai header.i=@0sec.ai header.b=RaXZ0HFF; arc=none smtp.client-ip=209.85.221.45
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-471eeac43bfso3415524f8f.3
-        for <io-uring@vger.kernel.org>; Mon, 13 Jul 2026 11:31:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=0sec.ai; s=google; t=1783967486; x=1784572286; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=oR/f7encpZVkiKBTK1olxsoJ4tgqYqikW+d6n0bDAg4=;
-        b=RaXZ0HFFJ3NoTZlgEgTs+9X6vVl6SfJ3PgHg5iOhe1VUPId2VLmHsOhc3+aZDQULUQ
-         VMbyoKXwtv2jTSfc2lpSLnnpA/QPqNNRmNs+1QHOXMkhz+zG6dg0KnQ8JQGwzkRvW9Dm
-         VejG9Fe3dw2C+ipbZiQOUoxynso6XMGbwxOcdSUYQDZPeF1RO7tLNAbAFBk2mskL7d/L
-         wCkFoGSDTytLHjTZvPi5FaZcHStmlpMngUTtTE9HJYGJvT2El8NX+2pHTz8SGl47n1AS
-         tl8cUuUbhBrB2wxN4fHmT1Y7HvmGFZRJHbt6TEO3R5YHEINU+q1KpuwoaJyCwpTZzvo3
-         ButQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783967486; x=1784572286;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=oR/f7encpZVkiKBTK1olxsoJ4tgqYqikW+d6n0bDAg4=;
-        b=njn+qXUhh8KOCk2rvgE6RiVq3DXmbUi3M9dupeYweYrTJqH+yNkmuruXYcBefeFuJ2
-         L/+zSrowA+k6xXNrnWaqCD36qKvSWWywLlZnKk7MqNL54RBB4DVBQz6fgqiooJ8WoWZC
-         Y4V46norPkunvG9Vv1kh60kfKjUsQIXxXJF5najuHBY2zBORRzec1bGXdJwe6etHpb+e
-         p6wgY9jJ1N36lQeJeybpC9r5QhFjxncQQxGRVl+gseCAohrRCA4kwSVLJDTJk/7AanTb
-         t0M5RFELjw6R3rZbni9mzWLO+uc185w+WQfyOWJRqVYAEgQR1BQEBftzFS7ovGTH0osR
-         6BIQ==
-X-Gm-Message-State: AOJu0Yx/KKjUGhV+wpolSb9pIz8C4uSCGmv7qzb9Scd1VyAGoOo2N7SB
-	wTclkoJIpA2DjHu6zueuSS/m0x1xYyYGhmr7kF5JqMgS083eGiOtxf7WPWEGT7wNjpiRtU+ntfT
-	p0/n9UyXV
-X-Gm-Gg: AfdE7ckJN9HW4MKMsIpBQOCuLzaAw/oaXkbY9PqoJ4JC362/ouxyWzYF81jqnev4CoQ
-	m2vqO0+Ir7iHd8jpBvnSv7xl+DWrOwsqL7quuU8kRESERa0if/2isL8GW5h09y/iUGPrL+czNi9
-	xGCtH/ZKu4vJfPlIAHtV5kpiCdp85iUUoMSwGoR39qIAQMJ/ja0j/UDboAMmUBPR6GeSMEeOFYZ
-	m6hejEXuzIfyeGNw+6qIZttXP80pCP9aCi/mArLkpwp9clCCF8b88Fqq0iKdtktpa+1hp5GFUcx
-	fI67I6diCd1tCq/JwCSaHM9FIfmCOOC0FiN2eYBDxxlDuYfO96hrttAAsQUQglv3+S3/34mFS0H
-	kIR77rtP+a9SAEuVOvtBcI6PIW9upUjfgRLDO6+wWfvmOGrXegHpPuKMtKBdv2tD2Uicie0yhXI
-	H+iMxoFuB86N1XvgwRC9fhWodRp7S58v98GLFXG6o0eAasJzJXQVY6cIkvXdGZ0lkwpIH7tFlOp
-	cfkxs+hOIq3KXEVWBrsBDYvlub7B6fgZNY=
-X-Received: by 2002:a5d:5846:0:b0:472:79bc:3919 with SMTP id ffacd0b85a97d-47f2dceac0cmr11350573f8f.39.1783967486402;
-        Mon, 13 Jul 2026 11:31:26 -0700 (PDT)
-Received: from PeakBook-Mini.tail8e484.ts.net ([178.197.218.188])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f4635a9cesm1314729f8f.14.2026.07.13.11.31.25
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 13 Jul 2026 11:31:25 -0700 (PDT)
-From: Doruk Tan Ozturk <doruk@0sec.ai>
+	s=arc-20240116; t=1783998217; c=relaxed/simple;
+	bh=H1qi4xDYu6aZ4SFG2AQm4X0IU0pFHlRWGS3azI1kiBk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AkSBgb2VDoXbjIX5EBjwY2jIJQFjIdPJARwftLdYmYqaLEvXc3Y+Qw0UypAwtqn0t2jtdkKDc4rj0BlDWxcC0vzP9wpsa5JrYMBb65168SmL8oPW+qx4j5Z5/xk08WrhCXJCYZAkJindRDP6Sqj23AL3h1JlS/3+ucCbZEyAQx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+X-UUID: 94aff3207f3011f1aa26b74ffac11d73-20260714
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.12,REQID:14165b17-f75b-4358-ad47-1e07aef114be,IP:0,U
+	RL:0,TC:0,Content:-5,EDM:-20,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTI
+	ON:release,TS:-25
+X-CID-META: VersionHash:e7bac3a,CLOUDID:569651aee9488dc3ba6054e8b61dd914,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102|850|865|898,TC:nil,Content:0|15|50,E
+	DM:1,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:
+	0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 94aff3207f3011f1aa26b74ffac11d73-20260714
+X-User: xieyi@kylinos.cn
+Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <xieyi@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 824532912; Tue, 14 Jul 2026 11:03:25 +0800
+From: Yi Xie <xieyi@kylinos.cn>
 To: axboe@kernel.dk
 Cc: io-uring@vger.kernel.org,
-	Doruk Tan Ozturk <doruk@0sec.ai>
-Subject: [PATCH] io_uring/kbuf: free the old cached iovec, not the returned one, on bundle grow
-Date: Mon, 13 Jul 2026 20:31:24 +0200
-Message-ID: <20260713183124.4217-1-doruk@0sec.ai>
-X-Mailer: git-send-email 2.53.0
+	linux-kernel@vger.kernel.org,
+	Yi Xie <xieyi@kylinos.cn>
+Subject: [PATCH 1/5] io_uring/fs: check unused sqe fields for unlinkat
+Date: Tue, 14 Jul 2026 11:03:06 +0800
+Message-Id: <20260714030306.64820-1-xieyi@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
@@ -91,98 +69,61 @@ List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Rspamd-Action: no action
-X-Spamd-Result: default: False [1.04 / 15.00];
+X-Spamd-Result: default: False [0.04 / 15.00];
 	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_REJECT(1.00)[0sec.ai:s=google];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	R_MISSING_CHARSET(0.50)[];
 	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	TAGGED_FROM(0.00)[bounces-13997-lists,io-uring=lfdr.de];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	DMARC_NA(0.00)[kylinos.cn];
 	RCVD_TLS_LAST(0.00)[];
-	DMARC_NA(0.00)[0sec.ai];
-	FORGED_SENDER(0.00)[doruk@0sec.ai,io-uring@vger.kernel.org];
 	MIME_TRACE(0.00)[0:+];
-	FORGED_RECIPIENTS(0.00)[m:axboe@kernel.dk,m:io-uring@vger.kernel.org,m:doruk@0sec.ai,s:lists@lfdr.de];
-	FORWARDED(0.00)[lists@lfdr.de];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	DKIM_TRACE(0.00)[0sec.ai:-];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
-	TO_DN_SOME(0.00)[];
-	PRECEDENCE_BULK(0.00)[];
-	FORGED_SENDER_FORWARDING(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[doruk@0sec.ai,io-uring@vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
-	RCVD_COUNT_FIVE(0.00)[5];
+	RCVD_COUNT_THREE(0.00)[4];
+	TAGGED_FROM(0.00)[bounces-13998-lists,io-uring=lfdr.de];
+	FORWARDED(0.00)[lists@lfdr.de];
+	FORGED_SENDER(0.00)[xieyi@kylinos.cn,io-uring@vger.kernel.org];
+	FORGED_RECIPIENTS(0.00)[m:axboe@kernel.dk,m:io-uring@vger.kernel.org,m:linux-kernel@vger.kernel.org,m:xieyi@kylinos.cn,s:lists@lfdr.de];
 	FORGED_RECIPIENTS_FORWARDING(0.00)[];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	FORGED_SENDER_FORWARDING(0.00)[];
+	PRECEDENCE_BULK(0.00)[];
+	FROM_NEQ_ENVFROM(0.00)[xieyi@kylinos.cn,io-uring@vger.kernel.org];
+	RCPT_COUNT_THREE(0.00)[4];
 	ALIAS_RESOLVED(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[vger.kernel.org:from_smtp,sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,0sec.ai:from_mime,0sec.ai:email,0sec.ai:mid]
+	R_DKIM_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	FROM_HAS_DN(0.00)[]
 X-Rspamd-Server: lfdr
-X-Rspamd-Queue-Id: C44A674E7F9
+X-Rspamd-Queue-Id: E89627508CE
 
-Commit cd053d788c3f ("io_uring: fix dangling iovec after provided-buffer
-bundle grow failure") moved the KBUF_MODE_FREE kfree() out of the expand
-branch to after the validation loop, so the old cached iovec is only
-released once the new buffers have been validated. However, by the time
-control reaches the post-loop free, arg->iovs has already been reassigned
-in the expand branch to the freshly allocated array that is about to be
-returned to the caller:
+Zero check unused SQE fields addr3 and pad2 for unlinkat. They're
+not needed now, but could be used sometime in the future.
 
-	iov = kmalloc_objs(struct iovec, nr_avail);
-	...
-	arg->iovs = iov;		/* now the array we return */
-	...
-	if (arg->mode & KBUF_MODE_FREE)
-		kfree(arg->iovs);	/* ... but this frees it */
-
-On a successful grow, io_ring_buffers_peek() therefore frees the very
-iovec array it returns. io_recv_buf_select() then builds an iov_iter over
-that freed array and caches it in kmsg->vec.iovec, giving a
-slab-use-after-free read during the recv copy and a later double free of
-the iovec array on request cleanup. The array is a kmalloc() whose size is
-controlled by the number of ring buffers the caller commits, so the freed
-object lands in an attacker-influenced kmalloc cache.
-
-KBUF_MODE_FREE is meant to release the *old* cached iovec once it has been
-replaced by a larger one. Free the captured org_iovs instead, and only
-when a grow actually happened (arg->iovs != org_iovs) so the no-grow case
-still returns the reused array. The -EFAULT failure path already frees the
-new array and leaves org_iovs for the caller, so it is unaffected.
-
-Reproduced on next-20260710 with KASAN by an unprivileged IORING_OP_RECV
-using IORING_RECVSEND_BUNDLE over a provided-buffer ring: a first
-(expanding) bundle caches a small iovec, and an in-request bundle retry
-grows again under KBUF_MODE_FREE, triggering both the UAF read and the
-double free. The change eliminates the KASAN splat.
-
-Fixes: cd053d788c3f ("io_uring: fix dangling iovec after provided-buffer bundle grow failure")
-Signed-off-by: Doruk Tan Ozturk <doruk@0sec.ai>
+Signed-off-by: Yi Xie <xieyi@kylinos.cn>
 ---
- io_uring/kbuf.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ io_uring/fs.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-index b6b969b55e12..07d81dc7cbe2 100644
---- a/io_uring/kbuf.c
-+++ b/io_uring/kbuf.c
-@@ -328,8 +328,8 @@ static int io_ring_buffers_peek(struct io_kiocb *req, struct buf_sel_arg *arg,
- 		buf = io_ring_head_to_buf(br, ++head, bl->mask);
- 	} while (--nr_iovs);
+diff --git a/io_uring/fs.c b/io_uring/fs.c
+index d0580c754bf8..26ea841a22e7 100644
+--- a/io_uring/fs.c
++++ b/io_uring/fs.c
+@@ -110,7 +110,8 @@ int io_unlinkat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	const char __user *fname;
+ 	int err;
  
--	if (arg->mode & KBUF_MODE_FREE)
--		kfree(arg->iovs);
-+	if ((arg->mode & KBUF_MODE_FREE) && arg->iovs != org_iovs)
-+		kfree(org_iovs);
- 
- 	if (head == tail)
- 		req->flags |= REQ_F_BL_EMPTY;
+-	if (sqe->off || sqe->len || sqe->buf_index || sqe->splice_fd_in)
++	if (sqe->off || sqe->len || sqe->buf_index || sqe->splice_fd_in ||
++	    sqe->addr3 || sqe->__pad2[0])
+ 		return -EINVAL;
+ 	if (unlikely(req->flags & REQ_F_FIXED_FILE))
+ 		return -EBADF;
 -- 
-2.43.0
+2.25.1
 
 

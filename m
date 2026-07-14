@@ -1,284 +1,182 @@
-Return-Path: <io-uring+bounces-14011-lists+io-uring=lfdr.de@vger.kernel.org>
+Return-Path: <io-uring+bounces-14012-lists+io-uring=lfdr.de@vger.kernel.org>
 Delivered-To: lists+io-uring@lfdr.de
 Received: from mail.lfdr.de
 	by mail.lfdr.de with LMTP
-	id Bwi+F/mBVmrv7gAAu9opvQ
-	(envelope-from <io-uring+bounces-14011-lists+io-uring=lfdr.de@vger.kernel.org>)
-	for <lists+io-uring@lfdr.de>; Tue, 14 Jul 2026 20:37:45 +0200
+	id TtuwJ7OIVmrZ8QAAu9opvQ
+	(envelope-from <io-uring+bounces-14012-lists+io-uring=lfdr.de@vger.kernel.org>)
+	for <lists+io-uring@lfdr.de>; Tue, 14 Jul 2026 21:06:27 +0200
 X-Original-To: lists+io-uring@lfdr.de
 Received: from sea.lore.kernel.org (sea.lore.kernel.org [IPv6:2600:3c0a:e001:db::12fc:5321])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBE9B757E35
-	for <lists+io-uring@lfdr.de>; Tue, 14 Jul 2026 20:37:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B046C758186
+	for <lists+io-uring@lfdr.de>; Tue, 14 Jul 2026 21:06:26 +0200 (CEST)
 Authentication-Results: mail.lfdr.de;
-	dkim=pass header.d=gmail.com header.s=20251104 header.b=i4zlqBeV;
-	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-14011-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c0a:e001:db::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-14011-lists+io-uring=lfdr.de@vger.kernel.org";
-	dmarc=pass (policy=none) header.from=gmail.com;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="d/xwwglL";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="rXxvn6/c";
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="d/xwwglL";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="rXxvn6/c";
+	spf=pass (mail.lfdr.de: domain of "io-uring+bounces-14012-lists+io-uring=lfdr.de@vger.kernel.org" designates 2600:3c0a:e001:db::12fc:5321 as permitted sender) smtp.mailfrom="io-uring+bounces-14012-lists+io-uring=lfdr.de@vger.kernel.org";
+	dmarc=pass (policy=none) header.from=suse.de;
 	arc=pass ("subspace.kernel.org:s=arc-20240116:i=1")
 Received: from smtp.subspace.kernel.org (conduit.subspace.kernel.org [100.90.174.1])
-	by sea.lore.kernel.org (Postfix) with ESMTP id EC01C3055563
-	for <lists+io-uring@lfdr.de>; Tue, 14 Jul 2026 18:35:41 +0000 (UTC)
+	by sea.lore.kernel.org (Postfix) with ESMTP id 679AF323E652
+	for <lists+io-uring@lfdr.de>; Tue, 14 Jul 2026 19:01:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 681A6417BF8;
-	Tue, 14 Jul 2026 18:35:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA41935838A;
+	Tue, 14 Jul 2026 19:01:09 +0000 (UTC)
 X-Original-To: io-uring@vger.kernel.org
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D63F2DEA8C
-	for <io-uring@vger.kernel.org>; Tue, 14 Jul 2026 18:35:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FECE3E171E
+	for <io-uring@vger.kernel.org>; Tue, 14 Jul 2026 19:00:50 +0000 (UTC)
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784054141; cv=none; b=X9D18KZ1Yf4/auxObbMftcTPTPtT8JPZw+U79jry+twinBof3NrHTw+zBIxApKrKL+T/i6x67AInbCpMLoj0zGMAwyliLELaIjW/Z0jSrwxytoFAbxLd9L3pAvwbwGUhizQaEB9L7tkyDg0IvGU/fEe1WXb7T6cwRtkycRuVzHw=
+	t=1784055669; cv=none; b=BAFgNR/f32qhq9lRYIKPY3S+ySPyYnELZKJ7tjh4XyXYWVtFQb09zBF/5KZKYt8M5drWOSiaH9mGMN1CznwNkrxoun7LQNXlWpNtxgWIZoLiwK6U1P4wi50s68at2939HEQ03wt5Ru0+1rBo1/43bF27QZkxUeV3erR7BneQWHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784054141; c=relaxed/simple;
-	bh=qX8k3+cKww3nWHyMDj+5/Al1prHUu1YboDksaPSqod4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=a7iqUaiK74NzNTCvM032hG1mdjg/LAPzwXxXOI7Fj/OO+n2shfVqXCY6R9qG+5Q9Ua9YWWQYYd/ZZ1macOtVpktpIcayxVsmlYyv4jZi9hE754kDdn2OfLO3cJNaSsrwMFeMlHWwIyi/NKX0VyGj9X0YfAN7T5nXd1iTZs/GcFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i4zlqBeV; arc=none smtp.client-ip=209.85.215.171
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-c88a4d79ba5so3008422a12.2
-        for <io-uring@vger.kernel.org>; Tue, 14 Jul 2026 11:35:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784054139; x=1784658939; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=5z0mSwlKlnsorYMgOxOie4qM/ENy5OVX2EJNIf4M4wo=;
-        b=i4zlqBeVSSTF+4+k8pxlZp0rVp+EPoWKKzFw7sjfq6S64LqkBDOiVsOP91gPHE0c55
-         XvMUZ7M1OLXsBqHgWAFZ2Dc4DUnZKwWOsearfpSW/JY9FLW7d42p5AVu4x1jGWDOI7my
-         djQhV2dxEo/UVQwvEoQkdn7Hm1e6MuBp2VcNyWk8OYGjgWhEfUhW5cKj9NMv5WSZTCOv
-         VmsAEB/r7AauwHnVi09i/LsB4ZL37/qxwx8BWrWW4FYRIpX3UaCwBBGNONBSRb/kfnsy
-         uvU3LJMffOokfcnNYcVK+3RSFotUvGTamvLBAYpgVyw1uQkMEOYKFQ3KoMtVXn1Xa0J1
-         ou3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784054139; x=1784658939;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=5z0mSwlKlnsorYMgOxOie4qM/ENy5OVX2EJNIf4M4wo=;
-        b=MlwwRNfRqJ31VzQnlQob3VzjDxyr57rktFz4p++Aqiupi2ouE8RFQp149oA9hM2e4d
-         YQogBFWeRY2qejOhU/fsb35SLoajHQ1KSKuBHVl7SefnsfHYD+WEWmUfJnHMbghl1Doq
-         AsoLHLjK3vsyfQgOQbuuXHdB7M/A3cjawXJqHxYR+2H6L7jHT8w4dZSYkvdCkAqcMgE1
-         4/wv/6+l/k+XhpWsR5EywMym92UIMFqHynaUHoWRBH94uWmEXHEXZtttHLiwj544wXPh
-         G9Otu4PwZmS1tN7bbgbJnS/UhCbaMTAdT4gVAPq6oQoZwHQBiLfJFIhOmc/yTB8xarXT
-         /1kA==
-X-Gm-Message-State: AOJu0YxsPjzfJ6fsvxY+zTGDgA0cofjkXwwZd7RLiQQGeC6cGT2FPlnO
-	lUObQbrQ1W+9SMrGrWZplbN39OmbPZswBW1YESfrw+wy+mhVvkEdiuwc28MQALUQjtI=
-X-Gm-Gg: AfdE7cmH1NoAOUOA80rcJJUhCNoxp9xy10hRJephYlDbdBUFDQCmR0W3zX8V31TthPP
-	/TAJFi33JR4Y6YX9VVawqkhXMtqz7LCf0/ogxWwKLVsyQadk82FoXVhy6HbHQj0OLuOoHSWnHrn
-	OEo9Te2HzyrhMlr2ydymUWaX5xSenP9PY1dH8Y7tcsKS7eZ5txYy+/Y6Sa8v0Do+IbSS+p+Tcmp
-	PTMbS+nTCPkgB161Vfr6l9OPt+pBDpWeq0dzSzNIZDgBXfbE8fksmqIihvpMIoDzKC0IL7UyQ1c
-	YnCSdm1cRP0lcnRDDuj4XIpQX+9rejKnvuB0ZyqPQBh46x6OMm+Jr+Znc2XVJtdcaN1KXlZKA3Y
-	b5NC6thSClri6SWDpDzQIyKPcu3RoFMtcFoEWKbcRE3Z0bDfpIhHrX5E60Cbyr+Q8lurKPC+Z/g
-	PrdX2yKh2Q/BCrNHjYaOmC9jOHz9tWkBqnw8h9J59eeC4itf94C8naOAPXc5hUpLdpEqJ0aMd+D
-	xRkiO2XaipmXahs6SpR0AZ19HKV127E1g//G8NiHnAkhMC9WyZcTP+N0SM3o89J9W09suIDwWjo
-X-Received: by 2002:a05:6a21:394a:b0:3bd:3a53:c147 with SMTP id adf61e73a8af0-3c35754ee33mr4259840637.45.1784054139053;
-        Tue, 14 Jul 2026 11:35:39 -0700 (PDT)
-Received: from prateek-Aspire-A515-57G.. ([182.77.77.253])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3119c2a7bb5sm56450280eec.25.2026.07.14.11.35.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jul 2026 11:35:38 -0700 (PDT)
-From: Prateek <kprateek283@gmail.com>
-To: io-uring@vger.kernel.org
-Cc: axboe@kernel.dk,
-	krisman@suse.de,
-	Prateek <kprateek283@gmail.com>
-Subject: [PATCH v3 2/2] test/timeout-swallow: verify -ETIME is not swallowed
-Date: Wed, 15 Jul 2026 00:05:29 +0530
-Message-ID: <20260714183529.321703-2-kprateek283@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260714183529.321703-1-kprateek283@gmail.com>
-References: <20260714183529.321703-1-kprateek283@gmail.com>
+	s=arc-20240116; t=1784055669; c=relaxed/simple;
+	bh=E8edDEn3cCBAVDCTytMOfKUuirTzIHK8IvSEcA+ngsg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=aCTQQ7wjMNpMWM1p4uv1zf5rPFr2Q4HfG1hqQuw8K8PC5419UYtJKpW4mwMR56ANZ4A3xp4iRwCodLLSarjWraigreLSzGLfGr5zhVbDqBokE2n03udyzSTx2Zv3f6c4VPJJdooTnHbljdcdO4F6FsC7tonGxVVeJU9gAQMyaSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=d/xwwglL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rXxvn6/c; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=d/xwwglL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rXxvn6/c; arc=none smtp.client-ip=195.135.223.130
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1DD5077FA0;
+	Tue, 14 Jul 2026 19:00:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1784055649; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zaeRSP+ceFIWpAMYv8RBVCZtmclyb6JVPkvXvE9N5vc=;
+	b=d/xwwglL2TgWetAHw93PPuqrS5eZeRdzfo4fs31gOFyMqoMaJ0TNQeImgWSPBxcNiJ88hH
+	CPBH/X4poIARts+gfDQFQSMWhvtw3qj7yaFkPE9Oxzaahm3bh446s1+3VnXXqG6jkIiTga
+	SBjMjxI0TvUuaoj2/fMOrUpEzKvBBMY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1784055649;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zaeRSP+ceFIWpAMYv8RBVCZtmclyb6JVPkvXvE9N5vc=;
+	b=rXxvn6/ch8DWZxd91GNTNnAIhUUPXwkinI/4UKODw+oOFVGN32kB4AXsyJERRySm7N1EmU
+	Q9H3zA0qmu8iUsDA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1784055649; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zaeRSP+ceFIWpAMYv8RBVCZtmclyb6JVPkvXvE9N5vc=;
+	b=d/xwwglL2TgWetAHw93PPuqrS5eZeRdzfo4fs31gOFyMqoMaJ0TNQeImgWSPBxcNiJ88hH
+	CPBH/X4poIARts+gfDQFQSMWhvtw3qj7yaFkPE9Oxzaahm3bh446s1+3VnXXqG6jkIiTga
+	SBjMjxI0TvUuaoj2/fMOrUpEzKvBBMY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1784055649;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zaeRSP+ceFIWpAMYv8RBVCZtmclyb6JVPkvXvE9N5vc=;
+	b=rXxvn6/ch8DWZxd91GNTNnAIhUUPXwkinI/4UKODw+oOFVGN32kB4AXsyJERRySm7N1EmU
+	Q9H3zA0qmu8iUsDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C19D5779AE;
+	Tue, 14 Jul 2026 19:00:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id MAlbJ2CHVmrkKQAAD6G6ig
+	(envelope-from <krisman@suse.de>); Tue, 14 Jul 2026 19:00:48 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: Yi Xie <xieyi@kylinos.cn>, axboe@kernel.dk
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, Yi Xie
+ <xieyi@kylinos.cn>
+Subject: Re: [PATCH 1/5] io_uring/fs: check unused sqe fields for unlinkat
+In-Reply-To: <20260714030306.64820-1-xieyi@kylinos.cn>
+Organization: SUSE
+References: <20260714030306.64820-1-xieyi@kylinos.cn>
+Date: Tue, 14 Jul 2026 15:00:47 -0400
+Message-ID: <878q7d4crk.fsf@mailhost.krisman.be>
 Precedence: bulk
 X-Mailing-List: io-uring@vger.kernel.org
 List-Id: <io-uring.vger.kernel.org>
 List-Subscribe: <mailto:io-uring+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:io-uring+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
+X-Spam-Level: 
 X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-0.66 / 15.00];
-	MID_CONTAINS_FROM(1.00)[];
+X-Spamd-Result: default: False [-1.66 / 15.00];
 	ARC_ALLOW(-1.00)[subspace.kernel.org:s=arc-20240116:i=1];
 	R_MISSING_CHARSET(0.50)[];
-	DMARC_POLICY_ALLOW(-0.50)[gmail.com,none];
+	DMARC_POLICY_ALLOW(-0.50)[suse.de,none];
 	R_SPF_ALLOW(-0.20)[+ip6:2600:3c0a:e001:db::/64:c];
-	R_DKIM_ALLOW(-0.20)[gmail.com:s=20251104];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
 	MAILLIST(-0.15)[generic];
 	MIME_GOOD(-0.10)[text/plain];
 	HAS_LIST_UNSUB(-0.01)[];
-	FREEMAIL_CC(0.00)[kernel.dk,suse.de,gmail.com];
-	TO_DN_SOME(0.00)[];
-	TAGGED_FROM(0.00)[bounces-14011-lists,io-uring=lfdr.de];
-	FORGED_RECIPIENTS_MAILLIST(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	TAGGED_FROM(0.00)[bounces-14012-lists,io-uring=lfdr.de];
+	FORGED_RECIPIENTS(0.00)[m:xieyi@kylinos.cn,m:axboe@kernel.dk,m:io-uring@vger.kernel.org,m:linux-kernel@vger.kernel.org,s:lists@lfdr.de];
+	FORGED_SENDER(0.00)[krisman@suse.de,io-uring@vger.kernel.org];
 	FORWARDED(0.00)[lists@lfdr.de];
-	FORGED_SENDER(0.00)[kprateek283@gmail.com,io-uring@vger.kernel.org];
-	FORGED_RECIPIENTS(0.00)[m:io-uring@vger.kernel.org,m:axboe@kernel.dk,m:krisman@suse.de,m:kprateek283@gmail.com,s:lists@lfdr.de];
 	FORGED_SENDER_MAILLIST(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	FREEMAIL_FROM(0.00)[gmail.com];
+	HAS_ORG_HEADER(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_TRACE(0.00)[suse.de:+];
+	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	MISSING_XM_UA(0.00)[];
 	PRECEDENCE_BULK(0.00)[];
 	FORGED_SENDER_FORWARDING(0.00)[];
-	FROM_NEQ_ENVFROM(0.00)[kprateek283@gmail.com,io-uring@vger.kernel.org];
+	FROM_NEQ_ENVFROM(0.00)[krisman@suse.de,io-uring@vger.kernel.org];
 	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[gmail.com:+];
-	RCVD_COUNT_FIVE(0.00)[5];
+	FORGED_RECIPIENTS_MAILLIST(0.00)[];
+	RCVD_COUNT_FIVE(0.00)[6];
 	FORGED_RECIPIENTS_FORWARDING(0.00)[];
-	ASN(0.00)[asn:63949, ipnet:2600:3c0a::/32, country:SG];
+	RCPT_COUNT_FIVE(0.00)[5];
 	ALIAS_RESOLVED(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	TAGGED_RCPT(0.00)[io-uring];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[vger.kernel.org:from_smtp,suse.de:email]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[sea.lore.kernel.org:helo,sea.lore.kernel.org:rdns,kylinos.cn:email,suse.de:from_mime,suse.de:email,suse.de:dkim,vger.kernel.org:from_smtp,mailhost.krisman.be:mid]
 X-Rspamd-Server: lfdr
-X-Rspamd-Queue-Id: CBE9B757E35
+X-Rspamd-Queue-Id: B046C758186
 
-Regression test for the previous commit. Submits an SQE and waits with a
-zero timeout for more completions than can arrive; the result must be
--ETIME, not the positive submit count. Covers the normal EXT_ARG wait
-path and the registered-wait path, each skipped gracefully where
-unsupported.
+Yi Xie <xieyi@kylinos.cn> writes:
 
-Signed-off-by: Prateek <kprateek283@gmail.com>
+> Zero check unused SQE fields addr3 and pad2 for unlinkat. They're
+> not needed now, but could be used sometime in the future.
+>
+> Signed-off-by: Yi Xie <xieyi@kylinos.cn>
+
+Arguably, this is a common issue across many operations.  I'd love
+to have a more automated way to write these checks.
+
+
 Reviewed-by: Gabriel Krisman Bertazi <krisman@suse.de>
----
- test/Makefile          |   1 +
- test/timeout-swallow.c | 114 +++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 115 insertions(+)
- create mode 100644 test/timeout-swallow.c
 
-diff --git a/test/Makefile b/test/Makefile
-index d6358a93..ae23ef6d 100644
---- a/test/Makefile
-+++ b/test/Makefile
-@@ -293,6 +293,7 @@ test_srcs := \
- 	timerfd-short-read.c \
- 	timeout.c \
- 	timeout-new.c \
-+	timeout-swallow.c \
- 	timestamp.c \
- 	timestamp-bug.c \
- 	truncate.c \
-diff --git a/test/timeout-swallow.c b/test/timeout-swallow.c
-new file mode 100644
-index 00000000..e65e669e
---- /dev/null
-+++ b/test/timeout-swallow.c
-@@ -0,0 +1,114 @@
-+/* SPDX-License-Identifier: MIT */
-+/*
-+ * Description: tests that io_uring_wait_cqes() and variants do not swallow
-+ *              -ETIME when loop-fetching CQEs if some SQEs were submitted.
-+ */
-+#include <stdio.h>
-+#include <unistd.h>
-+#include <errno.h>
-+#include <sys/time.h>
-+#include "liburing.h"
-+#include "helpers.h"
-+
-+/*
-+ * Test the normal -ETIME swallow path.
-+ */
-+static int test_timeout(struct io_uring *ring)
-+{
-+	struct io_uring_sqe *sqe;
-+	struct io_uring_cqe *cqe;
-+	struct __kernel_timespec long_ts = { .tv_sec = 10, .tv_nsec = 0 };
-+	struct __kernel_timespec zero_ts = { .tv_sec = 0, .tv_nsec = 0 };
-+	int ret;
-+
-+	if (!(ring->features & IORING_FEAT_EXT_ARG))
-+		return T_EXIT_SKIP;
-+
-+	sqe = io_uring_get_sqe(ring);
-+	if (!sqe) {
-+		fprintf(stderr, "get_sqe failed\n");
-+		return T_EXIT_FAIL;
-+	}
-+	/* Long timeout, won't complete immediately */
-+	io_uring_prep_timeout(sqe, &long_ts, 1, 0);
-+
-+	/* Zero timeout forces immediate expiry inside the syscall on the first pass */
-+	ret = io_uring_submit_and_wait_timeout(ring, &cqe, 2, &zero_ts, NULL);
-+
-+	if (ret == -ETIME)
-+		return T_EXIT_PASS;
-+
-+	fprintf(stderr, "test_timeout failed: expected -ETIME, got %d\n", ret);
-+	return T_EXIT_FAIL;
-+}
-+
-+/*
-+ * Test the registered-wait -ETIME swallow path.
-+ */
-+static int test_timeout_reg(struct io_uring *ring)
-+{
-+	struct io_uring_sqe *sqe;
-+	struct io_uring_cqe *cqe;
-+	struct __kernel_timespec long_ts = { .tv_sec = 10, .tv_nsec = 0 };
-+	struct io_uring_reg_wait reg = { .ts = { .tv_sec = 0, .tv_nsec = 0 } };
-+	int ret;
-+
-+	if (!(ring->features & IORING_FEAT_EXT_ARG))
-+		return T_EXIT_SKIP;
-+
-+	/* Not supported on this kernel */
-+	ret = io_uring_register_wait_reg(ring, &reg, 1);
-+	if (ret)
-+		return T_EXIT_SKIP;
-+
-+	sqe = io_uring_get_sqe(ring);
-+	if (!sqe) {
-+		fprintf(stderr, "get_sqe failed\n");
-+		return T_EXIT_FAIL;
-+	}
-+	io_uring_prep_timeout(sqe, &long_ts, 1, 0);
-+
-+	ret = io_uring_submit_and_wait_reg(ring, &cqe, 2, 0);
-+	if (ret == -ETIME)
-+		return T_EXIT_PASS;
-+
-+	fprintf(stderr, "test_timeout_reg failed: expected -ETIME, got %d\n", ret);
-+	return T_EXIT_FAIL;
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	struct io_uring ring;
-+	int ret, ret2, final_ret = T_EXIT_PASS;
-+
-+	if (argc > 1)
-+		return T_EXIT_SKIP;
-+
-+	ret = io_uring_queue_init(8, &ring, 0);
-+	if (ret) {
-+		if (ret == -ENOSYS)
-+			return T_EXIT_SKIP;
-+		fprintf(stderr, "queue_init failed: %d\n", ret);
-+		return T_EXIT_FAIL;
-+	}
-+
-+	ret = test_timeout(&ring);
-+	if (ret == T_EXIT_FAIL) {
-+		fprintf(stderr, "test_timeout failed\n");
-+		final_ret = T_EXIT_FAIL;
-+	}
-+
-+	ret2 = test_timeout_reg(&ring);
-+	if (ret2 == T_EXIT_FAIL) {
-+		fprintf(stderr, "test_timeout_reg failed\n");
-+		final_ret = T_EXIT_FAIL;
-+	}
-+
-+	io_uring_queue_exit(&ring);
-+
-+	if (final_ret == T_EXIT_FAIL)
-+		return T_EXIT_FAIL;
-+	if (ret == T_EXIT_SKIP && ret2 == T_EXIT_SKIP)
-+		return T_EXIT_SKIP;
-+	return T_EXIT_PASS;
-+}
+> ---
+>  io_uring/fs.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/io_uring/fs.c b/io_uring/fs.c
+> index d0580c754bf8..26ea841a22e7 100644
+> --- a/io_uring/fs.c
+> +++ b/io_uring/fs.c
+> @@ -110,7 +110,8 @@ int io_unlinkat_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+>  	const char __user *fname;
+>  	int err;
+>  
+> -	if (sqe->off || sqe->len || sqe->buf_index || sqe->splice_fd_in)
+> +	if (sqe->off || sqe->len || sqe->buf_index || sqe->splice_fd_in ||
+> +	    sqe->addr3 || sqe->__pad2[0])
+>  		return -EINVAL;
+>  	if (unlikely(req->flags & REQ_F_FIXED_FILE))
+>  		return -EBADF;
+> -- 
+> 2.25.1
+>
+
 -- 
-2.43.0
-
+Gabriel Krisman Bertazi
 
